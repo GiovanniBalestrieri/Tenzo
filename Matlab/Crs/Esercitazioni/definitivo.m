@@ -1,0 +1,264 @@
+%% PROGETTO 1 SU AUTOMATIC FLIGHT CONTROL SYSTEM(AFCS)
+%base
+clear all;
+clc;
+
+disp('Definisco i dati del problema (sistema a tempo continuo)');
+A=[-0.88 4.03 -0.1 -0.06 -0.1 -1.0 -5.26 -5.9 -317.9 333.02;
+   -0.46 -1.25 -0.06 1.15 -0.54 -0.38 17.11 -12.92 -700 -3117.2;
+    -1.55 -0.14 -1.87 -1.26 -0.77 -32.2 -66.1 -44 -385.5 135.7;
+    0.56 0.42 -0.04 -1.28 0.07 0.59 -375.1 6.2 -286.3 1166;
+    0.73 -0.34 0.12 0.1  -0.01 2.48 16.39 -211.5 -1531 -1614;
+    0 0 0 1 0 0 0 0 0  0;
+    0 0 0 0 1 0 0 0 0  0;
+    0 0 0 0 0 1 0 0 0  0;
+    0 0 0 0 0 0 0 0 -6.0 0;
+    0 0 0 0 0 0 0 0  0 -6.0];
+B=[ 0 0 0 0 0 0 0 0 6.0 0;
+    0 0 0 0 0 0 0 0  0 6.0]';
+M=[ 1 1 1 1 1 1 1 1 1 1]';
+N=[ 1;
+    1];
+C=[ 1 0 0 0 0 0 0 0 0 0;
+    0 1 0 0 0 0 0 0  0 0];
+D=zeros(2,2);
+  
+n=10;
+p=2;
+q=2;
+alpha=3;
+omega=4;
+%f=omega/(2*pi);
+gamma1=0;
+k1=1;
+h1=1;
+h2=1;
+gamma2=complex(0,omega);
+disp('definizione segnali esogeni');
+disp('gamma1='); disp(gamma1);
+disp('gamma2='); disp(gamma2);
+%disp('Premere un tasto per continuare...');
+%pause;
+
+%% specifica1 Verifichare che esiste un cotrollore che soddisfa le specifiche A1,B,C1
+%clc;
+
+disp('specifica 1) Verifichare che esiste un cotrollore che soddisfa le specifiche A1,B,C1 (teorema 5.4.2):');
+disp('verifica preliminare, autovalori del processo [eig(A)]:')
+stab=1;
+eOp = eig(A);
+[dn,dm]=size(eOp);
+  for i=1:dn,
+      if (real(eOp(i))>0 ) stab=0; disp('elemento a parte reale positiva:'); disp(eOp(i)); end    
+  end
+if (stab==0) disp('Sistema instabile: gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
+if (stab==1) disp('Sistema stabile: gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
+disp(eOp);
+
+
+if (rank(ctrb(A+alpha*eye(n),B))==10) disp('a1) verificata, la coppia A,B � raggiungibile, rank(matrice controllabilit� �)'); disp(rank(ctrb(A,B))); end
+if (rank(obsv(A+alpha*eye(n),C))==10) disp('a1) verificata, la coppia A,C � osservabile, rank(matrice osservabilit� �)'); disp(rank(obsv(A,C))); end
+
+
+R1=[ A-gamma1*eye(size(A)) B ; C D];
+if (rank(R1)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma1 �:'); disp(rank(R1)); end
+R2=[ A-gamma2*eye(size(A)) B ; C D];
+if (rank(R2)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma2 �:'); disp(rank(R2)); end
+
+
+%% calcolo modello interno
+disp('specifica 2) Calcolo modello interno KM1');
+k1_segnato=max(k1,h1);
+k2_segnato=h2;
+disp('definiamo k1 segnato come massimo tra k e h dei disturbi e riferimenti i-esimi');
+disp('max(k1,h1):'); disp(k1_segnato); disp('max(k2,h2):'); disp(k2_segnato);
+syms s;
+phi1=((s-gamma1)^k1_segnato)*((s-gamma2)^k2_segnato)*((s-conj(gamma2))^k2_segnato);
+disp('phi(lambda)='); disp((phi1));
+mu=3;
+disp('mu='); disp(mu);
+
+Aphi=compan(sym2poly(phi1));
+APhi=zeros(3);
+APhi(3,:)=Aphi(1,:);
+APhi(1,2)=Aphi(2,1);
+APhi(2,3)=Aphi(3,2);
+disp('matrice in forma compagna Aphi:');
+disp(APhi);
+disp('Bphi:');
+BPhi=[0;0;1];
+disp(BPhi);
+
+disp('la matrice dinamica AK1 del modello interno KM1 :');
+AK1=blkdiag(APhi,APhi);
+disp(AK1);
+disp('la matrice dinamica BK1 del modello interno KM1 :');
+BK1=blkdiag(BPhi,BPhi);
+disp(BK1);
+
+
+%%Calcolo delle matrici F1,F2 pe3r stabilizzare la scascata in anello aperto, V per Kalman 
+disp('Calcolo delle matrici F1,F2 per stabilizzare la cascata S1-S2, ovvero l anello aperto,e  V per Kalman ');
+Asig =[ A zeros(10,6); -BK1*C AK1];
+Bsig = [ B; -BK1*D];
+Q = eye(16);
+R = eye(2);
+F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
+
+disp('matrici stablizzanti:')
+F2=F(:,1:10)
+disp('dimensioni [pxn]:'); disp(size(F2));
+F1=F(:,11:16)
+disp('dimensioni [pxq*mu]:'); disp(size(F1));
+
+Q = eye(10);
+R = eye(2);
+disp('matrice per Kalman:')
+V=lqr(A',C',Q,R)'
+disp('dimensione attesa [nxq]');
+disp(size(V));
+
+disp('verifica spostamento autovalori:');
+disp('autovalori A+B*F2');
+disp(eig(A+B*F2));
+disp('autovalori A-V*C');
+disp(eig(A-V*C));
+
+%% specifica 3 ) definizione matrici per simulink:
+disp('specifica 3 ) definizione matrici per simulink:');
+%per disturbo sul processo defibnisco Bmod:
+Bmod=[M B]; %nota prima d e poi u scambio la somma per comodit�
+Dmod=[N D];
+
+%si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
+Aoss=A-V*C;
+Boss=[B-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
+Coss=eye(n);
+Doss=zeros(size(Boss));
+
+%ricordando che delta xi1=AK1*xi+ Bk1*e
+AMI=AK1;
+BMI=BK1;
+CMI=eye(q*mu);
+DMI=zeros(q*mu,q);
+
+disp('avvio simulazione 1');
+open('progetto2_mi_dist_kalm.mdl')
+sim('progetto2_mi_dist_kalm.mdl')
+
+disp('Premere un tasto per continuare...');
+pause;
+clc;
+
+%%
+disp('avvio il programma per il calcolo ottimizzato');
+alpha=1;
+
+%% specifica1 Verifichare che esiste un cotrollore che soddisfa le specifiche A1,B,C1
+%clc;
+
+disp('specifica 1) Verifichare che esiste un cotrollore che soddisfa le specifiche A1,B,C1 (teorema 5.4.2):');
+disp('verifica preliminare, autovalori del processo [eig(A)]:')
+stab=1;
+eOp = eig(A);
+[dn,dm]=size(eOp);
+  for i=1:dn,
+      if (real(eOp(i))>0 ) stab=0; disp('elemento a parte reale positiva:'); disp(eOp(i)); end    
+  end
+if (stab==0) disp('Sistema instabile: gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
+if (stab==1) disp('Sistema stabile: gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
+disp(eOp);
+
+
+if (rank(ctrb(A+alpha*eye(n),B))==10) disp('a1) verificata, la coppia A,B � raggiungibile, rank(matrice controllabilit� �)'); disp(rank(ctrb(A,B))); end
+if (rank(obsv(A+alpha*eye(n),C))==10) disp('a1) verificata, la coppia A,C � osservabile, rank(matrice osservabilit� �)'); disp(rank(obsv(A,C))); end
+
+
+
+
+R1=[ A-gamma1*eye(size(A)) B ; C D];
+if (rank(R1)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma1 �:'); disp(rank(R1)); end
+R2=[ A-gamma2*eye(size(A)) B ; C D];
+if (rank(R2)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma2 �:'); disp(rank(R2)); end
+
+
+%% calcolo modello interno
+disp('specifica 2) Calcolo modello interno KM1');
+k1_segnato=max(k1,h1);
+k2_segnato=h2;
+disp('definiamo k1 segnato come massimo tra k e h dei disturbi e riferimenti i-esimi');
+disp('max(k1,h1):'); disp(k1_segnato); disp('max(k2,h2):'); disp(k2_segnato);
+syms s;
+phi1=((s-gamma1)^k1_segnato)*((s-gamma2)^k2_segnato)*((s-conj(gamma2))^k2_segnato);
+disp('phi(lambda)='); disp((phi1));
+mu=3;
+disp('mu='); disp(mu);
+
+Aphi=compan(sym2poly(phi1));
+APhi=zeros(3);
+APhi(3,:)=Aphi(1,:);
+APhi(1,2)=Aphi(2,1);
+APhi(2,3)=Aphi(3,2);
+disp('matrice in forma compagna Aphi:');
+disp(APhi);
+disp('Bphi:');
+BPhi=[0;0;1];
+disp(BPhi);
+
+disp('la matrice dinamica AK1 del modello interno KM1 :');
+AK1=blkdiag(APhi,APhi);
+disp(AK1);
+disp('la matrice dinamica BK1 del modello interno KM1 :');
+BK1=blkdiag(BPhi,BPhi);
+disp(BK1);
+
+
+%%Calcolo delle matrici F1,F2 pe3r stabilizzare la scascata in anello aperto, V per Kalman 
+disp('Calcolo delle matrici F1,F2 per stabilizzare la cascata S1-S2, ovvero l anello aperto,e  V per Kalman ');
+Asig =[ A zeros(10,6); -BK1*C AK1];
+Bsig = [ B; -BK1*D];
+Q = eye(16);
+R = eye(2);
+R(1,1)=(10^-2); % corrisponde l'altezza dell'aereo
+R(2,2)=(10^-1); % corrisponde pitch normalizzato
+F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
+
+disp('matrici stablizzanti:')
+F2=F(:,1:10)
+disp('dimensioni [pxn]:'); disp(size(F2));
+F1=F(:,11:16)
+disp('dimensioni [pxq*mu]:'); disp(size(F1));
+
+Q = eye(10);
+R = eye(2);
+disp('matrice per Kalman:')
+V=lqr(A',C',Q,R)'
+disp('dimensione attesa [nxq]');
+disp(size(V));
+
+disp('verifica spostamento autovalori:');
+disp('autovalori A+B*F2');
+disp(eig(A+B*F2));
+disp('autovalori A-V*C');
+disp(eig(A-V*C));
+%% specifica 3 ) definizione matrici per simulink:
+disp('specifica 3 ) definizione matrici per simulink:');
+%per disturbo sul processo defibnisco Bmod:
+Bmod=[M B]; %nota prima d e poi u scambio la somma per comodit�
+Dmod=[N D];
+
+%si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
+Aoss=A-V*C;
+Boss=[B-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
+Coss=eye(n);
+Doss=zeros(size(Boss));
+
+%ricordando che delta xi1=AK1*xi+ Bk1*e
+AMI=AK1;
+BMI=BK1;
+CMI=eye(q*mu);
+DMI=zeros(q*mu,q);
+
+disp('avvio simulazione 2');
+open('progetto2_mi_dist_kalm2.mdl')
+sim('progetto2_mi_dist_kalm2.mdl')
