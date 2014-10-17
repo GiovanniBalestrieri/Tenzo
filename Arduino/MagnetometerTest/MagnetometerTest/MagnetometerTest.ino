@@ -42,5 +42,5 @@ void display_data(int b, int f, int p, int r){    // pitch and roll (p, r) are r
   Serial.println(p);
   Serial.print("Roll = ");
   Serial.println(r);
-  delay(1000);
+  delay(100);
 } 
