@@ -4,8 +4,8 @@
 
 #include <SoftwareSerial.h>
 
-uint8_t pinRx = 15 , pinTx = 14; // the pin on Arduino
-long BaudRate = 57600 , sysTick = 0;
+uint8_t pinRx = 2 , pinTx = 4; // the pin on Arduino
+long BaudRate = 9600 , sysTick = 0;
 char GotChar, getData;
 unsigned long timer = millis();
 // Xbee SoftwareSerial initialization

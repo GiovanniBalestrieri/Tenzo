@@ -56,6 +56,9 @@ PID myPID(&errorRoll, &Output, &Setpoint, consKp, consKi, consKd, DIRECT);
 int w0X = 90;
 int w0Y = 90;
 
+// Motor speed definitions
+int w1,w2,w3,w4;
+
 // Connect the GPS Power pin to 5V
 // Connect the GPS Ground pin to ground
 // If using software serial (sketch example default):
@@ -69,7 +72,7 @@ int w0Y = 90;
 // (you can change the pin numbers to match your wiring):
 
 //#if ARDUINO >= 100
-SoftwareSerial mySerial(10, 11);
+SoftwareSerial mySerial(11, 10);
 //#else
 //NewSoftSerial mySerial(10, 11);
 //#endif
@@ -92,8 +95,8 @@ double yAngle;
 double zAngle;
 
 //Offset Kalman
-int kalmanXOffset = -7;
-int kalmanYOffset = -1;
+int kalmanXOffset = -13;
+int kalmanYOffset = 2;
 int kalmanZOffset = 0;
 
 double compAngleX = 0;
@@ -197,6 +200,12 @@ float alphaAK = 0.3;
 #define gyrothresholdMid 1500
 
 #define gyrothresholdHigh 2000
+// Initialize quaternions
+
+float  q0 = 1.0f;
+float  q1 = 0.0f;
+float  q2 = 0.0f;
+float  q3 = 0.0f;
 
 
 // Accelerometer parameter definition
@@ -390,7 +399,7 @@ void setup()
 unsigned long timer = millis();
 void loop()
 {
-  //control();
+  control();
   getAccValues();
   getGyroValues();  
   getCompassValues(); 
@@ -398,6 +407,24 @@ void loop()
   gpsRoutine();
   xbeeRoutine();
   sendDataSensors(matlab);
+}
+
+void control()
+{
+   errorRoll = abs(Setpoint - rollK);
+   if(errorRoll<5)
+  {  //we're close to setpoint, use conservative tuning parameters
+    myPID.SetTunings(consKp, consKi, consKd);
+  }
+  else
+  {
+     //we're far from setpoint, use aggressive tuning parameters
+     myPID.SetTunings(aggKp, aggKi, aggKd);
+  }
+  myPID.Compute();
+//  Output = w1*w1 - w3*w3;  // MIGILIORA
+  w1 = sqrt(Output - w3*w3);
+  w1 = w0X + Output;
 }
 
 void getCompassValues()
@@ -432,7 +459,7 @@ void xbeeRoutine()
   if (Serial.available()) 
   {
     GotChar = Serial.read();
-
+    
     if(GotChar == 'P')
     {  	 
       plotting = true;
@@ -998,7 +1025,7 @@ void gpsRoutine()
     Serial.print((int)GPS.fix);
     Serial.print(" quality: ");  
     Serial.println((int)GPS.fixquality); 
-    //if (GPS.fix) {
+    if (GPS.fix) {
       Serial.print("Location: ");
       Serial.print(GPS.latitude, 4); 
       Serial.print(GPS.lat);
@@ -1021,7 +1048,7 @@ void gpsRoutine()
       xbee.print(GPS.altitude);
       Serial.println("Satellites: "); 
       Serial.println((int)GPS.satellites);
-    //}
+    }
   }
 }
 
@@ -1121,6 +1148,19 @@ void getGyroValues()
 
 void estimateAngle()
 {
+  
+//  getYawPitchRollRad(float * ypr) {
+//  float q[4]; // quaternion
+//  float gx, gy, gz; // estimated gravity direction
+//  getQ(q);
+//  
+//  gx = 2 * (q[1]*q[3] - q[0]*q[2]);
+//  gy = 2 * (q[0]*q[1] + q[2]*q[3]);
+//  gz = q[0]*q[0] - q[1]*q[1] - q[2]*q[2] + q[3]*q[3];
+//  
+//  ypr[0] = atan2(2 * q[1] * q[2] - 2 * q[0] * q[3], 2 * q[0]*q[0] + 2 * q[1] * q[1] - 1);
+//  ypr[1] = atan(gx / sqrt(gy*gy + gz*gz));
+//  ypr[2] = atan(gy / sqrt(gx*gx + gz*gz));
 
   // compAngleX = ((1-complementaryConstant) * (compAngleX + (wx * (double)(micros() - timerMu) / 1000000))) + (complementaryConstant * angleXAcc); 
   // compAngleY = ((1-complementaryConstant) * (compAngleY + (-wy * (double)(micros() - timerMu) / 1000000))) + (complementaryConstant * angleYAcc); 
