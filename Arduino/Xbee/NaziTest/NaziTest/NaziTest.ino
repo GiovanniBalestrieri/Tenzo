@@ -4,7 +4,7 @@
 
 #include <SoftwareSerial.h>
 
-uint8_t pinRx = 2 , pinTx = 4; // the pin on Arduino
+uint8_t pinRx = 4 , pinTx = 2; // the pin on Arduino
 long BaudRate = 9600 , sysTick = 0;
 char GotChar, getData;
 unsigned long timer = millis();
@@ -36,14 +36,14 @@ void loop()
     xbee.print(GotChar);
     Serial.print(GotChar);
   }
-  while (xbee.available()>0)
+  if (xbee.available()>0)
   {  //is there anything to read
-    Serial.println("Ohohoh");
+    //Serial.println("Ohohoh");
     getData = xbee.read();  //if yes, read it  
-    
+    byte dat = xbee.read();
     Serial.print(getData);
-    //xbee.println(getData);
-    Serial.print(getData);
+    xbee.println(getData);
+    xbee.println(dat);
     Serial.println();
     if(getData == 'a')
     {  	 

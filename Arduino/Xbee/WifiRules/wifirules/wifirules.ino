@@ -7,8 +7,8 @@
 char theNumberString[numberOfDigits + 1];
 int theNumber;
 
-uint8_t pinRx = 2 , pinTx = 4; // the pin on Arduino
-long BaudRate = 57600 , sysTick = 0;
+uint8_t pinRx = 12 , pinTx = 13; // the pin on Arduino
+long BaudRate = 9600 , sysTick = 0;
 char GotChar, getData;
 boolean stringComplete=false;
 String inputString = "";
@@ -33,7 +33,6 @@ void setup() {
   // set the data rate for the SoftwareSerial port
   xbee.begin( BaudRate );
   xbee.println("Setup Completed!");
-  pinMode(13, OUTPUT);   	//set pin 13 as output
 }
 
 void loop() 
@@ -101,9 +100,9 @@ void loop()
   {  //is there anything to read
     getData = xbee.read();  //if yes, read it  
     //xbee.write( (char) getData);
-    //xbee.println(getData);
+    xbee.println(getData);
     //xbee.print("another?\n");
-    //Serial.print(getData);
+    Serial.print(getData);
     //Serial.println();
     if(getData == 'a')
     {  	 
