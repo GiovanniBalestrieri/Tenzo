@@ -585,10 +585,7 @@ void control()
     {
       InputPitch = pitchK;
       errorPitch = abs(SetpointPitch - pitchK); //distance away from setpoint
-  //    Serial.println();
-  //        Serial.println();
-  //        Serial.print(errorPitch);
-  //            Serial.println();
+      
       if(errorPitch<5)
       {  //we're close to setpoint, use conservative tuning parameters
         myPitchPID.SetTunings(consKpPitch, consKiPitch, consKdPitch);
@@ -630,8 +627,7 @@ void control()
       {
          //we're far from setpoint, use aggressive tuning parameters
          myYawPID.SetTunings(aggKpYaw, aggKiYaw, aggKdYaw);
-      }
-    
+      }    
       myYawPID.Compute(); // Resturns outputYaw
       Serial.print(" Yawpid: ");
       Serial.print(OutputYaw);
@@ -642,6 +638,12 @@ void control()
     {
       OutputYaw=0;
     }
+  }
+  else
+  {
+    OutputRoll = 0;
+    OutputPitch = 0;    
+    OutputYaw = 0;
   }
 }
 
