@@ -10,8 +10,10 @@
 #include <SoftwareSerial.h>
 
 uint8_t pinRx = 12 , pinTx = 13; // the pin on Arduino
-long BaudRate = 9600;
-char GotChar, getData;
+long BaudRateSerial = 9600;
+long BaudRateXbee = 57600;
+char GotChar;
+byte getData;
 
 // Compare function variables
 char inData[20]; // Allocate some space for the string
@@ -22,16 +24,16 @@ byte index = 0; // Index into array; where to store the character
 SoftwareSerial xbee(pinRx, pinTx); // RX, TX
 
 void setup() {
-  Serial.begin(BaudRate);
+  Serial.begin(BaudRateSerial);
   Serial.println( "Welcome to the XBee Communication Test" );
   Serial.print("BaudRate:");
-  Serial.println(BaudRate);
+  Serial.println(BaudRateXbee);
   Serial.print(" Rx Pin#");
   Serial.println(pinRx,DEC);
   Serial.print(" Tx Pin#");
   Serial.println(pinTx,DEC);
   // set the data rate for the SoftwareSerial port
-  xbee.begin( BaudRate );
+  xbee.begin( BaudRateXbee );
   xbee.println("Setup Completed!");
 }
 
@@ -49,10 +51,42 @@ void loop()
   {  
     getData = xbee.read();  
     
+    Serial.println();
+    Serial.println(getData);
     // send it back to the Xbee
-    xbee.println(getData);
+    //xbee.println(getData);
+    if(getData == 16)
+    {  	 
+      int intValue = 17;
+      //xbee.print(intValue, HEX);   
+      //xbee.print(xbee, BIN);
+      xbee.write(0x11);
+      Serial.println(" Sending to Matlab:  0x11");
+      //Serial.write(0x34);
+    } 
+    else if (getData == 18)
+    {
+      Serial.println(" Matlab communication established. ");
+    }
+    else if(getData == 19)
+    {  	 
+      Serial.println(" [Warning] Matlab communication problem. ");
+    }
     
+    /*if(getData == 'T')
+    {  	 
+      xbee.write(0x34);
+      Serial.println(" Sending to Matlab:  0x34");
+      //Serial.write(0x34);
+    } 
+    else if(getData == 'Y')
+    {  	 
+      Serial.println(" Matlab communication established. ");
+    } 
+    else if(getData == 'N')
+    {  	 
+      Serial.println(" [Warning] Matlab communication problem. ");
+    } */
     // print to serial monitor for visual feedback
-    Serial.print(getData);
   }
 }
