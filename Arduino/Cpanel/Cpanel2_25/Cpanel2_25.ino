@@ -469,7 +469,7 @@ typedef struct mcTag {
     long param3;
     long param4;   } MyCommand;
     
-unsigned char buffer[50];  // or worst case message size
+unsigned char buffer[70];  // or worst case message size
 
 MyControlHdr * pCtrlHdr = (MyControlHdr *)(&buffer[0]);
 
@@ -1524,7 +1524,11 @@ void resetMotorsPidOff()
   timerStart = 0;
   checkpoint = 0;
   // Disable Pid when motors are off
-  changePidState(false);
+  if (enablePid)
+  {
+    // Change only if PID enables 
+    changePidState(false);
+  }
 }
 
 void protocol1()
@@ -1597,6 +1601,10 @@ void initialize()
     if (enablePid)
     {  
       changePidState(true);
+    }
+    else
+    {
+      changePidState(false);
     }
   }
   else
@@ -1713,7 +1721,9 @@ void sendDataSensors(boolean device)
       Serial.print("Sending Ack to Matlab. TakeOffState:  ");
       Serial.print(pMyCmd->param1);
       Serial.println(); 
-     }
+     } 
+     
+     sendCommandToMatlab();  
    }
    else if (sendHoverState)
    {
@@ -1729,7 +1739,9 @@ void sendDataSensors(boolean device)
       Serial.print("Sending Ack to Matlab: Hover: ");
       Serial.print(pMyCmd->param1);
       Serial.println(); 
-     }
+     } 
+     
+     sendCommandToMatlab();  
    }
    else if (sendLandAck)
    {
@@ -1740,13 +1752,15 @@ void sendDataSensors(boolean device)
      else
      pMyCmd->param1 = 1;   
      sendLandAck = false;
+     sendCommandToMatlab();
      if (printAckCommands)
      {
       Serial.println();
       Serial.print("Sending Ack to Matlab. Land state:  ");
       Serial.print(pMyCmd->param1);
       Serial.println(); 
-     }
+     } 
+       
    }
    else if (sendAccToMatlab)
    {
@@ -1754,7 +1768,9 @@ void sendDataSensors(boolean device)
            
      pMyCmd->param1 = accX*100;   
      pMyCmd->param2 = accY*100;
-     pMyCmd->param3 = accZ*100;
+     pMyCmd->param3 = accZ*100; 
+     
+     sendCommandToMatlab();  
    }
    else if (sendGyroToMatlab)
    {
@@ -1762,7 +1778,9 @@ void sendDataSensors(boolean device)
            
      pMyCmd->param1 = Wfilter[0]*100;   
      pMyCmd->param2 = Wfilter[1]*100;
-     pMyCmd->param3 = Wfilter[2]*100;
+     pMyCmd->param3 = Wfilter[2]*100; 
+     
+     sendCommandToMatlab();  
    }
    else if (sendEstToMatlab && sendMagnToMatlab)
    {
@@ -1779,6 +1797,8 @@ void sendDataSensors(boolean device)
      pMyCmd->param1 = (int)yAngle;   
      pMyCmd->param2 = (int)xAngle;
      pMyCmd->param3 = (int)zAngle*100;
+     
+     sendCommandToMatlab();  
    }
    /*
    else if (sendRollToMatlab)
@@ -1862,7 +1882,8 @@ void sendDataSensors(boolean device)
    {
      pMyCmd->cmd = 20;
            
-     pMyCmd->param1 = throttle;  
+     pMyCmd->param1 = throttle; 
+     sendCommandToMatlab();  
    }
    else if (sendPidState)
    {
@@ -1947,8 +1968,8 @@ void sendDataSensors(boolean device)
        sendAltToMatlab = false;
      }
      sendPidState = false;
-   }
-   sendCommandToMatlab();   
+     sendCommandToMatlab(); 
+   }  
   } 
 }
 
@@ -1957,8 +1978,8 @@ void sendCommandToMatlab()
   // Build Header
   pCtrlHdr->srcAddr = 1;
   pCtrlHdr->dstAddr = 2;    // maybe you'll make 2555 a broadcast address? 
-  pCtrlHdr->versionX = 13;    // possible way to let a receiver know a code version
-  pCtrlHdr->numCmds = 4;    // how many commands will be in the message
+  pCtrlHdr->versionX = versionArduinoProtocol;    // possible way to let a receiver know a code version
+  pCtrlHdr->numCmds = 2;    // how many commands will be in the message
   pCtrlHdr->hdrLength = sizeof(MyControlHdr );  // tells receiver where commands start
   pCtrlHdr->cmdLength = sizeof(MyCommand );     // tells receiver size of each command 
   // include total length of entire message

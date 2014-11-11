@@ -115,7 +115,7 @@ portWin = 'Com3';
 portUnix = '\dev\ttyS0';
 baudrate = 19200;
 % buffer size should be the same as the one specified on the Arduino side
-buffSize = 50;
+buffSize = 35;
 terminator = 'CR';
 tag = 'Quad';
 
@@ -504,7 +504,7 @@ delete(instrfindall)
             if takeOffAck == 1
                 % Initialize the cmd array
                 cmd = zeros(8,4,'uint8');
-                cmd(1,1) = uint8(takeOffID);
+                cmd(1,1) = uint8(landID);
                 %cmd(2,4) = uint8(defaultAlt);
                 bits = reshape(bitget(defaultAlt,32:-1:1),8,[]);
                 cmd(2,:) = weights2*bits;
@@ -548,7 +548,7 @@ delete(instrfindall)
                    warndlg('Enabling PID. Fly safe.','Report') 
                     % Initialize the cmd array
                     cmd = zeros(8,4,'uint8');
-                    cmd(1,1) = uint8(takeOffID);
+                    cmd(1,1) = uint8(iHoverID);
                     % Sends 1 to activate PID
                     bits = reshape(bitget(1,32:-1:1),8,[]);
                     cmd(2,:) = weights2*bits;
@@ -558,7 +558,7 @@ delete(instrfindall)
                    warndlg('Pid already active. Desactivating','!! Warning !!') 
                    % Initialize the cmd array
                    cmd = zeros(8,4,'uint8');
-                   cmd(1,1) = uint8(takeOffID);
+                   cmd(1,1) = uint8(iHoverID);
                     % Sends 0 to disable PID
                    bits = reshape(bitget(0,32:-1:1),8,[]);
                    cmd(2,:) = weights2*bits;
@@ -1073,7 +1073,7 @@ delete(instrfindall)
                 % Mess sent from Arduino to MATLAB
                 % Assemble long int sent bytewise
                 versionArd = typecast([uint8(mess(3)), uint8(mess(4)),uint8(mess(5)), uint8(mess(6))], 'int32');
-                if version ~= versionArd
+                if versionProtocol ~= versionArd
                     warndlg('Your version is different from the one in Tenzo. Sync your repository.','!! Warning !!') 
                 end
                 numCmd = mess(7);
@@ -1084,10 +1084,10 @@ delete(instrfindall)
                 sizeOfEachCmd = mess(9);
                 totMessLength = typecast([uint8(mess(10)), uint8(mess(11))], 'int16');
                 disp('Total message length:');
-                disp(totMessLength);
+                %disp(totMessLength);
                 % TODO CRC check for message's integrity
                 crcvalue = typecast([uint8(mess(12)), uint8(mess(13))], 'int16');
-                disp('CRC value');
+                %disp('CRC value');
                 disp(crcvalue);
 
                 %% Read Commands
@@ -1099,58 +1099,59 @@ delete(instrfindall)
 
                     if type == 0 
                         % Motors
-                        disp('Unset');                         
+                        disp('Unset');
+                        break;
                     end
                     if type == 1 
                         % Motors
                         disp('Motors');
                         speed1 = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
+                        disp('speed:');
                         disp(speed1);                       
                     end
                     if type == 2 
                         disp('Accelerations');
                         % Acc
                         accXr = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
+                        disp('accX:');
                         disp(accXr/100);
 
                         accYr = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('val2:');
+                        disp('accY:');
                         disp(accYr/100);                             
 
                         accZr = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('val3:');
+                        disp('accZ:');
                         disp(accZr/100);       
                     end
                     if type == 3
                         % Gyro
                         disp('Gyro');
                         wXr = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
+                        disp('wX:');
                         disp(wXr/100);
 
                         wYr = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('val2:');
+                        disp('wY:');
                         disp(wYr/100);                             
 
                         wZr = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('val3:');
+                        disp('wZ:');
                         disp(wZr/100);
                     end
                     if type == 4 
                         % Magn
                         disp('Magn');;
                         rollM = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
+                        disp('rollMagn:');
                         disp(rollM);
 
                         pitchM = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('val2:');
+                        disp('pitchMagn:');
                         disp(pitchM);                             
 
                         bearingM = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('val3:');
+                        disp('yawMagn:');
                         disp(bearingM/100);
                     end
                     if type == 5
@@ -1158,20 +1159,20 @@ delete(instrfindall)
                         disp(' Kalman Est');
                         disp('Magn');;
                         rollE = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
+                        disp('roll K:');
                         disp(rollE);
 
                         pitchE = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('val2:');
+                        disp('pitch K:');
                         disp(pitchE);                             
 
                         bearingE = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('val3:');
+                        disp('yaw K:');
                         disp(bearingE/100);
                     end
                     if type == 6
                         % Sonic
-                        disp('Sonic');
+                        disp('Sonic');                        
                     end
                     if type == 7 
                         % Gps
@@ -1185,38 +1186,38 @@ delete(instrfindall)
                         % Pid Roll CONS
                         disp('Pid Roll Cons');
                         consRollKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
+                        disp('consRollKp:');
                         disp(consRollKpTemp/100);
 
                         consRollKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('val2:');
+                        disp('consRollKd:');
                         disp(consRollKdTemp/100);                             
 
                         consRollKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('val3:');
+                        disp('consRollKi:');
                         disp(consRollKiTemp/100);    
 
                         thresholdTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('val4:');
+                        disp('threshold:');
                         disp(thresholdTemp);   
                     end                   
                     if type == 13 
                         % Pid Roll AGG
                         disp('Pid Roll AGG');
                         aggRollKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
+                        disp('aggRollKp:');
                         disp(aggRollKpTemp/100);
 
                         aggRollKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('val2:');
+                        disp('aggRollKd:');
                         disp(aggRollKdTemp/100);                             
 
                         aggRollKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('val3:');
+                        disp('aggRollKi:');
                         disp(aggRollKiTemp/100);    
 
                         thresholdTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('val4:');
+                        disp('threshold:');
                         disp(thresholdTemp);   
                     end
                     if type == 10 
@@ -1235,7 +1236,7 @@ delete(instrfindall)
                         disp(consPitchKiTemp/100);    
 
                         thresholdTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('val4:');
+                        disp('threshold:');
                         disp(thresholdTemp);   
                     end                   
                     if type == 14 
@@ -1254,7 +1255,7 @@ delete(instrfindall)
                         disp(aggPitchKiTemp/100);    
 
                         thresholdTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('val4:');
+                        disp('threshold:');
                         disp(thresholdTemp);   
                     end
                     if type == 11 
@@ -1273,7 +1274,7 @@ delete(instrfindall)
                         disp(consYawKiTemp/100);    
 
                         thresholdTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('val4:');
+                        disp('threshold:');
                         disp(thresholdTemp);   
                     end                   
                     if type == 15 
@@ -1340,10 +1341,14 @@ delete(instrfindall)
                         disp('val1:');
                         disp(takeOffAck);
                         if takeOffAck == 1
+                            set(takeOffBtn,'String','Flying');
                             landAck = 0;
+                            disp('Changed landAck:');
+                            disp(landAck);
+                            set(landBtn,'String','Land');
+                        else                            
+                            set(takeOffBtn,'String','Take Off');
                         end
-                        disp('Changed landAck:');
-                        disp(landAck);
                     end                    
                     if type == 18
                         % Hovering Ack
@@ -1351,6 +1356,13 @@ delete(instrfindall)
                         hoverAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                         disp('val1:');
                         disp(hoverAck);
+                        if hoverAck == 1
+                            set(hoverBtn,'String','Smart');
+                            disp('Pid enabled');
+                        else                            
+                            set(hoverBtn,'String','iHover');
+                            disp('Unsafe hovering');
+                        end
                     end                    
                     if type == 19
                         % Landed Ack
@@ -1358,6 +1370,10 @@ delete(instrfindall)
                         landAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                         disp('val1:');
                         disp(landAck);
+                        if landAck == 1                           
+                            set(landBtn,'String','Landed'); 
+                            set(takeOffBtn,'String','Take Off');
+                        end
                     end
             end
 %             while (get(xbee, 'BytesAvailable')~=0 && tenzo == true)
