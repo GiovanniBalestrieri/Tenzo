@@ -43,9 +43,10 @@ boolean printRawGyro= false;
 boolean printGyro = false; 
 boolean printRawCompass= false; 
 boolean printCompass = false; 
-boolean printRawKalman= true; 
+boolean printRawKalman= false; 
 boolean printKalman = false; 
 boolean printPIDVals = false;
+boolean printTimers = false;
 
 
 /**
@@ -53,7 +54,7 @@ boolean printPIDVals = false;
  */
 boolean enablePid = false;
 boolean enableRollPid = true;
-boolean enablePitchPid =true;
+boolean enablePitchPid = true;
 boolean enableYawPid = false;
 boolean enableAltitudePid = false;
 // Define IO and setpoint for control
@@ -84,6 +85,12 @@ PID myRollPID(&InputRoll, &OutputRoll, &SetpointRoll, consKpRoll, consKiRoll, co
 PID myPitchPID(&InputPitch, &OutputPitch, &SetpointPitch, consKpPitch, consKiPitch, consKdPitch, DIRECT);
 PID myYawPID(&InputYaw, &OutputYaw, &SetpointYaw, consKpYaw, consKiYaw, consKdYaw, DIRECT);
 PID myAltitudePID(&InputAltitude, &OutputAltitude, &SetpointAltitude, consKpAltitude, consKiAltitude, consKdAltitude, DIRECT);
+
+// Threshold
+int thresholdRoll = 20;
+int thresholdPitch = 20;
+int thresholdYaw = 20;
+int thresholdAlt = 20;
 
 // initialize pid outputs
 int rollPID = 0;
@@ -155,14 +162,7 @@ int kalmanZOffset = 0;
 double compAngleX = 0;
 double compAngleY = 0;
 
-float complementaryConstant = 0.03;
-// Xbee 
-uint8_t pinRx = 12 , pinTx = 13; // the pin on Arduino
-long BaudRate = 57600;
-char GotChar;
-byte getData;
-// Xbee SoftwareSerial initialization
-SoftwareSerial xbee(pinRx, pinTx); // RX, TX
+float complementaryConstant = 0.03; 
 
 // If using hardware serial (e.g. Arduino Mega), comment
 // out the above six lines and enable this line instead:
@@ -386,9 +386,103 @@ unsigned long checkpoint;
 unsigned long timeToLand = 30000;
 boolean autoLand = true;
 
+/**
+ *  Serial Communication Protocol
+ **/
+ 
+// Serial
+int BaudRateSerial = 9600;
+// Gps
+int BaudRateGps = 4800;
+// Xbee 
+uint8_t pinRx = 12 , pinTx = 13; // the pin on Arduino
+int BaudRateXbee = 19200;
+char GotChar;
+byte getData;
+// Xbee SoftwareSerial initialization
+SoftwareSerial xbee(pinRx, pinTx);
+
+int buffSize = 33;
+byte bufferBytes[33];
+
+byte loBytew1, hiBytew1,loBytew2, hiBytew2;
+int loWord,hiWord;
+
+// Serial Protocol
+int versionArduinoProtocol = 1;
+long versionProtocol;
+long cmd1;
+long cmd2;
+long cmd3;
+long cmd4;
+
+// Serial IDs
+int arduinoAdd = 1;
+int MatlabAdd = 2;
+
+int motorsID = 1;
+int accID = 2;
+int gyroID = 3;
+int magnID = 4;
+int estID = 5;
+int sonicID = 6;
+int gpsID = 7;
+int baroID = 8;
+int rollConsID = 9;
+int pitchConsID = 10;
+int yawConsID = 11;
+int altitudeConsID = 12;
+int rollAggID = 13;
+int pitchAggID = 14;
+int yawAggID = 15;
+int altitudeAggID = 16;
+int takeOffID = 17;
+int iHoverID = 18;
+int landID = 19;
+int enableMotorsID = 20;
+int sendPidRollID = 21;
+int sendPidPitchID = 22;
+int sendPidYawID = 23;
+int sendPidAltID = 24;
+
+int cmdLength = 17;
+int headerLength = 13;
+
+typedef struct mcTag {
+     unsigned char srcAddr;
+     unsigned char dstAddr;
+     unsigned long versionX;
+     unsigned char numCmds;
+     unsigned char hdrLength;
+     unsigned char cmdLength;
+     unsigned short totalLen;
+     unsigned short crc; } MyControlHdr;
+
+  typedef struct ctrTag {
+    unsigned char cmd;
+    long param1;
+    long param2;
+    long param3;
+    long param4;   } MyCommand;
+    
+unsigned char buffer[50];  // or worst case message size
+
+MyControlHdr * pCtrlHdr = (MyControlHdr *)(&buffer[0]);
+
+// Control Sensors data transmission
+boolean sendAccToMatlab = false;
+boolean sendGyroToMatlab = false;
+boolean sendEstToMatlab = false;
+boolean sendMagnToMatlab = false;
+boolean sendMotorsToMatlab = false;
+boolean sendRollToMatlab = false;
+boolean sendPitchToMatlab = false;
+boolean sendYawToMatlab = false;
+boolean sendAltToMatlab = false;
+boolean sendPidState = false;
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(BaudRateSerial);
   // Initializes I2C
   Wire.begin();    
   Serial.print(" CPanel ");
@@ -428,7 +522,7 @@ void setup()
 //  //tell the PID to range between 0 and the full throttle
 //  myYawPID.SetOutputLimits(-500, 500);
 
-  GPS.begin(4800);
+  GPS.begin(BaudRateGps);
   Serial.println(" Testing Gps...");
   // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
@@ -483,7 +577,7 @@ void setup()
   setupL3G4200D(250); // Configure L3G4200  - 250, 500 or 2000 deg/sec
 
   // Initialize xbee serial communication
-  xbee.begin( BaudRate );
+  xbee.begin( BaudRateXbee );
   //xbee.println("Setup Completed!");
 
   // Initialise Kalman Values
@@ -543,12 +637,15 @@ void loop()
   detOrientation();
   control();
   sendDataSensors(matlab);
-  Serial.println();
-  Serial.print("                      checkpoint: ");
-  Serial.print(checkpoint);
-  Serial.print("      timer: ");
-  Serial.print(timerStart);
-  Serial.println();
+  if (printTimers)
+  {
+    Serial.println();
+    Serial.print("                      checkpoint: ");
+    Serial.print(checkpoint);
+    Serial.print("      timer: ");
+    Serial.print(timerStart);
+    Serial.println();
+  }
   protocol1();
 }
 
@@ -561,7 +658,7 @@ void control()
     {
       InputRoll = rollK;
       errorRoll = abs(SetpointRoll - rollK); //distance away from setpoint
-      if(errorRoll<5)
+      if(errorRoll<thresholdRoll)
       {  //we're close to setpoint, use conservative tuning parameters
         myRollPID.SetTunings(consKpRoll, consKiRoll, consKdRoll);
       }
@@ -587,7 +684,7 @@ void control()
       InputPitch = pitchK;
       errorPitch = abs(SetpointPitch - pitchK); //distance away from setpoint
       
-      if(errorPitch<5)
+      if(errorPitch<thresholdPitch)
       {  //we're close to setpoint, use conservative tuning parameters
         myPitchPID.SetTunings(consKpPitch, consKiPitch, consKdPitch);
       }
@@ -620,7 +717,7 @@ void control()
        errorYaw = abs(SetpointYaw - bearing1); //distance away from setpoint
      }
       
-      if(errorYaw<5)
+      if(errorYaw<thresholdYaw)
       {  //we're close to setpoint, use conservative tuning parameters
         myYawPID.SetTunings(consKpYaw, consKiYaw, consKdYaw);
       }
@@ -1035,275 +1132,344 @@ void xbeeRoutine()
   }
 
   if(xbee.available()>0)
-  {  
-    //is there anything to read
-    getData = xbee.read();   
-    //getByte = xbee.read();
-    Serial.println();
-    Serial.print(getData);
-    Serial.println();
-    
-    // Establishing Matlab Communication  
-    if(getData == 'T')
-    {  	 
-      xbee.print('K');
-      Serial.println(" Sending K to Matlab...");
-    } 
-    else if(getData == 'Y')
-    {  	 
-      Serial.println(" Matlab communication established. ");
-    } 
-    else if(getData == 'N')
-    {  	 
-      Serial.println(" [Warning] Matlab communication problem. ");
-    }    
-    if(getData == 21)
-    { 
-      // Take Off
-      initialize();
-    } 
-    else if(getData == 22)
-    { 
-      // iHover
-      enablePID = true;
-      // send feedback to Matlab
-    }
-    else if(getData == 23)
-    { 
-      // Land
-      land();
-    }
-    // Plotting command evaluation
-    else if(getData == 'P')
-    {  	 
-      plotting = true;
-      Serial.println(" Sending plot data from now on.");
-    } 
-    else if(getData == 'L')
-    {  	
-      plotting = false; 
-      Serial.println(" Stop sentind data to Matlab.");
-    }
-    else if(getData == 'K')
-    {  	
-      Serial.println(" Received landing Command. Initializing landing Protocol...");
-      land();
-    }
-    else if (getData == 'M')
-    {    
-      matlab=true;
-    }
-    else if (getData == 'S')
-    {    
-      matlab=false;
-    }
-    // Pid remote activation
-    else if (getData == 'p')
-    {
-      enablePid = true;
-    }
-    // Manual motor speed
-    else if (getData == 'w')
-    {
-      Serial.println('W');
-      if (throttle<thresholdUp)
+  { 
+   if (xbee.available() >= buffSize)
+   {     
+      // Store byte in buffer
+      for (int j=0;j<buffSize;j++)
       {
-        throttle = throttle + 5;
-      }
-    }
-    else if (getData == 's')
-    {
-      Serial.println('S');
-      if (throttle>thresholdDown)
+        bufferBytes[j]=xbee.read();
+        Serial.print("Received: ");
+        Serial.print(bufferBytes[j]);
+        Serial.println();
+      }      
+      if (bufferBytes[0] == 2 && bufferBytes[1]==1)
       {
-        throttle = throttle - 5;
-      }
-    }
-    else if (getData == 'E')
-    {
-      if (throttle<thresholdUp)
-      {
-        throttle = throttle + 1;
-      }
-    }
-    else if (getData == 'D')
-    {
-      if (throttle>thresholdDown)
-      {
-        throttle = throttle - 1;
-      }
-    }
-    else if (getData == 'X')
-    {
-       if (!cmplx)
-       {
-         // begin of the string
-         cmplx =true;
-       }
-       else
-       {
-         // end of the string - reset values
-         cmplx=false;
-         optCount=0;
-         /* Create the double from num1 and num2 */
-         complNum=num1+(num2/(counter));
-         /* Reset the variables for the next round */
-         Serial.print("     opt1: ");
-         Serial.print(options1[opt1]); 
+         /**
+           * Message has been correctly sent by MATLAB and delivered to the Arduino 
+           * Decoding Header
+           **/
          
-         Serial.print("     opt2: ");
-         Serial.print(options2[opt2]); 
-                   
-         Serial.print("     opt3: ");
-         Serial.print(options3[opt3]); 
+         // Assembling VERSION long skip first two bytes
          
-         Serial.print("    Value: ");
-         Serial.print(complNum);
-                 
-         // Roll 
-         if (opt1==0 && opt2==0 && opt3 ==0)
-            consKpRoll = complNum;
-         else if (opt1==0 && opt2==0 && opt3 ==1)
-            consKdRoll = complNum;
-         else if (opt1==0 && opt2==0 && opt3 ==2)
-            consKiRoll = complNum;
-        else if (opt1==0 && opt2==1 && opt3 ==0)
-            aggKpRoll = complNum;
-        else if (opt1==0 && opt2==1 && opt3 ==1)
-            aggKdRoll = complNum;
-        else if (opt1==0 && opt2==1 && opt3 ==2)
-            aggKiRoll = complNum;
-        // Pitch
-        else if (opt1==1 && opt2==0 && opt3 ==0)
-            consKpPitch = complNum;
-        else if (opt1==1 && opt2==0 && opt3 ==1)
-            consKdPitch = complNum;
-        else if (opt1==1 && opt2==0 && opt3 ==2)
-            consKiPitch = complNum;
-        else if (opt1==1 && opt2==1 && opt3 ==0)
-            aggKpPitch = complNum;
-        else if (opt1==1 && opt2==1 && opt3 ==1)
-            aggKdPitch = complNum;
-        else if (opt1==1 && opt2==1 && opt3 ==2)
-            aggKiPitch = complNum;  
+         //hiBytew1 = bufferBytes[2];
+         //Serial.println(hiBytew1,BIN);
+         //loBytew1 = bufferBytes[3];
+         //Serial.println(loBytew1,BIN);
+         //loWord = word(hiBytew1, loBytew1);
+         //Serial.println(loWord,BIN);
+         hiBytew2 = bufferBytes[4];
+         //Serial.println(hiBytew2,BIN);
+         loBytew2 = bufferBytes[5];
+         //Serial.println(loBytew2,BIN);
+         hiWord = word(hiBytew2, loBytew2);
+         //versionProtocol = makeLong( hiWord, loWord);
+         versionProtocol = hiWord;
+         Serial.println();
+         Serial.print("Version");
+         Serial.print(versionProtocol);
+         if (versionProtocol != versionArduinoProtocol)
+         Serial.println("Warning Sync Repos, different serial protocols");
+         
+         //  number cmd
+         int numCmd = bufferBytes[6];
+         int headL = bufferBytes[7];
+         int cmdL = bufferBytes[8];
+         //  total Length
+         hiBytew2 = bufferBytes[9];
+         //Serial.println(hiBytew2,BIN);
+         loBytew2 = bufferBytes[10];
+         //Serial.println(loBytew2,BIN);
+         short totL = word(hiBytew2, loBytew2);
+         Serial.println();
+         Serial.print("Tot Len");
+         Serial.println(totL);
+         // CRC
+         hiBytew2 = bufferBytes[11];
+         //Serial.println(hiBytew2,BIN);
+         loBytew2 = bufferBytes[12];
+         //Serial.println(loBytew2,BIN);
+         short crc = word(hiBytew2, loBytew2);
+         Serial.println();
+         Serial.print("Crc");
+         Serial.println(crc);
+         
+         /**
+           * Decoding Command
+           **/
+         int type = bufferBytes[13];
+         if (type == 1)
+         {
+           // Motors : same cmd   
+           
+           stopSendingToMatlab();
+           
+           hiBytew2 = bufferBytes[16];
+           loBytew2 = bufferBytes[17];
+           int motorSpeedChange = word(hiBytew2, loBytew2);
+           
+           if (motorSpeedChange > 0)
+           {
+            if (throttle<thresholdUp)
+            {
+               throttle = throttle + motorSpeedChange;
+            }
+           }
+           else
+           {
+            if (throttle>thresholdDown)
+            {
+               throttle = throttle + motorSpeedChange;
+            } 
+           }
+         }
+         else if (type == 2)
+         {
+           // Send Acc Values
+           stopSendingToMatlab();
+           sendAccToMatlab = true;
+         }
+         else if (type == 3)
+         {
+           // Send Gyro Values
+           stopSendingToMatlab();
+           sendGyroToMatlab = true;
+         }
+         else if (type == 4 || type == 5)
+         {
+           // Send Est + Magn Values
+           stopSendingToMatlab();
+           sendMagnToMatlab = true;
+           sendEstToMatlab = true;
+         }
+         else if (type == 17)
+         {
+           // Take Off!
+           stopSendingToMatlab();
+           
+           hiBytew2 = bufferBytes[16];
+           loBytew2 = bufferBytes[17];
+           int altitudeRef = word(hiBytew2, loBytew2);
+           // TODO set altitude reference when initiate
+           if (!initialized)
+           {
+              initialize();
+           }
+           else
+           {
+              Serial.println(" Already out in space");
+           }
+         }
+         else if (type == 19)
+         {
+           // Land
+           stopSendingToMatlab();
+           
+           hiBytew2 = bufferBytes[16];
+           loBytew2 = bufferBytes[17];
+           int stopSpeed = word(hiBytew2, loBytew2);
+           // Aggressive or kind stop
+           land();
+         }
+         else if (type == 18)
+         {
+           // Hover with PID
+           stopSendingToMatlab();
+           
+           hiBytew2 = bufferBytes[16];
+           loBytew2 = bufferBytes[17];
+           int enab = word(hiBytew2, loBytew2);
+           if (enab==0)
+           enablePid = false;
+           else if (enab == 1)
+           enablePid = true;
+         }
+         else if (type == enableMotorsID)
+         {
+           // Request Motors Data  type: 20  
+           stopSendingToMatlab();
+           
+           hiBytew2 = bufferBytes[16];
+           loBytew2 = bufferBytes[17];
+           int enab = word(hiBytew2, loBytew2);
+           if (enab==0)
+           sendMotorsToMatlab = false;
+           else if (enab == 1)
+           sendMotorsToMatlab = true;
+         }
+         else if (type == sendPidRollID)
+         {
+           // Request Motors Data   type: 21        
+           stopSendingToMatlab();
+           sendPidState = true;
+           sendRollToMatlab = true;
+         }
+         else if (type == sendPidPitchID)
+         {
+           // Request Motors Data   type: 22        
+           stopSendingToMatlab();
+           sendPidState = true;
+           sendPitchToMatlab = true;
+         }
+         else if (type == sendPidYawID)
+         {
+           // Request Motors Data   type: 23        
+           stopSendingToMatlab();
+           sendPidState = true;
+           sendYawToMatlab = true;
+         }
+         else if (type == sendPidAltID)
+         {
+           // Request Motors Data   type: 24        
+           stopSendingToMatlab();
+           sendPidState = true;
+           sendAltToMatlab = true;
+         }
+         else 
+         {
+           stopSendingToMatlab();
+           
+           hiBytew2 = bufferBytes[16];
+           loBytew2 = bufferBytes[17];
+           cmd1 = word(hiBytew2, loBytew2);
+           
+           hiBytew2 = bufferBytes[20];
+           loBytew2 = bufferBytes[21];
+           cmd2 = word(hiBytew2, loBytew2);
+           
+           hiBytew2 = bufferBytes[24];
+           loBytew2 = bufferBytes[25];
+           cmd3 = word(hiBytew2, loBytew2);
+           
+           hiBytew2 = bufferBytes[28];
+           loBytew2 = bufferBytes[29];
+           cmd4 = word(hiBytew2, loBytew2);
+           
+           if (type == 9)
+           {
+             // Pid Cons ROLL 
+             consKpRoll = cmd1*100;
+             consKdRoll = cmd2*100;
+             consKiRoll = cmd3*100;
+             thresholdRoll = cmd4;
+             sendPidState = true;
+             sendRollToMatlab = true;
+           }
+           else if (type == 13)
+           {
+             // Pid AGG ROLL 
+             aggKpRoll = cmd1*100;
+             aggKdRoll = cmd2*100;
+             aggKiRoll = cmd3*100;
+             thresholdRoll = cmd4;
+             sendPidState = true;
+             sendRollToMatlab = true;
+           }
+           else if (type == 10)
+           {
+             // Pid Cons PITCH 
+             consKpPitch = cmd1*100;
+             consKdPitch = cmd2*100;
+             consKiPitch = cmd3*100;
+             thresholdPitch = cmd4;
+             sendPidState = true;
+             sendPitchToMatlab = true;
+           }
+           else if (type == 14)
+           {
+             // Pid AGG PITCH 
+             aggKpPitch = cmd1*100;
+             aggKdPitch = cmd2*100;
+             aggKiPitch = cmd3*100;
+             thresholdPitch = cmd4;
+             sendPidState = true;
+             sendPitchToMatlab = true;
+           }
+           else if (type == 11)
+           {
+             // Pid Cons YAW 
+             consKpYaw = cmd1*100;
+             consKdYaw = cmd2*100;
+             consKiYaw = cmd3*100;
+             thresholdYaw = cmd4;
+             sendPidState = true;
+             sendYawToMatlab = true;
+           }
+           else if (type == 15)
+           {
+             // Pid AGG YAW 
+             aggKpYaw = cmd1*100;
+             aggKdYaw = cmd2*100;
+             aggKiYaw = cmd3*100;
+             thresholdYaw = cmd4;
+             sendPidState = true;
+             sendYawToMatlab = true;
+           }
+           else if (type == 12)
+           {
+             // Pid Cons ALTITUDE 
+             consKpAltitude = cmd1*100;
+             consKdAltitude = cmd2*100;
+             consKiAltitude = cmd3*100;
+             thresholdAlt = cmd4;
+             sendPidState = true;
+             sendAltToMatlab = true;
+           }
+           else if (type == 16)
+           {
+             // Pid AGG ALTITUDE 
+             aggKpAltitude = cmd1*100;
+             aggKdAltitude = cmd2*100;
+             aggKiAltitude = cmd3*100;
+             thresholdAlt = cmd4;
+             sendPidState = true;
+             sendAltToMatlab = true;
+           }           
+         }
+      } // Message to Arduino from Matlab
+   }
+   else if (xbee.available() > 0)
+   { 
+      getData = xbee.read();  
       
-        // Yaw
-        else if (opt1==2 && opt2==0 && opt3 ==0)
-            consKpYaw = complNum;
-        else if (opt1==2 && opt2==0 && opt3 ==1)
-            consKdYaw = complNum;
-        else if (opt1==2 && opt2==0 && opt3 ==2)
-            consKiYaw = complNum;
-        else if (opt1==2 && opt2==1 && opt3 ==0)
-            aggKpYaw = complNum;
-        else if (opt1==2 && opt2==1 && opt3 ==1)
-            aggKdYaw = complNum;
-        else if (opt1==2 && opt2==1 && opt3 ==2)
-            aggKiYaw = complNum;   
-         
-         // Altitude
-        else if (opt1==3 && opt2==0 && opt3 ==0)
-            consKpAltitude = complNum;
-        else if (opt1==3 && opt2==0 && opt3 ==1)
-            consKdAltitude = complNum;
-        else if (opt1==3 && opt2==0 && opt3 ==2)
-            consKiAltitude = complNum;
-        else if (opt1==3 && opt2==1 && opt3 ==0)
-            aggKpAltitude = complNum;
-        else if (opt1==3 && opt2==1 && opt3 ==1)
-            aggKdAltitude = complNum;
-        else if (opt1==3 && opt2==1 && opt3 ==2)
-            aggKiAltitude = complNum;   
-         
-         num1=0;
-         num2=0;
-         complNum=0;
-         counter=1;
-         mySwitch=false;
-         numOfDec=0;
-       }
-    }    
-    else if (getData==44)
-    {
-       // Comma
-       optCount++;
-       Serial.println();
-       Serial.print("virgola numero: ");
-       Serial.println(optCount);
-       letterCount = 0;
-    }
-    //listen for numbers between 0-9
-    else if(getData>47 && getData<58)
-    {
-      //number found
-      if (cmplx)
+      Serial.println();
+      Serial.print("Received: ");
+      Serial.print(getData);
+      Serial.println();
+      
+      // Establishing Matlab Communication  
+      if(getData == 16)
+      {  	 
+        byte message[] = {0x11};
+        xbee.write(message, sizeof(message));
+        /*
+        Serial.println();
+        Serial.print(" Sending to Matlab:  ");
+        Serial.println();
+        Serial.print(message[0]);
+        */
+      } 
+      else if (getData == 18)
       {
-        if (optCount == 1)
-        {
-         opt1 = getData - 48; 
-         Serial.print(opt1);
-        }
-        else if (optCount == 2)
-        {
-         opt2 = getData - 48; 
-         Serial.print(opt2);
-        }
-        else if (optCount == 3)
-        {
-         opt3 = getData - 48; 
-         Serial.print(opt3);
-        }
-        if (optCount == 4)
-        {
-          /* If mySwitch is true, then populate the num1 variable
-          otherwise populate the num2 variable*/
-          if(!mySwitch)
-          {
-            num1=(num1*10)+(getData-48);
-          }
-          else
-          {
-            num2=(num2*10)+(getData-48);           
-            /* These counters are important */
-            counter=counter*10;
-            numOfDec++;
-          }
-        }
+        Serial.println(" Matlab communication established. ");
+        matlab = true;
       }
-    }
-    else if (getData==46)
-    {
-        mySwitch=true;
-    }
-    else if(getData == 'r')
-    {
-      resetMotors();
-    }
-    else if (getData== '1')
-    {
-      testMotor(1);
-    }
-    else if (getData== '2')
-    {
-      testMotor(2);
-    }
-    else if (getData== '3')
-    {
-      testMotor(3);
-    }
-    else if (getData== '4')
-    {
-      testMotor(4);
-    }
-    else if (getData== 'i')
-    {
-      if (!initialized)
-      {
-        initialize();
-      }
-      else
-      {
-        Serial.println(" Already out in space");
+      else if(getData == 19)
+      {  	 
+        Serial.println(" [Warning] Matlab communication problem. ");
+      }  
+      else if (getData == 20)
+      {  	 
+        byte message[] = {0x15};
+        xbee.write(message, sizeof(message));
+        /*
+        Serial.println();
+        Serial.print(" Sending to Matlab:  ");
+        Serial.println(message[0]);  
+        Serial.println(" Disconnected. ");
+        Serial.println(); 
+        */
+        matlab = false;
       }
     }
   }
@@ -1313,6 +1479,19 @@ void xbeeRoutine()
     motorSpeedPID(throttle,OutputPitch ,OutputRoll, OutputYaw);
     Serial.println(throttle);
   }
+}
+
+void stopSendingToMatlab()
+{  
+   sendAccToMatlab = false;
+   sendGyroToMatlab = false;
+   sendMagnToMatlab = false;
+   sendEstToMatlab = false;
+   sendRollToMatlab = false;
+   sendMotorsToMatlab = false;
+   sendPitchToMatlab = false;
+   sendYawToMatlab = false;
+   sendAltToMatlab = false;
 }
 
 void resetMotors()
@@ -1356,7 +1535,7 @@ void land()
     }
     resetMotors();
     initialized = false;
-    Serial.print("   finished");
+    //Serial.print("   finished");
     
     // Disable Pid when motors are off
     myRollPID.SetMode(MANUAL);
@@ -1380,23 +1559,26 @@ void initialize()
   throttle=rampTill;
   initialized = true;
   
-  // Enable Pid Actions
-  myRollPID.SetMode(AUTOMATIC);
-  //tell the PID to range between 0 and the full throttle
-  SetpointRoll = 0;
-  myRollPID.SetOutputLimits(-500, 500);
-  
-  // Pitch
-  myPitchPID.SetMode(AUTOMATIC);
-  SetpointPitch = 0;
-  //tell the PID to range between 0 and the full throttle
-  myPitchPID.SetOutputLimits(-500, 500);
-  
-  // Yaw
-  myYawPID.SetMode(AUTOMATIC);
-  SetpointYaw=0;
-  //tell the PID to range between 0 and the full throttle
-  myYawPID.SetOutputLimits(-500, 500);
+  //if (enablePID)
+  //{  
+    // Enable Pid Actions
+    myRollPID.SetMode(AUTOMATIC);
+    //tell the PID to range between 0 and the full throttle
+    SetpointRoll = 0;
+    myRollPID.SetOutputLimits(-500, 500);
+    
+    // Pitch
+    myPitchPID.SetMode(AUTOMATIC);
+    SetpointPitch = 0;
+    //tell the PID to range between 0 and the full throttle
+    myPitchPID.SetOutputLimits(-500, 500);
+    
+    // Yaw
+    myYawPID.SetMode(AUTOMATIC);
+    SetpointYaw=0;
+    //tell the PID to range between 0 and the full throttle
+    myYawPID.SetOutputLimits(-500, 500);
+  //}
 }
 
 void motorSpeedPID(int thr, int rollpid, int pitchpid, int yawpid)
@@ -1450,66 +1632,215 @@ void sendDataSensors(boolean device)
 {
   if (device)
   {    
-    Serial.println("       M    ");
-//    byte message[] = {0xAA, 0xBB, 0x06,0x13};
-
-    //xbee.write(message, sizeof(message));
-    // Gathering and Sending Sensors data
-    
-    xbee.print('R');    
-    xbee.print(',');
-    xbee.print(roll1);
-    xbee.print(',');
-    xbee.print('P');
-    xbee.print(',');
-    xbee.print(pitch1);
-    xbee.print(',');
-    xbee.print('Y');
-    xbee.print(',');
-    xbee.print(bearing1);
-    // Send Kalman Filer Angular position values
-    xbee.print(',');
-    xbee.print('KR');
-    xbee.print(',');
-    xbee.print((int)yAngle);
-    xbee.print(',');
-    xbee.print('KP');
-    xbee.print(',');
-    xbee.print((int)xAngle);
-    // Send the rest      
-    xbee.print('W');
-    xbee.print(',');
-    //xbee.print(wx);
-    xbee.print(Wfilter[0]);
-    xbee.print(',');
-    xbee.print('W');
-    xbee.print(',');
-    //xbee.print(wy);
-    xbee.print(Wfilter[1]);
-    xbee.print(',');
-    xbee.print('W');
-    xbee.print(',');
-    //xbee.print(wz);
-    xbee.print(Wfilter[2]);
-    xbee.print(',');
-    xbee.print('A');
-    xbee.print(',');
-    xbee.print(accX);
-    xbee.print(',');
-    xbee.print('A');
-    xbee.print(',');
-    xbee.print(accY);
-    xbee.print(',');
-    xbee.print('A');
-    xbee.print(',');
-    xbee.print(accZ);
-    xbee.print(',');
-    xbee.print('O');
-    xbee.print(',');
-    xbee.print(throttle);
-    
-    //Plot terminator carriage
-    xbee.write(13);
+   long cmdTmp1;
+   long cmdTmp2;
+   long cmdTmp3;
+   long cmdTmp4;
+   
+   MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+   
+   if (sendAccToMatlab)
+   {
+     pMyCmd->cmd = 2;
+           
+     pMyCmd->param1 = accX*100;   
+     pMyCmd->param2 = accY*100;
+     pMyCmd->param3 = accZ*100;
+   }
+   else if (sendGyroToMatlab)
+   {
+     pMyCmd->cmd = 3;
+           
+     pMyCmd->param1 = Wfilter[0]*100;   
+     pMyCmd->param2 = Wfilter[1]*100;
+     pMyCmd->param3 = Wfilter[2]*100;
+   }
+   else if (sendEstToMatlab && sendMagnToMatlab)
+   {
+     pMyCmd->cmd = 4;
+           
+     pMyCmd->param1 = roll1;   
+     pMyCmd->param2 = pitch1;
+     pMyCmd->param3 = bearing1*100;
+     
+     pMyCmd++;           // moves pointer to next command position in message
+     
+     pMyCmd->cmd = 5;
+           
+     pMyCmd->param1 = (int)yAngle;   
+     pMyCmd->param2 = (int)xAngle;
+     pMyCmd->param3 = (int)zAngle*100;
+   }
+   /*
+   else if (sendRollToMatlab)
+   {
+     pMyCmd->cmd = 9;
+           
+     pMyCmd->param1 = consKpRoll*100;   
+     pMyCmd->param2 = consKdRoll*100;
+     pMyCmd->param3 = consKiRoll*100;
+     pMyCmd->param4 = thresholdRoll;
+     
+     pMyCmd++;           // moves pointer to next command position in message
+     
+     pMyCmd->cmd = 13;
+           
+     pMyCmd->param1 = aggKpRoll*100;   
+     pMyCmd->param2 = aggKdRoll*100;
+     pMyCmd->param3 = aggKiRoll*100;
+     pMyCmd->param4 = thresholdRoll;
+     
+     sendRollToMatlab = false;
+   }
+   else if (sendPitchToMatlab)
+   {
+     pMyCmd->cmd = 10;
+           
+     pMyCmd->param1 = consKpPitch*100;   
+     pMyCmd->param2 = consKdPitch*100;
+     pMyCmd->param3 = consKiPitch*100;
+     pMyCmd->param4 = thresholdPitch;
+     
+     pMyCmd++;           // moves pointer to next command position in message
+     
+     pMyCmd->cmd = 14;
+           
+     pMyCmd->param1 = aggKpPitch*100;   
+     pMyCmd->param2 = aggKdPitch*100;
+     pMyCmd->param3 = aggKiPitch*100;
+     pMyCmd->param4 = thresholdPitch;
+   }
+   else if (sendYawToMatlab)
+   {
+     pMyCmd->cmd = 11;
+           
+     pMyCmd->param1 = consKpYaw*100;   
+     pMyCmd->param2 = consKdYaw*100;
+     pMyCmd->param3 = consKiYaw*100;
+     pMyCmd->param4 = thresholdYaw;
+     
+     pMyCmd++;           // moves pointer to next command position in message
+     
+     pMyCmd->cmd = 15;
+           
+     pMyCmd->param1 = aggKpYaw*100;   
+     pMyCmd->param2 = aggKdYaw*100;
+     pMyCmd->param3 = aggKiYaw*100;
+     pMyCmd->param4 = thresholdYaw;
+   }
+   else if (sendAltToMatlab)
+   {
+     pMyCmd->cmd = 12;
+           
+     pMyCmd->param1 = consKpAlt*100;   
+     pMyCmd->param2 = consKdAlt*100;
+     pMyCmd->param3 = consKiAlt*100;
+     pMyCmd->param4 = thresholdAlt;
+     
+     pMyCmd++;           // moves pointer to next command position in message
+     
+     pMyCmd->cmd = 16;
+           
+     pMyCmd->param1 = aggKpAlt*100;   
+     pMyCmd->param2 = aggKdAlt*100;
+     pMyCmd->param3 = aggKiAlt*100;
+     pMyCmd->param4 = thresholdAlt;
+     
+     sendAltToMatlab =false;
+   }
+   */
+   else if (sendMotorsToMatlab)
+   {
+     pMyCmd->cmd = 20;
+           
+     pMyCmd->param1 = throttle;  
+   }
+   else if (sendPidState)
+   {
+     if (sendRollToMatlab)
+     {
+       pMyCmd->cmd = 12;
+             
+       pMyCmd->param1 = consKpAltitude*100;   
+       pMyCmd->param2 = consKdAltitude*100;
+       pMyCmd->param3 = consKiAltitude*100;
+       pMyCmd->param4 = thresholdAlt;
+       
+       pMyCmd++;           // moves pointer to next command position in message
+       
+       pMyCmd->cmd = 16;
+             
+       pMyCmd->param1 = aggKpAltitude*100;   
+       pMyCmd->param2 = aggKdAltitude*100;
+       pMyCmd->param3 = aggKiAltitude*100;
+       pMyCmd->param4 = thresholdAlt;
+       
+       sendRollToMatlab = false;
+     }
+     else if (sendPitchToMatlab)
+     {
+       pMyCmd->cmd = 9;
+             
+       pMyCmd->param1 = consKpRoll*100;   
+       pMyCmd->param2 = consKdRoll*100;
+       pMyCmd->param3 = consKiRoll*100;
+       pMyCmd->param4 = thresholdRoll;
+       
+       pMyCmd++;           // moves pointer to next command position in message
+       
+       pMyCmd->cmd = 13;
+             
+       pMyCmd->param1 = aggKpRoll*100;   
+       pMyCmd->param2 = aggKdRoll*100;
+       pMyCmd->param3 = aggKiRoll*100;
+       pMyCmd->param4 = thresholdRoll;
+       
+       sendPitchToMatlab = false;
+     }
+     else if (sendYawToMatlab)
+     {
+       pMyCmd->cmd = 10;
+             
+       pMyCmd->param1 = consKpPitch*100;   
+       pMyCmd->param2 = consKdPitch*100;
+       pMyCmd->param3 = consKiPitch*100;
+       pMyCmd->param4 = thresholdPitch;
+       
+       pMyCmd++;           // moves pointer to next command position in message
+       
+       pMyCmd->cmd = 14;
+             
+       pMyCmd->param1 = aggKpPitch*100;   
+       pMyCmd->param2 = aggKdPitch*100;
+       pMyCmd->param3 = aggKiPitch*100;
+       pMyCmd->param4 = thresholdPitch;
+       
+       sendYawToMatlab = false;
+     }
+     else if (sendAltToMatlab)
+     {
+       pMyCmd->cmd = 11;
+             
+       pMyCmd->param1 = consKpYaw*100;   
+       pMyCmd->param2 = consKdYaw*100;
+       pMyCmd->param3 = consKiYaw*100;
+       pMyCmd->param4 = thresholdYaw;
+       
+       pMyCmd++;           // moves pointer to next command position in message
+       
+       pMyCmd->cmd = 15;
+             
+       pMyCmd->param1 = aggKpYaw*100;   
+       pMyCmd->param2 = aggKdYaw*100;
+       pMyCmd->param3 = aggKiYaw*100;
+       pMyCmd->param4 = thresholdYaw;
+       
+       sendAltToMatlab = false;
+     }
+     sendPidState = false;
+   }
+   
+   
   } 
 }
 
@@ -1676,7 +2007,7 @@ void gpsRoutine()
     timer = millis();
 
   // approximately every 2 seconds or so, print out the current stats
-  if (millis() - timer > 2000 /*&& GPS.fix*/) 
+  if (millis() - timer > 2000 && GPS.fix) 
   { 
     timer = millis(); // reset the timer
 
@@ -1871,6 +2202,7 @@ void estimateAngle()
     Serial.print(" ; ");
     Serial.print((int)zAngle);
     Serial.print(")     ");
+    Serial.println();
   }
   if (printKalman)
   {
@@ -1881,8 +2213,8 @@ void estimateAngle()
     Serial.print(" ; ");
     Serial.print((int) angK[2]);
     Serial.print(")");
+    Serial.println();
   }
-  Serial.println();
 
   pitchK = angK[0];
   rollK = angK[1];

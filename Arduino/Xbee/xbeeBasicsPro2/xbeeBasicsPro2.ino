@@ -29,11 +29,6 @@ byte getData;
 byte loBytew1, hiBytew1,loBytew2, hiBytew2;
 int loWord,hiWord;
 
-// Compare function variables
-char inData[20]; // Allocate some space for the string
-char inChar=-1; // Where to store the character read
-byte index = 0; // Index into array; where to store the character
-
 // Xbee SoftwareSerial initialization
 SoftwareSerial xbee(pinRx, pinTx); // RX, TX
 int buffSize = 33;
