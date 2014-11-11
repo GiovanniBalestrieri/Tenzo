@@ -47,8 +47,8 @@ boolean printRawKalman= false;
 boolean printKalman = false; 
 boolean printPIDVals = false;
 boolean printTimers = false;
-
-
+boolean printThrottle = false;
+boolean printAckCommands = true;
 /**
  * Pid Controller 
  */
@@ -194,8 +194,12 @@ Servo servo2;
 Servo servo3;
 Servo servo4;
 
+int landSpeed = 1;
 int rampTill = 80;
-int motorRampDelay = 150;
+int motorRampDelayFast = 150;
+int motorRampDelayMedium = 350;
+int motorRampDelaySlow = 550;
+int motorRampDelayVerySlow = 850;
 
 void useInterrupt(boolean); 
 
@@ -480,6 +484,10 @@ boolean sendPitchToMatlab = false;
 boolean sendYawToMatlab = false;
 boolean sendAltToMatlab = false;
 boolean sendPidState = false;
+boolean sendLandAck = false;
+boolean sendTakeOffAck = false;
+boolean sendHoverState = false;
+
 void setup()
 {
   Serial.begin(BaudRateSerial);
@@ -976,7 +984,7 @@ void xbeeRoutine()
     }  
     else if(GotChar == 'r')
     {  	
-      resetMotors();
+      resetMotorsPidOff();
     } 
     else if(GotChar == 'z')
     { 
@@ -1267,9 +1275,18 @@ void xbeeRoutine()
            
            hiBytew2 = bufferBytes[16];
            loBytew2 = bufferBytes[17];
-           int stopSpeed = word(hiBytew2, loBytew2);
-           // Aggressive or kind stop
-           land();
+           landSpeed = word(hiBytew2, loBytew2);
+           // TODO: Aggressive or kind stop
+           if (initialized)
+           {
+             land();
+           }
+           else
+           {
+             Serial.println();
+             Serial.print("Received Land command but Tenzo is not hovering!! WARNING!!");
+             Serial.println();
+           }
          }
          else if (type == 18)
          {
@@ -1283,6 +1300,8 @@ void xbeeRoutine()
            enablePid = false;
            else if (enab == 1)
            enablePid = true;
+           
+           sendHoverState = true;
          }
          else if (type == enableMotorsID)
          {
@@ -1442,12 +1461,12 @@ void xbeeRoutine()
       {  	 
         byte message[] = {0x11};
         xbee.write(message, sizeof(message));
-        /*
+        
         Serial.println();
         Serial.print(" Sending to Matlab:  ");
         Serial.println();
         Serial.print(message[0]);
-        */
+        
       } 
       else if (getData == 18)
       {
@@ -1462,13 +1481,13 @@ void xbeeRoutine()
       {  	 
         byte message[] = {0x15};
         xbee.write(message, sizeof(message));
-        /*
+        
         Serial.println();
         Serial.print(" Sending to Matlab:  ");
         Serial.println(message[0]);  
         Serial.println(" Disconnected. ");
         Serial.println(); 
-        */
+        
         matlab = false;
       }
     }
@@ -1477,7 +1496,10 @@ void xbeeRoutine()
   {
     //motorSpeed(throttle);
     motorSpeedPID(throttle,OutputPitch ,OutputRoll, OutputYaw);
-    Serial.println(throttle);
+    if (printThrottle)
+    {
+      Serial.println(throttle);
+    }
   }
 }
 
@@ -1494,7 +1516,7 @@ void stopSendingToMatlab()
    sendAltToMatlab = false;
 }
 
-void resetMotors()
+void resetMotorsPidOff()
 {
   throttle = 0;
   motorSpeed(0);
@@ -1502,9 +1524,7 @@ void resetMotors()
   timerStart = 0;
   checkpoint = 0;
   // Disable Pid when motors are off
-  myRollPID.SetMode(MANUAL);
-  myPitchPID.SetMode(MANUAL);
-  myYawPID.SetMode(MANUAL);
+  changePidState(false);
 }
 
 void protocol1()
@@ -1516,7 +1536,9 @@ void protocol1()
     timerStart = millis() - checkpoint;
     // if Tenzo has already been initialized for a timeToLand period then land
     if (initialized && timerStart>=timeToLand)
-       land();
+    {
+      land();
+    }
   }
 }
 void land()
@@ -1531,36 +1553,67 @@ void land()
     {
       motorSpeed(j);
       Serial.println(j);
-      delay(motorRampDelay); 
+      // Kind or brutal land
+      if (landSpeed == 1)
+        delay(motorRampDelayFast);
+      else if (landSpeed == 2)
+        delay(motorRampDelayMedium);
+      else if (landSpeed == 3)
+        delay(motorRampDelaySlow);
+      else
+        delay(motorRampDelayVerySlow);
     }
-    resetMotors();
+    resetMotorsPidOff();
     initialized = false;
+    // Notify Matlab after landing
+    if (matlab)
+    sendLandAck = true;
     //Serial.print("   finished");
-    
-    // Disable Pid when motors are off
-    myRollPID.SetMode(MANUAL);
-    myPitchPID.SetMode(MANUAL);
-    myYawPID.SetMode(MANUAL);
   }
 }
 
 void initialize()
 {
-  initializing = true;
-  resetMotors();
-  delay(2000);
-  for (int j=0; j<rampTill;j++)
+  if (!initialized)
   {
-    motorSpeed(j);
-    Serial.println(j);
-    delay(motorRampDelay); 
+    // 2 Matlab Notifications HERE 
+    // sendTakeOffAck = true  and
+    // sendHoverState = true in changePidState fcn   
+    initializing = true;
+    resetMotorsPidOff();
+    delay(2000);
+    for (int j=0; j<rampTill;j++)
+    {
+      motorSpeed(j);
+      Serial.println(j);
+      delay(motorRampDelayFast); 
+    }
+    checkpoint = millis();
+    throttle=rampTill;
+    initialized = true;
+    // Notify Matlab after Take Off  
+    if (matlab)
+      sendTakeOffAck =true;
+    if (enablePid)
+    {  
+      changePidState(true);
+    }
   }
-  checkpoint = millis();
-  throttle=rampTill;
-  initialized = true;
-  
-  //if (enablePID)
-  //{  
+  else
+  {
+    Serial.println();
+    Serial.print("First Land ortherwise Tenzo will crash");
+    Serial.println();
+  }
+}
+
+void changePidState(boolean cond)
+{
+  // If pid state is modified, notify Matlab
+  if (matlab)
+    sendHoverState = true;
+  if (cond)
+  {
     // Enable Pid Actions
     myRollPID.SetMode(AUTOMATIC);
     //tell the PID to range between 0 and the full throttle
@@ -1578,7 +1631,13 @@ void initialize()
     SetpointYaw=0;
     //tell the PID to range between 0 and the full throttle
     myYawPID.SetOutputLimits(-500, 500);
-  //}
+  }
+  else
+  { 
+    myRollPID.SetMode(MANUAL);
+    myPitchPID.SetMode(MANUAL);
+    myYawPID.SetMode(MANUAL);
+  }
 }
 
 void motorSpeedPID(int thr, int rollpid, int pitchpid, int yawpid)
@@ -1639,7 +1698,57 @@ void sendDataSensors(boolean device)
    
    MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
    
-   if (sendAccToMatlab)
+   if (sendTakeOffAck)
+   {
+     pMyCmd->cmd = 17;
+           
+     if (initialized)      
+     pMyCmd->param1 = 1; 
+     else
+     pMyCmd->param1 = 0;     
+     sendTakeOffAck = false;
+     if (printAckCommands)
+     {
+      Serial.println();
+      Serial.print("Sending Ack to Matlab. TakeOffState:  ");
+      Serial.print(pMyCmd->param1);
+      Serial.println(); 
+     }
+   }
+   else if (sendHoverState)
+   {
+     pMyCmd->cmd = 18;
+     if (enablePid)      
+     pMyCmd->param1 = 1; 
+     else
+     pMyCmd->param1 = 0; 
+     sendHoverState = false;
+     if (printAckCommands)
+     {
+      Serial.println();
+      Serial.print("Sending Ack to Matlab: Hover: ");
+      Serial.print(pMyCmd->param1);
+      Serial.println(); 
+     }
+   }
+   else if (sendLandAck)
+   {
+     pMyCmd->cmd = 19;
+     
+     if (initialized)      
+     pMyCmd->param1 = 0; 
+     else
+     pMyCmd->param1 = 1;   
+     sendLandAck = false;
+     if (printAckCommands)
+     {
+      Serial.println();
+      Serial.print("Sending Ack to Matlab. Land state:  ");
+      Serial.print(pMyCmd->param1);
+      Serial.println(); 
+     }
+   }
+   else if (sendAccToMatlab)
    {
      pMyCmd->cmd = 2;
            
@@ -1839,9 +1948,25 @@ void sendDataSensors(boolean device)
      }
      sendPidState = false;
    }
-   
-   
+   sendCommandToMatlab();   
   } 
+}
+
+void sendCommandToMatlab()
+{
+  // Build Header
+  pCtrlHdr->srcAddr = 1;
+  pCtrlHdr->dstAddr = 2;    // maybe you'll make 2555 a broadcast address? 
+  pCtrlHdr->versionX = 13;    // possible way to let a receiver know a code version
+  pCtrlHdr->numCmds = 4;    // how many commands will be in the message
+  pCtrlHdr->hdrLength = sizeof(MyControlHdr );  // tells receiver where commands start
+  pCtrlHdr->cmdLength = sizeof(MyCommand );     // tells receiver size of each command 
+  // include total length of entire message
+  pCtrlHdr->totalLen= sizeof(MyControlHdr ) + (sizeof(MyCommand) * pCtrlHdr->numCmds); 
+  pCtrlHdr->crc = 21;   // dummy temp value
+ 
+  for (int v=0;v<=sizeof(buffer);v++)
+  xbee.write(buffer[v]);  
 }
 
 void testMotor(int x)
