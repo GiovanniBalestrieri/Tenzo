@@ -24,23 +24,25 @@ byte index = 0; // Index into array; where to store the character
 SoftwareSerial xbee(pinRx, pinTx); // RX, TX
 
 typedef struct mcTag {
-       unsigned char srcAddr;
-       unsigned char dstAddr;
-       unsigned long versionX;
-       unsigned char numCmds;
-       unsigned char hdrLength;
-       unsigned char cmdLength;
-       unsigned short totalLen;
-       unsigned short crc } MyControlHdr;
+     unsigned char srcAddr;
+     unsigned char dstAddr;
+     unsigned long versionX;
+     unsigned char numCmds;
+     unsigned char hdrLength;
+     unsigned char cmdLength;
+     unsigned short totalLen;
+     unsigned short crc; } MyControlHdr;
 
-    typedef struct ctrTag {
-      unsigned char cmd;
-      long param1;
-      long param2;
-      long param3;
-      long param4;   } MyCommand;
+  typedef struct ctrTag {
+    unsigned char cmd;
+    long param1;
+    long param2;
+    long param3;
+    long param4;   } MyCommand;
 
-    unsigned char buffer[255];  // or worst case message size
+  unsigned char buffer[255];  // or worst case message size
+    
+  MyControlHdr * pCtrlHdr = (MyControlHdr *)(&buffer[0]);
 
 void setup() {
   Serial.begin(BaudRateSerial);
@@ -79,7 +81,18 @@ void loop()
     // send it back to the Xbee
     //xbee.println(getData);
     if(getData == 16)
-    {  	 
+    { 
+     MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+      // first command in this message
+      pMyCmd->cmd = 0;      // indicates communication
+      pMyCmd->param1 = 17;  // 
+      pMyCmd->param2 =0;
+      pMyCmd->param3 =0;
+      pMyCmd->param4 =0;
+      //pCtrlHdr->crc = calcCrc(buffer, pCtrlHdr->totalLen); // crc function
+      
+      
+      /*	 
       byte message[] = {0x11, 0x11};
 
       xbee.write(message, sizeof(message));
@@ -89,6 +102,8 @@ void loop()
       Serial.println();
       Serial.print(message[1]);
       //xbee.write(0x11);
+      */
+      sendCommand();
     } 
     else if (getData == 18)
     {
@@ -99,4 +114,38 @@ void loop()
       Serial.println(" [Warning] Matlab communication problem. ");
     }
   }
+}
+
+void sendCommand()
+{
+  // Build Header
+  pCtrlHdr->srcAddr = 1;
+  pCtrlHdr->dstAddr = 1;    // maybe you'll make 2555 a broadcast address? 
+  pCtrlHdr->versionX = 1;    // possible way to let a receiver know a code version
+  pCtrlHdr->numCmds = 2;    // how many commands will be in the message
+  pCtrlHdr->hdrLength = sizeof(MyControlHdr );  // tells receiver where commands start
+  pCtrlHdr->cmdLength = sizeof(MyCommand );     // tells receiver size of each command 
+  // include total length of entire message
+  pCtrlHdr->totalLen= sizeof(MyControlHdr ) + (sizeof(MyCommand) * pCtrlHdr->numCmds); 
+  pCtrlHdr->crc = 0;   // dummy temp value
+
+  xbee.write(buffer);  
+}
+
+//CRC-8 - algoritmo basato sulle formule di CRC-8 di Dallas/Maxim
+//codice pubblicato sotto licenza GNU GPL 3.0
+byte CRC8(const byte *data, byte len) {
+  byte crc = 0x00;
+  while (len--) {
+    byte extract = *data++;
+    for (byte tempI = 8; tempI; tempI--) {
+      byte sum = (crc ^ extract) & 0x01;
+      crc >>= 1;
+      if (sum) {
+        crc ^= 0x8C;
+      }
+      extract >>= 1;
+    }
+  }
+  return crc;
 }
