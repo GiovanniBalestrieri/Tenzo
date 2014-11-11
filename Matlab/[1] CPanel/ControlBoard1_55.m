@@ -1373,6 +1373,7 @@ delete(instrfindall)
                         if landAck == 1                           
                             set(landBtn,'String','Landed'); 
                             set(takeOffBtn,'String','Take Off');
+                            takeOffAck = 0;
                         end
                     end
             end

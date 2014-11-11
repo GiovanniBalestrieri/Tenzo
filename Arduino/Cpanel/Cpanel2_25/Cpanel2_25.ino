@@ -1290,18 +1290,49 @@ void xbeeRoutine()
          }
          else if (type == 18)
          {
-           // Hover with PID
-           stopSendingToMatlab();
-           
-           hiBytew2 = bufferBytes[16];
-           loBytew2 = bufferBytes[17];
-           int enab = word(hiBytew2, loBytew2);
-           if (enab==0)
-           enablePid = false;
-           else if (enab == 1)
-           enablePid = true;
-           
-           sendHoverState = true;
+           if (!initialized)
+           {
+             // Hover with PID
+             stopSendingToMatlab();
+             
+             hiBytew2 = bufferBytes[16];
+             loBytew2 = bufferBytes[17];
+             int enab = word(hiBytew2, loBytew2);
+             if (enab==0)
+             {
+               if (enablePid)
+               {
+                 enablePid = false;
+                 sendHoverState = true;
+               }
+               else
+               {
+                 Serial.println();
+                 Serial.print("Received Pid switch off request but already disabled! WARNING!!");
+                 Serial.println();
+               }
+             }
+             else if (enab == 1)
+             {
+               if (!enablePid)
+               {
+                 enablePid = true;
+                 sendHoverState = true;
+               }
+               else
+               {
+                 Serial.println();
+                 Serial.print("Received Pid activation request but already enable! WARNING!!");
+                 Serial.println();
+               }
+             }
+           }
+           else
+           {
+             Serial.println();
+             Serial.print("Received Hovering command but Tenzo is not flying!! WARNING!!");
+             Serial.println();             
+           }
          }
          else if (type == enableMotorsID)
          {
