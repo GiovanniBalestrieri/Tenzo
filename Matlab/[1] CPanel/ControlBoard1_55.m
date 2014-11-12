@@ -36,6 +36,7 @@ global pitchAggID;
 global yawAggID;
 global altitudeAggID;
 global bufferSend;
+global landingSpeed;
 
 % Serial Acks
 global takeOffAck;
@@ -133,6 +134,7 @@ global kr;
 global KalmanPitch;
 global kp;
 version = 1.45;
+landingSpeed = 2;
 
 %% Plot variables
 
@@ -181,6 +183,7 @@ pidModeStrategy = 'U';
 %% variables declaration
 
 takeOffAck = 0;
+hoverAck = 0;
 landAck = 1;
 defaultAlt = 1;
 % used to store long/short num to arrays
@@ -506,7 +509,7 @@ delete(instrfindall)
                 cmd = zeros(8,4,'uint8');
                 cmd(1,1) = uint8(landID);
                 %cmd(2,4) = uint8(defaultAlt);
-                bits = reshape(bitget(defaultAlt,32:-1:1),8,[]);
+                bits = reshape(bitget(landingSpeed,32:-1:1),8,[]);
                 cmd(2,:) = weights2*bits;
                 sendMess(cmd);
                 % wait for feedback from Tenzo and change state of btn
@@ -545,7 +548,7 @@ delete(instrfindall)
         if tenzo == true
             if takeOffAck == 1
                 if hoverAck == 0
-                   warndlg('Enabling PID. Fly safe.','Report') 
+                    warndlg('Enabling PID. Safe flight.','Report') 
                     % Initialize the cmd array
                     cmd = zeros(8,4,'uint8');
                     cmd(1,1) = uint8(iHoverID);
@@ -1334,7 +1337,7 @@ delete(instrfindall)
                         disp('val4:');
                         disp(thresholdTemp);   
                     end
-                    if type == 17
+                    if type == takeOffID
                         % Take Off Ack
                         disp('Take Off Ack');
                         takeOffAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
@@ -1350,21 +1353,21 @@ delete(instrfindall)
                             set(takeOffBtn,'String','Take Off');
                         end
                     end                    
-                    if type == 18
+                    if type == iHoverID
                         % Hovering Ack
                         disp('Hovering Ack');
                         hoverAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                         disp('val1:');
                         disp(hoverAck);
                         if hoverAck == 1
-                            set(hoverBtn,'String','Smart');
+                            set(hoverBtn,'String','NoPid');
                             disp('Pid enabled');
                         else                            
-                            set(hoverBtn,'String','iHover');
-                            disp('Unsafe hovering');
+                            set(hoverBtn,'String','iHoverPid');
+                            disp('Unsafe hovering OR Landed');
                         end
                     end                    
-                    if type == 19
+                    if type == landID
                         % Landed Ack
                         disp('Landed Ack');
                         landAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');

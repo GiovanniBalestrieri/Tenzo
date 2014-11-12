@@ -388,7 +388,7 @@ unsigned long timerStart;
 unsigned long checkpoint;
 // Safe Mode: after timeToLand ms tenzo will land automatically
 unsigned long timeToLand = 30000;
-boolean autoLand = true;
+boolean autoLand = false;
 
 /**
  *  Serial Communication Protocol
@@ -419,6 +419,7 @@ long cmd1;
 long cmd2;
 long cmd3;
 long cmd4;
+int numCommandToSend = 0;
 
 // Serial IDs
 int arduinoAdd = 1;
@@ -601,7 +602,7 @@ void setup()
   kalmanY.setQangle(0.05); // Process noise variance for the accelerometer
   kalmanZ.setQangle(0.05); // Process noise variance for the accelerometer
 
-  //kalmanX.setRmeasure(0.003); // Measurement noise variance
+  // KalmanX.setRmeasure(0.003); // Measurement noise variance
 
   kalmanX.setRmeasure(0.5); // Measurement noise variance  
   kalmanY.setRmeasure(0.5); // Measurement noise variance
@@ -715,19 +716,20 @@ void control()
     if (enableYawPid)
     {
       if (filterAng == 1)
-     {
-       InputYaw = angPosFilter[2];
-       errorYaw = abs(SetpointYaw - angPosFilter[2]); //distance away from setpoint
-     }
-     else if (filterAng == 0)
-     {
-       InputYaw = bearing1;
-       errorYaw = abs(SetpointYaw - bearing1); //distance away from setpoint
-     }
+      {
+         InputYaw = angPosFilter[2];
+         errorYaw = abs(SetpointYaw - angPosFilter[2]); //distance away from setpoint
+      }
+      else if (filterAng == 0)
+      {
+         InputYaw = bearing1;
+         errorYaw = abs(SetpointYaw - bearing1); 
+      }
       
       if(errorYaw<thresholdYaw)
-      {  //we're close to setpoint, use conservative tuning parameters
-        myYawPID.SetTunings(consKpYaw, consKiYaw, consKdYaw);
+      {
+         //we're close to setpoint, use conservative tuning parameters
+         myYawPID.SetTunings(consKpYaw, consKiYaw, consKdYaw);
       }
       else
       {
@@ -1250,9 +1252,9 @@ void xbeeRoutine()
            sendMagnToMatlab = true;
            sendEstToMatlab = true;
          }
-         else if (type == 17)
+         else if (type == takeOffID)
          {
-           // Take Off!
+           // Channel 17: Take Off
            stopSendingToMatlab();
            
            hiBytew2 = bufferBytes[16];
@@ -1268,9 +1270,9 @@ void xbeeRoutine()
               Serial.println(" Already out in space");
            }
          }
-         else if (type == 19)
+         else if (type == landID)
          {
-           // Land
+           // Channel 19: Land
            stopSendingToMatlab();
            
            hiBytew2 = bufferBytes[16];
@@ -1288,9 +1290,10 @@ void xbeeRoutine()
              Serial.println();
            }
          }
-         else if (type == 18)
+         else if (type == iHoverID)
          {
-           if (!initialized)
+           // Channel 18: Hovering
+           if (initialized)
            {
              // Hover with PID
              stopSendingToMatlab();
@@ -1298,33 +1301,29 @@ void xbeeRoutine()
              hiBytew2 = bufferBytes[16];
              loBytew2 = bufferBytes[17];
              int enab = word(hiBytew2, loBytew2);
-             if (enab==0)
+             if (enab==0 && enablePid)
              {
-               if (enablePid)
-               {
                  enablePid = false;
                  sendHoverState = true;
-               }
-               else
-               {
-                 Serial.println();
-                 Serial.print("Received Pid switch off request but already disabled! WARNING!!");
-                 Serial.println();
-               }
+                 numCommandToSend++;
              }
-             else if (enab == 1)
+             else if (enab==0 && !enablePid)
              {
-               if (!enablePid)
-               {
-                 enablePid = true;
-                 sendHoverState = true;
-               }
-               else
-               {
+               Serial.println();
+               Serial.print("Received Pid 'switch off' request but has already been disabled! WARNING!!");
+               Serial.println();
+             }
+             else if (enab == 1 && enablePid)
+             {
                  Serial.println();
                  Serial.print("Received Pid activation request but already enable! WARNING!!");
                  Serial.println();
-               }
+             }
+             else if (enab == 1 && !enablePid)
+             {
+                 enablePid = true;
+                 sendHoverState = true;
+                 numCommandToSend++;               
              }
            }
            else
@@ -1557,7 +1556,8 @@ void resetMotorsPidOff()
   // Disable Pid when motors are off
   if (enablePid)
   {
-    // Change only if PID enables 
+    // Change only if PID is enabled 
+    // Tenzo has landed, no need of controls
     changePidState(false);
   }
 }
@@ -1602,7 +1602,10 @@ void land()
     initialized = false;
     // Notify Matlab after landing
     if (matlab)
-    sendLandAck = true;
+    {
+      sendLandAck = true;
+      numCommandToSend++;
+    }
     //Serial.print("   finished");
   }
 }
@@ -1616,7 +1619,7 @@ void initialize()
     // sendHoverState = true in changePidState fcn   
     initializing = true;
     resetMotorsPidOff();
-    delay(2000);
+    delay(500);
     for (int j=0; j<rampTill;j++)
     {
       motorSpeed(j);
@@ -1628,7 +1631,10 @@ void initialize()
     initialized = true;
     // Notify Matlab after Take Off  
     if (matlab)
+    {
       sendTakeOffAck =true;
+      numCommandToSend++;
+    }
     if (enablePid)
     {  
       changePidState(true);
@@ -1649,8 +1655,15 @@ void initialize()
 void changePidState(boolean cond)
 {
   // If pid state is modified, notify Matlab
-  if (matlab)
+  if (enablePid == cond && matlab)
+  {
+    sendHoverState = false;
+  }
+  else if (enablePid != cond && matlab)
+  {
     sendHoverState = true;
+    numCommandToSend++;
+  }
   if (cond)
   {
     // Enable Pid Actions
@@ -1670,12 +1683,14 @@ void changePidState(boolean cond)
     SetpointYaw=0;
     //tell the PID to range between 0 and the full throttle
     myYawPID.SetOutputLimits(-500, 500);
+    enablePid = true;
   }
   else
   { 
     myRollPID.SetMode(MANUAL);
     myPitchPID.SetMode(MANUAL);
     myYawPID.SetMode(MANUAL);
+    enablePid = false;
   }
 }
 
@@ -1756,8 +1771,47 @@ void sendDataSensors(boolean device)
      
      sendCommandToMatlab();  
    }
+   else if (sendHoverState && sendLandAck)
+   {
+     // Channel 18: Hovering
+     pMyCmd->cmd = 18;
+     if (enablePid)      
+     pMyCmd->param1 = 1; 
+     else
+     pMyCmd->param1 = 0; 
+     sendHoverState = false;
+     
+     if (printAckCommands)
+     {
+      Serial.println();
+      Serial.print("Sending Ack to Matlab: Hover: ");
+      Serial.print(pMyCmd->param1);
+      Serial.println(); 
+     } 
+     
+     pMyCmd++;           // Second Message
+     // Channel 19: Landing
+     pMyCmd->cmd = landID;
+     
+     if (initialized)      
+     pMyCmd->param1 = 0; 
+     else
+     pMyCmd->param1 = 1;   
+     sendLandAck = false;
+     
+     if (printAckCommands)
+     {
+      Serial.println();
+      Serial.print("Sending Ack to Matlab. Land state:  ");
+      Serial.print(pMyCmd->param1);
+      Serial.println(); 
+     }      
+     // Send two commands to Matlab. numCommandsToSend = 2;
+     sendCommandToMatlab();  
+   }   
    else if (sendHoverState)
    {
+     // Channel 18: Hovering
      pMyCmd->cmd = 18;
      if (enablePid)      
      pMyCmd->param1 = 1; 
@@ -1776,7 +1830,8 @@ void sendDataSensors(boolean device)
    }
    else if (sendLandAck)
    {
-     pMyCmd->cmd = 19;
+     // Channel 19: Landing
+     pMyCmd->cmd = landID;
      
      if (initialized)      
      pMyCmd->param1 = 0; 
@@ -2010,7 +2065,11 @@ void sendCommandToMatlab()
   pCtrlHdr->srcAddr = 1;
   pCtrlHdr->dstAddr = 2;    // maybe you'll make 2555 a broadcast address? 
   pCtrlHdr->versionX = versionArduinoProtocol;    // possible way to let a receiver know a code version
-  pCtrlHdr->numCmds = 2;    // how many commands will be in the message
+  pCtrlHdr->numCmds = numCommandToSend;    // how many commands will be in the message
+  Serial.println();
+  Serial.print("Sending # commands:");
+  Serial.print(numCommandToSend);
+  Serial.println();
   pCtrlHdr->hdrLength = sizeof(MyControlHdr );  // tells receiver where commands start
   pCtrlHdr->cmdLength = sizeof(MyCommand );     // tells receiver size of each command 
   // include total length of entire message
@@ -2018,7 +2077,10 @@ void sendCommandToMatlab()
   pCtrlHdr->crc = 21;   // dummy temp value
  
   for (int v=0;v<=sizeof(buffer);v++)
-  xbee.write(buffer[v]);  
+  {
+    xbee.write(buffer[v]);  
+  }
+  numCommandToSend = 0;
 }
 
 void testMotor(int x)
