@@ -1131,23 +1131,26 @@ delete(instrfindall)
                     if type == accID 
                         disp('Accelerations');
                         % Acc
-                        accXr = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                        accXr = typecast([int8(mess(typei + 1)), int8(mess(typei + 2)),int8(mess(typei + 3)), int8(mess(typei + 4))], 'int32');
                         disp('accX:');
-                        disp(accXr/100);
+                        disp(accXr*0.01);
+                        disp(single(accXr));
 
-                        accYr = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                        accYr = typecast([int8(mess(typei + 5)), int8(mess(typei + 6)),int8(mess(typei + 7)), int8(mess(typei + 8))], 'int32');
                         disp('accY:');
-                        disp(accYr/100);                             
+                        disp(accYr*0.01));  
+                        disp(single(accYr));                              
 
-                        accZr = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                        accZr = typecast([int8(mess(typei + 9)), int8(mess(typei + 10)),int8(mess(typei + 11)), int8(mess(typei + 12))], 'int32');
                         disp('accZ:');
-                        disp(accZr/100);  
+                        disp(single(accZr*0.01)); 
+                        disp(single(accZr));  
                         
                         if accelero == true
                             % Gets Accelerometer data
-                            axdata = [ axdata(2:end) ; accXr/100 ];
-                            aydata = [ aydata(2:end) ; accYr/100 ];
-                            azdata = [ azdata(2:end) ; accZr/100 ];  
+                            axdata = [ axdata(2:end) ; single(accXr/100) ];
+                            aydata = [ aydata(2:end) ; single(accYr/100) ];
+                            azdata = [ azdata(2:end) ; single(accZr/100) ];  
                         end
                                               
                         %Plot the X magnitude
@@ -1302,7 +1305,7 @@ delete(instrfindall)
 
                         bearingE = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                         disp('yaw K:');
-                        disp(bearingE/100);
+                        disp(single(bearingE/100));
                         
                             
                         if filterEst
@@ -1324,11 +1327,10 @@ delete(instrfindall)
                         %Plot the X magnitude
                         h1 = subplot(3,1,1,'Parent',hTabs(3));
                         %set(hAx,'title','X angular velocity in deg/s');
-                        
-                            plot(h1,index,EKXdata,'b-','LineWidth',1);
+                        plot(h1,index,EKXdata,'b-','LineWidth',2);
                         if doubleAnglePlot
                             hold on;
-                            plot(h1,index,Rdata,'r','LineWidth',2);
+                            plot(h1,index,Rdata,'r','LineWidth',1);
                             hold off;
                         end
                         %xlabel('Time')
@@ -1337,10 +1339,10 @@ delete(instrfindall)
                         %hold on;
                         h2 = subplot(3,1,2,'Parent',hTabs(3));
                         %title('Y angular velocity in deg/s');
-                        plot(h2,index,Pdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        plot(h2,index,EKYdata,'b-','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                         if doubleAnglePlot
                             hold on;
-                            plot(h2,index,EKYdata,'b-','LineWidth',1);
+                            plot(h2,index,Pdata,'r','LineWidth',1);
                             hold off;
                         end
                         %xlabel('Time');
@@ -1349,11 +1351,11 @@ delete(instrfindall)
                         h3 = subplot(3,1,3,'Parent',hTabs(3));
                         %title('Z angular velocity in deg/s');
                         %hold on;
-                        plot(h3,index,Ydata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        plot(h3,index,EKZdata,'b-','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                         %axis([1 buf_len -80 80]);
                         if doubleAnglePlot
                             hold on;
-                            plot(h3,index,EKZdata,'b-','LineWidth',1);
+                            plot(h3,index,Ydata,'r','LineWidth',2); 
                             hold off;
                         end
                         %xlabel('Time');

@@ -1131,19 +1131,20 @@ delete(instrfindall)
                     if type == accID 
                         disp('Accelerations');
                         % Acc
-                        accXr = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                        accXr = typecast([int8(mess(typei + 1)), int8(mess(typei + 2)),int8(mess(typei + 3)), int8(mess(typei + 4))], 'int32');
                         disp('accX:');
-                        disp(single(accXr/100));
+                        disp(vpa(accXr/100,2));
                         disp(single(accXr));
 
-                        accYr = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                        accYr = typecast([int8(mess(typei + 5)), int8(mess(typei + 6)),int8(mess(typei + 7)), int8(mess(typei + 8))], 'int32');
                         disp('accY:');
-                        disp(single(accYr/100));  
+                        disp(vpa(accYr/100,2));  
                         disp(single(accYr));                              
 
-                        accZr = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                        accZr = typecast([int8(mess(typei + 9)), int8(mess(typei + 10)),int8(mess(typei + 11)), int8(mess(typei + 12))], 'int32');
                         disp('accZ:');
-                        disp(single(accZr/100));  
+                        disp(single(accZr/100,2)); 
+                        disp(single(accZr));  
                         
                         if accelero == true
                             % Gets Accelerometer data
