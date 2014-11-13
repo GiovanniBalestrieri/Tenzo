@@ -1,13 +1,15 @@
 function ControlBoard()
 
 clear all;
+clc;
 
 global xbee;
 global portWin;
 global portUnix;
 global baudrate;
 global terminator;
-global buffSize;
+global inputBuffSize;
+global outputBuffSize;
 global tag;
 global tenzo;
 global matlabAdd;
@@ -42,6 +44,13 @@ global landingSpeed;
 global takeOffAck;
 global landAck;
 global hoverAck;
+global accReceived;
+global accRequested;
+global gyroRequested;
+global anglesRequested;
+global gyroReceived;
+global magnReceived;
+global estReceived;
 
 % Sensors vars
 global Roll;
@@ -75,6 +84,10 @@ global alpha;
 global accelero;
 global magneto;
 global gyrosco;
+global filterMagn;
+global filterAcc;
+global filterEst;
+global filterGyro;
 
 % pidState
 global pidStrategy;
@@ -116,17 +129,18 @@ portWin = 'Com3';
 portUnix = '\dev\ttyS0';
 baudrate = 19200;
 % buffer size should be the same as the one specified on the Arduino side
-buffSize = 34;
+inputBuffSize = 47+1;
+outputBuffSize = 31;
 terminator = 'CR';
 tag = 'Quad';
 
-gyroTimer = timer('ExecutionMode','FixedRate','Period',0.3,'TimerFcn',{@graphGyro});
+gyroTimer = timer('ExecutionMode','FixedRate','Period',1.5,'TimerFcn',{@graphGyro});
 
 global angleTimer;
-angleTimer = timer('ExecutionMode','FixedRate','Period',0.3,'TimerFcn',{@graphAngles});
+angleTimer = timer('ExecutionMode','FixedRate','Period',1.5,'TimerFcn',{@graphAngles});
                           
 global accTimer;
-accTimer = timer('ExecutionMode','FixedRate','Period',0.3,'TimerFcn',{@graphAcc});
+accTimer = timer('ExecutionMode','FixedRate','Period',1.5,'TimerFcn',{@graphAcc});
           
 % Complementary and Kalman Filert values
 global KalmanRoll;
@@ -135,6 +149,14 @@ global KalmanPitch;
 global kp;
 version = 1.45;
 landingSpeed = 2;
+
+% Serial Sensors Acks initialization
+accReceived = false;
+gyroReceived = false;
+magnReceived = false;
+estReceived = false;
+
+doubleAnglePlot = false;
 
 %% Plot variables
 
@@ -152,13 +174,14 @@ gzFdata = zeros(buf_len,1);
 axdata = zeros(buf_len,1);
 aydata = zeros(buf_len,1);
 azdata = zeros(buf_len,1);
-Tdata = zeros(buf_len,1);
+Rdata = zeros(buf_len,1);
 Pdata = zeros(buf_len,1);
 Ydata = zeros(buf_len,1);
 
 % Kalman & Complementary Filter errors variables for the Axis
 EKXdata = zeros(buf_len,1);
 EKYdata = zeros(buf_len,1);
+EKZdata = zeros(buf_len,1);
 
 wx = 0;
 gxFilt = 0;
@@ -176,6 +199,10 @@ omega = 0;
 magneto = false;
 gyrosco = false;
 accelero = false;
+filterEst = false;
+filterMagn = false;
+filterAcc = false;
+filterGyro = false;
 
 pidStrategy ='U';
 pidModeStrategy = 'U';
@@ -189,8 +216,8 @@ defaultAlt = 1;
 % used to store long/short num to arrays
 weights2 = 2.^([7:-1:0]);
 
-bufferSend = zeros(1,buffSize-1);
-
+bufferSend = zeros(1, outputBuffSize);
+  
 disp('Welcome to the CPanel');
 % Delete all serial connections
 delete(instrfindall)
@@ -548,7 +575,7 @@ delete(instrfindall)
         if tenzo == true
             if takeOffAck == 1
                 if hoverAck == 0
-                    warndlg('Enabling PID. Safe flight.','Report') 
+                    %warndlg('Enabling PID. Safe flight.','Report') 
                     % Initialize the cmd array
                     cmd = zeros(8,4,'uint8');
                     cmd(1,1) = uint8(iHoverID);
@@ -558,7 +585,7 @@ delete(instrfindall)
                     sendMess(cmd);
                     % wait for feedback from Tenzo and change state of btn
                 else
-                   warndlg('Pid already active. Desactivating','!! Warning !!') 
+                   warndlg('Desactivating PID','!! Warning !!') 
                    % Initialize the cmd array
                    cmd = zeros(8,4,'uint8');
                    cmd(1,1) = uint8(iHoverID);
@@ -730,6 +757,15 @@ delete(instrfindall)
         %# update plot color
         val = get(src,'Value');
         
+        if val == 1
+            magneto = false;
+            accelero = false;
+            gyrosco = false;
+            stop(gyroTimer);
+            stop(angleTimer);
+            stop(accTimer);
+        end
+        
         % Gyro
         if val == 2
             magneto = false;
@@ -845,7 +881,7 @@ delete(instrfindall)
             % Max wait time
             set(xbee, 'TimeOut', 10);  
             % One message long buffer
-            set(xbee, 'InputBufferSize',buffSize)
+            set(xbee, 'InputBufferSize',inputBuffSize)
             % Open the serial
             fopen(xbee);    
 
@@ -896,6 +932,8 @@ delete(instrfindall)
                 fclose(xbee);
                 delete(xbee);
                 clear xbee;
+            else
+                
             end
         end 
     end
@@ -967,7 +1005,7 @@ delete(instrfindall)
 
         disp(bufferSend);
         fwrite(xbee,bufferSend,'uint8');    
-        xbee.ValuesSent
+        %xbee.ValuesSent
         
         %% Command
 
@@ -977,88 +1015,65 @@ delete(instrfindall)
     function graphAngles(obj,event,handles)
         % To debug uncomment the following line
         %disp('Angles');
-       %Plot the X magnitude
-        h1 = subplot(3,1,1,'Parent',hTabs(3));
-        %set(hAx,'title','X angular velocity in deg/s');
-        plot(h1,index,Tdata,'r','LineWidth',2);
-        hold on;
-        plot(h1,index,EKXdata,'b-','LineWidth',1);
-        hold off;
-%             xlabel('Time')
-%             ylabel('Wx');
-%             axis([1 buf_len -80 80]);
-%             %hold on;
-        h2 = subplot(3,1,2,'Parent',hTabs(3));
-%             title('Y angular velocity in deg/s');
-        plot(h2,index,Pdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-        hold on;
-        plot(h2,index,EKYdata,'b-','LineWidth',1);
-        hold off;
-%             xlabel('Time');
-%             ylabel('Wy Acc');
-%             axis([1 buf_len -80 80]);
-        h3 = subplot(3,1,3,'Parent',hTabs(3));
-%             title('Z angular velocity in deg/s');
-%             %hold on;
-        plot(h3,index,Ydata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-%       axis([1 buf_len -80 80]);
-        hold on;
-        plot(h2,index,EKYdata,'b-','LineWidth',1);
-        hold off;
-%             xlabel('Time');
-%             ylabel('Wz Acc'); 
+        anglesRequested = true;
+        
+        %% Requests data only if previous ones have been received and plotted
+        
+        if estReceived || anglesRequested
+            %Initialize the cmd array
+            cmd = zeros(8,4,'uint8');
+            % You can send 
+            % cmd(1,1) = uint8(magnID); OR
+            cmd(1,1) = uint8(estID);
+            % Sends 1 to activate PID
+            bits = reshape(bitget(0,32:-1:1),8,[]);
+            cmd(2,:) = weights2*bits;
+            sendMess(cmd);
+        else
+            disp('Not received yet Gyro');
+        end
+            
+
     end
 
     function graphGyro(obj,event,handles)
         % To debug uncomment the following line
         %disp('Gyro');
-        %Plot the X magnitude
-        h1 = subplot(3,1,1,'Parent',hTabs(3));
-        %set(hAx,'title','X angular velocity in deg/s');
-        plot(h1,index,gxFdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-%             xlabel('Time');
-%             ylabel('Wx');
-%             axis([1 buf_len -80 80]);
-%             %hold on;
-        h2 = subplot(3,1,2,'Parent',hTabs(3));
-%             title('Y angular velocity in deg/s');
-        plot(h2,index,gyFdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-%             xlabel('Time');
-%             ylabel('Wy Acc');
-%             axis([1 buf_len -80 80]);
-        h3 = subplot(3,1,3,'Parent',hTabs(3));
-%             title('Z angular velocity in deg/s');
-%             %hold on;
-        plot(h3,index,gzFdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-%             axis([1 buf_len -80 80]);
-%             xlabel('Time');
-%             ylabel('Wz Acc');                
+        gyroRequested = true;
+        %% Requests data only if previous ones have been received and plotted
+        
+        if gyroReceived || gyroRequested
+            % Initialize the cmd array
+            cmd = zeros(8,4,'uint8');
+            cmd(1,1) = uint8(gyroID);
+            % Sends 1 to activate PID
+            bits = reshape(bitget(0,32:-1:1),8,[]);
+            cmd(2,:) = weights2*bits;
+            sendMess(cmd);
+        else
+            disp('Not received yet Gyro');
+        end
+            
     end
 
     function graphAcc(obj,event,handles)
         % To debug uncomment the following line
         %disp('Acc');
-        %Plot the X magnitude
-        h1 = subplot(3,1,1,'Parent',hTabs(3));
-        %set(hAx,'title','X angular velocity in deg/s');
-        plot(h1,index,axdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-%             xlabel('Time');
-%             ylabel('Wx');
-%             axis([1 buf_len -80 80]);
-%             %hold on;
-        h2 = subplot(3,1,2,'Parent',hTabs(3));
-%             title('Y angular velocity in deg/s');
-        plot(h2,index,aydata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-%             xlabel('Time');
-%             ylabel('Wy Acc');
-%             axis([1 buf_len -80 80]);
-        h3 = subplot(3,1,3,'Parent',hTabs(3));
-%             title('Z angular velocity in deg/s');
-%             %hold on;
-        plot(h3,index,azdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-%             axis([1 buf_len -80 80]);
-%             xlabel('Time');
-%             ylabel('Wz Acc');
+        accRequested = true;
+        %% Requests data only if previous ones have been received and plotted
+        
+        if accReceived || accRequested
+            % Initialize the cmd array
+            cmd = zeros(8,4,'uint8');
+            cmd(1,1) = uint8(accID);
+            % Sends 1 to activate PID
+            bits = reshape(bitget(0,32:-1:1),8,[]);
+            cmd(2,:) = weights2*bits;
+            accReceived = false;
+            sendMess(cmd);
+        else
+            disp('Not received yet');
+        end
     end
 
     function storeDataFromSerial(obj,event,handles)
@@ -1066,13 +1081,14 @@ delete(instrfindall)
        while (get(xbee, 'BytesAvailable')~=0 && tenzo == true)
             % read until terminator
             [mess,count] = fread(xbee);
+            disp('Reading incoming buffer. Dimensions:');
             %% Debug stuff
 
-            %disp(count);
-            %disp(mess);
+            disp(count);
+            disp(mess);
             %% Parsing the message
 
-            if (count == buffSize && mess(2) == matlabAdd && mess(1) == arduinoAdd)
+            if (count >= (inputBuffSize) && mess(2) == matlabAdd && mess(1) == arduinoAdd)
                 % Mess sent from Arduino to MATLAB
                 % Assemble long int sent bytewise
                 versionArd = typecast([uint8(mess(3)), uint8(mess(4)),uint8(mess(5)), uint8(mess(6))], 'int32');
@@ -1086,15 +1102,15 @@ delete(instrfindall)
 %                     disp(readFrom);
                 sizeOfEachCmd = mess(9);
                 totMessLength = typecast([uint8(mess(10)), uint8(mess(11))], 'int16');
-                disp('Total message length:');
-                %disp(totMessLength);
+                disp('Total message length (header value):');
+                disp(totMessLength);
                 % TODO CRC check for message's integrity
                 crcvalue = typecast([uint8(mess(12)), uint8(mess(13))], 'int16');
                 %disp('CRC value');
-                disp(crcvalue);
+                %disp(crcvalue);
 
                 %% Read Commands
-                for i = 0:numCmd
+                for i = 0:(numCmd-1)
                     typei = (readFrom+1)+i*sizeOfEachCmd;
                     type = mess(typei) 
                     disp('Message #:');
@@ -1112,22 +1128,68 @@ delete(instrfindall)
                         disp('speed:');
                         disp(speed1);                       
                     end
-                    if type == 2 
+                    if type == accID 
                         disp('Accelerations');
                         % Acc
                         accXr = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                         disp('accX:');
-                        disp(accXr/100);
+                        disp(single(accXr/100));
+                        disp(single(accXr));
 
                         accYr = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
                         disp('accY:');
-                        disp(accYr/100);                             
+                        disp(single(accYr/100));  
+                        disp(single(accYr));                              
 
                         accZr = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                         disp('accZ:');
-                        disp(accZr/100);       
+                        disp(single(accZr/100));  
+                        
+                        if accelero == true
+                            % Gets Accelerometer data
+                            axdata = [ axdata(2:end) ; single(accXr/100) ];
+                            aydata = [ aydata(2:end) ; single(accYr/100) ];
+                            azdata = [ azdata(2:end) ; single(accZr/100) ];  
+                        end
+                                              
+                        %Plot the X magnitude
+                        h1 = subplot(3,1,1,'Parent',hTabs(3));
+                        %set(hAx,'title','X angular velocity in deg/s');
+                        if filterAcc
+                            plot(h1,index,axdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        else
+                            plot(h1,index,axdata,'r','LineWidth',2);
+                        end
+                        %xlabel('Time');
+                        %ylabel('Wx');
+                        %axis([1 buf_len -80 80]);
+                        %hold on;
+                        h2 = subplot(3,1,2,'Parent',hTabs(3));
+                        %title('Y angular velocity in deg/s');
+                        if filterAcc
+                            plot(h2,index,aydata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        else
+                            plot(h2,index,aydata,'b','LineWidth',2);
+                        end
+                        %xlabel('Time');
+                        %ylabel('Wy Acc');
+                        %axis([1 buf_len -80 80]);
+                        h3 = subplot(3,1,3,'Parent',hTabs(3));
+                        %title('Z angular velocity in deg/s');
+                        %hold on;
+                        if filterAcc
+                            plot(h3,index,azdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        else
+                            plot(h3,index,azdata,'g','LineWidth',2);
+                        end
+                        %axis([1 buf_len -80 80]);
+                        %xlabel('Time');
+                        %ylabel('Wz Acc');
+                        
+                        % Toggle ack 
+                        accReceived = true;
                     end
-                    if type == 3
+                    if type == gyroID
                         % Gyro
                         disp('Gyro');
                         wXr = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
@@ -1141,8 +1203,49 @@ delete(instrfindall)
                         wZr = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                         disp('wZ:');
                         disp(wZr/100);
+                        
+                        if gyrosco == true
+                            if filterGyro
+                                % Filters gyro data and stores them
+                                gxFilt = (1 - alpha)*gxFilt + alpha*wXr/100;
+                                gyFilt = (1 - alpha)*gyFilt + alpha*wYr/100;
+                                gzFilt = (1 - alpha)*gzFilt + alpha*wZr/100;
+                            else
+                                gxFilt = wXr/100;
+                                gyFilt = wYr/100;
+                                gzFilt = wZr/100;
+                            end
+                                gxFdata = [ gxFdata(2:end) ; gxFilt ];
+                                gyFdata = [ gyFdata(2:end) ; gyFilt ];
+                                gzFdata = [ gzFdata(2:end) ; gzFilt ];                            
+                        end
+                        
+                        %Plot the X magnitude
+                        h1 = subplot(3,1,1,'Parent',hTabs(3));
+                        %set(hAx,'title','X angular velocity in deg/s');
+                        plot(h1,index,gxFdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        %xlabel('Time');
+                        %ylabel('Wx');
+                        %axis([1 buf_len -80 80]);
+                        %hold on;
+                        h2 = subplot(3,1,2,'Parent',hTabs(3));
+                        %title('Y angular velocity in deg/s');
+                        plot(h2,index,gyFdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        %xlabel('Time');
+                        %ylabel('Wy Acc');
+                        %axis([1 buf_len -80 80]);
+                        h3 = subplot(3,1,3,'Parent',hTabs(3));
+                        %title('Z angular velocity in deg/s');
+                        %hold on;
+                        plot(h3,index,gzFdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        %axis([1 buf_len -80 80]);
+                        %xlabel('Time');
+                        %ylabel('Wz Acc');    
+                        
+                        % Toggle ack 
+                        gyroReceived = true;
                     end
-                    if type == 4 
+                    if type == magnID 
                         % Magn
                         disp('Magn');;
                         rollM = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
@@ -1155,9 +1258,39 @@ delete(instrfindall)
 
                         bearingM = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                         disp('yawMagn:');
-                        disp(bearingM/100);
+                        disp(bearingM);
+                        
+                        if magneto == true
+                            % Gets Magnetometer and Estimated angles
+                            if (rollM>90)
+                                rollM = rollM - 360;
+                            end
+                            if (pitchM > 90)
+                                pitchM =  pitchM - 360;
+                            end 
+                            
+                            if filterMagn
+                                % Apply noise filtering
+                                TFilt = (1 - alpha)*TFilt + alpha*rollM;
+                                PFilt = (1 - alpha)*PFilt + alpha*pitchM;
+                                YFilt = (1 - alpha)*YFilt + alpha*bearingM/100;
+
+                                Rdata = [ Rdata(2:end) ; TFilt ];
+                                Pdata = [ Pdata(2:end) ; PFilt ];
+                                Ydata = [ Ydata(2:end) ; YFilt ]; 
+                            else
+                                Rdata = [ Rdata(2:end) ; rollM ];
+                                Pdata = [ Pdata(2:end) ; pitchM ];
+                                Ydata = [ Ydata(2:end) ; bearingM/100 ]; 
+                            end
+                        else
+                            disp('Warning! Received magneto data but not requested');
+                        end
+                        
+                        % Toggle ack 
+                        magnReceived = true;
                     end
-                    if type == 5
+                    if type == estID
                         % Est
                         disp(' Kalman Est');
                         disp('Magn');;
@@ -1171,7 +1304,64 @@ delete(instrfindall)
 
                         bearingE = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                         disp('yaw K:');
-                        disp(bearingE/100);
+                        disp(single(bearingE/100));
+                        
+                            
+                        if filterEst
+                            REstFilt = (1 - alpha)*REstFilt + alpha*rollE;
+                            PEstFilt = (1 - alpha)*PEstFilt + alpha*pitchE;
+                            YEstFilt = (1 - alpha)*YEstFilt + alpha*bearingE/100;
+                        else
+                            REstFilt = rollE;
+                            PEstFilt = pitchE;
+                            YEstFilt = bearingE/100;
+                        end
+                        EKXdata = [ EKXdata(2:end) ; REstFilt ];
+                        EKYdata = [ EKYdata(2:end) ; PEstFilt ];
+                        EKZdata= [ EKYdata(2:end) ; YEstFilt ];
+                        
+                        %% Plot Angles
+
+                        
+                        %Plot the X magnitude
+                        h1 = subplot(3,1,1,'Parent',hTabs(3));
+                        %set(hAx,'title','X angular velocity in deg/s');
+                        plot(h1,index,EKXdata,'b-','LineWidth',2);
+                        if doubleAnglePlot
+                            hold on;
+                            plot(h1,index,Rdata,'r','LineWidth',1);
+                            hold off;
+                        end
+                        %xlabel('Time')
+                        %ylabel('Wx');
+                        %axis([1 buf_len -80 80]);
+                        %hold on;
+                        h2 = subplot(3,1,2,'Parent',hTabs(3));
+                        %title('Y angular velocity in deg/s');
+                        plot(h2,index,EKYdata,'b-','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        if doubleAnglePlot
+                            hold on;
+                            plot(h2,index,Pdata,'r','LineWidth',1);
+                            hold off;
+                        end
+                        %xlabel('Time');
+                        %ylabel('Wy Acc');
+                        %axis([1 buf_len -80 80]);
+                        h3 = subplot(3,1,3,'Parent',hTabs(3));
+                        %title('Z angular velocity in deg/s');
+                        %hold on;
+                        plot(h3,index,EKZdata,'b-','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        %axis([1 buf_len -80 80]);
+                        if doubleAnglePlot
+                            hold on;
+                            plot(h3,index,Ydata,'r','LineWidth',2); 
+                            hold off;
+                        end
+                        %xlabel('Time');
+                        %ylabel('Wz Acc'); 
+                        
+                        % Toggle ack 
+                        estReceived = true;
                     end
                     if type == 6
                         % Sonic
@@ -1339,9 +1529,8 @@ delete(instrfindall)
                     end
                     if type == takeOffID
                         % Take Off Ack
-                        disp('Take Off Ack');
                         takeOffAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
+                        disp('Take Off Ack');
                         disp(takeOffAck);
                         if takeOffAck == 1
                             set(takeOffBtn,'String','Flying');
@@ -1355,9 +1544,8 @@ delete(instrfindall)
                     end                    
                     if type == iHoverID
                         % Hovering Ack
-                        disp('Hovering Ack');
                         hoverAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
+                        disp('Hovering Ack');
                         disp(hoverAck);
                         if hoverAck == 1
                             set(hoverBtn,'String','NoPid');
@@ -1369,9 +1557,8 @@ delete(instrfindall)
                     end                    
                     if type == landID
                         % Landed Ack
-                        disp('Landed Ack');
                         landAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
+                        disp('Landed Ack');
                         disp(landAck);
                         if landAck == 1                           
                             set(landBtn,'String','Landed'); 
@@ -1426,11 +1613,11 @@ delete(instrfindall)
 %     %                     PFilt = (1 - alpha)*PFilt + alpha*pitch;
 %     %                     YFilt = (1 - alpha)*YFilt + alpha*yaw;
 % 
-%     %                     Tdata = [ Tdata(2:end) ; TFilt ];
+%     %                     Rdata = [ Rdata(2:end) ; TFilt ];
 %     %                     Pdata = [ Pdata(2:end) ; PFilt ];
 %     %                     Ydata = [ Ydata(2:end) ; YFilt ]; 
 % 
-%                         Tdata = [ Tdata(2:end) ; theta ];
+%                         Rdata = [ Rdata(2:end) ; theta ];
 %                         Pdata = [ Pdata(2:end) ; pitch ];
 %                         Ydata = [ Ydata(2:end) ; yaw ]; 
 % 
