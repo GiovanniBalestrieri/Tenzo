@@ -2263,7 +2263,7 @@ void sendDataSensors(boolean device)
        if (printAckCommands)
        {
           Serial.println();
-          Serial.print("Sending pid vals to Matlab. roll cons");
+          Serial.print("Sending pid vals to Matlab. roll cons: ");
           Serial.println(pMyCmd->param1);
           Serial.println(pMyCmd->param2);
           Serial.println(pMyCmd->param3);
