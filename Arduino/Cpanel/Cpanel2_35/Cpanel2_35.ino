@@ -353,7 +353,7 @@ double angleZAcc;
 
 // Pressure Params
 Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
-float seaLevelPressure = 1006;
+float seaLevelPressure = 1013;
 int pitchK;
 int rollK;
 int yaw;
@@ -1405,7 +1405,8 @@ void xbeeRoutine()
            // Request Motors Data   type: 22      || 26 
            stopSendingToMatlab();
            sendPidState = true;
-           sendPitchToMatlab = true;
+           sendPitchToMatlab = true;         
+           if (printVerboseSerial)
            {
               Serial.println();
               Serial.print("Channel: 22||26   pitch Pid? ");
@@ -1417,7 +1418,8 @@ void xbeeRoutine()
            // Request Motors Data   type: 23      || 27
            stopSendingToMatlab();
            sendPidState = true;
-           sendYawToMatlab = true;
+           sendYawToMatlab = true;         
+           if (printVerboseSerial)
            {
               Serial.println();
               Serial.print("Channel: 23||27   yaw Pid? ");
@@ -1429,7 +1431,8 @@ void xbeeRoutine()
            // Request Motors Data   type: 24      || 28
            stopSendingToMatlab();
            sendPidState = true;
-           sendAltToMatlab = true;
+           sendAltToMatlab = true;         
+           if (printVerboseSerial)
            {
               Serial.println();
               Serial.print("Channel: 24||28   alt Pid? ");
@@ -1459,80 +1462,100 @@ void xbeeRoutine()
            if (type == 9)
            {
              // Pid Cons ROLL 
-             consKpRoll = cmd1*100;
-             consKdRoll = cmd2*100;
-             consKiRoll = cmd3*100;
-             thresholdRoll = cmd4;
+             consKpRoll = cmd1/1000;
+             consKdRoll = cmd2/1000;
+             consKiRoll = cmd3/1000;
+             SetpointRoll = cmd4;
              sendPidState = true;
-             sendRollToMatlab = true;
+             sendRollToMatlab = true;        
+             if (printVerboseSerial)
+             {
+                Serial.println();
+                Serial.println("Cons Roll Pid ");
+                Serial.println(consKpRoll);
+                Serial.println(consKdRoll);
+                Serial.println(consKiRoll);
+                Serial.println(SetpointRoll);
+                Serial.println();
+             }
            }
            else if (type == 13)
            {
              // Pid AGG ROLL 
-             aggKpRoll = cmd1*100;
-             aggKdRoll = cmd2*100;
-             aggKiRoll = cmd3*100;
-             thresholdRoll = cmd4;
+             aggKpRoll = cmd1/1000;
+             aggKdRoll = cmd2/1000;
+             aggKiRoll = cmd3/1000;
+             SetpointRoll = cmd4;
              sendPidState = true;
-             sendRollToMatlab = true;
+             sendRollToMatlab = true;      
+             if (printVerboseSerial)
+             {
+                Serial.println();
+                Serial.println("Agg Roll Pid ");
+                Serial.println(aggKpRoll);
+                Serial.println(aggKdRoll);
+                Serial.println(aggKiRoll);
+                Serial.println(SetpointRoll);
+                Serial.println();
+             }
            }
            else if (type == 10)
            {
              // Pid Cons PITCH 
-             consKpPitch = cmd1*100;
-             consKdPitch = cmd2*100;
-             consKiPitch = cmd3*100;
-             thresholdPitch = cmd4;
+             consKpPitch = cmd1/1000;
+             consKdPitch = cmd2/1000;
+             consKiPitch = cmd3/1000;
+             SetpointPitch = cmd4;
              sendPidState = true;
              sendPitchToMatlab = true;
            }
            else if (type == 14)
            {
              // Pid AGG PITCH 
-             aggKpPitch = cmd1*100;
-             aggKdPitch = cmd2*100;
-             aggKiPitch = cmd3*100;
-             thresholdPitch = cmd4;
+             aggKpPitch = cmd1/1000;
+             aggKdPitch = cmd2/1000;
+             aggKiPitch = cmd3/1000;
+             SetpointPitch = cmd4;
              sendPidState = true;
              sendPitchToMatlab = true;
            }
            else if (type == 11)
            {
              // Pid Cons YAW 
-             consKpYaw = cmd1*100;
-             consKdYaw = cmd2*100;
-             consKiYaw = cmd3*100;
-             thresholdYaw = cmd4;
+             consKpYaw = cmd1/1000;
+             consKdYaw = cmd2/1000;
+             consKiYaw = cmd3/1000;
+             SetpointYaw = cmd4;
              sendPidState = true;
              sendYawToMatlab = true;
            }
            else if (type == 15)
            {
              // Pid AGG YAW 
-             aggKpYaw = cmd1*100;
-             aggKdYaw = cmd2*100;
-             aggKiYaw = cmd3*100;
-             thresholdYaw = cmd4;
+             aggKpYaw = cmd1/1000;
+             aggKdYaw = cmd2/1000;
+             aggKiYaw = cmd3/1000;
+             SetpointYaw = cmd4;
              sendPidState = true;
              sendYawToMatlab = true;
            }
            else if (type == 12)
            {
              // Pid Cons ALTITUDE 
-             consKpAltitude = cmd1*100;
-             consKdAltitude = cmd2*100;
-             consKiAltitude = cmd3*100;
-             thresholdAlt = cmd4;
+             consKpAltitude = cmd1/1000;
+             consKdAltitude = cmd2/1000;
+             consKiAltitude = cmd3/1000;
+             SetpointAlt = cmd4;
              sendPidState = true;
              sendAltToMatlab = true;
            }
            else if (type == 16)
            {
              // Pid AGG ALTITUDE 
-             aggKpAltitude = cmd1*100;
-             aggKdAltitude = cmd2*100;
-             aggKiAltitude = cmd3*100;
-             thresholdAlt = cmd4;
+             aggKpAltitude = cmd1/1000;
+             aggKdAltitude = cmd2/1000;
+             aggKiAltitude = cmd3/1000;
+             SetpointdAlt = cmd4;
              sendPidState = true;
              sendAltToMatlab = true;
            }           
@@ -1810,18 +1833,18 @@ void changePidState(boolean cond)
     // Enable Pid Actions
     myRollPID.SetMode(AUTOMATIC);
     //tell the PID to range between 0 and the full throttle
-    SetpointRoll = 0;
+    //SetpointRoll = 0;
     myRollPID.SetOutputLimits(-500, 500);
     
     // Pitch
     myPitchPID.SetMode(AUTOMATIC);
-    SetpointPitch = 0;
+    //SetpointPitch = 0;
     //tell the PID to range between 0 and the full throttle
     myPitchPID.SetOutputLimits(-500, 500);
     
     // Yaw
     myYawPID.SetMode(AUTOMATIC);
-    SetpointYaw=0;
+    //SetpointYaw=0;
     //tell the PID to range between 0 and the full throttle
     myYawPID.SetOutputLimits(-500, 500);
     enablePid = true;
@@ -2214,9 +2237,9 @@ void sendDataSensors(boolean device)
        pMyCmd->cmd = 12;
        numCommandToSend++;
              
-       pMyCmd->param1 = consKpAltitude*100;   
-       pMyCmd->param2 = consKdAltitude*100;
-       pMyCmd->param3 = consKiAltitude*100;
+       pMyCmd->param1 = consKpAltitude*1000;   
+       pMyCmd->param2 = consKdAltitude*1000;
+       pMyCmd->param3 = consKiAltitude*1000;
        pMyCmd->param4 = SetpointAltitude;
        if (printAckCommands)
        {
@@ -2234,9 +2257,9 @@ void sendDataSensors(boolean device)
        pMyCmd->cmd = 16;
        numCommandToSend++;
              
-       pMyCmd->param1 = aggKpAltitude*100;   
-       pMyCmd->param2 = aggKdAltitude*100;
-       pMyCmd->param3 = aggKiAltitude*100;
+       pMyCmd->param1 = aggKpAltitude*1000;   
+       pMyCmd->param2 = aggKdAltitude*1000;
+       pMyCmd->param3 = aggKiAltitude*1000;
        pMyCmd->param4 = SetpointAltitude;
        if (printAckCommands)
        {
@@ -2343,9 +2366,9 @@ void sendDataSensors(boolean device)
        pMyCmd->cmd = 11;
        numCommandToSend++;
              
-       pMyCmd->param1 = consKpYaw*100;   
-       pMyCmd->param2 = consKdYaw*100;
-       pMyCmd->param3 = consKiYaw*100;
+       pMyCmd->param1 = consKpYaw*1000;   
+       pMyCmd->param2 = consKdYaw*1000;
+       pMyCmd->param3 = consKiYaw*1000;
        pMyCmd->param4 = SetpointYaw;
        if (printAckCommands)
        {
@@ -2363,9 +2386,9 @@ void sendDataSensors(boolean device)
        pMyCmd->cmd = 15;
        numCommandToSend++;
              
-       pMyCmd->param1 = aggKpYaw*100;   
-       pMyCmd->param2 = aggKdYaw*100;
-       pMyCmd->param3 = aggKiYaw*100;
+       pMyCmd->param1 = aggKpYaw*1000;   
+       pMyCmd->param2 = aggKdYaw*1000;
+       pMyCmd->param3 = aggKiYaw*1000;
        pMyCmd->param4 = SetpointYaw;
        if (printAckCommands)
        {

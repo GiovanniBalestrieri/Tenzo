@@ -374,14 +374,14 @@ delete(instrfindall)
     % Pid Aggressive threshold value 
     
     frameThreshold = uicontrol('Style','frame','Visible','off', ...
-        'Parent',hTabs(4), 'Position',[ 222 323 30 30 ]);
+        'Parent',hTabs(4), 'Position',[ 222 323 50 50 ]);
     
     referencePIDVal = uicontrol('Style','edit', 'String','0', ...
-        'Position', [226 325 20 25],'Visible','off',...
+        'Position', [226 325 40 40],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',13,'FontWeight','normal');
     
     referencePIDTxt = uicontrol('Style','text', 'String','Reference', ...
-        'Position', [135 325 70 25],'Visible','off',...
+        'Position', [135 325 70 40],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',11,'FontWeight','normal');
     
     sendPidValsBtn = uicontrol('Style','pushbutton', 'String','Send', ...
@@ -680,20 +680,20 @@ delete(instrfindall)
 
     function pidKdSliderCallBack(src,eventData)
        set(pidKdVal,'String',get(pidKdSlider,'Value'));
-       if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
-       strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',1,', ...
-           num2str(get(pidKpSlider,'Value')),',X']
-       fprintf(xbee,'%s',strindToSend,'sync'); 
-       end
+%        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
+%        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',1,', ...
+%            num2str(get(pidKpSlider,'Value')),',X']
+%        fprintf(xbee,'%s',strindToSend,'sync'); 
+%       end
     end
 
     function pidKiSliderCallBack(src,eventData)
        set(pidKiVal,'String',get(pidKiSlider,'Value'));
-       if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
-       strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',2,', ...
-           num2str(get(pidKpSlider,'Value')),',X']
-       fprintf(xbee,'%s',strindToSend,'sync'); 
-       end
+%        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
+%        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',2,', ...
+%            num2str(get(pidKpSlider,'Value')),',X']
+%        fprintf(xbee,'%s',strindToSend,'sync'); 
+%        end
     end
 
 %    function pidKpSliderCallBack(src,eventData)
@@ -1154,17 +1154,19 @@ delete(instrfindall)
                             cmd(1,1) = uint8(cmdtype);
                             % Sends 1 to activate PID
                             disp('ref value:');
-                            disp(get(referencePIDTxt,'String'));
-                            %bits = reshape(bitget(get(referencePIDTxt,'String'),32:-1:1),8,[]);
-%                             cmd(2,:) = weights2*bits;
-                            disp('Kp Slider value:');
-                            disp(get(pidKpSlider,'Value')*100);
-%                             bits = reshape(bitget(get(pidKpSlider,'Value')*100,32:-1:1),8,[]);
-%                             cmd(3,:) = weights2*bits;
-%                             bits = reshape(bitget(get(pidKdSlider,'Value')*100,32:-1:1),8,[]);
-%                             cmd(4,:) = weights2*bits;
-%                             bits = reshape(bitget(get(pidKiSlider,'Value')*100,32:-1:1),8,[]);
-%                             cmd(5,:) = weights2*bits;
+                            disp(get(referencePIDVal,'String'));
+                            disp('Kp val');
+                            disp(get(pidKpSlider,'Value'));
+                            disp('Rounded Kp val');
+                            disp(int8(get(pidKpSlider,'Value')*1000));
+                            bits = reshape(bitget(int8(get(pidKpSlider,'Value')*1000),32:-1:1),8,[]);
+                            cmd(2,:) = weights2*bits;
+                            bits = reshape(bitget(int8(get(pidKdSlider,'Value'))*1000,32:-1:1),8,[]);
+                            cmd(3,:) = weights2*bits;
+                            bits = reshape(bitget(get(pidKdSlider,'Value')*1000,32:-1:1),8,[]);
+                            cmd(4,:) = weights2*bits;
+                            bits = reshape(bitget(double(get(referencePIDVal,'String')),32:-1:1),8,[]);
+                            cmd(5,:) = weights2*bits;
                             disp('sending');
                             sendMess(cmd);
                        else
@@ -1339,21 +1341,21 @@ delete(instrfindall)
                         % Acc
                         accXr = typecast([int8(mess(typei + 1)), int8(mess(typei + 2)),int8(mess(typei + 3)), int8(mess(typei + 4))], 'int32');
                         disp('accX:');
-                        disp(accXr);
+                        disp(double(accXr)/100);
 
                         accYr = typecast([int8(mess(typei + 5)), int8(mess(typei + 6)),int8(mess(typei + 7)), int8(mess(typei + 8))], 'int32');
                         disp('accY:');
-                        disp(double(accYr));                            
+                        disp(double(accYr)/100);                            
 
                         accZr = typecast([int8(mess(typei + 9)), int8(mess(typei + 10)),int8(mess(typei + 11)), int8(mess(typei + 12))], 'int32');
                         disp('accZ:');
-                        disp(accZr);
+                        disp(double(accZr)/100);
                         
                         if accelero == true
                             % Gets Accelerometer data
-                            axdata = [ axdata(2:end) ; accXr ];
-                            aydata = [ aydata(2:end) ; accYr ];
-                            azdata = [ azdata(2:end) ; accZr ];  
+                            axdata = [ axdata(2:end) ; double(accXr)/100 ];
+                            aydata = [ aydata(2:end) ; double(accYr)/100 ];
+                            azdata = [ azdata(2:end) ; double(accZr)/100 ];  
                         end               
                         %Plot the X magnitude
                         h1 = subplot(3,1,1,'Parent',hTabs(3));
@@ -1583,28 +1585,29 @@ delete(instrfindall)
                         disp('Pid Roll Cons');
                         consRollKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                         disp('consRollKp:');
-                        consRollKp = consRollKpTemp/100;
+                        %disp(consRollKpTemp);
+                        consRollKp = double(consRollKpTemp)/1000;
                         disp(consRollKp);
 
                         consRollKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
                         disp('consRollKd:');
-                        consRollKd = consRollKdTemp/100;
+                        consRollKd = double(consRollKdTemp)/1000;
                         disp(consRollKd);                             
 
                         consRollKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                         disp('consRollKi:');
-                        consRollKi = consRollKiTemp/100;
+                        consRollKi = double(consRollKiTemp)/1000;
                         disp(consRollKi);    
 
                         setpointRollTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('threshold:');
+                        disp('setpointRollTemp:');
                         disp(setpointRollTemp);   
                         
                         if strcmp(pidModeStrategy,'0')
                             set(pidKpSlider,'Value',consRollKp);
-                            set(pidKpSlider,'Value',consRollKd);
-                            set(pidKpSlider,'Value',consRollKi);
-                            set(referencePIDTxt,'String',setpointRollTemp);
+                            set(pidKdSlider,'Value',consRollKd);
+                            set(pidKiSlider,'Value',consRollKi);
+                            set(referencePIDVal,'String',setpointRollTemp);
                         end
                     end                   
                     if type == 13 
@@ -1612,28 +1615,28 @@ delete(instrfindall)
                         disp('Pid Roll AGG');
                         aggRollKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                         disp('aggRollKp:');
-                        aggRollKp = aggRollKpTemp/100;
-                        disp(aggRollKpTemp/100);
+                        aggRollKp = double(aggRollKpTemp)/1000;
+                        disp(aggRollKp);
 
                         aggRollKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
                         disp('aggRollKd:');
-                        aggRollKd = aggRollKdTemp/100;
+                        aggRollKd = double(aggRollKdTemp)/1000;
                         disp(aggRollKd);                             
 
                         aggRollKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                         disp('aggRollKi:');
-                        aggRollKi = aggRollKiTemp/100;
+                        aggRollKi = double(aggRollKiTemp)/1000;
                         disp(aggRollKi);    
 
                         setpointRollTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('threshold:');
+                        disp('setpointRollTemp:');
                         disp(setpointRollTemp);   
                        
                         if strcmp(pidModeStrategy,'1') 
                             set(pidKpSlider,'Value',aggRollKp);
                             set(pidKpSlider,'Value',aggRollKd);
                             set(pidKpSlider,'Value',aggRollKi);
-                            set(referencePIDTxt,'String',setpointRollTemp);
+                            set(referencePIDVal,'String',setpointRollTemp);
                         end
                     end
                     if type == 10 
@@ -1641,17 +1644,17 @@ delete(instrfindall)
                         disp('Pid Pitch Cons');
                         consPitchKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                         disp('val1:');
-                        consPitchKp = consPitchKpTemp/100;
+                        consPitchKp = double(consPitchKpTemp)/1000;
                         disp(consPitchKp);
 
                         consPitchKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
                         disp('val2:');
-                        consPitchKd = consPitchKdTemp/100;
+                        consPitchKd = double(consPitchKdTemp)/1000;
                         disp(consPitchKd);                             
 
                         consPitchKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                         disp('val3:');
-                        consPitchKi = consPitchKiTemp/100;
+                        consPitchKi = double(consPitchKiTemp)/1000;
                         disp(consPitchKi);    
 
                         setpointPitchTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
@@ -1661,8 +1664,8 @@ delete(instrfindall)
                         if strcmp(pidModeStrategy,'0')
                             set(pidKpSlider,'Value',consPitchKp);
                             set(pidKpSlider,'Value',consPitchKd);
-                            set(pidKpSlider,'Value',consPitchKi);
-                            set(referencePIDTxt,'String',setpointPitchTemp);
+                            set(pidKpSlider,'Value',1);
+                            set(referencePIDVal,'String',setpointPitchTemp);
                         end
                     end                   
                     if type == 14 
@@ -1670,17 +1673,17 @@ delete(instrfindall)
                         disp('Pid Pitch Agg');
                         aggPitchKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                         disp('val1:');
-                        aggPitchKp = aggPitchKpTemp/100;
+                        aggPitchKp = double(aggPitchKpTemp)/1000;
                         disp(aggPitchKp);
 
                         aggPitchKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
                         disp('val2:');
-                        aggPitchKd = aggPitchKdTemp/100;
+                        aggPitchKd = double(aggPitchKdTemp)/1000;
                         disp(aggPitchKd);                             
 
                         aggPitchKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                         disp('val3:');
-                        aggPitchKi = aggPitchKiTemp/100;
+                        aggPitchKi = double(aggPitchKiTemp)/1000;
                         disp(aggPitchKi);    
 
                         setpointPitchTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
@@ -1691,7 +1694,7 @@ delete(instrfindall)
                             set(pidKpSlider,'Value',aggPitchKp);
                             set(pidKdSlider,'Value',aggPitchKd);
                             set(pidKiSlider,'Value',aggPitchKi);
-                            set(referencePIDTxt,'String',setpointPitchTemp);
+                            set(referencePIDVal,'String',setpointPitchTemp);
                         end
                     end
                     if type == 11 
@@ -1699,17 +1702,17 @@ delete(instrfindall)
                         disp('Pid Yaw Cons');
                         consYawKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                         disp('val1:');
-                        consYawKp = consYawKpTemp/100;
+                        consYawKp = double(consYawKpTemp)/1000;
                         disp(consYawKp);
 
                         consYawKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
                         disp('val2:');
-                        consYawKd = consYawKdTemp/100;
+                        consYawKd = double(consYawKdTemp)/1000;
                         disp(consYawKd);                             
 
                         consYawKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                         disp('val3:');
-                        consYawKi = consYawKiTemp/100;
+                        consYawKi = double(consYawKiTemp)/1000;
                         disp(consYawKi);    
 
                         setpointYawTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
@@ -1720,7 +1723,7 @@ delete(instrfindall)
                             set(pidKpSlider,'Value',consYawKp);
                             set(pidKpSlider,'Value',consYawKd);
                             set(pidKpSlider,'Value',consYawKi);
-                            set(referencePIDTxt,'String',setpointYawTemp);
+                            set(referencePIDVal,'String',setpointYawTemp);
                         end
                     end                   
                     if type == 15 
@@ -1728,17 +1731,17 @@ delete(instrfindall)
                         disp('Pid Yaw AGG');
                         aggYawKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                         disp('val1:');
-                        aggYawKp = aggYawKpTemp/100;
+                        aggYawKp = double(aggYawKpTemp)/1000;
                         disp(aggYawKp);
 
                         aggYawKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
                         disp('val2:');
-                        aggYawKd = aggYawKdTemp/100;
+                        aggYawKd = double(aggYawKdTemp)/1000;
                         disp(aggYawKd);                             
 
                         aggYawKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                         disp('val3:');
-                        aggYawKi = aggYawKiTemp/100;
+                        aggYawKi = double(aggYawKiTemp)/1000;
                         disp(aggYawKiTemp/100);    
 
                         setpointYawTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
@@ -1749,25 +1752,25 @@ delete(instrfindall)
                             set(pidKpSlider,'Value',aggYawKp);
                             set(pidKdSlider,'Value',aggYawKd);
                             set(pidKiSlider,'Value',aggYawKi);
-                            set(referencePIDTxt,'String',setpointYawTemp);
+                            set(referencePIDVal,'String',setpointYawTemp);
                         end
                     end
-                    if type == 11
+                    if type == 12
                         % Pid Alt CONS
                         disp('Pid Alt Cons');
                         consAltKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                         disp('val1:');
-                        consAltKp = consAltKpTemp/100;
+                        consAltKp = double(consAltKpTemp)/1000;
                         disp(consAltKp);
 
                         consAltKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
                         disp('val2:');
-                        consAltKd = consAltKdTemp/100;
+                        consAltKd = double(consAltKdTemp)/1000;
                         disp(consAltKd);                             
 
                         consAltKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                         disp('val3:');
-                        consAltKi = consAltKiTemp/100;
+                        consAltKi = double(consAltKiTemp)/1000;
                         disp(consAltKi);    
 
                         setpointAltTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
@@ -1775,33 +1778,40 @@ delete(instrfindall)
                         disp(setpointAltTemp);   
                         
                         if strcmp(pidModeStrategy,'0')
-                            set(pidKpSlider,'Value',consAKp);
-                            set(pidKpSlider,'Value',consPitchKd);
-                            set(pidKpSlider,'Value',consPitchKi);
-                            set(referencePIDTxt,'String',setpointPitchTemp);
+                            set(pidKpSlider,'Value',consAltKp);
+                            set(pidKpSlider,'Value',consAltKd);
+                            set(pidKpSlider,'Value',consAltKi);
+                            set(referencePIDVal,'String',setpointAltTemp);
                         end
                     end                   
-                    if type == 15 
+                    if type == 16 
                         % Pid Alt AGG
                         disp('Pid Alt AGG');
                         aggAltKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                         disp('val1:');
-                        aggAltKp = aggAltKpTemp/100;
+                        aggAltKp =double(aggAltKpTemp)/1000;
                         disp(aggAltKp);
 
                         aggAltKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
                         disp('val2:');
-                        aggAltKd = aggAltKdTemp/100;
+                        aggAltKd = double(aggAltKdTemp)/1000;
                         disp(aggAltKd);                             
 
                         aggAltKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                         disp('val3:');
-                        aggAltKi = aggAltKiTemp/100;
+                        aggAltKi = double(aggAltKiTemp)/1000;
                         disp(aggAltKi);    
 
                         setpointAltTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
                         disp('val4:');
-                        disp(setpointAltTemp);   
+                        disp(setpointAltTemp); 
+                        
+                        if strcmp(pidModeStrategy,'1') 
+                            set(pidKpSlider,'Value',aggAltKp);
+                            set(pidKdSlider,'Value',aggAltKd);
+                            set(pidKiSlider,'Value',aggAltKi);
+                            set(referencePIDVal,'String',setpointAltTemp);
+                        end
                     end
                     if type == takeOffID
                         % Take Off Ack
