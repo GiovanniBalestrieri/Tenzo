@@ -1158,14 +1158,18 @@ delete(instrfindall)
                             disp('Kp val');
                             disp(get(pidKpSlider,'Value'));
                             disp('Rounded Kp val');
-                            disp(double(get(pidKpSlider,'Value')*1000));
-                            bits = reshape(bitget(uin32(get(pidKpSlider,'Value')*1000),32:-1:1),8,[]);
+                            disp(double(round(get(pidKpSlider,'Value')*1000)));
+                            disp('Rounded Kd val');
+                            disp(double(round(get(pidKdSlider,'Value')*1000)));
+                            disp('Rounded Ki val');
+                            disp(double(round(get(pidKiSlider,'Value')*1000)));
+                            bits = reshape(bitget(double(round(get(pidKpSlider,'Value')*1000)),32:-1:1),8,[]);
                             cmd(2,:) = weights2*bits;
-                            bits = reshape(bitget(uint32(get(pidKdSlider,'Value')*1000),32:-1:1),8,[]);
+                            bits = reshape(bitget(double(round(get(pidKdSlider,'Value')*1000)),32:-1:1,'int32'),8,[]);
                             cmd(3,:) = weights2*bits;
-                            bits = reshape(bitget(uint32(get(pidKdSlider,'Value')*1000),32:-1:1),8,[]);
+                            bits = reshape(bitget(double(round(get(pidKiSlider,'Value')*1000)),32:-1:1,'int32'),8,[]);
                             cmd(4,:) = weights2*bits;
-                            bits = reshape(bitget(double(get(referencePIDVal,'String')),32:-1:1),8,[]);
+                            bits = reshape(bitget(str2double(get(referencePIDVal,'String')),32:-1:1,'int32'),8,[]);
                             cmd(5,:) = weights2*bits;
                             disp('sending');
                             sendMess(cmd);
@@ -1199,22 +1203,22 @@ delete(instrfindall)
                            disp('dovrebbe eessre 21');
                        elseif strcmp(pidStrategy,'0') && strcmp(pidModeStrategy,'1')
                            % R A        
-                           cmdtype = rCPPID;
+                           cmdtype = rARPID;
                        elseif strcmp(pidStrategy,'1') && strcmp(pidModeStrategy,'0')
                            % P C
-                           cmdtype = rCYPID;
+                           cmdtype = rCPPID;
                        elseif strcmp(pidStrategy,'1') && strcmp(pidModeStrategy,'1')
                            % P A                                 
-                           cmdtype = rCAPID;
+                           cmdtype = rAPPID;
                        elseif strcmp(pidStrategy,'2') && strcmp(pidModeStrategy,'0')
                            % Y C
-                           cmdtype = rAPPID;
+                           cmdtype = rCYPID;
                        elseif strcmp(pidStrategy,'2') && strcmp(pidModeStrategy,'1')
                            % Y A                                 
-                           cmdtype = rARPID;
+                           cmdtype = rAYPID;
                        elseif strcmp(pidStrategy,'3') && strcmp(pidModeStrategy,'0')
                            % A C
-                           cmdtype = rAYPID;
+                           cmdtype = rCAPID;
                        elseif strcmp(pidStrategy,'3') && strcmp(pidModeStrategy,'1')
                            % A A  (american Airlines -> Allin                        
                            cmdtype = rAAPID;
@@ -1634,8 +1638,8 @@ delete(instrfindall)
                        
                         if strcmp(pidModeStrategy,'1') 
                             set(pidKpSlider,'Value',aggRollKp);
-                            set(pidKpSlider,'Value',aggRollKd);
-                            set(pidKpSlider,'Value',aggRollKi);
+                            set(pidKdSlider,'Value',aggRollKd);
+                            set(pidKiSlider,'Value',aggRollKi);
                             set(referencePIDVal,'String',setpointRollTemp);
                         end
                     end
@@ -1663,8 +1667,8 @@ delete(instrfindall)
                         
                         if strcmp(pidModeStrategy,'0')
                             set(pidKpSlider,'Value',consPitchKp);
-                            set(pidKpSlider,'Value',consPitchKd);
-                            set(pidKpSlider,'Value',1);
+                            set(pidKdSlider,'Value',consPitchKd);
+                            set(pidKiSlider,'Value',consPitchKi);
                             set(referencePIDVal,'String',setpointPitchTemp);
                         end
                     end                   
@@ -1721,8 +1725,8 @@ delete(instrfindall)
                         
                         if strcmp(pidModeStrategy,'0')
                             set(pidKpSlider,'Value',consYawKp);
-                            set(pidKpSlider,'Value',consYawKd);
-                            set(pidKpSlider,'Value',consYawKi);
+                            set(pidKdSlider,'Value',consYawKd);
+                            set(pidKiSlider,'Value',consYawKi);
                             set(referencePIDVal,'String',setpointYawTemp);
                         end
                     end                   
@@ -1779,8 +1783,8 @@ delete(instrfindall)
                         
                         if strcmp(pidModeStrategy,'0')
                             set(pidKpSlider,'Value',consAltKp);
-                            set(pidKpSlider,'Value',consAltKd);
-                            set(pidKpSlider,'Value',consAltKi);
+                            set(pidKdSlider,'Value',consAltKd);
+                            set(pidKiSlider,'Value',consAltKi);
                             set(referencePIDVal,'String',setpointAltTemp);
                         end
                     end                   

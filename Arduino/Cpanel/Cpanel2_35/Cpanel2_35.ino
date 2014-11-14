@@ -60,8 +60,8 @@ boolean enablePitchPid = true;
 boolean enableYawPid = false;
 boolean enableAltitudePid = false;
 // Define IO and setpoint for control
-double SetpointRoll = 10, InputRoll, errorRoll, OutputRoll;
-double SetpointPitch = 5, InputPitch, errorPitch, OutputPitch;
+double SetpointRoll = 0, InputRoll, errorRoll, OutputRoll;
+double SetpointPitch = 0, InputPitch, errorPitch, OutputPitch;
 double SetpointYaw = 180, InputYaw, errorYaw, OutputYaw;
 double SetpointAltitude = 1, InputAltitude, errorAltitude, OutputAltitude;
 
@@ -1008,6 +1008,10 @@ void xbeeRoutine()
     {  	
       resetMotorsPidOff();
     } 
+    else if (GotChar == 'P')
+    {
+      dispAllPidVals();
+    }
     else if(GotChar == 'z')
     { 
       if (alphaA_xy>0.01)
@@ -1462,16 +1466,16 @@ void xbeeRoutine()
            if (type == 9)
            {
              // Pid Cons ROLL 
-             consKpRoll = cmd1/1000;
-             consKdRoll = cmd2/1000;
-             consKiRoll = cmd3/1000;
+             consKpRoll = (double) cmd1/1000;
+             consKdRoll = (double) cmd2/1000;
+             consKiRoll = (double) cmd3/1000;
              SetpointRoll = cmd4;
              sendPidState = true;
              sendRollToMatlab = true;        
              if (printVerboseSerial)
              {
                 Serial.println();
-                Serial.println("Cons Roll Pid ");
+                Serial.println("AA Cons Roll Pid ");
                 Serial.println(consKpRoll);
                 Serial.println(consKdRoll);
                 Serial.println(consKiRoll);
@@ -1482,9 +1486,9 @@ void xbeeRoutine()
            else if (type == 13)
            {
              // Pid AGG ROLL 
-             aggKpRoll = cmd1/1000;
-             aggKdRoll = cmd2/1000;
-             aggKiRoll = cmd3/1000;
+             aggKpRoll = (double) cmd1/1000;
+             aggKdRoll = (double) cmd2/1000;
+             aggKiRoll = (double) cmd3/1000;
              SetpointRoll = cmd4;
              sendPidState = true;
              sendRollToMatlab = true;      
@@ -1502,29 +1506,49 @@ void xbeeRoutine()
            else if (type == 10)
            {
              // Pid Cons PITCH 
-             consKpPitch = cmd1/1000;
-             consKdPitch = cmd2/1000;
-             consKiPitch = cmd3/1000;
+             consKpPitch = (double) cmd1/1000;
+             consKdPitch = (double) cmd2/1000;
+             consKiPitch = (double) cmd3/1000;
              SetpointPitch = cmd4;
              sendPidState = true;
              sendPitchToMatlab = true;
+             if (printVerboseSerial)
+             {
+                Serial.println();
+                Serial.println("cons pitch Pid ");
+                Serial.println(consKpPitch);
+                Serial.println(consKdPitch);
+                Serial.println(consKiPitch);
+                Serial.println(SetpointRoll);
+                Serial.println();
+             }
            }
            else if (type == 14)
            {
              // Pid AGG PITCH 
-             aggKpPitch = cmd1/1000;
-             aggKdPitch = cmd2/1000;
-             aggKiPitch = cmd3/1000;
+             aggKpPitch = (double) cmd1/1000;
+             aggKdPitch = (double) cmd2/1000;
+             aggKiPitch = (double) cmd3/1000;
              SetpointPitch = cmd4;
              sendPidState = true;
              sendPitchToMatlab = true;
+             if (printVerboseSerial)
+             {
+                Serial.println();
+                Serial.println("Agg Roll Pid ");
+                Serial.println(aggKpRoll);
+                Serial.println(aggKdRoll);
+                Serial.println(aggKiRoll);
+                Serial.println(SetpointRoll);
+                Serial.println();
+             }
            }
            else if (type == 11)
            {
              // Pid Cons YAW 
-             consKpYaw = cmd1/1000;
-             consKdYaw = cmd2/1000;
-             consKiYaw = cmd3/1000;
+             consKpYaw = (double) cmd1/1000;
+             consKdYaw = (double) cmd2/1000;
+             consKiYaw = (double) cmd3/1000;
              SetpointYaw = cmd4;
              sendPidState = true;
              sendYawToMatlab = true;
@@ -1532,9 +1556,9 @@ void xbeeRoutine()
            else if (type == 15)
            {
              // Pid AGG YAW 
-             aggKpYaw = cmd1/1000;
-             aggKdYaw = cmd2/1000;
-             aggKiYaw = cmd3/1000;
+             aggKpYaw = (double) cmd1/1000;
+             aggKdYaw = (double) cmd2/1000;
+             aggKiYaw = (double) cmd3/1000;
              SetpointYaw = cmd4;
              sendPidState = true;
              sendYawToMatlab = true;
@@ -1542,20 +1566,20 @@ void xbeeRoutine()
            else if (type == 12)
            {
              // Pid Cons ALTITUDE 
-             consKpAltitude = cmd1/1000;
-             consKdAltitude = cmd2/1000;
-             consKiAltitude = cmd3/1000;
-             SetpointAlt = cmd4;
+             consKpAltitude = (double) cmd1/1000;
+             consKdAltitude = (double) cmd2/1000;
+             consKiAltitude = (double) cmd3/1000;
+             SetpointAltitude = cmd4;
              sendPidState = true;
              sendAltToMatlab = true;
            }
            else if (type == 16)
            {
              // Pid AGG ALTITUDE 
-             aggKpAltitude = cmd1/1000;
-             aggKdAltitude = cmd2/1000;
-             aggKiAltitude = cmd3/1000;
-             SetpointdAlt = cmd4;
+             aggKpAltitude = (double) cmd1/1000;
+             aggKdAltitude = (double) cmd2/1000;
+             aggKiAltitude = (double) cmd3/1000;
+             SetpointAltitude = cmd4;
              sendPidState = true;
              sendAltToMatlab = true;
            }           
@@ -3278,4 +3302,70 @@ void arr3_rad_to_deg(float * arr) {
   arr[0] *= 180/M_PI;
   arr[1] *= 180/M_PI;
   arr[2] *= 180/M_PI;
+}
+
+void dispAllPidVals()
+{
+    Serial.println();
+    Serial.println(" Roll:  ");
+    Serial.print("   Cons [p,d,i]: [");
+    Serial.print(consKpRoll);
+    Serial.print(" ; ");
+    Serial.print(consKdRoll);
+    Serial.print(" ; ");
+    Serial.print(consKiRoll);
+    Serial.print(" ]   Agg: [p,d,i]: [");
+    Serial.print(aggKpRoll);
+    Serial.print(" ; ");
+    Serial.print(aggKdRoll);
+    Serial.print(" ; ");
+    Serial.print(aggKiRoll);
+    Serial.print(" ]   Setpoint: ");
+    Serial.print(SetpointRoll);
+    Serial.println(" Pitch:  ");
+    Serial.print("   Cons [p,d,i]: [");
+    Serial.print(consKpPitch);
+    Serial.print(" ; ");
+    Serial.print(consKdPitch);
+    Serial.print(" ; ");
+    Serial.print(consKiPitch);
+    Serial.print(" ]   Agg: [p,d,i]: [");
+    Serial.print(aggKpPitch);
+    Serial.print(" ; ");
+    Serial.print(aggKdPitch);
+    Serial.print(" ; ");
+    Serial.print(aggKiPitch);
+    Serial.print(" ]   Setpoint: ");
+    Serial.print(SetpointPitch);
+    Serial.println(" Yaw:  ");
+    Serial.print("   Cons [p,d,i]: [");
+    Serial.print(consKpYaw);
+    Serial.print(" ; ");
+    Serial.print(consKdYaw);
+    Serial.print(" ; ");
+    Serial.print(consKiYaw);
+    Serial.print(" ]   Agg: [p,d,i]: [");
+    Serial.print(aggKpYaw);
+    Serial.print(" ; ");
+    Serial.print(aggKdYaw);
+    Serial.print(" ; ");
+    Serial.print(aggKiYaw);
+    Serial.print(" ]   Setpoint: ");
+    Serial.print(SetpointYaw);
+    Serial.println(" Alt:  ");
+    Serial.print("   Cons [p,d,i]: [");
+    Serial.print(consKpAltitude);
+    Serial.print(" ; ");
+    Serial.print(consKdAltitude);
+    Serial.print(" ; ");
+    Serial.print(consKiAltitude);
+    Serial.print(" ]   Agg: [p,d,i]: [");
+    Serial.print(aggKpAltitude);
+    Serial.print(" ; ");
+    Serial.print(aggKdAltitude);
+    Serial.print(" ; ");
+    Serial.print(aggKiAltitude);
+    Serial.print(" ]   Setpoint: ");
+    Serial.print(SetpointAltitude);
+    Serial.println();
 }
