@@ -1006,9 +1006,9 @@ delete(instrfindall)
                 set(connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
                 set(conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
                 disp('Connection closed...');        
-                fclose(xbee);
-                delete(xbee);
-                clear xbee;
+%                 fclose(xbee);
+%                 delete(xbee);
+%                 clear xbee;
             else
                 
             end

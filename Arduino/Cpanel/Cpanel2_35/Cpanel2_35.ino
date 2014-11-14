@@ -38,14 +38,15 @@
  */
 boolean printOrientationFreeIMU = false; 
 boolean printRawAcc = false; 
-boolean printAcc = false; 
+boolean printAcc = true; 
 boolean printRawGyro= false; 
 boolean printGyro = false; 
 boolean printRawCompass= false; 
 boolean printCompass = false; 
-boolean printRawKalman= false; 
+boolean printRawKalman= true; 
 boolean printKalman = false; 
-boolean printPIDVals = false;
+boolean printPIDVals = true;
+boolean printMotorsVals = false;
 boolean printTimers = false;
 boolean printThrottle = false;
 boolean printAckCommands = true;
@@ -55,7 +56,7 @@ boolean printVerboseSerial = true;
  */
 boolean autoEnablePid = true;
 boolean enablePid = false;
-boolean enableRollPid = true;
+boolean enableRollPid = false;
 boolean enablePitchPid = true;
 boolean enableYawPid = false;
 boolean enableAltitudePid = false;
@@ -72,16 +73,16 @@ double consKpRoll=0.32, consKiRoll=0, consKdRoll=0.3;
 
 
 // Pitch
-double aggKpPitch=0.3, aggKiPitch=0, aggKdPitch=0.1;
+double aggKpPitch=0.46, aggKiPitch=0, aggKdPitch=0.21;
 double consKpPitch=0.3, consKiPitch=0, consKdPitch=0.2;
 
 // Yaw
-double aggKpYaw=4, aggKiYaw=0.2, aggKdYaw=1;
-double consKpYaw=0.5, consKiYaw=0, consKdYaw=0.25;
+double aggKpYaw=0.3, aggKiYaw=0.0, aggKdYaw=0.1;
+double consKpYaw=0.3, consKiYaw=0, consKdYaw=0.0;
 
 // Altitude  ->> *** Add it, judst created
-double aggKpAltitude=4, aggKiAltitude=0.2, aggKdAltitude=1;
-double consKpAltitude=0.5, consKiAltitude=0, consKdAltitude=0.25;
+double aggKpAltitude=0.2, aggKiAltitude=0.0, aggKdAltitude=0.1;
+double consKpAltitude=0.1, consKiAltitude=0, consKdAltitude=0.1;
 
 //Specify the links and initial tuning parameters
 PID myRollPID(&InputRoll, &OutputRoll, &SetpointRoll, consKpRoll, consKiRoll, consKdRoll, DIRECT);
@@ -198,7 +199,7 @@ Servo servo3;
 Servo servo4;
 
 int landSpeed = 1;
-int rampTill = 80;
+int rampTill = 70;
 int motorRampDelayFast = 150;
 int motorRampDelayMedium = 350;
 int motorRampDelaySlow = 550;
@@ -752,15 +753,15 @@ void control()
          //we're far from setpoint, use aggressive tuning parameters
          myYawPID.SetTunings(aggKpYaw, aggKiYaw, aggKdYaw);
       }    
-      myYawPID.Compute(); // Resturns outputYaw
-     
+      myYawPID.Compute(); // Resturns outputYaw 
+      
       if (printPIDVals)
       {
         Serial.print(" Yawpid: ");
         Serial.print(OutputYaw);
         Serial.println("");
         Serial.println("");
-      }
+      }     
     }
     else
     {
@@ -1891,7 +1892,7 @@ void motorSpeedPID(int thr, int rollpid, int pitchpid, int yawpid)
   motorB = thr + pitchpid + yawpid;
   motorC = thr - rollpid - yawpid;
   motorD = thr - pitchpid + yawpid; 
-  if (printPIDVals)
+  if (printMotorsVals)
   {
     Serial.println();
     Serial.print(" Motors:[  ");
@@ -3321,7 +3322,7 @@ void dispAllPidVals()
     Serial.print(" ; ");
     Serial.print(aggKiRoll);
     Serial.print(" ]   Setpoint: ");
-    Serial.print(SetpointRoll);
+    Serial.println(SetpointRoll);
     Serial.println(" Pitch:  ");
     Serial.print("   Cons [p,d,i]: [");
     Serial.print(consKpPitch);
@@ -3336,7 +3337,7 @@ void dispAllPidVals()
     Serial.print(" ; ");
     Serial.print(aggKiPitch);
     Serial.print(" ]   Setpoint: ");
-    Serial.print(SetpointPitch);
+    Serial.println(SetpointPitch);
     Serial.println(" Yaw:  ");
     Serial.print("   Cons [p,d,i]: [");
     Serial.print(consKpYaw);
@@ -3351,7 +3352,7 @@ void dispAllPidVals()
     Serial.print(" ; ");
     Serial.print(aggKiYaw);
     Serial.print(" ]   Setpoint: ");
-    Serial.print(SetpointYaw);
+    Serial.println(SetpointYaw);
     Serial.println(" Alt:  ");
     Serial.print("   Cons [p,d,i]: [");
     Serial.print(consKpAltitude);
@@ -3366,6 +3367,6 @@ void dispAllPidVals()
     Serial.print(" ; ");
     Serial.print(aggKiAltitude);
     Serial.print(" ]   Setpoint: ");
-    Serial.print(SetpointAltitude);
+    Serial.println(SetpointAltitude);
     Serial.println();
 }
