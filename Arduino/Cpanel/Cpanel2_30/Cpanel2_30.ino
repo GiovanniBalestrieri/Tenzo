@@ -38,12 +38,12 @@
  */
 boolean printOrientationFreeIMU = false; 
 boolean printRawAcc = false; 
-boolean printAcc = true; 
+boolean printAcc = false; 
 boolean printRawGyro= false; 
-boolean printGyro = true; 
-boolean printRawCompass= true; 
+boolean printGyro = false; 
+boolean printRawCompass= false; 
 boolean printCompass = false; 
-boolean printRawKalman= true; 
+boolean printRawKalman= false; 
 boolean printKalman = false; 
 boolean printPIDVals = false;
 boolean printTimers = false;
@@ -449,10 +449,14 @@ int takeOffID = 17;
 int iHoverID = 18;
 int landID = 19;
 int enableMotorsID = 20;
-int sendPidRollID = 21;
-int sendPidPitchID = 22;
-int sendPidYawID = 23;
-int sendPidAltID = 24;
+int sendConsPidRollID = 21;
+int sendConsPidPitchID = 22;
+int sendConsPidYawID = 23;
+int sendConsPidAltID = 24;
+int sendAggPidRollID = 25;
+int sendAggPidPitchID = 26;
+int sendAggPidYawID = 27;
+int sendAggPidAltID = 28;
 
 int cmdLength = 17;
 int headerLength = 13;
@@ -1382,33 +1386,54 @@ void xbeeRoutine()
            else if (enab == 1)
            sendMotorsToMatlab = true;
          }
-         else if (type == sendPidRollID)
+         else if (type == sendConsPidRollID || type == sendAggPidRollID)
          {
-           // Request Motors Data   type: 21        
+           // Request Motors Data   type: 21      || 25  
            stopSendingToMatlab();
            sendPidState = true;
-           sendRollToMatlab = true;
+           sendRollToMatlab = true;          
+           if (printVerboseSerial)
+           {
+              Serial.println();
+              Serial.print("Channel: 21||25   roll Pid? ");
+              Serial.println();
+           }
          }
-         else if (type == sendPidPitchID)
+         else if (type == sendConsPidPitchID || type == sendAggPidPitchID)
          {
-           // Request Motors Data   type: 22        
+           // Request Motors Data   type: 22      || 26 
            stopSendingToMatlab();
            sendPidState = true;
            sendPitchToMatlab = true;
+           {
+              Serial.println();
+              Serial.print("Channel: 22||26   pitch Pid? ");
+              Serial.println();
+           }
          }
-         else if (type == sendPidYawID)
+         else if (type == sendConsPidYawID || type == sendAggPidYawID)
          {
-           // Request Motors Data   type: 23        
+           // Request Motors Data   type: 23      || 27
            stopSendingToMatlab();
            sendPidState = true;
            sendYawToMatlab = true;
+           {
+              Serial.println();
+              Serial.print("Channel: 23||27   yaw Pid? ");
+              Serial.println();
+           }
          }
-         else if (type == sendPidAltID)
+         else if (type == sendConsPidAltID || type == sendAggPidAltID)
          {
-           // Request Motors Data   type: 24        
+           // Request Motors Data   type: 24      || 28
            stopSendingToMatlab();
            sendPidState = true;
            sendAltToMatlab = true;
+           {
+              Serial.println();
+              Serial.print("Channel: 24||28   alt Pid? ");
+              Serial.println();
+           }
          }
          else 
          {
@@ -2175,95 +2200,184 @@ void sendDataSensors(boolean device)
    {
      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
      pMyCmd->cmd = 20;
+     numCommandToSend++;
            
      pMyCmd->param1 = throttle; 
      sendCommandToMatlab();  
    }
    else if (sendPidState)
    {
-     if (sendRollToMatlab)
+     if (sendAltToMatlab)
      {
        MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
        pMyCmd->cmd = 12;
+       numCommandToSend++;
              
        pMyCmd->param1 = consKpAltitude*100;   
        pMyCmd->param2 = consKdAltitude*100;
        pMyCmd->param3 = consKiAltitude*100;
-       pMyCmd->param4 = thresholdAlt;
+       pMyCmd->param4 = SetpointAltitude;
+       if (printAckCommands)
+       {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. Alt cons");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+       } 
        
        pMyCmd++;           // moves pointer to next command position in message
        
        pMyCmd->cmd = 16;
+       numCommandToSend++;
              
        pMyCmd->param1 = aggKpAltitude*100;   
        pMyCmd->param2 = aggKdAltitude*100;
        pMyCmd->param3 = aggKiAltitude*100;
-       pMyCmd->param4 = thresholdAlt;
+       pMyCmd->param4 = SetpointAltitude;
+       if (printAckCommands)
+       {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. Alt agg");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+       } 
+       
+       sendAltToMatlab = false;
+     }
+     else if (sendRollToMatlab)
+     {
+       MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+       pMyCmd->cmd = 9;
+       numCommandToSend++;
+             
+       pMyCmd->param1 = consKpRoll*100;   
+       pMyCmd->param2 = consKdRoll*100;
+       pMyCmd->param3 = consKiRoll*100;
+       pMyCmd->param4 = SetpointRoll;
+       if (printAckCommands)
+       {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. roll cons");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+       } 
+       
+       pMyCmd++;           // moves pointer to next command position in message
+       
+       pMyCmd->cmd = 13;
+       numCommandToSend++;
+             
+       pMyCmd->param1 = aggKpRoll*100;   
+       pMyCmd->param2 = aggKdRoll*100;
+       pMyCmd->param3 = aggKiRoll*100;
+       pMyCmd->param4 = SetpointRoll;
+       if (printAckCommands)
+       {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. roll agg");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+       } 
        
        sendRollToMatlab = false;
      }
      else if (sendPitchToMatlab)
      {
        MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
-       pMyCmd->cmd = 9;
+       pMyCmd->cmd = 10;
+       numCommandToSend++;
              
-       pMyCmd->param1 = consKpRoll*100;   
-       pMyCmd->param2 = consKdRoll*100;
-       pMyCmd->param3 = consKiRoll*100;
-       pMyCmd->param4 = thresholdRoll;
+       pMyCmd->param1 = consKpPitch*100;   
+       pMyCmd->param2 = consKdPitch*100;
+       pMyCmd->param3 = consKiPitch*100;
+       pMyCmd->param4 = SetpointPitch;
+       if (printAckCommands)
+       {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. pitch cons");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+       } 
        
        pMyCmd++;           // moves pointer to next command position in message
        
-       pMyCmd->cmd = 13;
+       pMyCmd->cmd = 14;
+       numCommandToSend++;
              
-       pMyCmd->param1 = aggKpRoll*100;   
-       pMyCmd->param2 = aggKdRoll*100;
-       pMyCmd->param3 = aggKiRoll*100;
-       pMyCmd->param4 = thresholdRoll;
+       pMyCmd->param1 = aggKpPitch*100;   
+       pMyCmd->param2 = aggKdPitch*100;
+       pMyCmd->param3 = aggKiPitch*100;
+       pMyCmd->param4 = SetpointPitch;
+       if (printAckCommands)
+       {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. pitch agg");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+       } 
        
        sendPitchToMatlab = false;
      }
      else if (sendYawToMatlab)
      {
        MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
-       pMyCmd->cmd = 10;
-             
-       pMyCmd->param1 = consKpPitch*100;   
-       pMyCmd->param2 = consKdPitch*100;
-       pMyCmd->param3 = consKiPitch*100;
-       pMyCmd->param4 = thresholdPitch;
-       
-       pMyCmd++;           // moves pointer to next command position in message
-       
-       pMyCmd->cmd = 14;
-             
-       pMyCmd->param1 = aggKpPitch*100;   
-       pMyCmd->param2 = aggKdPitch*100;
-       pMyCmd->param3 = aggKiPitch*100;
-       pMyCmd->param4 = thresholdPitch;
-       
-       sendYawToMatlab = false;
-     }
-     else if (sendAltToMatlab)
-     {
-       MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
        pMyCmd->cmd = 11;
+       numCommandToSend++;
              
        pMyCmd->param1 = consKpYaw*100;   
        pMyCmd->param2 = consKdYaw*100;
        pMyCmd->param3 = consKiYaw*100;
-       pMyCmd->param4 = thresholdYaw;
+       pMyCmd->param4 = SetpointYaw;
+       if (printAckCommands)
+       {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. Yaw cons");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+       } 
        
        pMyCmd++;           // moves pointer to next command position in message
        
        pMyCmd->cmd = 15;
+       numCommandToSend++;
              
        pMyCmd->param1 = aggKpYaw*100;   
        pMyCmd->param2 = aggKdYaw*100;
        pMyCmd->param3 = aggKiYaw*100;
-       pMyCmd->param4 = thresholdYaw;
+       pMyCmd->param4 = SetpointYaw;
+       if (printAckCommands)
+       {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. yaw agg");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+       } 
        
-       sendAltToMatlab = false;
+       sendYawToMatlab = false;
      }
      sendPidState = false;
      sendCommandToMatlab(); 
