@@ -593,10 +593,6 @@ delete(instrfindall)
     function landCallback(src,eventData)
         if tenzo == true
             if takeOffAck == 1
-                if speakCmd && vocalVerb>=1 
-                        %tts('atterraggio programmato',voice);
-                        tts('Starting land protocol.',voice);
-                end
                 % Initialize the cmd array
                 cmd = zeros(8,4,'uint8');
                 cmd(1,1) = uint8(landID);
@@ -605,6 +601,10 @@ delete(instrfindall)
                 cmd(2,:) = weights2*bits;
                 sendMess(cmd);
                 % wait for feedback from Tenzo and change state of btn
+                if speakCmd && vocalVerb>=1 
+                        %tts('atterraggio programmato',voice);
+                        tts('Starting land protocol.',voice);
+                end
             else
                warndlg('Tenzo is not in hovering mode. First Take Off then try again. ','!! Warning !!') 
                % you can start take off protocol automatically
@@ -618,10 +618,6 @@ delete(instrfindall)
     function takeOffCallback(src,eventData)
         if tenzo == true
             if takeOffAck == 0
-                if speakCmd && vocalVerb>=1 
-                        %tts('Decollo programmato',voice);
-                        tts('Starting take off protocol.',voice);
-                end
                 % Initialize the cmd array
                 cmd = zeros(8,4,'uint8');
                 cmd(1,1) = uint8(takeOffID);
@@ -629,7 +625,10 @@ delete(instrfindall)
                 bits = reshape(bitget(defaultAlt,32:-1:1),8,[]);
                 cmd(2,:) = weights2*bits;
                 sendMess(cmd);
-                % wait for feedback from Tenzo and change state of btn
+                if speakCmd && vocalVerb>=1 
+                        %tts('Decollo programmato',voice);
+                        tts('Starting take off protocol.',voice);
+                end
             else
                warndlg('Tenzo already out in space. Connection blocked. Protocol 1','!! DANGER !!') 
                % you can start take off protocol automatically

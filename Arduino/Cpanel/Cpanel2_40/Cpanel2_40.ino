@@ -43,7 +43,7 @@ boolean printRawGyro= false;
 boolean printGyro = false; 
 boolean printRawCompass= false; 
 boolean printCompass = false; 
-boolean printRawKalman= false; 
+boolean printRawKalman= true; 
 boolean printKalman = false; 
 boolean printPIDVals = true;
 boolean printMotorsVals = false;
@@ -69,13 +69,13 @@ double SetpointAltitude = 1, InputAltitude, errorAltitude, OutputAltitude;
 
 // Define the aggressive and conservative Tuning Parameters
 // Roll
-double aggKpRoll=0.1, aggKiRoll=0, aggKdRoll=0.1;
-double consKpRoll=0.32, consKiRoll=0, consKdRoll=0.3;
+double aggKpRoll=0.37, aggKiRoll=0, aggKdRoll=0.17;
+double consKpRoll=0.35, consKiRoll=0, consKdRoll=0.14;
 
 
 // Pitch
-double aggKpPitch=0.1, aggKiPitch=0, aggKdPitch=0.1;
-double consKpPitch=0.40, consKiPitch=0, consKdPitch=0.21;
+double aggKpPitch=0.37, aggKiPitch=0, aggKdPitch=0.17;
+double consKpPitch=0.35, consKiPitch=0, consKdPitch=0.14;
 
 // Yaw
 double aggKpYaw=0.3, aggKiYaw=0.0, aggKdYaw=0.1;
@@ -692,9 +692,11 @@ void control()
       
       if (printPIDVals)
       {
-        Serial.println();
+        Serial.print("ErrorRoll:");
+        Serial.print(errorRoll);
         Serial.print("Roll PID: ");
         Serial.print(OutputRoll);
+        Serial.println();
       }
     }
     else
@@ -715,14 +717,17 @@ void control()
       else
       {
          //we're far from setpoint, use aggressive tuning parameters
-         myPitchPID.SetTunings(aggKpRoll, aggKiPitch, aggKdPitch);
+         myPitchPID.SetTunings(aggKpPitch, aggKiPitch, aggKdPitch);
       }
     
       myPitchPID.Compute(); // Computes outputPitch
       if (printPIDVals)
-      {
-        Serial.print("  Pitch: ");
+      { 
+        Serial.print("  Error Pitch: ");
+        Serial.print(errorPitch);
+        Serial.print("  pidAction: ");
         Serial.print(OutputPitch);
+        Serial.println();
       }
     }  
     else
@@ -758,8 +763,11 @@ void control()
       
       if (printPIDVals)
       {
+        Serial.print(" ErrorYaw: ");
+        Serial.print(errorYaw);
         Serial.print(" Yawpid: ");
         Serial.print(OutputYaw);
+        Serial.println();
       }     
     }
     else
@@ -1475,6 +1483,7 @@ void xbeeRoutine()
              consKiRoll = (double) cmd3/1000;
              SetpointRoll = cmd4;
              sendPidState = true;
+             changePidValues();
              sendRollToMatlab = true;        
              if (printVerboseSerial)
              {
@@ -1495,6 +1504,7 @@ void xbeeRoutine()
              aggKiRoll = (double) cmd3/1000;
              SetpointRoll = cmd4;
              sendPidState = true;
+             changePidValues();
              sendRollToMatlab = true;      
              if (printVerboseSerial)
              {
@@ -1515,6 +1525,7 @@ void xbeeRoutine()
              consKiPitch = (double) cmd3/1000;
              SetpointPitch = cmd4;
              sendPidState = true;
+             changePidValues();
              sendPitchToMatlab = true;
              if (printVerboseSerial)
              {
@@ -1535,14 +1546,15 @@ void xbeeRoutine()
              aggKiPitch = (double) cmd3/1000;
              SetpointPitch = cmd4;
              sendPidState = true;
+             changePidValues();
              sendPitchToMatlab = true;
              if (printVerboseSerial)
              {
                 Serial.println();
                 Serial.println("Agg Roll Pid ");
-                Serial.println(aggKpRoll);
-                Serial.println(aggKdRoll);
-                Serial.println(aggKiRoll);
+                Serial.println(aggKpPitch);
+                Serial.println(aggKdPitch);
+                Serial.println(aggKiPitch);
                 Serial.println(SetpointRoll);
                 Serial.println();
              }
@@ -1555,6 +1567,7 @@ void xbeeRoutine()
              consKiYaw = (double) cmd3/1000;
              SetpointYaw = cmd4;
              sendPidState = true;
+             changePidValues();
              sendYawToMatlab = true;
            }
            else if (type == 15)
@@ -1565,6 +1578,7 @@ void xbeeRoutine()
              aggKiYaw = (double) cmd3/1000;
              SetpointYaw = cmd4;
              sendPidState = true;
+             changePidValues();
              sendYawToMatlab = true;
            }
            else if (type == 12)
@@ -1575,6 +1589,7 @@ void xbeeRoutine()
              consKiAltitude = (double) cmd3/1000;
              SetpointAltitude = cmd4;
              sendPidState = true;
+             changePidValues();
              sendAltToMatlab = true;
            }
            else if (type == 16)
@@ -1585,6 +1600,7 @@ void xbeeRoutine()
              aggKiAltitude = (double) cmd3/1000;
              SetpointAltitude = cmd4;
              sendPidState = true;
+             changePidValues();
              sendAltToMatlab = true;
            }           
          }
@@ -1642,6 +1658,59 @@ void xbeeRoutine()
     if (printThrottle)
     {
       Serial.println(throttle);
+    }
+  }
+}
+
+void changePidValues()
+{
+  if (enablePid)
+  {
+    // Roll PID
+    if (enableRollPid)
+    {
+      if(errorRoll<thresholdRoll)
+      {  //we're close to setpoint, use conservative tuning parameters
+        myRollPID.SetTunings(consKpRoll, consKiRoll, consKdRoll);
+      }
+      else
+      {
+         //we're far from setpoint, use aggressive tuning parameters
+         myRollPID.SetTunings(aggKpRoll, aggKiRoll, aggKdRoll);
+      }
+    }
+    
+    // Pitch PID
+    if (enablePitchPid)
+    {
+      if(errorPitch<thresholdPitch)
+      {  //we're close to setpoint, use conservative tuning parameters
+        myPitchPID.SetTunings(consKpPitch, consKiPitch, consKdPitch);
+      }
+      else
+      {
+         //we're far from setpoint, use aggressive tuning parameters
+         myPitchPID.SetTunings(aggKpPitch, aggKiPitch, aggKdPitch);
+      }
+    }
+    
+    // Yaw PID
+    if (enableYawPid)
+    {
+      if(errorYaw<thresholdYaw)
+      {
+         //we're close to setpoint, use conservative tuning parameters
+         myYawPID.SetTunings(consKpYaw, consKiYaw, consKdYaw);
+      }
+      else
+      {
+         //we're far from setpoint, use aggressive tuning parameters
+         myYawPID.SetTunings(aggKpYaw, aggKiYaw, aggKdYaw);
+      } 
+    }
+    if (printPIDVals)
+    {
+      dispActualAllPidVals();     
     }
   }
 }
@@ -2283,11 +2352,12 @@ void sendDataSensors(boolean device)
        pMyCmd++;           // moves pointer to next command position in message
        
        pMyCmd->cmd = 16;
-       numCommandToSend++;
-             
+       numCommandToSend++;      
+       
        pMyCmd->param1 = aggKpAltitude*1000;   
        pMyCmd->param2 = aggKdAltitude*1000;
        pMyCmd->param3 = aggKiAltitude*1000;
+      
        pMyCmd->param4 = SetpointAltitude;
        if (printAckCommands)
        {
@@ -2327,7 +2397,7 @@ void sendDataSensors(boolean device)
        
        pMyCmd->cmd = 13;
        numCommandToSend++;
-             
+       
        pMyCmd->param1 = aggKpRoll*1000;   
        pMyCmd->param2 = aggKdRoll*1000;
        pMyCmd->param3 = aggKiRoll*1000;
@@ -2341,7 +2411,7 @@ void sendDataSensors(boolean device)
           Serial.println(pMyCmd->param3);
           Serial.println(pMyCmd->param4);
           Serial.println(); 
-       } 
+       }
        
        sendRollToMatlab = false;
      }
@@ -2395,7 +2465,7 @@ void sendDataSensors(boolean device)
        numCommandToSend++;
              
        pMyCmd->param1 = consKpYaw*1000;   
-       pMyCmd->param2 = consKdYaw*1000;
+       pMyCmd->param2 = consKiYaw*1000;
        pMyCmd->param3 = consKiYaw*1000;
        pMyCmd->param4 = SetpointYaw;
        if (printAckCommands)
@@ -3311,65 +3381,135 @@ void arr3_rad_to_deg(float * arr) {
 void dispAllPidVals()
 {
     Serial.println();
-    Serial.println(" Roll:  ");
-    Serial.print("   Cons [p,d,i]: [");
-    Serial.print(consKpRoll);
-    Serial.print(" ; ");
-    Serial.print(consKdRoll);
-    Serial.print(" ; ");
-    Serial.print(consKiRoll);
-    Serial.print(" ]   Agg: [p,d,i]: [");
-    Serial.print(aggKpRoll);
-    Serial.print(" ; ");
-    Serial.print(aggKdRoll);
-    Serial.print(" ; ");
-    Serial.print(aggKiRoll);
-    Serial.print(" ]   Setpoint: ");
-    Serial.println(SetpointRoll);
-    Serial.println(" Pitch:  ");
-    Serial.print("   Cons [p,d,i]: [");
-    Serial.print(consKpPitch);
-    Serial.print(" ; ");
-    Serial.print(consKdPitch);
-    Serial.print(" ; ");
-    Serial.print(consKiPitch);
-    Serial.print(" ]   Agg: [p,d,i]: [");
-    Serial.print(aggKpPitch);
-    Serial.print(" ; ");
-    Serial.print(aggKdPitch);
-    Serial.print(" ; ");
-    Serial.print(aggKiPitch);
-    Serial.print(" ]   Setpoint: ");
-    Serial.println(SetpointPitch);
-    Serial.println(" Yaw:  ");
-    Serial.print("   Cons [p,d,i]: [");
-    Serial.print(consKpYaw);
-    Serial.print(" ; ");
-    Serial.print(consKdYaw);
-    Serial.print(" ; ");
-    Serial.print(consKiYaw);
-    Serial.print(" ]   Agg: [p,d,i]: [");
-    Serial.print(aggKpYaw);
-    Serial.print(" ; ");
-    Serial.print(aggKdYaw);
-    Serial.print(" ; ");
-    Serial.print(aggKiYaw);
-    Serial.print(" ]   Setpoint: ");
-    Serial.println(SetpointYaw);
-    Serial.println(" Alt:  ");
-    Serial.print("   Cons [p,d,i]: [");
-    Serial.print(consKpAltitude);
-    Serial.print(" ; ");
-    Serial.print(consKdAltitude);
-    Serial.print(" ; ");
-    Serial.print(consKiAltitude);
-    Serial.print(" ]   Agg: [p,d,i]: [");
-    Serial.print(aggKpAltitude);
-    Serial.print(" ; ");
-    Serial.print(aggKdAltitude);
-    Serial.print(" ; ");
-    Serial.print(aggKiAltitude);
-    Serial.print(" ]   Setpoint: ");
-    Serial.println(SetpointAltitude);
+    Serial.print(" Updating PID values");
+    Serial.println();
+    if (enableRollPid)
+    {
+      Serial.println(" Roll:  ");
+      Serial.print("   Cons [p,d,i]: [");
+      Serial.print(consKpRoll);
+      Serial.print(" ; ");
+      Serial.print(consKdRoll);
+      Serial.print(" ; ");
+      Serial.print(consKiRoll);
+      Serial.print(" ]   Agg: [p,d,i]: [");
+      Serial.print(aggKpRoll);
+      Serial.print(" ; ");
+      Serial.print(aggKdRoll);
+      Serial.print(" ; ");
+      Serial.print(aggKiRoll);
+      Serial.print(" ]   Setpoint: ");
+      Serial.println(SetpointRoll);
+    }
+    if (enablePitchPid)
+    {
+      Serial.println(" Pitch:  ");
+      Serial.print("   Cons [p,d,i]: [");
+      Serial.print(consKpPitch);
+      Serial.print(" ; ");
+      Serial.print(consKdPitch);
+      Serial.print(" ; ");
+      Serial.print(consKiPitch);
+      Serial.print(" ]   Agg: [p,d,i]: [");
+      Serial.print(aggKpPitch);
+      Serial.print(" ; ");
+      Serial.print(aggKdPitch);
+      Serial.print(" ; ");
+      Serial.print(aggKiPitch);
+      Serial.print(" ]   Setpoint: ");
+      Serial.println(SetpointPitch);
+    }
+    if (enableYawPid)
+    {
+      Serial.println(" Yaw:  ");
+      Serial.print("   Cons [p,d,i]: [");
+      Serial.print(consKpYaw);
+      Serial.print(" ; ");
+      Serial.print(consKdYaw);
+      Serial.print(" ; ");
+      Serial.print(consKiYaw);
+      Serial.print(" ]   Agg: [p,d,i]: [");
+      Serial.print(aggKpYaw);
+      Serial.print(" ; ");
+      Serial.print(aggKdYaw);
+      Serial.print(" ; ");
+      Serial.print(aggKiYaw);
+      Serial.print(" ]   Setpoint: ");
+      Serial.println(SetpointYaw);
+    }
+    if (enableAltitudePid)
+    {
+      Serial.println(" Alt:  ");
+      Serial.print("   Cons [p,d,i]: [");
+      Serial.print(consKpAltitude);
+      Serial.print(" ; ");
+      Serial.print(consKdAltitude);
+      Serial.print(" ; ");
+      Serial.print(consKiAltitude);
+      Serial.print(" ]   Agg: [p,d,i]: [");
+      Serial.print(aggKpAltitude);
+      Serial.print(" ; ");
+      Serial.print(aggKdAltitude);
+      Serial.print(" ; ");
+      Serial.print(aggKiAltitude);
+      Serial.print(" ]   Setpoint: ");
+      Serial.println(SetpointAltitude);
+    }
+    Serial.println();
+}
+
+void dispActualAllPidVals()
+{
+    Serial.println();
+    Serial.print(" Updating PID values");
+    Serial.println();
+    if (enableRollPid)
+    {
+      Serial.println(" Roll:  ");
+      Serial.print("   [p,d,i]: [");
+      Serial.print(myRollPID.GetKp());
+      Serial.print(" ; ");
+      Serial.print(myRollPID.GetKd());
+      Serial.print(" ; ");
+      Serial.print(myRollPID.GetKi());
+      Serial.print(" ]   Setpoint: ");
+      Serial.println(SetpointRoll);
+    }
+    if (enablePitchPid)
+    {
+      Serial.println(" Pitch:  ");
+      Serial.print("   [p,d,i]: [");
+      Serial.print(myPitchPID.GetKp());
+      Serial.print(" ; ");
+      Serial.print(myPitchPID.GetKd());
+      Serial.print(" ; ");
+      Serial.print(myPitchPID.GetKi());
+      Serial.print(" ]   Setpoint: ");
+      Serial.println(SetpointPitch);
+    }
+    if (enableYawPid)
+    {
+      Serial.println(" Yaw:  ");
+      Serial.print("  [p,d,i]: [");
+      Serial.print(myYawPID.GetKp());
+      Serial.print(" ; ");
+      Serial.print(myPitchPID.GetKd());
+      Serial.print(" ; ");
+      Serial.print(myPitchPID.GetKi());
+      Serial.print(" ]   Setpoint: ");
+      Serial.println(SetpointYaw);
+    }
+    if (enableAltitudePid)
+    {
+      Serial.println(" Alt:  ");
+      Serial.print("   [p,d,i]: [");
+      Serial.print(myAltitudePID.GetKp());
+      Serial.print(" ; ");
+      Serial.print(myAltitudePID.GetKd());
+      Serial.print(" ; ");
+      Serial.print(myAltitudePID.GetKi());
+      Serial.print(" ]   Setpoint: ");
+      Serial.println(SetpointAltitude);
+    }
     Serial.println();
 }
