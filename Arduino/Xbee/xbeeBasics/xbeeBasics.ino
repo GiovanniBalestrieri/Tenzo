@@ -11,7 +11,7 @@
 
 uint8_t pinRx = 12 , pinTx = 13; // the pin on Arduino
 long BaudRateSerial = 9600;
-long BaudRateXbee = 57600;
+long BaudRateXbee = 19200;
 char GotChar;
 byte getData;
 
@@ -31,7 +31,7 @@ typedef struct mcTag {
        unsigned char hdrLength;
        unsigned char cmdLength;
        unsigned short totalLen;
-       unsigned short crc } MyControlHdr;
+       unsigned short crc; } MyControlHdr;
 
     typedef struct ctrTag {
       unsigned char cmd;

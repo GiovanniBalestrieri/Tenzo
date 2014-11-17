@@ -12,7 +12,7 @@
  *  - Bias substraction
  *  - Std filter for measurements
  *  - XBee connectivity
- *  - Matlab-Ready
+ *  - Matlab connection 
  *  - Kalman filter
  *  - Complementary Filter
  *  - Motors control
@@ -43,7 +43,7 @@ boolean printRawGyro= false;
 boolean printGyro = false; 
 boolean printRawCompass= false; 
 boolean printCompass = false; 
-boolean printRawKalman= true; 
+boolean printRawKalman= false; 
 boolean printKalman = false; 
 boolean printPIDVals = true;
 boolean printMotorsVals = false;
@@ -74,8 +74,8 @@ double consKpRoll=0.35, consKiRoll=0, consKdRoll=0.14;
 
 
 // Pitch
-double aggKpPitch=0.22, aggKiPitch=0.08, aggKdPitch=0.12;
-double consKpPitch=0.29, consKiPitch=0.09, consKdPitch=0.11;
+double aggKpPitch=0.12, aggKiPitch=0.08, aggKdPitch=0.12;
+double consKpPitch=0.24, consKiPitch=0.09, consKdPitch=0.11;
 
 // Yaw
 double aggKpYaw=0.3, aggKiYaw=0.0, aggKdYaw=0.1;
@@ -92,8 +92,8 @@ PID myYawPID(&InputYaw, &OutputYaw, &SetpointYaw, consKpYaw, consKiYaw, consKdYa
 PID myAltitudePID(&InputAltitude, &OutputAltitude, &SetpointAltitude, consKpAltitude, consKiAltitude, consKdAltitude, DIRECT);
 
 // Threshold
-int thresholdRoll = 15;
-int thresholdPitch = 15;
+int thresholdRoll = 25;
+int thresholdPitch = 25;
 int thresholdYaw = 15;
 int thresholdAlt = 20;
 
@@ -220,7 +220,7 @@ void useInterrupt(boolean);
 
 #define num 3
 
-#define codeVersion 1.85
+#define codeVersion 2.45
 
 /*
  * Filter parameters
@@ -245,8 +245,8 @@ float alphaW = 0.9; // Exp(-2PI*Fcutoff/SamplingTime)
 //float alphaA_z  = 0.58;
 
 // Accelerometer filter constant good
-float alphaA_xy = 0.03;  //use 'a' to increse and 'z' to decrease
-float alphaA_z  = 0.03;  //use 'h' to increase 'n' to decrease
+float alphaA_xy = 0.05;  //use 'a' to increse and 'z' to decrease
+float alphaA_z  = 0.05;  //use 'h' to increase 'n' to decrease
 
 //// Accelerometer filter constant 25 HZ
 //float alphaA_xy = 0.35;
@@ -598,7 +598,7 @@ void setup()
 
   // Initialize xbee serial communication
   xbee.begin( BaudRateXbee );
-  //xbee.println("Setup Completed!");
+  xbee.println("Setup Completed!");
 
   // Initialise Kalman Values
   kalmanX.setAngle(0);
