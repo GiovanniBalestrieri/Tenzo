@@ -397,7 +397,7 @@ unsigned long timerStart;
 unsigned long checkpoint;
 // Safe Mode: after timeToLand ms tenzo will land automatically
 unsigned long timeToLand = 20000;
-boolean autoLand = false;
+boolean autoLand = true;
 boolean landing = false;
 
 /**
@@ -1290,10 +1290,12 @@ void xbeeRoutine()
              if (!matlab)
              {
                sendConnAck = true;
+               sendTenzoState = true;
              }
              else 
              {
                sendConnAck = true;
+               sendTenzoState = true;
                // Connection requested but already connected
                Serial.println();
                Serial.println(" Warning!! Something wrong during CONnection sync.");
@@ -1307,6 +1309,7 @@ void xbeeRoutine()
              if (!matlab)
              {
                sendConnAck = true;
+               sendTenzoState = true;
                Serial.println();
                Serial.println(" Warning!! Communication problems. Sending again.");
                Serial.println();
