@@ -43,14 +43,27 @@ boolean printRawGyro= false;
 boolean printGyro = false; 
 boolean printRawCompass= false; 
 boolean printCompass = false; 
-boolean printRawKalman= true; 
+boolean printRawKalman= false; 
 boolean printKalman = false; 
-boolean printPIDVals = true;
+boolean printPIDVals = false;
 boolean printMotorsVals = false;
 boolean printTimers = false;
 boolean printThrottle = false;
-boolean printAckCommands = false;
+boolean printAckCommands = true;
 boolean printVerboseSerial = false;
+
+// Take Off settings
+int rampTill = 60;
+int motorRampDelayFast = 150;
+int motorRampDelayMedium = 350;
+int motorRampDelaySlow = 550;
+int motorRampDelayVerySlow = 850;
+
+// Safe Mode: after timeToLand ms tenzo will land automatically
+unsigned long timeToLand = 20000;
+boolean autoLand = false;
+boolean landing = false;
+int landSpeed = 1;
 /**
  * Pid Controller 
  */
@@ -183,7 +196,6 @@ float complementaryConstant = 0.03;
 /*
  * Boolean variables initialization
  */
-
 // this keeps track of whether we're using the interrupt
 // off by default!
 boolean usingInterrupt = false;
@@ -202,13 +214,6 @@ Servo servo1;
 Servo servo2;
 Servo servo3;
 Servo servo4;
-
-int landSpeed = 1;
-int rampTill = 60;
-int motorRampDelayFast = 150;
-int motorRampDelayMedium = 350;
-int motorRampDelaySlow = 550;
-int motorRampDelayVerySlow = 850;
 
 void useInterrupt(boolean); 
 
@@ -338,6 +343,15 @@ float gzF=0;
 float xF=0;
 float yF=0;
 float zF=0;
+float xF_m1=0;
+float yF_m1=0;
+float zF_m1=0;
+float xF_m2=0;
+float yF_m2=0;
+float zF_m2=0;
+float xFbuff[3] = {0,0,0};
+float yFbuff[3] = {0,0,0};
+float zFbuff[3] = {0,0,0};
 
 // Filter compass params
 float APxF=0;
@@ -395,10 +409,6 @@ char* options3[3]  = {"proportional","Derivative","Integral"};
 // Landing protocol variables
 unsigned long timerStart;
 unsigned long checkpoint;
-// Safe Mode: after timeToLand ms tenzo will land automatically
-unsigned long timeToLand = 20000;
-boolean autoLand = true;
-boolean landing = false;
 
 /**
  *  Serial Communication Protocol
@@ -1316,6 +1326,8 @@ void xbeeRoutine()
              }
              else 
              {
+               sendConnAck = true;
+               sendTenzoState = true;
                // Impossible: Connection requested but already connected
                Serial.println();
                Serial.println(" Warning!! Something wrong during CONnection sync.");
@@ -1331,6 +1343,7 @@ void xbeeRoutine()
              }
              else 
              {
+               sendDisconnAck = true;
                // Impossible: Disconnection requested but already disconnected
                Serial.println();
                Serial.println(" Warning!! Something wrong during DISconnection sync.");
@@ -1338,6 +1351,38 @@ void xbeeRoutine()
                Serial.println();
              }
            }
+           else
+           {
+             //  Shouldn't get here - Wrong mess received
+             Serial.println();
+             Serial.println(" Warning!! Third Condition.");
+             Serial.println();
+           }
+         }
+         else if (type == tenzoStateID)
+         {
+           hiBytew2 = bufferBytes[16];
+           loBytew2 = bufferBytes[17];
+           int remoteTakeOffTemp = word(hiBytew2, loBytew2);
+           
+           hiBytew2 = bufferBytes[20];
+           loBytew2 = bufferBytes[21];
+           int remoteHoverTemp = word(hiBytew2, loBytew2);
+           
+           hiBytew2 = bufferBytes[24];
+           loBytew2 = bufferBytes[25];
+           int remoteLandTemp = word(hiBytew2, loBytew2);
+           
+           if (printAckCommands) 
+           {
+             // Impossible: Disconnection requested but already disconnected
+             Serial.println();
+             Serial.println(" | Check state requested |");
+             Serial.println();
+           }
+           
+           checkLocalRemoteStates(remoteTakeOffTemp,remoteHoverTemp,remoteLandTemp);
+           
          }
          else if (type == motorsID)
          {
@@ -1862,6 +1907,59 @@ void changePidValues()
   }
 }
 
+void checkLocalRemoteStates(int to, int h, int l)
+{
+  boolean toCond = false, hCond = false, lCond = false;
+ // Checks whether states have been correctly synced
+ if (initialized && to == 1)
+ {
+    toCond = true;
+ } 
+ else if (!initialized && to == 0)
+ {
+    toCond = true;
+ } 
+ 
+ if (enablePid && h==1)
+ {
+   hCond = true;
+ }
+ else if (!enablePid && h==0)
+ {   
+   hCond = true;
+ }
+ 
+ if (initialized && l==0)
+ {
+   lCond = true;
+ }
+ else if (!initialized && l==1)
+ {   
+   lCond = true;
+ } 
+ 
+ if (lCond && hCond && toCond)
+ {
+   matlab = true;
+   if (printAckCommands)
+   {
+     Serial.println();
+     Serial.print("[Sync] Tutto a porno");
+     Serial.println();
+   }
+ }
+ else
+ {
+   sendTenzoState = true;
+   if (printAckCommands)
+   {
+     Serial.println();
+     Serial.print("[Sync] state problem between Arduino (local) and Matlab (remote). Sending states... ");
+     Serial.println();
+   }
+ }
+}
+
 void stopSendingToMatlab()
 {  
    sendAccToMatlab = false;
@@ -2163,7 +2261,6 @@ void sendDataSensors(boolean device)
      pMyCmd->cmd = connID;
      pMyCmd->param1 = 2; 
      sendConnAck = false;
-     matlab = true;
      sendCommandToMatlab(); 
      if (printAckCommands)
      {
@@ -2190,7 +2287,6 @@ void sendDataSensors(boolean device)
      pMyCmd->cmd = connID;
      pMyCmd->param1 = 2; 
      sendConnAck = false;
-     matlab = true;
      sendCommandToMatlab(); 
      if (printAckCommands)
      {
@@ -2945,6 +3041,10 @@ void accFilterExpMA(float val[])
   val[0] = xF;
   val[1] = yF;
   val[2] = zF; 
+  
+  xFbuff[2] = val[0];
+  yFbuff[2] = val[1];
+  zFbuff[2] = val[2];
 }
 
 

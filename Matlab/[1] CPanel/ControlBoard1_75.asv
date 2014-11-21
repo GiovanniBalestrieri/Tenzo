@@ -785,7 +785,7 @@ delete(instrfindall)
                         %tts('Attenzione. Disabilitazione controllore pid.',voice);
                         tts('Warning. Disabling PID.',voice);
                 end
-                   warndlg('Desactivating PID','!! Warning !!') 
+                   %warndlg('Desactivating PID','!! Warning !!') 
                    % Initialize the cmd array
                    cmd = zeros(8,4,'uint8');
                    cmd(1,1) = uint8(iHoverID);
@@ -1364,7 +1364,7 @@ delete(instrfindall)
     function readPidCallback(obj,event)
         if tenzo == true
             if takeOffAck == 1
-                if hoverAck == 1
+                %if hoverAck == 1
                    if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
                        pidRead = true;
                        if strcmp(pidStrategy,'0') && strcmp(pidModeStrategy,'0')
@@ -1407,9 +1407,9 @@ delete(instrfindall)
                    else
                        warndlg('Please select correct mode from Popo menus','!! Warning !!')
                    end  
-                else
-                    warndlg('Pid not active, Activate iHover function','!! Warning !!')
-                end
+                %else
+                 %   warndlg('Pid not active, Activate iHover function','!! Warning !!')
+                %end
             else
                 warndlg('Tenzo is not flying. First Take Off then try again. ','!! Warning !!')
             end
@@ -1500,9 +1500,9 @@ delete(instrfindall)
                     if type == connID 
                         % Connection Channel
                         disp('Connection channel'); 
-                        conAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                        conAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32')
                         if (conAck == 2)
-                            tenzo = true; 
+                            tenzo = true;
                             set(connect,'BackgroundColor',[.99 .183 0.09],'String','Disconnect');
                             set(conTxt,'ForegroundColor', [.21 .96 .07],'String','Online');    
                             disp ('Connection established. Rock & Roll!'); 
@@ -1512,7 +1512,6 @@ delete(instrfindall)
                             end
                         elseif (conAck == 10)
                             tenzo = false;
-                            stop(timerXbee);
                             %delete(timerXbee);
                             set(connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
                             set(conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
@@ -1521,15 +1520,16 @@ delete(instrfindall)
                                     %tts('Connessione chiusa',voice);
                                     tts('Connection closed',voice);
                             end
-            %                 fclose(xbee);
-            %                 delete(xbee);
-            %                 clear xbee;
+                            stop(timerXbee);
+                            fclose(xbee);
+%                             delete(xbee);
+                            %clear xbee;
                         else
                             disp ('Bogh!');
                             % Received something else 
                             cmd = zeros(8,4,'uint8');
                             cmd(1,1) = uint8(connID);
-                            bits = reshape(bitget(3,32:-1:1),8,[]);
+                            bits = reshape(bitget(tnzo,32:-1:1),8,[]);
                             cmd(2,:) = weights2*bits;
                             sendMess(cmd);
                             
@@ -1542,7 +1542,7 @@ delete(instrfindall)
                             end
                             disp ('Communication problem. Check Hardware and retry.');
                             %warndlg('Communication busy. Press OK and reconnect','!! Warning !!')
-                            set(connect,'Value',1);
+                            %set(connect,'Value',1);
                         end                        
                     elseif (tenzo == false)
                         % Connection problem, Received something else 
@@ -1562,7 +1562,7 @@ delete(instrfindall)
                         end
                         disp ('Communication problem. Check Hardware and retry.');
                         %warndlg('Communication busy. Press OK and reconnect','!! Warning !!')
-                        set(connect,'Value',1);
+                        %set(connect,'Value',1);
                     end
                     if  tenzo == true
                         if type == 0 
@@ -2115,7 +2115,7 @@ delete(instrfindall)
                             break;
                         end
                         if type == tenzoStateID 
-                            % Tenzo State
+                            % Setting Tenzo State
                             disp('Reading state'); 
                             takeOffAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                             hoverAck = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');

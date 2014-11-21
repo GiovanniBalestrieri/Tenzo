@@ -3,6 +3,7 @@ function ControlBoard()
 clear all;
 clc;
 
+
 global xbee;
 global portWin;
 global portUnix;
@@ -136,6 +137,10 @@ global aggYawKi;
 global consYawKp;
 global consYawKd;
 global consYawKi;
+
+%% Version
+
+version = 1.75;
 
 %% Serial protocol
 
@@ -286,9 +291,9 @@ disp('Welcome to the CPanel');
 delete(instrfindall)
 
     %% create tabbed GUI
-    hFig = figure('Menubar','none');
+    handles.hFig = figure('Menubar','none');
     s = warning('off', 'MATLAB:uitabgroup:OldVersion');
-    hTabGroup = uitabgroup('Parent',hFig);
+    hTabGroup = uitabgroup('Parent',handles.hFig);
     warning(s);
     hTabs(1) = uitab('Parent',hTabGroup, 'Title','Home');
     hTabs(2) = uitab('Parent',hTabGroup, 'Title','Motors');
@@ -349,11 +354,11 @@ delete(instrfindall)
         'Position', [350 210 120 30],...
         'Parent',hTabs(1), 'Callback',@landCallback);
     
-    conTxt = uicontrol('Style','text', 'String','Offline','ForegroundColor',[.99 .183 0.09], ...
+    handles.conTxt = uicontrol('Style','text', 'String','Offline','ForegroundColor',[.99 .183 0.09], ...
         'Position', [70 20 100 30],...
         'Parent',hTabs(1), 'FontSize',13,'FontWeight','bold');
     
-    connect = uicontrol('Style','togglebutton', 'String','Connect', ...
+    handles.connect = uicontrol('Style','togglebutton', 'String','Connect', ...
         'Position', [400 20 120 30],'BackgroundColor',[.21 .96 .07],...
         'Parent',hTabs(1), 'Callback',@connection);        
     
@@ -1119,8 +1124,9 @@ delete(instrfindall)
         end
     end
     
-    function connection(~,~)        
-        if get(connect,'Value') == 1
+    function connection(obj,event,handles) 
+        handles = guidata(gcf);
+        if get(handles.connect,'Value') == 1
             disp('Connecting...');
             
             delete(instrfindall);
@@ -1168,7 +1174,7 @@ delete(instrfindall)
             
         end
 
-        if get(connect,'Value') == 0
+        if get(handles.connect,'Value') == 0
             disp ('Disconnecting...');             
             
             % Initialize the cmd array
@@ -1458,7 +1464,20 @@ delete(instrfindall)
         end
     end
 
-    function storeDataFromSerial(obj,event,handles)       
+    function sendStates()
+        cmd = zeros(8,4,'uint8');
+        cmd(1,1) = uint8(tenzoStateID);
+        bits = reshape(bitget(double(takeOffAck),32:-1:1),8,[]);
+        cmd(2,:) = weights2*bits;
+        bits = reshape(bitget(double(hoverAck),32:-1:1),8,[]);
+        cmd(3,:) = weights2*bits;
+        bits = reshape(bitget(double(landAck),32:-1:1),8,[]);
+        cmd(4,:) = weights2*bits;
+        sendMess(cmd); 
+    end
+
+    function storeDataFromSerial(obj,event,handles)
+        handles = guidata(gcf);
        while (get(xbee, 'BytesAvailable')~=0)
             % read until terminator
             [mess,count] = fread(xbee);
@@ -1503,8 +1522,11 @@ delete(instrfindall)
                         conAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32')
                         if (conAck == 2)
                             tenzo = true;
-                            set(connect,'BackgroundColor',[.99 .183 0.09],'String','Disconnect');
-                            set(conTxt,'ForegroundColor', [.21 .96 .07],'String','Online');    
+                            
+                            %set(connect,'BackgroundColor',[.99 .183 0.09],'String','Disconnect');
+                            
+                            set(handles.connect,'String','Disconnect');
+                            set(handles.conTxt,'ForegroundColor', [.21 .96 .07],'String','Online');    
                             disp ('Connection established. Rock & Roll!'); 
                             if speakCmd && vocalVerb>=1 
                                     %tts('Connessione eseguita',voice);
@@ -1513,8 +1535,9 @@ delete(instrfindall)
                         elseif (conAck == 10)
                             tenzo = false;
                             %delete(timerXbee);
-                            set(connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
-                            set(conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
+                            %set(connect,'String','Connect');
+                            set(handles.connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
+                            set(handles.conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
                             disp('Connection closed...');
                             if speakCmd && vocalVerb>=1 
                                     %tts('Connessione chiusa',voice);
@@ -1527,20 +1550,13 @@ delete(instrfindall)
                         else
                             disp ('Bogh!');
                             % Received something else 
-                            cmd = zeros(8,4,'uint8');
-                            cmd(1,1) = uint8(connID);
-                            bits = reshape(bitget(3,32:-1:1),8,[]);
-                            cmd(2,:) = weights2*bits;
-                            sendMess(cmd);
+                            sendStates();
                             
-                            tenzo = false;
-                            set(connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
-                            set(conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
                             if speakCmd && vocalVerb>=1 
                                 %    tts('Problema di connessione',voice);
-                                    tts('Connection problem',voice);
+                                    tts('Third condition detected. Warning. ',voice);
                             end
-                            disp ('Communication problem. Check Hardware and retry.');
+                            disp ('Communication problem. Third condition detected..');
                             %warndlg('Communication busy. Press OK and reconnect','!! Warning !!')
                             %set(connect,'Value',1);
                         end                        
@@ -1554,8 +1570,8 @@ delete(instrfindall)
                         sendMess(cmd);
 
                         tenzo = false;
-                        set(connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
-                        set(conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
+                        set(handles.connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
+                        set(handles.conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
                         if speakCmd && vocalVerb>=1 
                             %    tts('Problema di connessione',voice);
                                 tts('Connection problem',voice);
@@ -2115,7 +2131,7 @@ delete(instrfindall)
                             break;
                         end
                         if type == tenzoStateID 
-                            % Tenzo State
+                            % Setting Tenzo State
                             disp('Reading state'); 
                             takeOffAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                             hoverAck = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
@@ -2155,10 +2171,12 @@ delete(instrfindall)
                                 set(hoverBtn,'String','iHoverPid');
                                 disp('Unsafe hovering OR Landed');
                             end
+                            sendStates();
                         end 
                     end
                 end
             end %Message delivered from Arduino
        end
-    end  
+    end 
+guidata(handles.hFig,handles);
 end
