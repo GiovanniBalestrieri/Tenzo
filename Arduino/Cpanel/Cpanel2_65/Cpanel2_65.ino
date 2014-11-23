@@ -43,11 +43,16 @@ boolean printRawGyro= false;
 boolean printGyro = false; 
 boolean printRawCompass= false; 
 boolean printCompass = false; 
-boolean printRawKalman= true; 
+boolean printRawKalman= false; 
 boolean printKalman = false; 
 boolean printPIDVals = false;
 boolean printMotorsVals = false;
+// Timers
 boolean printTimers = false;
+boolean printLandProtocolTimers = false;
+boolean printGeneralTimers = true;
+boolean printAccTimers = true;
+
 boolean printThrottle = false;
 boolean printAckCommands = true;
 boolean printVerboseSerial = false;
@@ -352,6 +357,12 @@ float zF_m2=0;
 float xFbuff[3] = {0,0,0};
 float yFbuff[3] = {0,0,0};
 float zFbuff[3] = {0,0,0};
+int sizeBuffAcc = 10;
+float buffXAccToSend[10];
+float buffYAccToSend[10];
+float buffZAccToSend[10];
+float buffTimeToSend[10];
+int contBuffAcc = 1;
 
 // Filter compass params
 float APxF=0;
@@ -386,6 +397,29 @@ int thresholdUp=255, thresholdDown=1;
 // Motor speed;
 int throttle=0;
 int omega=0;
+
+/** 
+ * Timers
+ **/
+ 
+// General 
+unsigned long generalTimer;
+unsigned long lastGeneralTimer;
+// Acc
+unsigned long accTimer;
+unsigned long lastAccTimer;
+unsigned long filteredAccTimer;
+unsigned long lastFiltAccTimer;
+// Gyro
+unsigned long gyroTimer;
+unsigned long lastGyroTimer;
+unsigned long filteredGyroTimer;
+unsigned long lastFilteredGyroTimer;
+// Kalman
+unsigned long kalTimer;
+unsigned long lastKalTimer;
+unsigned long filteredKalTimer;
+unsigned long lastFilteredKalTimer;
 
 unsigned long timerMu;
 
@@ -431,11 +465,13 @@ int loWord,hiWord;
 
 // Serial Protocol
 int versionArduinoProtocol = 4;
+int mode = 0;
 long cmd1;
 long cmd2;
 long cmd3;
 long cmd4;
 int numCommandToSend = 0;
+int numFilterValuesToSend = 0;
 
 int inputBuffSize = 30;
 int outputBuffSize = 30;
@@ -477,9 +513,10 @@ int tenzoStateID = 30;
 int connID = 31;
 
 int cmdLength = 17;
+int shortCmdLength = 9;
 int headerLength = 13;
 
-typedef struct mcTag {
+typedef struct mcTag {  // 13 bytes
      unsigned char srcAddr;
      unsigned char dstAddr;
      unsigned long versionX;
@@ -489,12 +526,20 @@ typedef struct mcTag {
      unsigned short totalLen;
      unsigned short crc; } MyControlHdr;
 
-  typedef struct ctrTag {
+  typedef struct ctrTag { // 17 bytes
     unsigned char cmd;
     long param1;
     long param2;
     long param3;
     long param4;   } MyCommand;
+    
+    typedef struct ctrTagShort { // 9 bytes
+    unsigned char cmd;
+    int param1;
+    int param2;
+    int param3;
+    int param4; 
+  } MyShortCommand;
     
 unsigned char buffer[47];  // or worst case message size 70, 47: 2 mess
 
@@ -666,25 +711,51 @@ void setup()
 
 void loop()
 {
+  updateTimers();
   getAccValues(); 
   getCompassValues(); 
   getGyroValues(); 
   estimateAngle();
-  gpsRoutine();
+  //gpsRoutine();
   xbeeRoutine();
   detOrientation();
   control();
   sendDataSensors(matlab);
+  protocol1();
+  timers();
+}
+
+void updateTimers()
+{
+  // General timers
+  lastGeneralTimer = millis();  
+}
+
+void timers()
+{ 
+  generalTimer = millis() - lastGeneralTimer;
   if (printTimers)
   {
-    Serial.println();
-    Serial.print("                      checkpoint: ");
-    Serial.print(checkpoint);
-    Serial.print("      timer: ");
-    Serial.print(timerStart);
-    Serial.println();
+    if (printLandProtocolTimers)
+    {
+      Serial.println();
+      Serial.print("                      checkpoint: ");
+      Serial.print(checkpoint);
+      Serial.print("      timer: ");
+      Serial.print(timerStart);
+      Serial.println();
+    }
+    if (printGeneralTimers)
+    {
+      Serial.println();
+      Serial.print("    lastGenTimer: ");
+      Serial.print(lastGeneralTimer);
+      Serial.print("    GenTimer: ");
+      Serial.print(generalTimer);
+      Serial.print(" ms ");
+      Serial.println();
+    }
   }
-  protocol1();
 }
 
 void control()
@@ -2780,6 +2851,43 @@ void sendDataSensors(boolean device)
   } 
 }
 
+void sendCommandToMatlabFilter()
+{
+  // Build Header
+  pCtrlHdr->srcAddr = 1;
+  pCtrlHdr->dstAddr = 2;     
+  pCtrlHdr->versionX = versionArduinoProtocol;    // possible way to let a receiver know a code version
+  pCtrlHdr->numCmds = numFilterValuesToSend;    // how many commands will be in the message
+  if (printVerboseSerial)
+  {
+    Serial.println();
+    Serial.print("Sending # commands:");
+    Serial.print(numFilterValuesToSend);
+    Serial.println();
+  }
+  pCtrlHdr->hdrLength = sizeof(MyControlHdr );  // tells receiver where commands start
+  pCtrlHdr->cmdLength = sizeof(MyCommand );     // tells receiver size of each command 
+  // include total length of entire message
+  pCtrlHdr->totalLen= sizeof(MyControlHdr ) + (sizeof(MyShortCommand) * pCtrlHdr->numCmds);
+  if (printVerboseSerial)
+  {
+    Serial.println();
+    Serial.print("Total length: ");
+    Serial.print(pCtrlHdr->totalLen);
+    Serial.println();
+  }
+  pCtrlHdr->crc = 21;   // dummy temp value
+ Serial.println();
+ 
+  for (int v=0;v<=sizeof(buffer);v++)
+  {
+    Serial.write(buffer[v]);  
+  }
+ Serial.println();
+  numFilterValuesToSend = 0;
+}
+
+
 void sendCommandToMatlab()
 {
   // Build Header
@@ -2813,6 +2921,7 @@ void sendCommandToMatlab()
   }
   numCommandToSend = 0;
 }
+
 
 void testMotor(int x)
 {   
@@ -2896,31 +3005,109 @@ void getAccValues()
   int accValY = analogRead(accPinY);
   int accValZ = analogRead(accPinZ);
 
-
-//  float aX = (float) (accValX - gX0);
-//  float aY = (float) (accValY - gY0);
-//  float aZ = (float) (accValZ - gZ0);
-
-
  accX = (((accValX*5000.0)/1023.0)-XError)/800;
  accY = (((accValY*5000.0)/1023.0)-YError)/800;
  accZ = (((accValZ*5000.0)/1023.0)-ZError)/800;
 
-
-//  accX = aX*5/(1024.0*0.800);  
-//  accY = aY*5/(1024.0*0.800);  
-//  accZ = aZ*5/(1024.0*0.800);  
-
-//  //Compute angles from acc values
-//  angleXAcc = (atan2(-accX,accZ)) * RAD_TO_DEG;
-//  angleYAcc = (atan2(accY,accZ)) * RAD_TO_DEG;
-//  angleZAcc = (atan2(accY,accX)) * RAD_TO_DEG;
+  // gets the value sample time
+  accTimer = millis() - lastAccTimer;
+  // updates last reading timer
+  lastAccTimer = millis(); 
 
   accfilter[0] = accX;
   accfilter[1] = accY;
   accfilter[2] = accZ;
   
   accFilterExpMA(accfilter);
+  
+  // gets the time between each filtered sample
+  filteredAccTimer = millis() - lastFiltAccTimer;
+  // updates last reading timer
+  lastFiltAccTimer = millis(); 
+  
+  Serial.println(contBuffAcc);
+  // Fills the buffers to send
+  if (contBuffAcc%11 == 0)
+  {
+    sendBuffAcc();
+  }
+  else
+  {
+    Serial.print(" Filling Buff  ");
+    Serial.print(accX);
+    Serial.print("   ");
+    Serial.print(accY);    
+    Serial.print("   ");
+    Serial.print(accZ);
+    Serial.print("   ");
+    Serial.print(lastAccTimer);
+    buffXAccToSend[contBuffAcc-1] = accX;
+    Serial.println("   ");
+    for (int i=0;i<10;i++)    
+    {  
+      Serial.print("val: ");
+      Serial.print(i);
+      Serial.print("    ");
+      Serial.println(buffXAccToSend[i]);
+    }
+    Serial.println();
+    buffYAccToSend[contBuffAcc-1] = accY;
+    Serial.println("   ");
+    for (int i=0;i<10;i++)    
+    {  
+      Serial.print("val: ");
+      Serial.print(i);
+      Serial.print("    ");
+      Serial.println(buffYAccToSend[i]);
+    }
+    Serial.println();
+    buffZAccToSend[contBuffAcc-1] = accZ;
+    Serial.println("   ");
+    for (int i=0;i<10;i++)    
+    {  
+      Serial.print("val: ");
+      Serial.print(i);
+      Serial.print("    ");
+      Serial.println(buffZAccToSend[i]);
+    }
+    Serial.println();
+    buffTimeToSend[contBuffAcc-1] = lastAccTimer;
+    for (int i=0;i<10;i++)    
+    {  
+      Serial.print("val: ");
+      Serial.print(i);
+      Serial.print("    ");
+      Serial.println(buffTimeToSend[i
+      ]);
+    }
+    Serial.println();
+    contBuffAcc++;
+  }
+  
+  if (printTimers)
+  {    
+    if (printAccTimers)
+    {
+      Serial.println();
+      Serial.print(" millis ");
+      Serial.print(millis());
+      Serial.println();
+      Serial.print("    lastAccTimer: ");
+      Serial.print(lastAccTimer);
+      Serial.print("    AccTimer: ");
+      Serial.print(accTimer);
+      Serial.print(" ms Acc Sample Rate:");
+      Serial.print( 1/((float)accTimer/1000));
+      Serial.print(" Hz ");
+      Serial.println();
+      Serial.print("    lastFilteredAccTimer: ");
+      Serial.print(lastFiltAccTimer);
+      Serial.print("    filterAccTimer: ");
+      Serial.print(filteredAccTimer);
+      Serial.print(" ms ");
+      Serial.println();  
+    }
+  }
   
     //Compute angles from acc values
   angleXAcc = (atan2(-accfilter[0],accfilter[2])) * RAD_TO_DEG;
@@ -2950,8 +3137,46 @@ void getAccValues()
     Serial.print(accfilter[2]);
     Serial.print("]    ");
     Serial.println();
-  }
+  }  
 }  
+
+void sendBuffAcc()
+{
+  Serial.println();
+  Serial.print("Size of array:");
+  Serial.print(sizeof(buffXAccToSend));
+  Serial.println();
+  
+  MyShortCommand * pMyCmdShort = (MyShortCommand *)(&buffer[sizeof(MyControlHdr)]);
+  pMyCmdShort->cmd = 1;
+  numCommandToSend++;
+//             
+//   pMyCmd->param1 = consKpYaw*1000;   
+//   pMyCmd->param2 = consKiYaw*1000;
+//   pMyCmd->param3 = consKiYaw*1000;
+//   pMyCmd->param4 = SetpointYaw;
+       
+  for (int i=0;i<sizeBuffAcc;i++)    
+  {          
+    pMyCmdShort->param1 = buffXAccToSend[i]*1000;   
+    pMyCmdShort->param2 = buffYAccToSend[i]*1000;
+    pMyCmdShort->param3 = buffZAccToSend[i]*1000;
+    pMyCmdShort->param4 = buffTimeToSend[i];
+  }
+     if (printAckCommands)
+   {
+      Serial.println();
+      Serial.print("Sending pid vals to Matlab. Yaw cons");
+      Serial.println(pMyCmdShort->param1);
+      Serial.println(pMyCmdShort->param2);
+      Serial.println(pMyCmdShort->param3);
+      Serial.println(pMyCmdShort->param4);
+      Serial.println(); 
+   }  
+     
+   contBuffAcc=1;    
+   sendCommandToMatlabFilter();
+}
 
 void gpsRoutine()
 {
