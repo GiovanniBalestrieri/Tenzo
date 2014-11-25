@@ -46,7 +46,7 @@ void loop()
     maxAccY=accY;
   if (accZ > maxAccZ)
     maxAccZ=accZ;
-  printMax();
+  printValues();
   //printValues();
   if(Serial.available()>0)
   {

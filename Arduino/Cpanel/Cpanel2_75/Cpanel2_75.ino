@@ -1,3 +1,4 @@
+
 /**********************************************************************
  *             Arduino & L3G4200D gyro & KALMAN & 3 threshold PID     *
  *                running I2C mode, MMA7260Q Accelerometer            *
@@ -12,7 +13,7 @@
  *  - Bias substraction
  *  - Std filter for measurements
  *  - XBee connectivity
- *  - Matlab connection 
+ *  - Matlab connection
  *  - Kalman filter
  *  - Complementary Filter
  *  - Motors control
@@ -36,15 +37,15 @@
 /**
  * Print sensor's value
  */
-boolean printSetupInfo = false;
-boolean printOrientationFreeIMU = false; 
-boolean printRawAcc = false; 
-boolean printAcc = false; 
-boolean printRawGyro= false; 
-boolean printGyro = false; 
-boolean printRawCompass= false; 
-boolean printCompass = false; 
-boolean printRawKalman= false; 
+boolean printSetupInfo = true;
+boolean printOrientationFreeIMU = false;
+boolean printRawAcc = false;
+boolean printAcc = false;
+boolean printRawGyro= false;
+boolean printGyro = false;
+boolean printRawCompass= false;
+boolean printCompass = false;
+boolean printRawKalman= false;
 boolean printKalman = false; 
 boolean printPIDVals = false;
 boolean printMotorsVals = false;
@@ -56,7 +57,7 @@ boolean printAccTimers = true;
 
 boolean printThrottle = false;
 boolean printAckCommands = true;
-boolean printVerboseSerial = false;
+boolean printVerboseSerial = true;
 
 // Take Off settings
 int rampTill = 60;
@@ -355,16 +356,25 @@ float zF_m1=0;
 float xF_m2=0;
 float yF_m2=0;
 float zF_m2=0;
+/*
 float xFbuff[3] = {0,0,0};
 float yFbuff[3] = {0,0,0};
 float zFbuff[3] = {0,0,0};
-  
-unsigned char bufferAcc[864];  // 13 + (n*17)
-int sizeBuffAcc = 50;
-float buffXAccToSend[50];
-float buffYAccToSend[50];
-float buffZAccToSend[50];
-float buffTimeToSend[50];
+*/
+unsigned char bufferAcc[354];  // 13 + (n*17)
+
+int maxLengthMess = 40;
+int sizeBuffAcc = 10;
+/* Uncomment to save memory
+float buffXAccToSend[2];
+float buffYAccToSend[2];
+float buffZAccToSend[2];
+float buffTimeToSend[2];
+*/
+float buffXAccToSend[10];
+//float buffYAccToSend[60];
+//float buffZAccToSend[60];
+//float buffTimeToSend[10];
 int contBuffAcc = 1;
 
 // Filter compass params
@@ -1086,6 +1096,10 @@ void xbeeRoutine()
     else if(GotChar == 'A')
     {  	
       storeAccData = true;
+    }          
+    else if(GotChar == 'J')
+    {  	
+      storeAccData = false;
     }  
     else if (GotChar==46)
     {
@@ -2768,7 +2782,6 @@ void sendDataSensors(boolean device)
           Serial.println(pMyCmd->param4);
           Serial.println(); 
         }
-
         sendRollToMatlab = false;
       }
       else if (sendPitchToMatlab)
@@ -2811,7 +2824,6 @@ void sendDataSensors(boolean device)
           Serial.println(pMyCmd->param4);
           Serial.println(); 
         } 
-
         sendPitchToMatlab = false;
       }
       else if (sendYawToMatlab)
@@ -2881,6 +2893,7 @@ void sendCommandToMatlabFilter()
   pCtrlHdrAcc->cmdLength = sizeof(MyShortCommand );     // tells receiver size of each command 
   // include total length of entire message
   pCtrlHdrAcc->totalLen= sizeof(MyControlHdr ) + (sizeof(MyShortCommand) * pCtrlHdrAcc->numCmds);
+  /*
   if (printVerboseSerial)
   {
     Serial.println();
@@ -2894,22 +2907,22 @@ void sendCommandToMatlabFilter()
     Serial.print(pCtrlHdrAcc->hdrLength);
     Serial.println();
   }
+  */
   pCtrlHdrAcc->crc = 21;  // dummy temp value
   
   for (int v=0;v<=sizeof(bufferAcc);v++)
-  {
-    
-    Serial.print(v);
-    Serial.print(" Val: ");
-    Serial.print(bufferAcc[v]);
-    Serial.print(" (byte) | ");    
+  {    
+    //Serial.print(v);
+    //Serial.print(" Val: ");
+    //Serial.println(bufferAcc[v]);
+    //Serial.print(" (byte) | ");    
     Serial.write(bufferAcc[v]);  
-    Serial.println(" | ");
+    //Serial.println(" | ");
   }
   //Serial.println();
   numFilterValuesToSend = 0;
   
-  storeAccData = false;
+  //storeAccData = false;
 }
 
 
@@ -3048,27 +3061,31 @@ void getAccValues()
   // gets the time between each filtered sample
   filteredAccTimer = millis() - lastFiltAccTimer;
   // updates last reading timer
-  lastFiltAccTimer = millis(); 
-  
+  lastFiltAccTimer = millis();   
   
   // Fills the buffers to send
-  if (contBuffAcc%(sizeBuffAcc+1) == 0)
+  if (storeAccData)
   {
-    sendBuffAcc();
-    accDataReady=true;
-  }
-  else if (storeAccData)
-  {
-    Serial.println(" Storing  ...");
-    /*
-    Serial.print(" Filling Buff  ");
-     Serial.print(accX);
+     //Serial.println(" Storing  ...");
+    
+     //Serial.print(" Filling Buff  ");
+     Serial.println(accX);
+     /*
      Serial.print("   ");
      Serial.print(accY);    
      Serial.print("   ");
      Serial.print(accZ);
      Serial.print("   ");
      Serial.print(lastAccTimer);
+     
+     Serial.write(accX);
+     Serial.write(44);
+     Serial.write(accY);
+     Serial.write(44);
+     Serial.write(accZ);
+     Serial.write(44);
+     Serial.write(lastAccTimer);
+     Serial.write(21);
      */
     buffXAccToSend[contBuffAcc-1] = accX;
     /*
@@ -3082,7 +3099,7 @@ void getAccValues()
      }
      Serial.println();
      */
-    buffYAccToSend[contBuffAcc-1] = accY;
+    //buffYAccToSend[contBuffAcc-1] = accY;
     /*
     Serial.println("   ");
      for (int i=0;i<10;i++)    
@@ -3094,7 +3111,7 @@ void getAccValues()
      }
      Serial.println();
      */
-    buffZAccToSend[contBuffAcc-1] = accZ;
+    //buffZAccToSend[contBuffAcc-1] = accZ;
     /*
     Serial.println("   ");
      for (int i=0;i<10;i++)    
@@ -3106,7 +3123,7 @@ void getAccValues()
      }
      Serial.println();
      */
-    buffTimeToSend[contBuffAcc-1] = lastAccTimer;
+    //buffTimeToSend[contBuffAcc-1] = lastAccTimer;
     /*
     for (int i=0;i<10;i++)    
      {  
@@ -3119,7 +3136,12 @@ void getAccValues()
      */
      contBuffAcc++;
   }
-
+  if (contBuffAcc%(sizeBuffAcc+1) == 0)
+  {
+    sendBuffAcc();
+    accDataReady=true; // deprecated
+  }
+  
   if (printTimers && printAccTimers)
   {
     Serial.println();
@@ -3173,6 +3195,7 @@ void getAccValues()
 
 void sendBuffAcc()
 {
+  int stepCont = 1;
   if (printAckCommands)
   {
     Serial.println();
@@ -3180,12 +3203,12 @@ void sendBuffAcc()
     Serial.print(sizeof(buffXAccToSend));
     Serial.println();
   }
-
   MyShortCommand * pMyCmdShort = (MyShortCommand *)(&bufferAcc[sizeof(MyControlHdr)]);
 
   for (int i=0;i<sizeBuffAcc;i++)    
   {
-  /*  
+    //Serial.println(i);
+    /*  
     Serial.println(buffXAccToSend[i]);
     Serial.println(buffYAccToSend[i]);
     Serial.println(buffZAccToSend[i]);
@@ -3201,13 +3224,13 @@ void sendBuffAcc()
     
     pMyCmdShort->cmd = accValuesID;  
     pMyCmdShort->param1 = buffXAccToSend[i];   
-    pMyCmdShort->param2 = buffYAccToSend[i];
-    pMyCmdShort->param3 = buffZAccToSend[i];
-    pMyCmdShort->param4 = buffTimeToSend[i];
+    //pMyCmdShort->param2 = buffYAccToSend[i];
+    //pMyCmdShort->param3 = buffZAccToSend[i];
+    //pMyCmdShort->param4 = buffTimeToSend[i];
     
     if (printAckCommands)
     {
-      Serial.println("                              NEW");
+      Serial.println("       NEW CMD");
       //Serial.println("Inserting values into CMD");
       Serial.println(pMyCmdShort->param1);
       Serial.println(pMyCmdShort->param2);
@@ -3216,10 +3239,23 @@ void sendBuffAcc()
       Serial.println(); 
     }     
     pMyCmdShort++;
-  }  
-
-  contBuffAcc=1;    
-  sendCommandToMatlabFilter();
+    if (stepCont>0)
+    {
+      if (stepCont%(20) == 0 || stepCont == sizeBuffAcc -1)
+      {
+        sendCommandToMatlabFilter();
+        if (stepCont < sizeBuffAcc -1)
+        {
+          // New mess
+          Serial.println(stepCont);
+          MyShortCommand * pMyCmdShort = (MyShortCommand *)(&bufferAcc[sizeof(MyControlHdr)]);
+        }
+      }    
+    }
+    stepCont++;
+  }
+  //storeAccData = false;
+  contBuffAcc=1;      
 }
 
 void gpsRoutine()
@@ -3272,7 +3308,8 @@ void gpsRoutine()
     Serial.print((int)GPS.fix);
     Serial.print(" quality: ");  
     Serial.println((int)GPS.fixquality); 
-    if (GPS.fix) {
+    if (GPS.fix) 
+    {
       Serial.print("Location: ");
       Serial.print(GPS.latitude, 4); 
       Serial.print(GPS.lat);
@@ -3309,11 +3346,12 @@ void accFilterExpMA(float val[])
 
   val[0] = xF;
   val[1] = yF;
-  val[2] = zF; 
+  val[2] = zF;
   xF_m1 = xF;
   yF_m1 = yF;
   zF_m1 = zF;
 
+    /* Ripristina versione per filtro di secondo 
   for (int i=0 ; i<3;i++)
   {
     xFbuff[i]=xFbuff[i+1];
@@ -3323,6 +3361,7 @@ void accFilterExpMA(float val[])
   xFbuff[2] = val[0];
   yFbuff[2] = val[1];
   zFbuff[2] = val[2];
+  */
 }
 
 

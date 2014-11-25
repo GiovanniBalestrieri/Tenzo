@@ -55,7 +55,7 @@ boolean printGeneralTimers = true;
 boolean printAccTimers = true;
 
 boolean printThrottle = false;
-boolean printAckCommands = true;
+boolean printAckCommands = false;
 boolean printVerboseSerial = false;
 
 // Take Off settings
@@ -359,12 +359,12 @@ float xFbuff[3] = {0,0,0};
 float yFbuff[3] = {0,0,0};
 float zFbuff[3] = {0,0,0};
   
-unsigned char bufferAcc[864];  // 13 + (n*17)
-int sizeBuffAcc = 50;
-float buffXAccToSend[50];
-float buffYAccToSend[50];
-float buffZAccToSend[50];
-float buffTimeToSend[50];
+unsigned char bufferAcc[694];  // 13 + (n*17)
+int sizeBuffAcc = 1000;
+float buffXAccToSend[1000];
+float buffYAccToSend[1000];
+float buffZAccToSend[1000];
+float buffTimeToSend[1000];
 int contBuffAcc = 1;
 
 // Filter compass params
@@ -1086,6 +1086,10 @@ void xbeeRoutine()
     else if(GotChar == 'A')
     {  	
       storeAccData = true;
+    }          
+    else if(GotChar == 'J')
+    {  	
+      storeAccData = false;
     }  
     else if (GotChar==46)
     {
@@ -2899,17 +2903,17 @@ void sendCommandToMatlabFilter()
   for (int v=0;v<=sizeof(bufferAcc);v++)
   {
     
-    Serial.print(v);
-    Serial.print(" Val: ");
-    Serial.print(bufferAcc[v]);
-    Serial.print(" (byte) | ");    
+    //Serial.print(v);
+    //Serial.print(" Val: ");
+    //Serial.print(bufferAcc[v]);
+    //Serial.print(" (byte) | ");    
     Serial.write(bufferAcc[v]);  
-    Serial.println(" | ");
+    //Serial.println(" | ");
   }
   //Serial.println();
   numFilterValuesToSend = 0;
   
-  storeAccData = false;
+  //storeAccData = false;
 }
 
 
@@ -3059,7 +3063,7 @@ void getAccValues()
   }
   else if (storeAccData)
   {
-    Serial.println(" Storing  ...");
+    //Serial.println(" Storing  ...");
     /*
     Serial.print(" Filling Buff  ");
      Serial.print(accX);
@@ -3185,6 +3189,7 @@ void sendBuffAcc()
 
   for (int i=0;i<sizeBuffAcc;i++)    
   {
+    Serial.println(i);
   /*  
     Serial.println(buffXAccToSend[i]);
     Serial.println(buffYAccToSend[i]);
@@ -3216,10 +3221,10 @@ void sendBuffAcc()
       Serial.println(); 
     }     
     pMyCmdShort++;
-  }  
+  }
 
   contBuffAcc=1;    
-  sendCommandToMatlabFilter();
+  //sendCommandToMatlabFilter();
 }
 
 void gpsRoutine()
