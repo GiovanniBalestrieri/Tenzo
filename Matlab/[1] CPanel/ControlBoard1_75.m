@@ -293,6 +293,7 @@ delete(instrfindall)
     %% create tabbed GUI
     handles.hFig = figure('Menubar','none');
     s = warning('off', 'MATLAB:uitabgroup:OldVersion');
+    
     hTabGroup = uitabgroup('Parent',handles.hFig);
     warning(s);
     hTabs(1) = uitab('Parent',hTabGroup, 'Title','Home');

@@ -18,11 +18,11 @@ global finished;
 arduinoAdd = 1;
 matlabAdd = 2;
 % 20 cmd: 184+1
-InputBufferSize = 354;
+InputBufferSize = 357;
 
 version = 1;
 finished = 0;
-buf_len = 40;
+buf_len = 20;
 index = 1:buf_len;
 alphaAcc = 1;
 axFilt = 0;
@@ -117,7 +117,7 @@ handles.stop = uicontrol('Style','pushbutton', 'String','Stop', ...
             disp(mess);
             if (count == (InputBufferSize))% && mess(2) == matlabAdd && mess(1) == arduinoAdd)
                 %versionArd = typecast([uint8(mess(3)), uint8(mess(4)),uint8(mess(5)), uint8(mess(6))], 'int32');
-                numCmd = mess(7+2);
+                numCmd = mess(7+2)
                 %Arduino  tells the receiver where commands start
                 readFrom = mess(8+2);        
                 sizeOfEachCmd = mess(9+2);
@@ -136,31 +136,31 @@ handles.stop = uicontrol('Style','pushbutton', 'String','Stop', ...
                         cont=cont+1
                         % Pid Roll AGG
                         x = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'single');                        
-                        y = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'single');                        
-                        z = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'single');                        
-                        t = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'single');
+                        %y = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'single');                        
+                        %z = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'single');                        
+                        %t = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'single');
                                                 
                         %Filt Data
                         axFilt = (1 - alphaAcc)*axFilt + alphaAcc*x;
-                        ayFilt = (1 - alphaAcc)*ayFilt + alphaAcc*y;
-                        azFilt = (1 - alphaAcc)*azFilt + alphaAcc*z;
+                        %ayFilt = (1 - alphaAcc)*ayFilt + alphaAcc*y;
+                        %azFilt = (1 - alphaAcc)*azFilt + alphaAcc*z;
                         
                         % Raw Data
                         axData = [ axData(2:end) ; x ];
-                        ayData = [ ayData(2:end) ; y ];
-                        azData = [ azData(2:end) ; z ]; 
+                        %ayData = [ ayData(2:end) ; y ];
+                        %azData = [ azData(2:end) ; z ]; 
                         
                         axFiltData = [ axFiltData(2:end) ; axFilt ];
-                        ayFiltData = [ ayFiltData(2:end) ; ayFilt ];
-                        azFiltData = [ azFiltData(2:end) ; azFilt ]; 
+                        %ayFiltData = [ ayFiltData(2:end) ; ayFilt ];
+                        %azFiltData = [ azFiltData(2:end) ; azFilt ]; 
                         %Plot
                         
-                        time = [ time(2:end) ; t ];
+                        %time = [ time(2:end) ; t ];
                     end
                 end
             end
         end %while
-        if cont >= 20
+        if cont >= buf_len
             fwrite(xbee,'J');
             stop(timerXbee);
             finished = 1;
@@ -171,16 +171,18 @@ handles.stop = uicontrol('Style','pushbutton', 'String','Stop', ...
         if (finished == 1)
             AccData = matfile('dataAcc.mat','Writable',true);
             AccData.x = axData;
-            AccData.y = ayData;
-            AccData.z = azData;
-            AccData.t = time;
+            %AccData.y = ayData;
+            %AccData.z = azData;
+            %AccData.t = time;
             disp('Records saved in dataAcc.mat file. Check that out!');
             figure;
             %Plot the X acc
-            h1 = subplot(3,1,1);
+            h1 = subplot(1,1,1);
             %set(h1,'title','X acc (ms^-2)');
-            plot(h1,time,axData,'b','LineWidth',1);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+            plot(h1,index,axData,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
             grid on
+            axData
+            index
             %grid minor
             %xlim([0 100]);
             %hold on;
@@ -188,12 +190,12 @@ handles.stop = uicontrol('Style','pushbutton', 'String','Stop', ...
             %hold off;
             %xlabel('Time');
             %ylabel('Wx');
-            axis([time(1) time(end) -1 1]);
+            %axis([1 index -1 1]);
             %hold on;
-            h2 = subplot(3,1,2);
+            %h2 = subplot(3,1,2);
             %title('Y angular velocity in deg/s');
-            plot(h2,time,ayData,'b','LineWidth',1);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-            grid on
+            %plot(h2,buf_len,ayData,'b','LineWidth',1);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+            %grid on
             %grid minor
             %hold on;
             %plot(h1,time,ayFiltData,'r','LineWidth',1);
@@ -201,11 +203,11 @@ handles.stop = uicontrol('Style','pushbutton', 'String','Stop', ...
             %xlabel('Time');
             %ylabel('Wy Acc');
             %axis([1 buf_len -80 80]);
-            h3 = subplot(3,1,3);
+            %h3 = subplot(3,1,3);
             %title('Z angular velocity in deg/s');
             %hold on;
-            plot(h3,time,azData,'b','LineWidth',1);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-            grid on
+            %plot(h3,buf_len,azData,'b','LineWidth',1);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+            %grid on
             %grid minor
             %hold on;
             %plot(h3,time,azFiltData,'g','LineWidth',2);

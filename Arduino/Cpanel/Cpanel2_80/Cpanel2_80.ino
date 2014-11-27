@@ -37,7 +37,7 @@
 /**
  * Print sensor's value
  */
-boolean printSetupInfo = true;
+boolean printSetupInfo = false;
 boolean printOrientationFreeIMU = false;
 boolean printRawAcc = false;
 boolean printAcc = false;
@@ -56,8 +56,8 @@ boolean printGeneralTimers = true;
 boolean printAccTimers = true;
 
 boolean printThrottle = false;
-boolean printAckCommands = true;
-boolean printVerboseSerial = true;
+boolean printAckCommands = false;
+boolean printVerboseSerial = false;
 
 // Take Off settings
 int rampTill = 60;
@@ -89,15 +89,15 @@ double SetpointAltitude = 1, InputAltitude, errorAltitude, OutputAltitude;
 
 // Define the aggressive and conservative Tuning Parameters
 // Roll
-double aggKpRoll=0.10, aggKiRoll=0.06, aggKdRoll=0.04;
-double consKpRoll=0.22, consKiRoll=0.09, consKdRoll=0.02;
-double farKpRoll=0.05, farKiRoll=0.9, farKdRoll=0.03;
+float aggKpRoll=0.10, aggKiRoll=0.06, aggKdRoll=0.04;
+float consKpRoll=0.22, consKiRoll=0.09, consKdRoll=0.02;
+float farKpRoll=0.05, farKiRoll=0.9, farKdRoll=0.03;
 
 
 // Pitch
-double aggKpPitch=0.07, aggKiPitch=0.06, aggKdPitch=0.04;
-double consKpPitch=0.24, consKiPitch=0.09, consKdPitch=0.06;
-double farKpPitch=0.02, farKiPitch=0.09,  farKdPitch=0.10;
+float aggKpPitch=0.07, aggKiPitch=0.06, aggKdPitch=0.04;
+float consKpPitch=0.24, consKiPitch=0.09, consKdPitch=0.06;
+float farKpPitch=0.02, farKiPitch=0.09,  farKdPitch=0.10;
 
 // Yaw
 double aggKpYaw=0.3, aggKiYaw=0.0, aggKdYaw=0.1;
@@ -357,14 +357,15 @@ float zFbuff[3] = {0,0,0};
 unsigned char bufferAcc[354];  // 13 + (n*17)
 
 int maxLengthMess = 20;
-int sizeBuffAcc = 40;
+// Change here to modify number of samples
+int sizeBuffAcc = 20;
 /* Uncomment to save memory
 float buffXAccToSend[2];
 float buffYAccToSend[2];
 float buffZAccToSend[2];
 float buffTimeToSend[2];
 */
-float buffXAccToSend[40];
+float buffXAccToSend[20];
 //float buffYAccToSend[60];
 //float buffZAccToSend[60];
 //float buffTimeToSend[10];
@@ -3080,15 +3081,18 @@ void getAccValues()
      */
     buffXAccToSend[contBuffAcc-1] = accX;
     
-    Serial.println();
-    for (int i=0;i<sizeBuffAcc;i++)    
-    {  
-    Serial.print("val: ");
-    Serial.print(i);
-    Serial.print("    ");
-    Serial.println(buffXAccToSend[i]);
-    }
-    Serial.println();
+//    if (contBuffAcc==sizeBuffAcc-1)
+//    {
+//      Serial.println();      
+//      for (int i=0;i<sizeBuffAcc;i++)    
+//      {  
+//      Serial.print("val: ");
+//      Serial.print(i);
+//      Serial.print("    ");
+//      Serial.println(buffXAccToSend[i]);
+//      }
+//      Serial.println();
+//    }
     
     //buffYAccToSend[contBuffAcc-1] = accY;
     /*
@@ -3129,7 +3133,8 @@ void getAccValues()
   }
   if (contBuffAcc%(sizeBuffAcc+1) == 0)
   {
-    sendBuffAcc();
+    Serial.println();
+    sendBuffAcc(buffXAccToSend);
     accDataReady=true; // deprecated
   }
   
@@ -3184,27 +3189,36 @@ void getAccValues()
   }  
 }  
 
-void sendBuffAcc()
+void sendBuffAcc(float a[])
 {
   int stepCont = 1;
-  if (printAckCommands)
-  {
-    Serial.println();
-    Serial.print("Size of array:");
-    Serial.print(sizeof(buffXAccToSend));
-    Serial.println();
+  /*
+  Serial.println();      
+  for (int i=0;i<sizeBuffAcc;i++)    
+  {  
+  Serial.print("val: ");
+  Serial.print(i);
+  Serial.print("    ");
+  Serial.println(buffXAccToSend[i]);
   }
+  Serial.println(); 
+  */
+
   MyShortCommand * pMyCmdShort = (MyShortCommand *)(&bufferAcc[sizeof(MyControlHdr)]);
 
   for (int i=0;i<sizeBuffAcc;i++)    
   {
+    /*
+    Serial.print("val: ");
+    Serial.print(i);
+    Serial.print("| Global Array: ");
+    Serial.print(buffXAccToSend[i]);
     //Serial.println(i);
     /*  
     Serial.println(buffXAccToSend[i]);
     Serial.println(buffYAccToSend[i]);
     Serial.println(buffZAccToSend[i]);
     Serial.println(buffTimeToSend[i]);
-      
     
     Serial.write((byte)buffXAccToSend[i]);
     Serial.write((byte)buffYAccToSend[i]);
@@ -3214,21 +3228,31 @@ void sendBuffAcc()
     numFilterValuesToSend++;    
     
     pMyCmdShort->cmd = accValuesID;  
-    pMyCmdShort->param1 = buffXAccToSend[i];   
+    pMyCmdShort->param1 = a[i];  
+    pMyCmdShort->param2 = 0;
+    pMyCmdShort->param3 = 0;
+    pMyCmdShort->param4 = 0;
     //pMyCmdShort->param2 = buffYAccToSend[i];
     //pMyCmdShort->param3 = buffZAccToSend[i];
     //pMyCmdShort->param4 = buffTimeToSend[i];
-    
-    if (printAckCommands)
-    {
-      Serial.println("       NEW CMD");
-      //Serial.println("Inserting values into CMD");
-      Serial.println(pMyCmdShort->param1);
-      Serial.println(pMyCmdShort->param2);
-      Serial.println(pMyCmdShort->param3);
-      Serial.println(pMyCmdShort->param4);
-      Serial.println(); 
-    }     
+    /*
+    Serial.print("|  Param: ");
+    Serial.print(pMyCmdShort->param1);
+    Serial.print("|  Array: ");
+    Serial.println(a[i]);
+    */
+//    if (printAckCommands)
+//    {
+//      Serial.print(" CMD number: ");
+//      Serial.println(stepCont);
+//      Serial.print(pMyCmdShort->param1);
+//      Serial.print(" Orginal: ");
+//      Serial.print(a[i]);
+//      //Serial.println(pMyCmdShort->param2);
+//      //Serial.println(pMyCmdShort->param3);
+//      //Serial.println(pMyCmdShort->param4);
+//      Serial.println(); 
+//    }     
     pMyCmdShort++;
     if (stepCont>0)
     {
