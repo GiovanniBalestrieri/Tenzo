@@ -30,7 +30,7 @@ function DataAcquisiton()
     deltaT = 0;
     contSamples = 0;
     
-    buffLen = 100;
+    buffLen = 500;
     longBuffLen = 1000;
     index=1:buffLen;
     asked = false;
@@ -152,7 +152,7 @@ function DataAcquisiton()
                         axis([time(1) time(end) -1.5 1.5]);                
                         xlabel('time [ms]')
                         ylabel('Magnitude of X acc [m*s^-2]');
-                        plot(time(1:end),axdata(1:end),'b');
+                        plot(time(10:end),axdata(10:end),'b');
                         grid on;        
                     end
                     drawnow;                    
@@ -164,6 +164,13 @@ function DataAcquisiton()
                 disp('saving samples to file');
                 accDataToWrite = [axdata,time];
                 csvwrite('accx.txt',accDataToWrite);
+                disp('saving file to structure');
+                dat.x = axdata;
+                dat.y = aydata;
+                dat.z = azdata;
+                dat.time = time;
+                save('AccSamples.mat','-struct','dat');
+                disp(deltaT);
 %               fileID = fopen('accx.txt','w');
 %               fprintf(fileID,'%1.4f,%4.4f\n',axdata,time);
 %               fclose(fileID);

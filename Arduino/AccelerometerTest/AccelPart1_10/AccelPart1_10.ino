@@ -24,6 +24,7 @@ unsigned long timeToRead = 0;
 unsigned long lastTimeToRead = 0;
 
 int contSamples = 0;
+int lastTimeToRead = 500;
 
 byte mode;
 unsigned int sensorValue = 0;
@@ -85,7 +86,7 @@ void serialRoutine()
        Serial.print(",");
        Serial.println("A");
        delay(100);
-       while (contSamples <= 100)
+       while (contSamples <= samplesNum)
        {
          timeToRead = millis() - lastTimeToRead;
          x=analogRead(xaxis);
