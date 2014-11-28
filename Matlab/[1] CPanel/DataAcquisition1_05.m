@@ -12,11 +12,12 @@ function DataAcquisiton()
     global samplesNumMax;
     global timerArduino;
     global timerConnect;
+    global requestPending;
+    global firing;
     
     %% Creates window
     handles.hFig = figure('Menubar','none');
     AccData = warning('off', 'MATLAB:uitabgroup:OldVersion');
-    
     
     samplesNumMax = 1000;
     acceleration.s = 0;
@@ -32,8 +33,11 @@ function DataAcquisiton()
     longBuffLen = 1000;
     index=1:buffLen;
     asked = false;
-    recording = false;
+    rt = false;
+    plotting = false;
     receiving = false;
+    requestPending = false;
+    firing = false;
     
     AccX = zeros(samplesNumMax,1);
     AccY = zeros(samplesNumMax,1);
@@ -42,6 +46,8 @@ function DataAcquisiton()
     aydata = zeros(longBuffLen,1);
     azdata = zeros(longBuffLen,1);
     time  = zeros(longBuffLen,1);
+    
+    delete(instrfindall);
     
     %# Home UI components
     if (~exist('welcomeTxt','var'))
@@ -89,87 +95,90 @@ function DataAcquisiton()
     
     function rtCallback(obj,event,h)
         disp('RT pressed');
-        asked = ~asked
+        rt = ~rt
     
-        while asked
-            % waiting for the connection to be established
-            %disp(abs(az));
-            %disp(asked);       
-            %disp(serialFlag);
-            while (serialFlag == 1 && abs(az) >= -0.5)
-                
-                % Request acc data RT
+        % waiting for the connection to be established
+        disp(serialFlag);
+        while (serialFlag == 1 && abs(az) >= -0.5)               
+            % Request High Res data             
+            if rt
                 fwrite(acceleration.s,82);
-                [ax ay az t,receiving] = readAcc1_05(acceleration);
-                figure(2);
+                
+                [ax ay az t,firing] = readAcc1_05(acceleration);
+                firing
+                while (firing && ax+ay+az ~= 0 && rt)
+                    
+                    figure(4);
+                    cla;
 
-                cla;
+                    axdata = [ axdata(2:end) ; ax ];
+                    aydata = [ aydata(2:end) ; ay ];
+                    azdata = [ azdata(2:end) ; az ];    
+                    time   = [time(2:end) ; t/1000];
 
-                axdata = [ axdata(2:end) ; ax ];
-                aydata = [ aydata(2:end) ; ay ];
-                azdata = [ azdata(2:end) ; az ];    
-                time   = [time(2:end) ; t/1000];
+                    deltaT = t - prevTimer;
+                    prevTimer = t;
+                    h11 = subplot(3,1,1);
 
-                deltaT = t - prevTimer
-                prevTimer = t;
-                h11 = subplot(3,1,1);
-
-                title('Acc X');    
-                axis([1 buffLen -0.5 0.5]);
-                xlabel('time [ms]')
-                ylabel('Magnitude of X acc [m*s^-2]'); 
-                plot(h11,index,axdata(901:1000),'r');
-                grid on;
-
-                h12 = subplot(3,1,2);
-
-                title('Acc Y');      
-                axis([1 buffLen -0.5 0.5]);          
-                xlabel('time [ms]')
-                ylabel('Magnitude of Y acc [m*s^-2]');
-                plot(h12,index,aydata(901:1000),'r');
-                grid on;         
-
-                h13 = subplot(3,1,3);
-
-                title('Acc Z');
-                axis([1 buffLen -1.5 1.5]);                
-                xlabel('time [ms]')
-                ylabel('Magnitude of Z acc [m*s^-2]');
-                plot(h13,index,azdata(901:1000),'r');
-                grid on;         
-
-                if ((time(900) >= 0) && (time(1000)>0))
-                    figure(3);       
-                    title('Acc X');
-                    axis([time(950) time(1000) -1.5 1.5]);                
+                    title('Acc X');    
+                    axis([1 buffLen -0.5 0.5]);
                     xlabel('time [ms]')
-                    ylabel('Magnitude of X acc [m*s^-2]');
-                    plot (time(901:1000),axdata(901:1000),'b');
-                    grid on;        
+                    ylabel('Magnitude of X acc [m*s^-2]'); 
+                    plot(h11,index,axdata(901:1000),'r');
+                    grid on;
+
+                    h12 = subplot(3,1,2);
+
+                    title('Acc Y');      
+                    axis([1 buffLen -0.5 0.5]);          
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Y acc [m*s^-2]');
+                    plot(h12,index,aydata(901:1000),'r');
+                    grid on;         
+
+                    h13 = subplot(3,1,3);
+
+                    title('Acc Z');
+                    axis([1 buffLen -1.5 1.5]);                
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Z acc [m*s^-2]');
+                    plot(h13,index,azdata(901:1000),'r');
+                    grid on;         
+
+                    if ((time(950) >= 0) && (time(1000)>0))
+                        figure(5);       
+                        title('Acc X');
+                        axis([time(950) time(1000) -1.5 1.5]);                
+                        xlabel('time [ms]')
+                        ylabel('Magnitude of X acc [m*s^-2]');
+                        plot(time(901:1000),axdata(901:1000),'b');
+                        grid on;        
+                    end
+                    drawnow;                    
+                    [ax ay az t,rt] = readAcc1_05(acceleration);
                 end
-                drawnow;
+            end
+            if ~rt
+                break;
             end
         end
     end
 
     function recordCallback(obj,event,handles)
         disp('Record Pressed');
-        recording = ~recording
-        SerialFlag;
-        while recording
+        plotting = ~plotting
+        serialFlag;
+        if plotting == 1
             % waiting for the connection to be established
             %disp(abs(az));
-            %disp(asked);       
-            disp(serialFlag);
+            %disp(asked);     
             while (serialFlag == 1 && abs(az) >= -0.5)               
                 % Request High Res data 
                 fwrite(acceleration.s,84);
                 
                 [ax ay az t,receiving] = readAcc1_05(acceleration)
-                while (receiving)
-                %while (ax ~= 0 && ay ~= 0 && az ~= 0)
-                    [ax ay az t,receiving] = readAcc1_05(acceleration);
+                receiving
+                if (receiving)
                     figure(2);
 
                     cla;
@@ -231,10 +240,11 @@ function DataAcquisiton()
     
     function startCallback(obj,event,h)
         disp('start pressed');
-        asked = ~asked
+        asked = ~asked;
+        delete(timerfindall);
         if asked == true
             if serialFlag == 0 
-                [acceleration.s,serialFlag] = setupSerial();
+                [acceleration.s] = setupSerial();
             end
         else 
             if serialFlag == 1 
@@ -248,13 +258,9 @@ function DataAcquisiton()
         serialFlag;
     end
     
-    function [s,flag] = setupSerial()
-        delete(instrfindall);
+    function [s] = setupSerial()
         %comPortLinux = '/dev/ttyACM0';
         comPortWin = 'COM4';
-        flag = 0;
-        connected = false;
-
         oldSerial = instrfind('Port', comPortWin); 
         % if the set of such objects is not(~) empty
         if (~isempty(oldSerial))  
@@ -279,29 +285,35 @@ function DataAcquisiton()
 
 
         function connect(obj,event,h)
-            disp('Establishing connection')
-            fwrite(acceleration.s,16);  
-            if (get(timerArduino,'Running') == 'off')
-                start(timerArduino);    
+            if serialFlag == 0 && requestPending == false
+                if isvalid(acceleration.s) == 1
+                    fwrite(acceleration.s,16); 
+                end
+                if (strcmp(get(timerArduino,'Running'),'off'))
+                    start(timerArduino);    
+                end
             end
         end
 
-        function stoppedCon(obj,event,h)        
-            disp('Connection established');
-            serialFlag = 1
+        function stoppedCon(obj,event,h)       
+            serialFlag = 1;
+            requestPending = false;
+            stop(timerArduino);   
+            stop(timerConnect);      
             set(handles.start,'String','Stop');
-            stop(timerArduino);     
+            disp('Connection established');
         end
 
         function storeSerial(obj,event,handles)
-            while (get(acceleration.s, 'BytesAvailable')>0)
+            while (get(acceleration.s, 'BytesAvailable')==1)
                 [mess,cont] = fread(acceleration.s);
-                disp('Received bytes:');
+                %disp('Received bytes:');
                 %disp(cont);
-                disp(mess);
+                %disp(mess);
                 if (mess == 17)             
-                    display(['Collecting data']);
-                    fwrite(acceleration.s,18);     
+                    %display(['Collecting data']);
+                    fwrite(acceleration.s,18); 
+                    requestPending = true;   
                 elseif (mess == 19)  
                     stoppedCon();
                 elseif (mess == 82)  

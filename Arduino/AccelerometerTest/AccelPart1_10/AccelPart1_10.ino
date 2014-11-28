@@ -20,7 +20,8 @@ float aax,aay,aaz;
 // Acc Timers
 unsigned long accTimer;
 unsigned long lastAccTimer;
-unsigned long timeToRead;
+unsigned long timeToRead = 0;
+unsigned long lastTimeToRead = 0;
 
 byte mode;
 unsigned int sensorValue = 0;
@@ -77,13 +78,14 @@ void serialRoutine()
      mode = Serial.read();
      if (mode == 82)
      {
-       timeToRead = millis();
+       lastTimeToRead = millis();
        Serial.print("T");
        Serial.print(",");
        Serial.println("A");
        delay(100);
-       while (timeToRead>10000)
+       while (timeToRead<1000)
        {
+         timeToRead = millis() - lastTimeToRead;
          x=analogRead(xaxis);
          y=analogRead(yaxis);
          z=analogRead(zaxis);
@@ -97,7 +99,7 @@ void serialRoutine()
          // updates last reading timer
          lastAccTimer = millis(); 
          
-         Serial.print("T");
+         Serial.print("S");
          Serial.print(",");
          Serial.print(aax);
          Serial.print(",");
@@ -112,7 +114,7 @@ void serialRoutine()
        
        Serial.print("T");
        Serial.print(",");
-       Serial.println("B");
+       Serial.println("B");       
      } 
      else if (mode == 84)
      {
