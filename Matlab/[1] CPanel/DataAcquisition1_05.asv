@@ -161,12 +161,10 @@ function DataAcquisiton()
                 end
             end
             if ~rt
-                disp('saving samples to file');
-                accDataToWrite = [axdata,time];
-                csvwrite('accx.txt',accDataToWrite);
-%               fileID = fopen('accx.txt','w');
-%               fprintf(fileID,'%1.4f,%4.4f\n',axdata,time);
-%               fclose(fileID);
+                  accDataToWrite = [
+%                 fileID = fopen('accx.txt','w');
+%                 fprintf(fileID,'%1.4f,%4.4f\n',axdata,time);
+%                 fclose(fileID);
                 break;
             end
         end

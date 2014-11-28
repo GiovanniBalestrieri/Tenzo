@@ -23,6 +23,8 @@ unsigned long lastAccTimer;
 unsigned long timeToRead = 0;
 unsigned long lastTimeToRead = 0;
 
+int contSamples = 0;
+
 byte mode;
 unsigned int sensorValue = 0;
 boolean connectEd = false;
@@ -83,7 +85,7 @@ void serialRoutine()
        Serial.print(",");
        Serial.println("A");
        delay(100);
-       while (timeToRead<1000)
+       while (contSamples <= 100)
        {
          timeToRead = millis() - lastTimeToRead;
          x=analogRead(xaxis);
@@ -110,11 +112,13 @@ void serialRoutine()
          Serial.println(lastAccTimer);
          //Plot terminator carriage
          //Serial.write(13);
+         contSamples++;
        }
        
        Serial.print("T");
        Serial.print(",");
-       Serial.println("B");       
+       Serial.println("B");     
+       contSamples = 0;  
      } 
      else if (mode == 84)
      {
