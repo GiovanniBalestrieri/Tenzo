@@ -87,10 +87,18 @@ gxFdata2 = zeros(num_bins,1);
 
 for i = 1:num_bins
     axF = (1 - alpha)*axF + alpha*dat.x(i);
+    if (i==1)
+        axF2 = b(1)*dat.x(i);
+    end
+    if (i==2)
+        axF2 = b(1)*dat.x(i) +b(2)*dat.x(i-1)...
+            - a(2)*gxFdata2(num_bins)
+    end
     if (i>2 && i<num_bins-2)
-        axF2 = b(1)*dat.x(i)+b(2)-b(1))*dat.x(i-1)+(b(3)-b(2))*dat.x(i)...
-            + (a(1)-a(2))*gxFdata2(num_bins-(i+2)) + (a(2)-a(3))*gxFdata2(num_bins-(i+1)); 
-        %axF2 = (1 - 2*a(2)*a(3))*gxFdata2(num_bins-(i+2)) + (2*alpha - alpha^2)*gxFdata2(num_bins-(i+1)) + alpha^2*dat.x(i);
+        axF2 = b(1)*dat.x(i)+b(2)*dat.x(i-1)...
+            + b(3)*dat.x(i-2)...
+            - a(2)*gxFdata2(num_bins) ...
+            - a(3)*gxFdata2(num_bins-1); 
     end
     gxFdata = [ gxFdata(2:end) ; axF ];
     gxFdata2 = [ gxFdata2(2:end) ; axF2 ];
