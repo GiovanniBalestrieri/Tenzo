@@ -164,16 +164,13 @@ function DataAcquisiton()
                 disp('saving samples to file');
                 accDataToWrite = [axdata,time];
                 csvwrite('accx.txt',accDataToWrite);
-                disp('saving file to structure');
+                disp('saving file to structure accSamples.mat');
                 dat.x = axdata;
                 dat.y = aydata;
                 dat.z = azdata;
                 dat.time = time;
-                save('AccSamples.mat','-struct','dat');
+                save('accSamples.mat','-struct','dat');
                 disp(deltaT);
-%               fileID = fopen('accx.txt','w');
-%               fprintf(fileID,'%1.4f,%4.4f\n',axdata,time);
-%               fclose(fileID);
                 break;
             end
         end
