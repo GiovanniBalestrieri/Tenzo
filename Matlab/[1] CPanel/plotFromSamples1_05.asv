@@ -1,5 +1,6 @@
 % This scipt loads and plots data from a .mat file
 clc
+clear all
 gxFdata = 0;
 gyFdata = 0;
 gzFdata = 0;
@@ -17,14 +18,14 @@ ylabel('Amplitude [m*s^-2]');
 grid on
 grid minor
 
-% Plots raw data
-figure(2);
-plot(dat.x);
-title('Noisy acceleration along X axis');
-xlabel('Samples [s]');
-ylabel('Amplitude [m*s^-2]');
-grid on
-grid minor
+% % Plots raw data
+% figure(2);
+% plot(dat.x);
+% title('Noisy acceleration along X axis');
+% xlabel('Samples [s]');
+% ylabel('Amplitude [m*s^-2]');
+% grid on
+% grid minor
 
 % Plots magnitude spectrum of the signal
 X_mags=abs(fft(dat.x));
@@ -40,7 +41,7 @@ xlabel('Normalized frequency [\pi rads/samples]');
 ylabel('Magnitude');
 
 % Designs a second order filter using a butterworth design guidelines
-[b a] = butter(2,0.2,'low');
+[b a] = butter(2,0.05,'low');
 
 % Plot the frequency response (normalized frequency)
 H = freqz(b,a,floor(num_bins/2));
@@ -59,7 +60,7 @@ xlabel('Samples');
 ylabel('Amplitude');
 
 % Redesign the filter using a higher order filter
-[b2 a2] = butter(20,0.2,'low');
+[b2 a2] = butter(3,0.2,'low');
 
 % Plots the magnitude spectrum and compare with lower order
 H2 = freqz(b2,a2,floor(num_bins/2));
@@ -76,14 +77,12 @@ xlabel('Samples');
 ylabel('Amplitude');
 
 % Comparison between filters: first order low pass Vs second order
-alpha = 0.05
+alpha = 0.05;
 axF = 0;
 axF2 = 0;
 axF2m1 = 0;
 gxFdata = zeros(num_bins,1);
 gxFdata2 = zeros(num_bins,1);
-% gyFdata = zeros(num_bins,1);
-% gzFdata = zeros(num_bins,1);
 
 for i = 1:num_bins
     axF = (1 - alpha)*axF + alpha*dat.x(i);
@@ -92,18 +91,16 @@ for i = 1:num_bins
     end
     if (i==2)
         axF2 = b(1)*dat.x(i) +b(2)*dat.x(i-1)...
-            - a(2)*gxFdata2(num_bins-(i+1))
+            - a(2)*gxFdata2(num_bins)
     end
     if (i>2 && i<num_bins-2)
         axF2 = b(1)*dat.x(i)+b(2)*dat.x(i-1)...
             + b(3)*dat.x(i-2)...
-            - a(2)*gxFdata2(num_bins-(i+1)) ...
-            - a(3)*gxFdata2(num_bins-(i+2)); 
+            - a(2)*gxFdata2(num_bins) ...
+            - a(3)*gxFdata2(num_bins-1); 
     end
     gxFdata = [ gxFdata(2:end) ; axF ];
     gxFdata2 = [ gxFdata2(2:end) ; axF2 ];
-%     gyFdata = [ gyFdata(2:end) ; gyFilt ];
-%     gzFdata = [ gzFdata(2:end) ; gzFilt ];
 end
 
 figure(5)
@@ -114,6 +111,8 @@ hold on
 plot(gxFdata2,'.');
 hold on
 plot(x_filtered,'b');
+hold on
+plot(x_filtered2,'r-');
 title('Filter Comparison');
 xlabel('Samples [s]');
 ylabel('Amplitude [m*s^-2]');

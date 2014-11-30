@@ -30,7 +30,7 @@ function DataAcquisiton()
     deltaT = 0;
     contSamples = 0;
     
-    buffLen = 500;
+    buffLen = 600;
     longBuffLen = 1000;
     index=1:buffLen;
     asked = false;
@@ -109,7 +109,7 @@ function DataAcquisiton()
                 firing
                 while (firing && ax+ay+az ~= 0 && rt)
                     
-                    figure(4);
+                    figure(6);
                     cla;
 
                     axdata = [ axdata(2:end) ; ax ];
@@ -152,7 +152,7 @@ function DataAcquisiton()
                         axis([time(1) time(end) -1.5 1.5]);                
                         xlabel('time [ms]')
                         ylabel('Magnitude of X acc [m*s^-2]');
-                        plot(time(10:end),axdata(10:end),'b');
+                        plot(time(1:end),axdata(1:end),'b');
                         grid on;        
                     end
                     drawnow;                    
@@ -171,6 +171,14 @@ function DataAcquisiton()
                 dat.time = time;
                 save('accSamples.mat','-struct','dat');
                 disp(deltaT);
+                % Reset Arrays
+                AccX = zeros(buffLen,1);
+                AccY = zeros(buffLen,1);
+                AccZ = zeros(buffLen,1);
+                axdata= zeros(buffLen,1);
+                aydata = zeros(buffLen,1);
+                azdata = zeros(buffLen,1);
+                time  = zeros(buffLen,1);
                 break;
             end
         end
@@ -188,10 +196,10 @@ function DataAcquisiton()
                 % Request High Res data 
                 fwrite(acceleration.s,84);
                 
-                [ax ay az t,receiving] = readAcc1_05(acceleration)
+                [ax ay az t,receiving] = readAcc1_05(acceleration);
                 receiving
                 if (receiving)
-                    figure(2);
+                    figure(3);
 
                     cla;
 
@@ -208,7 +216,7 @@ function DataAcquisiton()
                     axis([1 buffLen -0.5 0.5]);
                     xlabel('time [ms]')
                     ylabel('Magnitude of X acc [m*s^-2]'); 
-                    plot(h11,index,axdata(901:1000),'r');
+                    plot(h11,index,axdata,'r');
                     grid on;
 
                     h12 = subplot(3,1,2);
@@ -217,7 +225,7 @@ function DataAcquisiton()
                     axis([1 buffLen -0.5 0.5]);          
                     xlabel('time [ms]')
                     ylabel('Magnitude of Y acc [m*s^-2]');
-                    plot(h12,index,aydata(901:1000),'r');
+                    plot(h12,index,aydata,'r');
                     grid on;         
 
                     h13 = subplot(3,1,3);
@@ -226,19 +234,41 @@ function DataAcquisiton()
                     axis([1 buffLen -1.5 1.5]);                
                     xlabel('time [ms]')
                     ylabel('Magnitude of Z acc [m*s^-2]');
-                    plot(h13,index,azdata(901:1000),'r');
+                    plot(h13,index,azdata,'r');
                     grid on;         
 
-                    if ((time(900) >= 0) && (time(1000)>0))
-                        figure(3);       
+                    if ((time(1) >= 0) && (time(end)>0))
+                        figure(4);       
                         title('Acc X');
-                        axis([time(950) time(1000) -1.5 1.5]);                
+                        axis([time(1) time(end) -1.5 1.5]);                
                         xlabel('time [ms]')
                         ylabel('Magnitude of X acc [m*s^-2]');
-                        plot (time(901:1000),axdata(901:1000),'b');
+                        plot (time,axdata,'b');
                         grid on;        
                     end
-                    drawnow;
+                    drawnow;                    
+                end
+                if ~plotting
+                    disp('saving samples to file');
+                    accDataToWrite = [axdata,time];
+                    csvwrite('accx.txt',accDataToWrite);
+                    disp('saving file to structure');
+                    dat.x = axdata;
+                    dat.y = aydata;
+                    dat.z = azdata;
+                    dat.time = time;
+                    save('AccSamples.mat','-struct','dat');
+                    disp(deltaT);
+
+                    % Reset Arrays
+                    AccX = zeros(buffLen,1);
+                    AccY = zeros(buffLen,1);
+                    AccZ = zeros(buffLen,1);
+                    axdata = zeros(buffLen,1);
+                    aydata = zeros(buffLen,1);
+                    azdata = zeros(buffLen,1);
+                    time  = zeros(buffLen,1);
+                    break;
                 end
             end
         end

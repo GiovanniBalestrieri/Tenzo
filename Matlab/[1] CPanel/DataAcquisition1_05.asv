@@ -30,7 +30,7 @@ function DataAcquisiton()
     deltaT = 0;
     contSamples = 0;
     
-    buffLen = 100;
+    buffLen = 500;
     longBuffLen = 1000;
     index=1:buffLen;
     asked = false;
@@ -161,10 +161,16 @@ function DataAcquisiton()
                 end
             end
             if ~rt
-                  accDataToWrite = [
-%                 fileID = fopen('accx.txt','w');
-%                 fprintf(fileID,'%1.4f,%4.4f\n',axdata,time);
-%                 fclose(fileID);
+                disp('saving samples to file');
+                accDataToWrite = [axdata,time];
+                csvwrite('accx.txt',accDataToWrite);
+                disp('saving file to structure accSamples.mat');
+                dat.x = axdata;
+                dat.y = aydata;
+                dat.z = azdata;
+                dat.time = time;
+                save('accSamples.mat','-struct','dat');
+                disp(deltaT);
                 break;
             end
         end
@@ -233,6 +239,28 @@ function DataAcquisiton()
                         grid on;        
                     end
                     drawnow;
+                    if ~plotting                        
+                        disp('saving samples to file');
+                        accDataToWrite = [axdata,time];
+                        csvwrite('accx.txt',accDataToWrite);
+                        disp('saving file to structure');
+                        dat.x = axdata;
+                        dat.y = aydata;
+                        dat.z = azdata;
+                        dat.time = time;
+                        save('AccSamples.mat','-struct','dat');
+                        disp(deltaT);
+                        
+                        % Reset Arrays
+                        AccX = zeros(buffLenDa,1);
+                        AccY = zeros(buffLenDa,1);
+                        AccZ = zeros(buffLenDa,1);
+                        axdata = zeros(buffLenDa,1);
+                        aydata = zeros(buffLenDa,1);
+                        azdata = zeros(buffLenDa,1);
+                        time  = zeros(buffLenDa,1);
+                        break;
+                    end
                 end
             end
         end

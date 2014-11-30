@@ -137,14 +137,62 @@ global aggYawKi;
 global consYawKp;
 global consYawKd;
 global consYawKi;
+global rt;
+global axdata;
+global aydata;
+global azdata;
+global axdataDa;
+global aydataDa;
+global azdataDa;
+global AccXDa;
+global AccYDa;
+global AccZDa;
+global time;
+global serialFlag;
+global samplesNumMax;
+global timerArduino;
+global timerConnect;
+global requestPending;
 
 %% Version
 
-version = 1.75;
+version = 1.90;
+
+%% Data Acquisition vars
+
+samplesNumMax = 1000;
+acceleration.s = 0;
+ax=0;
+ay=0;
+az=0;
+t=0;
+serialFlag=0;
+prevTimer = 0;
+deltaT = 0;
+contSamples = 0;
+
+
+buffLenDa = 500;
+longBuffLen = 1000;
+indexDa=1:buffLenDa;
+asked = false;
+rt = false;
+plotting = false;
+receiving = false;
+requestPending = false;
+firing = false;
+
+AccX = zeros(buffLenDa,1);
+AccY = zeros(buffLenDa,1);
+AccZ = zeros(buffLenDa,1);
+axdataDa = zeros(buffLenDa,1);
+aydataDa = zeros(buffLenDa,1);
+azdataDa = zeros(buffLenDa,1);
+time  = zeros(buffLenDa,1);
 
 %% Serial protocol
 
-versionProtocol = 4;
+versionProtocol = 5;
 % command Map
 motorsID = 1;
 accID = 2;
@@ -176,6 +224,7 @@ rAYPID = 27;
 rAAPID = 28;
 tenzoStateID = 30;
 connID = 31;
+accValuesID = 32;
 
 cmdLength = 17;
 headerLength = 13;
@@ -203,7 +252,6 @@ global KalmanRoll;
 global kr;
 global KalmanPitch;
 global kp;
-version = 1.65;
 landingSpeed = 2;
 
 % Serial Sensors Acks initialization
@@ -270,6 +318,7 @@ filterEst = false;
 filterMagn = false;
 filterAcc = false;
 filterGyro = false;
+rt = false;
 
 pidStrategy ='U';
 pidModeStrategy = 'U';
@@ -341,14 +390,26 @@ delete(instrfindall)
 
     if (~exist('handles.plot','var'))
         handles.record = uicontrol('Style','togglebutton', 'String','Record', ...
-            'Position', [110 50 120 30],...
+            'Position', [110 90 120 30],...
             'Parent',hTabs(5),'Callback',@recordCallback);
     end
     
     if (~exist('handles.plot','var'))
         handles.realTime = uicontrol('Style','togglebutton', 'String','Real time', ...
-            'Position', [310 50 120 30],...
+            'Position', [310 90 120 30],...
             'Parent',hTabs(5),'Callback',@rtCallback);
+    end
+    
+    if (~exist('handles.start','var'))
+        handles.start = uicontrol('Style','pushbutton', 'String','Start', ...
+            'Position', [110 20 120 30],...
+            'Parent',hTabs(5), 'Callback',@startCallback);
+    end
+    
+    if (~exist('handles.stop','var'))
+        handles.stop = uicontrol('Style','pushbutton', 'String','Stop', ...
+            'Position', [310 20 120 30],...
+            'Parent',hTabs(5), 'Callback',@stopCallback);
     end
     
     %% Home UI components
@@ -602,28 +663,114 @@ delete(instrfindall)
         'Parent',hTabs(3), 'Callback',@popupCallback);
     
     %% Data acquisition panel Callback
+    function startCallback(obj,event,h)
+        disp('start pressed');
+        asked = ~asked;
+        delete(timerfindall);
+        if asked == true
+            if serialFlag == 0 
+                [acceleration.s] = setupSerial();
+            end
+        else 
+            if serialFlag == 1 
+                receiving = false;
+                recording = false;
+                set(handles.start,'String','Start');
+                serialFlag = 0;
+            end
+        end
+        %disp(abs(az));
+        serialFlag;
+    end
     
-    function rtCallback(obj,event,h)
-        disp('RT pressed');
-        rt = ~rt
-    
-        % waiting for the connection to be established
-        disp(serialFlag);
-        while (serialFlag == 1 && abs(az) >= -0.5)               
-            % Request High Res data             
-            if rt
-                fwrite(acceleration.s,82);
-                
-                [ax ay az t,firing] = readAcc1_05(acceleration);
-                firing
-                while (firing && ax+ay+az ~= 0 && rt)
-                    
+    function [s] = setupSerial()
+        %comPortLinux = '/dev/ttyACM0';
+        comPortWin = 'COM4';
+        oldSerial = instrfind('Port', comPortWin); 
+        % if the set of such objects is not(~) empty
+        if (~isempty(oldSerial))  
+            disp('WARNING:  COM4 in use.  Closing.')
+            delete(oldSerial)
+        end
+        s = serial(comPortWin);
+
+        % Max wait time
+        set(s, 'TimeOut', 5); 
+        set(s,'terminator','CR');
+        set(s,'BaudRate',9600);
+        fopen(s);
+
+        disp('Sending Request.');
+        acceleration.s = s;
+        timerArduino = timer('ExecutionMode','fixedRate','Period',0.1,'TimerFcn',{@storeSerial});    
+
+        timerConnect = timer('ExecutionMode','fixedRate','Period',5,'TimerFcn',{@connectSerial});%,'StopFcn',{@stoppedCon});    
+        start(timerConnect);
+    end
+
+
+    function connectSerial(obj,event,h)
+        if serialFlag == 0 && requestPending == false
+            if isvalid(acceleration.s) == 1
+                fwrite(acceleration.s,16); 
+            end
+            if (strcmp(get(timerArduino,'Running'),'off'))
+                start(timerArduino);    
+            end
+        end
+    end
+
+    function stoppedCon(obj,event,h)       
+        serialFlag = 1;
+        requestPending = false;
+        stop(timerArduino);   
+        stop(timerConnect);      
+        set(handles.start,'String','Stop');
+        disp('Connection established');
+    end
+
+    function storeSerial(obj,event,handles)
+        while (get(acceleration.s, 'BytesAvailable')==1)
+            [mess,cont] = fread(acceleration.s);
+            %disp('Received bytes:');
+            %disp(cont);
+            %disp(mess);
+            if (mess == 17)             
+                %display(['Collecting data']);
+                fwrite(acceleration.s,18); 
+                requestPending = true;   
+            elseif (mess == 19)  
+                stoppedCon();
+            end
+        end
+    end
+
+    function stopCallback(obj,event,handles)
+        if (~exist('serialFlag','var')) 
+            %[acceleration.arduino,serialFlag] = setupSerial1_00();
+            disp('disconnect');
+        end 
+    end 
+
+function recordCallback(obj,event,handles)
+        disp('Record Pressed');
+        plotting = ~plotting
+        if plotting
+            while (serialFlag == 1 && abs(az) >= -0.5)               
+                % Request High Res data  
+                if isvalid(acceleration.s) == 1
+                    fwrite(acceleration.s,84);
+                end
+                [ax ay az t,receiving] = readAcc1_05(acceleration);
+                %
+                if (receiving)
                     figure(4);
+
                     cla;
 
-                    axdata = [ axdata(2:end) ; ax ];
-                    aydata = [ aydata(2:end) ; ay ];
-                    azdata = [ azdata(2:end) ; az ];    
+                    axdataDa = [ axdataDa(2:end) ; ax ];
+                    aydataDa = [ aydataDa(2:end) ; ay ];
+                    azdataDa = [ azdataDa(2:end) ; az ];    
                     time   = [time(2:end) ; t/1000];
 
                     deltaT = t - prevTimer;
@@ -631,37 +778,125 @@ delete(instrfindall)
                     h11 = subplot(3,1,1);
 
                     title('Acc X');    
-                    axis([1 buffLen -0.5 0.5]);
+                    axis([1 buffLenDa -0.5 0.5]);
                     xlabel('time [ms]')
                     ylabel('Magnitude of X acc [m*s^-2]'); 
-                    plot(h11,index,axdata,'r');
+                    plot(h11,indexDa,axdataDa,'r');
                     grid on;
 
                     h12 = subplot(3,1,2);
 
                     title('Acc Y');      
-                    axis([1 buffLen -0.5 0.5]);          
+                    axis([1 buffLenDa -0.5 0.5]);          
                     xlabel('time [ms]')
                     ylabel('Magnitude of Y acc [m*s^-2]');
-                    plot(h12,index,aydata,'r');
+                    plot(h12,indexDa,aydataDa,'r');
                     grid on;         
 
                     h13 = subplot(3,1,3);
 
                     title('Acc Z');
-                    axis([1 buffLen -1.5 1.5]);                
+                    axis([1 buffLenDa -1.5 1.5]);                
                     xlabel('time [ms]')
                     ylabel('Magnitude of Z acc [m*s^-2]');
-                    plot(h13,index,azdata,'r');
-                    grid on;         
-
+                    plot(h13,indexDa,azdataDa,'r');
+                    grid on; 
+                    
                     if ((time(1) >= 0) && (time(end)>0))
-                        figure(5);       
+                        figure(6);       
                         title('Acc X');
                         axis([time(1) time(end) -1.5 1.5]);                
                         xlabel('time [ms]')
                         ylabel('Magnitude of X acc [m*s^-2]');
-                        plot(time(10:end),axdata(10:end),'b');
+                        plot(time(1:end),axdataDa(1:end),'b');
+                        grid on;        
+                    end
+                    drawnow;
+                    if ~plotting                        
+                        disp('saving samples to file');
+                        accDataToWrite = [axdataDa,time];
+                        csvwrite('accx.txt',accDataToWrite);
+                        disp('saving file to structure');
+                        dat.x = axdataDa;
+                        dat.y = aydataDa;
+                        dat.z = azdataDa;
+                        dat.time = time;
+                        save('AccSamples.mat','-struct','dat');
+                        disp(deltaT);
+                        
+                        % Reset Arrays
+                        AccX = zeros(buffLenDa,1);
+                        AccY = zeros(buffLenDa,1);
+                        AccZ = zeros(buffLenDa,1);
+                        axdataDa = zeros(buffLenDa,1);
+                        aydataDa = zeros(buffLenDa,1);
+                        azdataDa = zeros(buffLenDa,1);
+                        time  = zeros(buffLenDa,1);
+                        break;
+                    end
+                end
+            end
+        end
+    end
+    
+    function rtCallback(obj,event,h)
+        disp('RT pressed');
+        rt = ~rt
+        disp(serialFlag);
+        while (serialFlag == 1 && abs(az) >= -0.5)               
+            % Request High Res data             
+            if rt
+                if isvalid(acceleration.s) == 1
+                    fwrite(acceleration.s,82);
+                end
+                [ax ay az t,firing] = readAcc1_05(acceleration);
+                firing
+                while (firing && ax+ay+az ~= 0 && rt)
+                    
+                    figure(4);
+                    cla;
+
+                    axdataDa = [ axdataDa(2:end) ; ax ];
+                    aydataDa = [ aydataDa(2:end) ; ay ];
+                    azdataDa = [ azdataDa(2:end) ; az ];    
+                    time   = [time(2:end) ; t/1000];
+
+                    deltaT = t - prevTimer;
+                    prevTimer = t;
+                    h11 = subplot(3,1,1);
+
+                    title('Acc X');    
+                    axis([1 buffLenDa -0.5 0.5]);
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of X acc [m*s^-2]'); 
+                    plot(h11,indexDa,axdataDa,'r');
+                    grid on;
+
+                    h12 = subplot(3,1,2);
+
+                    title('Acc Y');      
+                    axis([1 buffLenDa -0.5 0.5]);          
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Y acc [m*s^-2]');
+                    plot(h12,indexDa,aydataDa,'r');
+                    grid on;         
+
+                    h13 = subplot(3,1,3);
+
+                    title('Acc Z');
+                    axis([1 buffLenDa -1.5 1.5]);                
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Z acc [m*s^-2]');
+                    plot(h13,indexDa,azdataDa,'r');
+                    grid on;         
+
+                    if ((time(1) >= 0) && (time(end)>0))
+                        figure(6);       
+                        title('Acc X');
+                        axis([time(1) time(end) -1.5 1.5]);                
+                        xlabel('time [ms]')
+                        ylabel('Magnitude of X acc [m*s^-2]');
+                        plot(time(1:end),axdataDa(1:end),'b');
                         grid on;        
                     end
                     drawnow;                    
@@ -671,18 +906,25 @@ delete(instrfindall)
             end
             if ~rt
                 disp('saving samples to file');
-                accDataToWrite = [axdata,time];
+                accDataToWrite = [axdataDa,time];
                 csvwrite('accx.txt',accDataToWrite);
                 disp('saving file to structure');
-                dat.x = axdata;
-                dat.y = aydata;
-                dat.z = azdata;
+                dat.x = axdataDa;
+                dat.y = aydataDa;
+                dat.z = azdataDa;
                 dat.time = time;
                 save('AccSamples.mat','-struct','dat');
-                disp(deltaT);
-%               fileID = fopen('accx.txt','w');
-%               fprintf(fileID,'%1.4f,%4.4f\n',axdata,time);
-%               fclose(fileID);
+                disp('Sample time:');
+                disp(deltaT); 
+                
+                % Reset Arrays
+                AccX = zeros(buffLenDa,1);
+                AccY = zeros(buffLenDa,1);
+                AccZ = zeros(buffLenDa,1);
+                axdataDa = zeros(buffLenDa,1);
+                aydataDa = zeros(buffLenDa,1);
+                azdataDa = zeros(buffLenDa,1);
+                time  = zeros(buffLenDa,1);
                 break;
             end
         end

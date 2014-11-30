@@ -19,6 +19,8 @@
  *  - Motors control
  *  - FreeIMU Ready
  **/
+ 
+//#define ACQUISITION
 
 #include <Servo.h>
 #include <Wire.h>
@@ -37,7 +39,7 @@
 /**
  * Print sensor's value
  */
-boolean printSetupInfo = false;
+boolean printSetupInfo = true;
 boolean printOrientationFreeIMU = false;
 boolean printRawAcc = false;
 boolean printAcc = false;
@@ -45,7 +47,7 @@ boolean printRawGyro= false;
 boolean printGyro = false;
 boolean printRawCompass= false;
 boolean printCompass = false;
-boolean printRawKalman= false;
+boolean printRawKalman= true;
 boolean printKalman = false; 
 boolean printPIDVals = false;
 boolean printMotorsVals = false;
@@ -60,12 +62,18 @@ boolean printAckCommands = false;
 boolean printVerboseSerial = false;
 
 // Data acquisition variables
-float accX;
-float accY;
-float accZ;
 float aax;
 float aay;
 float aaz;
+
+float accX;
+float accY;
+float accZ;
+
+int contSamples = 0;
+int samplesNum = 500;
+
+const float RESOLUTION=800;
 
 // Take Off settings
 int rampTill = 60;
@@ -138,18 +146,6 @@ int yawPID = 0;
 int w0X = 90;
 int w0Y = 90;
 
-// Connect the GPS Power pin to 5V
-// Connect the GPS Ground pin to ground
-// If using software serial (sketch example default):
-//   Connect the GPS TX (transmit) pin to Digital 3
-//   Connect the GPS RX (receive) pin to Digital 2
-// If using hardware serial (e.g. Arduino Mega):
-//   Connect the GPS TX (transmit) pin to Arduino RX1, RX2 or RX3
-//   Connect the GPS RX (receive) pin to matching TX1, TX2 or TX3
-
-// If using software serial, keep these lines enabled
-// (you can change the pin numbers to match your wiring):
-
 //#if ARDUINO >= 100
 SoftwareSerial mySerial(10, 11);
 //#else
@@ -160,22 +156,6 @@ unsigned long timer = millis();
 
 // Create compass object
 CMPS10 my_compass;
-
-/**
- * FreeImu library variables
- */
-boolean enableIMUfiltering = false;
-boolean filterIMUData = true;
-// store yaw pitch roll
-float ypr[3];
-float iq0, iq1, iq2, iq3;
-float exInt, eyInt, ezInt;  // scaled integral error
-volatile float twoKp;      // 2 * proportional gain (Kp)
-volatile float twoKi;      // 2 * integral gain (Ki)
-volatile float q0, q1, q2, q3; // quaternion of sensor frame relative to auxiliary frame
-volatile float integralFBx,  integralFBy, integralFBz;
-unsigned long lastUpdate, now; // sample period expressed in milliseconds
-float sampleFreq;
 
 //FreeIMU imu;
 Kalman kalmanX;
@@ -357,13 +337,32 @@ float zF_m1=0;
 float xF_m2=0;
 float yF_m2=0;
 float zF_m2=0;
-/*
-float xFbuff[3] = {0,0,0};
-float yFbuff[3] = {0,0,0};
-float zFbuff[3] = {0,0,0};
-*/
-unsigned char bufferAcc[354];  // 13 + (n*17)
+float xFM2 = 0;
+float xFM1 = 0;
+float uXM2 = 0;
+float uXM1 = 0;
+float yFM2 = 0;
+float yFM1 = 0;
+float uYM2 = 0;
+float uYM1 = 0;
+float zFM2 = 0;
+float zFM1 = 0;
+float uZM2 = 0;
+float uZM1 = 0;
 
+// Digital ButterWorth 2nd order filter coefficients
+//0.10
+/*
+float aButter2[4] = {0,1,-1.5610,0.6414};
+float bButter2[4] = {0,0.0201,0.0402,0.0201};
+*/
+//0.05
+float aButter2[4] = {0,1,-1.7786,0.8008};
+float bButter2[4] = {0,0.0055,0.0111,0.0055};
+
+#ifdef ACQUISITION
+
+unsigned char bufferAcc[354];  // 13 + (n*17)
 int maxLengthMess = 20;
 // Change here to modify number of samples
 int sizeBuffAcc = 20;
@@ -377,6 +376,7 @@ float buffXAccToSend[20];
 //float buffYAccToSend[60];
 //float buffZAccToSend[60];
 //float buffTimeToSend[10];
+#endif
 int contBuffAcc = 1;
 
 // Filter compass params
@@ -388,10 +388,6 @@ float APzF=0;
 float AKxF=0;
 float AKyF=0;
 float AKzF=0;
-
-float accX=0;
-float accY=0;
-float accZ=0;
 
 double angleXAcc;
 double angleYAcc;
@@ -438,25 +434,9 @@ unsigned long lastFilteredKalTimer;
 
 unsigned long timerMu;
 
-/** 
- *  Xbee - Matlab pid values communication 
- *  Expected command: 
- *  X,[0-9],[0-9],[0-9],[1.2f],X
- **/
-
-byte byteRead;
-double num1, num2;
-double complNum,answer,counter;
-int numOfDec,optCount=0,letterCount=0;
-boolean mySwitch=false;
-boolean cmplx = false;
-int opt1,opt2,opt3;
-char* options1[4] = {
-  "Roll","pitch","Yaw","Altitude"};
-char* options2[2]  = {
-  "Conservative","Aggressive"};
-char* options3[3]  = {
-  "proportional","Derivative","Integral"};
+// Data Acqui.
+unsigned long timeToRead;
+unsigned long lastTimeToRead;
 
 // Landing protocol variables
 unsigned long timerStart;
@@ -569,7 +549,10 @@ MyShortCommand;
 unsigned char buffer[47];  // or worst case message size 70, 47: 2 mess
 
 MyControlHdr * pCtrlHdr = (MyControlHdr *)(&buffer[0]);
-MyControlHdr * pCtrlHdrAcc = (MyControlHdr *)(&bufferAcc[0]);
+
+#ifdef ACQUISITION
+  MyControlHdr * pCtrlHdrAcc = (MyControlHdr *)(&bufferAcc[0]);
+#endif
 
 // Control Sensors data transmission
 boolean sendAccToMatlab = false;
@@ -711,12 +694,6 @@ void setup()
   {
     getBmpValues();
   }
-  // Xbee communication variables
-  num1=0;
-  num2=0;
-  complNum=0;
-  counter=1;
-  numOfDec=0;  
 
   //wait for the sensors to be ready 
   delay(2000); 
@@ -732,7 +709,6 @@ void loop()
   estimateAngle();
   //gpsRoutine();
   xbeeRoutine();
-  detOrientation();
   control();
   sendDataSensors(matlab);
   protocol1();
@@ -901,27 +877,6 @@ void control()
   }
 }
 
-
-// FreeIMU orientation - TODO ** More work needed **
-void detOrientation()
-{
-  if (enableIMUfiltering)
-  {
-    getYawPitchRoll(ypr); 
-    if (printOrientationFreeIMU)
-    {
-      Serial.println();
-      Serial.print("Yaw: ");
-      Serial.print(ypr[0]);
-      Serial.print(" Pitch: ");
-      Serial.print(ypr[1]);
-      Serial.print(" Roll: ");
-      Serial.print(ypr[2]);
-      Serial.println("");
-    }
-  }
-}
-
 void getCompassValues()
 {
   bearing1 =  my_compass.bearing();
@@ -953,13 +908,14 @@ void xbeeRoutine()
 {
   if (Serial.available()) 
   {
-    //GotChar = Serial.read();
+    GotChar = Serial.read();
+    byte commansM = 0;
     
     // For data acquisition comment the line above and uncomment the lines below
-    byte mode = Serial.read();
-    char GotChar = 'k';
+    //byte commansM = Serial.read();
+    //char GotChar = 'k';
     
-    if (mode == 82)
+    if (commansM == 82)
      {
        lastTimeToRead = millis();
        Serial.print("T");
@@ -969,9 +925,9 @@ void xbeeRoutine()
        while (contSamples <= samplesNum)
        {
          timeToRead = millis() - lastTimeToRead;
-         int x=analogRead(xaxis);
-         int y=analogRead(yaxis);
-         int z=analogRead(zaxis);
+         int x = analogRead(accPinX);
+         int y = analogRead(accPinY);
+         int z = analogRead(accPinZ);
         
          aax = (((x*5000.0)/1023.0)-XError)/RESOLUTION;
          aay = (((y*5000.0)/1023.0)-YError)/RESOLUTION;
@@ -1001,7 +957,7 @@ void xbeeRoutine()
        Serial.println("B");     
        contSamples = 0;  
      } 
-     else if (mode == 84)
+     else if (commansM == 84)
      {
        Serial.print("R");
        Serial.print(",");
@@ -1009,10 +965,18 @@ void xbeeRoutine()
        Serial.print(",");
        Serial.print(accY);
        Serial.print(",");
-       Serial.print(aacZ);
+       Serial.print(accZ);
        Serial.print(",");
        Serial.println(lastAccTimer);
      }
+     if(commansM == 16)
+    {  	
+      Serial.write(17);
+    }
+    if (commansM == 18)
+    {
+      Serial.write(19);
+    }
     
     // If you're using data acquisition, you can leave these lines
     if(GotChar == 'A')
@@ -1023,10 +987,6 @@ void xbeeRoutine()
     {  	
       storeAccData = false;
     }  
-    else if (GotChar==46)
-    {
-      mySwitch=true;
-    }
     else if(GotChar == '8')
     {  	 
       plotting = true;
@@ -2034,7 +1994,6 @@ void land()
     landing = true;
     Serial.println();
     Serial.print("Landing protocol started...");
-    ;
     Serial.print(throttle);
     Serial.print(" ");
     for (int j=throttle; j>40 ;j--)
@@ -2280,10 +2239,11 @@ void sendDataSensors(boolean device)
       if (printAckCommands)
       {
         Serial.println();
-        Serial.println("Sending Connection Ack to Matlab: ");
+        Serial.println("Sending Connection Ack to Matlab: First Time");
         Serial.print(pMyCmd->param1);
         Serial.println(); 
-      }      
+      } 
+     matlab = true;     
     } 
   }
   else if (device)
@@ -2306,7 +2266,7 @@ void sendDataSensors(boolean device)
       if (printAckCommands)
       {
         Serial.println();
-        Serial.println("Sending Connection Ack to Matlab: ");
+        Serial.println("Sending Connection Ack to Matlab: DOPO ");
         Serial.print(pMyCmd->param1);
         Serial.println(); 
       }      
@@ -2371,7 +2331,7 @@ void sendDataSensors(boolean device)
     }
     else if (storeAccData && accDataReady)
     {
-      //////////////////////////// Send values to Matlab
+      //////////////////////////// Send values to Matlab /// Done in other way
     }
     else if (sendHoverState && sendTakeOffAck)
     {
@@ -2796,7 +2756,7 @@ void sendDataSensors(boolean device)
     }  
   } 
 }
-
+#ifdef ACQUISITION
 void sendCommandToMatlabFilter()
 {
   // Build Header
@@ -2846,7 +2806,7 @@ void sendCommandToMatlabFilter()
   
   //storeAccData = false;
 }
-
+#endif
 
 void sendCommandToMatlab()
 {
@@ -2978,85 +2938,19 @@ void getAccValues()
   accfilter[1] = accY;
   accfilter[2] = accZ;
 
-  accFilterExpMA(accfilter);
-
+  //accFilterExpMA(accfilter);
+  accButter2(accfilter);
+  
   // gets the time between each filtered sample
   filteredAccTimer = millis() - lastFiltAccTimer;
   // updates last reading timer
   lastFiltAccTimer = millis();   
   
+  #ifdef ACQUISITION
   // Fills the buffers to send
   if (storeAccData)
   {
-     //Serial.println(" Storing  ...");    
-     //Serial.print(" Filling Buff  ");
-     /*
-     Serial.print("   ");
-     Serial.print(accY);    
-     Serial.print("   ");
-     Serial.print(accZ);
-     Serial.print("   ");
-     Serial.print(lastAccTimer);
-     
-     Serial.write(accX);
-     Serial.write(44);
-     Serial.write(accY);
-     Serial.write(44);
-     Serial.write(accZ);
-     Serial.write(44);
-     Serial.write(lastAccTimer);
-     Serial.write(21);
-     */
     buffXAccToSend[contBuffAcc-1] = accX;
-    
-//    if (contBuffAcc==sizeBuffAcc-1)
-//    {
-//      Serial.println();      
-//      for (int i=0;i<sizeBuffAcc;i++)    
-//      {  
-//      Serial.print("val: ");
-//      Serial.print(i);
-//      Serial.print("    ");
-//      Serial.println(buffXAccToSend[i]);
-//      }
-//      Serial.println();
-//    }
-    
-    //buffYAccToSend[contBuffAcc-1] = accY;
-    /*
-    Serial.println("   ");
-     for (int i=0;i<sizeBuffAcc;i++)    
-     {  
-     Serial.print("val: ");
-     Serial.print(i);
-     Serial.print("    ");
-     Serial.println(buffYAccToSend[i]);
-     }
-     Serial.println();
-     */
-    //buffZAccToSend[contBuffAcc-1] = accZ;
-    /*
-    Serial.println("   ");
-     for (int i=0;i<sizeBuffAcc;i++)    
-     {  
-     Serial.print("val: ");
-     Serial.print(i);
-     Serial.print("    ");
-     Serial.println(buffZAccToSend[i]);
-     }
-     Serial.println();
-     */
-    //buffTimeToSend[contBuffAcc-1] = lastAccTimer;
-    /*
-    for (int i=0;i<sizeBuffAcc;i++)    
-     {  
-     Serial.print("val: ");
-     Serial.print(i);
-     Serial.print("    ");
-     Serial.println(buffTimeToSend[i]);
-     }
-     Serial.println();
-     */
      contBuffAcc++;
   }
   if (contBuffAcc%(sizeBuffAcc+1) == 0)
@@ -3065,7 +2959,7 @@ void getAccValues()
     sendBuffAcc(buffXAccToSend);
     accDataReady=true; // deprecated
   }
-  
+  #endif
   if (printTimers && printAccTimers)
   {
     Serial.println();
@@ -3117,42 +3011,15 @@ void getAccValues()
   }  
 }  
 
+#ifdef ACQUISITION
 void sendBuffAcc(float a[])
 {
   int stepCont = 1;
-  /*
-  Serial.println();      
-  for (int i=0;i<sizeBuffAcc;i++)    
-  {  
-  Serial.print("val: ");
-  Serial.print(i);
-  Serial.print("    ");
-  Serial.println(buffXAccToSend[i]);
-  }
-  Serial.println(); 
-  */
 
   MyShortCommand * pMyCmdShort = (MyShortCommand *)(&bufferAcc[sizeof(MyControlHdr)]);
 
   for (int i=0;i<sizeBuffAcc;i++)    
   {
-    /*
-    Serial.print("val: ");
-    Serial.print(i);
-    Serial.print("| Global Array: ");
-    Serial.print(buffXAccToSend[i]);
-    //Serial.println(i);
-    /*  
-    Serial.println(buffXAccToSend[i]);
-    Serial.println(buffYAccToSend[i]);
-    Serial.println(buffZAccToSend[i]);
-    Serial.println(buffTimeToSend[i]);
-    
-    Serial.write((byte)buffXAccToSend[i]);
-    Serial.write((byte)buffYAccToSend[i]);
-    Serial.write((byte)buffZAccToSend[i]);
-    Serial.write((byte)buffTimeToSend[i]);
-    */
     numFilterValuesToSend++;    
     
     pMyCmdShort->cmd = accValuesID;  
@@ -3160,27 +3027,6 @@ void sendBuffAcc(float a[])
     pMyCmdShort->param2 = 0;
     pMyCmdShort->param3 = 0;
     pMyCmdShort->param4 = 0;
-    //pMyCmdShort->param2 = buffYAccToSend[i];
-    //pMyCmdShort->param3 = buffZAccToSend[i];
-    //pMyCmdShort->param4 = buffTimeToSend[i];
-    /*
-    Serial.print("|  Param: ");
-    Serial.print(pMyCmdShort->param1);
-    Serial.print("|  Array: ");
-    Serial.println(a[i]);
-    */
-//    if (printAckCommands)
-//    {
-//      Serial.print(" CMD number: ");
-//      Serial.println(stepCont);
-//      Serial.print(pMyCmdShort->param1);
-//      Serial.print(" Orginal: ");
-//      Serial.print(a[i]);
-//      //Serial.println(pMyCmdShort->param2);
-//      //Serial.println(pMyCmdShort->param3);
-//      //Serial.println(pMyCmdShort->param4);
-//      Serial.println(); 
-//    }     
     pMyCmdShort++;
     if (stepCont>0)
     {
@@ -3200,6 +3046,7 @@ void sendBuffAcc(float a[])
   storeAccData = false;
   contBuffAcc=1;      
 }
+#endif
 
 void gpsRoutine()
 {
@@ -3293,20 +3140,32 @@ void accFilterExpMA(float val[])
   xF_m1 = xF;
   yF_m1 = yF;
   zF_m1 = zF;
-
-    /* Ripristina versione per filtro di secondo 
-  for (int i=0 ; i<3;i++)
-  {
-    xFbuff[i]=xFbuff[i+1];
-    yFbuff[i]=yFbuff[i+1];
-    zFbuff[i]=zFbuff[i+1];    
-  }
-  xFbuff[2] = val[0];
-  yFbuff[2] = val[1];
-  zFbuff[2] = val[2];
-  */
 }
 
+// Low pass filter
+void accButter2(float val[])
+{
+  xF = -aButter2[2]*xFM1 -aButter2[3]*xFM2 + bButter2[1]*val[0]+bButter2[2]*uXM1+bButter2[3]*uXM2;
+  yF = -aButter2[2]*yFM1 -aButter2[3]*yFM2 + bButter2[1]*val[1]+bButter2[2]*uYM1+bButter2[3]*uYM2;
+  zF = -aButter2[2]*zFM1 -aButter2[3]*zFM2 + bButter2[1]*val[2]+bButter2[2]*uZM1+bButter2[3]*uZM2;
+  
+  xFM2 = xFM1;
+  xFM1 = xF;
+  uXM2 = uXM1;
+  uXM1 = val[0];
+  yFM2 = yFM1;
+  yFM1 = yF;
+  uYM2 = uYM1;
+  uYM1 = val[1];
+  zFM2 = zFM1;
+  zFM1 = zF;
+  uZM2 = uZM1;
+  uZM1 = val[2];  
+  
+  val[0]=xF;
+  val[1]=yF;
+  val[2]=zF;
+}
 
 void omegaFilterExpMA(float val[])
 {
@@ -3434,7 +3293,10 @@ void estimateAngle()
   angK[0] = xAngle;
   angK[1] = yAngle;
   angK[2] = zAngle;
-  angEstKalmanFilter(angK);
+  
+  // Uncomment to filter Kalman estimates
+  //angEstKalmanFilter(angK);
+  
   if (printRawKalman)
   {
     Serial.println();
@@ -3635,301 +3497,6 @@ void useInterrupt(boolean v) {
     TIMSK0 &= ~_BV(OCIE0A);
     usingInterrupt = false;
   }
-}
-
-/**
- * FreeIMU implementation
- */
-
-void getValues(float val[])
-{
-  if (filterIMUData)
-  {
-    val[0] = Wfilter[0];
-    val[1] = Wfilter[1];
-    val[2] = Wfilter[2];
-    val[3] = accfilter[0];
-    val[4] = accfilter[1];
-    val[5] = accfilter[2];
-    val[6] = angPosFilter[0];
-    val[7] = angPosFilter[1];
-    val[8] = angPosFilter[2];
-  } 
-  else
-  {
-    val[0] = wx;
-    val[1] = wy;
-    val[2] = wz;
-    val[3] = accX;
-    val[4] = accY;
-    val[5] = accZ;
-    val[6] = roll1;
-    val[7] = pitch1;
-    val[8] = bearing1;
-  }
-}
-
-/**
- * Populates array q with a quaternion representing the IMU orientation with respect to the Earth
- * 
- * @param q the quaternion to populate
- */
-void getQ(float * q) {
-  float val[9];
-  getValues(val);
-
-  now = micros();
-  sampleFreq = 1.0 / ((now - lastUpdate) / 1000000.0);
-
-  lastUpdate = now;
-  // gyro values are expressed in deg/sec, the * M_PI/180 will convert it to radians/sec
-
-  //AHRSupdate(val[3] * M_PI/180, val[4] * M_PI/180, val[5] * M_PI/180, val[0], val[1], val[2], val[6], val[7], val[8]);
-  AHRSupdate(val[0] * M_PI/180, val[1] * M_PI/180, val[2] * M_PI/180, val[3], val[4], val[5], val[6], val[7], val[8]);
-
-  //  AHRSupdate(val[3] * M_PI/180, val[4] * M_PI/180, val[5] * M_PI/180, val[0], val[1], val[2], -val[6], -val[7], val[8]);
-  Serial.println();
-  Serial.print(q0);
-  Serial.print("  ");
-  Serial.print(q1);
-  Serial.print("  ");
-  Serial.print(q2);
-  Serial.print("  ");
-  Serial.print(q3);
-  Serial.println();
-  q[0] = q0;
-  q[1] = q1;
-  q[2] = q2;
-  q[3] = q3;
-}
-
-/**
- * Returns the Euler angles in degrees defined with the Aerospace sequence.
- * See Sebastian O.H. Madwick report "An efficient orientation filter for 
- * inertial and intertial/magnetic sensor arrays" Chapter 2 Quaternion representation
- * 
- * @param angles three floats array which will be populated by the Euler angles in degrees
- */
-void getEuler(float * angles) {
-  getEulerRad(angles);
-  arr3_rad_to_deg(angles);
-}
-
-/**
- * Returns the yaw pitch and roll angles, respectively defined as the angles in degrees between
- * the Earth North and the IMU X axis (yaw), the Earth ground plane and the IMU X axis (pitch)
- * and the Earth ground plane and the IMU Y axis.
- * 
- * @note This is not an Euler representation: the rotations aren't consecutive rotations but only
- * angles from Earth and the IMU. For Euler representation Yaw, Pitch and Roll see FreeIMU::getEuler
- * 
- * @param ypr three floats array which will be populated by Yaw, Pitch and Roll angles in degrees
- */
-void getYawPitchRoll(float * ypr) {
-  getYawPitchRollRad(ypr);
-  arr3_rad_to_deg(ypr);
-}
-
-/**
- * Returns the Euler angles in radians defined in the Aerospace sequence.
- * See Sebastian O.H. Madwick report "An efficient orientation filter for 
- * inertial and intertial/magnetic sensor arrays" Chapter 2 Quaternion representation
- * 
- * @param angles three floats array which will be populated by the Euler angles in radians
- */
-void getEulerRad(float * angles) {
-  float q[4]; // quaternion
-  getQ(q);
-  angles[0] = atan2(2 * q[1] * q[2] - 2 * q[0] * q[3], 2 * q[0]*q[0] + 2 * q[1] * q[1] - 1); // psi
-  angles[1] = -asin(2 * q[1] * q[3] + 2 * q[0] * q[2]); // theta
-  angles[2] = atan2(2 * q[2] * q[3] - 2 * q[0] * q[1], 2 * q[0] * q[0] + 2 * q[3] * q[3] - 1); // phi
-}
-
-/**
- * Returns the yaw pitch and roll angles, respectively defined as the angles in radians between
- * the Earth North and the IMU X axis (yaw), the Earth ground plane and the IMU X axis (pitch)
- * and the Earth ground plane and the IMU Y axis.
- * 
- * @note This is not an Euler representation: the rotations aren't consecutive rotations but only
- * angles from Earth and the IMU. For Euler representation Yaw, Pitch and Roll see FreeIMU::getEuler
- * 
- * @param ypr three floats array which will be populated by Yaw, Pitch and Roll angles in radians
- */
-void getYawPitchRollRad(float * ypr) {
-  float q[4]; // quaternion
-  float gx, gy, gz; // estimated gravity direction
-  getQ(q);
-
-  gx = 2 * (q[1]*q[3] - q[0]*q[2]);
-  gy = 2 * (q[0]*q[1] + q[2]*q[3]);
-  gz = q[0]*q[0] - q[1]*q[1] - q[2]*q[2] + q[3]*q[3];
-
-  ypr[0] = atan2(2 * q[1] * q[2] - 2 * q[0] * q[3], 2 * q[0]*q[0] + 2 * q[1] * q[1] - 1);
-  ypr[1] = atan(gx / sqrt(gy*gy + gz*gz));
-  ypr[2] = atan(gy / sqrt(gx*gx + gz*gz));
-}
-
-/**
- * Fast inverse square root implementation
- * @see http://en.wikipedia.org/wiki/Fast_inverse_square_root
- */
-float invSqrt(float number) {
-  volatile long i;
-  volatile float x, y;
-  volatile const float f = 1.5F;
-
-  x = number * 0.5F;
-  y = number;
-  i = * ( long * ) &y;
-  i = 0x5f375a86 - ( i >> 1 );
-  y = * ( float * ) &i;
-  y = y * ( f - ( x * y * y ) );
-  return y;
-}
-
-/**
- * Quaternion implementation of the 'DCM filter' [Mayhony et al].  Incorporates the magnetic distortion
- * compensation algorithms from Sebastian Madgwick's filter which eliminates the need for a reference
- * direction of flux (bx bz) to be predefined and limits the effect of magnetic distortions to yaw
- * axis only.
- * 
- * @see: http://www.x-io.co.uk/node/8#open_source_ahrs_and_imu_algorithms
- */
-void  AHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz) 
-{
-  float recipNorm;
-  float q0q0, q0q1, q0q2, q0q3, q1q1, q1q2, q1q3, q2q2, q2q3, q3q3;
-  float halfex = 0.0f, halfey = 0.0f, halfez = 0.0f;
-  float qa, qb, qc;
-
-  // Auxiliary variables to avoid repeated arithmetic
-  q0q0 = q0 * q0;
-  q0q1 = q0 * q1;
-  q0q2 = q0 * q2;
-  q0q3 = q0 * q3;
-  q1q1 = q1 * q1;
-  q1q2 = q1 * q2;
-  q1q3 = q1 * q3;
-  q2q2 = q2 * q2;
-  q2q3 = q2 * q3;
-  q3q3 = q3 * q3;
-
-  // Use magnetometer measurement only when valid (avoids NaN in magnetometer normalisation)
-  if((mx != 0.0f) && (my != 0.0f) && (mz != 0.0f)) {
-    float hx, hy, bx, bz;
-    float halfwx, halfwy, halfwz;
-
-    // Normalise magnetometer measurement
-    recipNorm = invSqrt(mx * mx + my * my + mz * mz);
-
-    mx *= recipNorm;
-    my *= recipNorm;
-    mz *= recipNorm;
-
-    // Reference direction of Earth's magnetic field
-    hx = 2.0f * (mx * (0.5f - q2q2 - q3q3) + my * (q1q2 - q0q3) + mz * (q1q3 + q0q2));
-    hy = 2.0f * (mx * (q1q2 + q0q3) + my * (0.5f - q1q1 - q3q3) + mz * (q2q3 - q0q1));
-    bx = sqrt(hx * hx + hy * hy);
-    bz = 2.0f * (mx * (q1q3 - q0q2) + my * (q2q3 + q0q1) + mz * (0.5f - q1q1 - q2q2));
-
-
-    // Estimated direction of magnetic field
-    halfwx = bx * (0.5f - q2q2 - q3q3) + bz * (q1q3 - q0q2);
-    halfwy = bx * (q1q2 - q0q3) + bz * (q0q1 + q2q3);
-    halfwz = bx * (q0q2 + q1q3) + bz * (0.5f - q1q1 - q2q2);
-
-
-    // Error is sum of cross product between estimated direction and measured direction of field vectors
-    halfex = (my * halfwz - mz * halfwy);
-    halfey = (mz * halfwx - mx * halfwz);
-    halfez = (mx * halfwy - my * halfwx);
-  }
-
-  // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
-  if((ax != 0.0f) && (ay != 0.0f) && (az != 0.0f)) {
-    float halfvx, halfvy, halfvz;
-
-    // Normalise accelerometer measurement
-    recipNorm = invSqrt(ax * ax + ay * ay + az * az);
-    ax *= recipNorm;
-    ay *= recipNorm;
-    az *= recipNorm;
-
-    // Estimated direction of gravity
-    halfvx = q1q3 - q0q2;
-    halfvy = q0q1 + q2q3;
-    halfvz = q0q0 - 0.5f + q3q3;
-
-    // Error is sum of cross product between estimated direction and measured direction of field vectors
-    halfex += (ay * halfvz - az * halfvy);
-    halfey += (az * halfvx - ax * halfvz);
-    halfez += (ax * halfvy - ay * halfvx);
-  }
-
-  // Apply feedback only when valid data has been gathered from the accelerometer or magnetometer
-  if(halfex != 0.0f && halfey != 0.0f && halfez != 0.0f) {
-    // Compute and apply integral feedback if enabled
-    if(twoKi > 0.0f) {
-      integralFBx += twoKi * halfex * (1.0f / sampleFreq);  // integral error scaled by Ki
-      integralFBy += twoKi * halfey * (1.0f / sampleFreq);
-      integralFBz += twoKi * halfez * (1.0f / sampleFreq);
-      gx += integralFBx;  // apply integral feedback
-      gy += integralFBy;
-      gz += integralFBz;
-    }
-    else {
-      integralFBx = 0.0f; // prevent integral windup
-      integralFBy = 0.0f;
-      integralFBz = 0.0f;
-    }
-
-    // Apply proportional feedback
-    gx += twoKp * halfex;
-    gy += twoKp * halfey;
-    gz += twoKp * halfez;
-
-  }
-
-  // Integrate rate of change of quaternion
-  gx *= (0.5f * (1.0f / sampleFreq));   // pre-multiply common factors
-  gy *= (0.5f * (1.0f / sampleFreq));
-  gz *= (0.5f * (1.0f / sampleFreq));
-  qa = q0;
-  qb = q1;
-  qc = q2;
-  q0 += (-qb * gx - qc * gy - q3 * gz);
-  q1 += (qa * gx + qc * gz - q3 * gy);
-  q2 += (qa * gy - qb * gz + q3 * gx);
-  q3 += (qa * gz + qb * gy - qc * gx);
-
-
-  Serial.println();
-  Serial.println();
-  Serial.print(qa);
-  Serial.print("  ");
-  Serial.print(qb);
-  Serial.print("   ");
-  Serial.print(qc);
-  Serial.print("  ");
-  Serial.print(q0);
-  Serial.println();
-  Serial.println(); 
-
-  // Normalise quaternion
-  recipNorm = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
-  q0 *= recipNorm;
-  q1 *= recipNorm;
-  q2 *= recipNorm;
-  q3 *= recipNorm;
-}
-
-/**
- * Converts a 3 elements array arr of angles expressed in radians into degrees
- */
-void arr3_rad_to_deg(float * arr) {
-  arr[0] *= 180/M_PI;
-  arr[1] *= 180/M_PI;
-  arr[2] *= 180/M_PI;
 }
 
 void dispAllPidVals()
