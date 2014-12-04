@@ -2946,20 +2946,6 @@ void getAccValues()
   // updates last reading 
   lastFiltAccTimer = millis();   
   
-  #ifdef ACQUISITION
-  // Fills the buffers to send
-  if (storeAccData)
-  {
-    buffXAccToSend[contBuffAcc-1] = accX;
-     contBuffAcc++;
-  }
-  if (contBuffAcc%(sizeBuffAcc+1) == 0)
-  {
-    Serial.println();
-    sendBuffAcc(buffXAccToSend);
-    accDataReady=true; // deprecated
-  }
-  #endif
   if (printTimers && printAccTimers)
   {
     Serial.println();
