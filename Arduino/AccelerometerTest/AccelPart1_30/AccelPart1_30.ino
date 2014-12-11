@@ -1,9 +1,11 @@
 //#define DEBUGMODE
-
+// avr-libc library includes
+#include <avr/io.h>
+#include <avr/interrupt.h>
 #include <Servo.h>
 #include <Wire.h>
 
-int versionCode = 1;
+int versionCode = 2;
 
 const float RESOLUTION=800; //0.8 v/g -> resolucion de 1.5g -> 800mV/g
 const float VOLTAGE=3.3;  //voltage al que está conectado el acelerómetro
@@ -18,8 +20,8 @@ const int yaxis = 1;
 const int zaxis = 2;
 
 float XError,YError,ZError;
-float xd,yd,zd,z,x,y;
-float aax,aay,aaz;
+float xd,yd,zd;
+volatile float aax,aay,aaz;
 
 /**
   *  Gyroscope 
@@ -52,16 +54,28 @@ Servo servo3;
 Servo servo4;
 
 // Filter acc params
-float xF=0;
-float yF=0;
-float zF=0;
-float xFM3 = 0;
-float xFM2 = 0;
-float xFM1 = 0;
-float uXM3 = 0;
-float uXM2 = 0;
-float uXM1 = 0;
+volatile float accF3[3]={0,0,0};
 
+volatile float xFM3 = 0;
+volatile float xFM2 = 0;
+volatile float xFM1 = 0;
+volatile float uXM3 = 0;
+volatile float uXM2 = 0;
+volatile float uXM1 = 0;
+
+volatile float yFM3 = 0;
+volatile float yFM2 = 0;
+volatile float yFM1 = 0;
+volatile float uYM3 = 0;
+volatile float uYM2 = 0;
+volatile float uYM1 = 0;
+
+volatile float zFM3 = 0;
+volatile float zFM2 = 0;
+volatile float zFM1 = 0;
+volatile float uZM3 = 0;
+volatile float uZM2 = 0;
+volatile float uZM1 = 0;
 
 //0.05
 float aButter2[4] = {0,1,-1.7786,0.8008};
@@ -134,7 +148,24 @@ void setup()
   servo4.write(0);
   
   Serial.print("Tenzo: ");
-  Serial.println(versionCode);
+  Serial.println(versionCode); 
+ 
+  // initialize Timer1
+  cli();          // disable global interrupts
+  TCCR1A = 0;     // set entire TCCR1A register to 0
+  TCCR1B = 0;     // same for TCCR1B
+ 
+  // set compare match register to desired timer count:
+  OCR1A = 15624;
+  // turn on CTC mode:
+  TCCR1B |= (1 << WGM12);
+  // Set CS10 and CS12 bits for 1024 prescaler:
+  TCCR1B |= (1 << CS10);
+  TCCR1B |= (1 << CS12);
+  // enable timer compare interrupt:
+  TIMSK1 |= (1 << OCIE1A);
+  // enable global interrupts:
+  sei();
 }
 
 void loop()
@@ -159,9 +190,9 @@ void serialRoutine()
        while (contSamples <= samplesNum)
        {
          timeToRead = millis() - lastTimeToRead;
-         x=analogRead(xaxis);
-         y=analogRead(yaxis);
-         z=analogRead(zaxis);
+         int x=analogRead(xaxis);
+         int y=analogRead(yaxis);
+         int z=analogRead(zaxis);
         
          aax = (((x*5000.0)/1023.0)-XError)/RESOLUTION;
          aay = (((y*5000.0)/1023.0)-YError)/RESOLUTION;
@@ -199,14 +230,23 @@ void serialRoutine()
        {
          timeToRead = millis() - lastTimeToRead;
          accTimer = micros() - lastAccTimer;
-         x=analogRead(xaxis);
+         int x = analogRead(xaxis);
+         int y = analogRead(yaxis);
+         int z = analogRead(zaxis);
         
-         aax = (((x*5000.0)/1023.0)-XError)/RESOLUTION;
+         
+         float accs[3];        
+         accs[0] = (((x*5000.0)/1023.0)-XError)/RESOLUTION;
+         accs[1] = (((y*5000.0)/1023.0)-YError)/RESOLUTION;
+         accs[2] = (((z*5000.0)/1023.0)-ZError)/RESOLUTION;
          
          if (enableFilter)
          {
            //float axF = accButter2(aax);
-           float axF = accButter3(aax);
+           accButter3(accs);
+           float axF = accs[0];
+           float ayF = accs[1];
+           float azF = accs[2];
            lastAccTimer = micros(); 
            if (enableKalman)
            {
@@ -286,7 +326,7 @@ void initialize()
 // Low pass filter
 float accButter2(float val)
 {
-  xF = -aButter2[2]*xFM1 -aButter2[3]*xFM2 + bButter2[1]*val+bButter2[2]*uXM1+bButter2[3]*uXM2;
+  float xF = -aButter2[2]*xFM1 -aButter2[3]*xFM2 + bButter2[1]*val+bButter2[2]*uXM1+bButter2[3]*uXM2;
   
   xFM2 = xFM1;
   xFM1 = xF;
@@ -296,18 +336,38 @@ float accButter2(float val)
   return xF;
 }
 
-float accButter3(float val)
+void accButter3(float val[])
 {
-  xF = -aButter3[2]*xFM1 -aButter3[3]*xFM2 -aButter3[4]* xFM3 + bButter3[1]*val+bButter3[2]*uXM1+bButter3[3]*uXM2 +bButter3[4]*uXM3;
+  accF3[0] = -aButter3[2]*xFM1 - aButter3[3]*xFM2 - aButter3[4]*xFM3 + bButter3[1]*val[0] + bButter3[2]*uXM1 + bButter3[3]*uXM2 + bButter3[4]*uXM3;
   
   xFM3 = xFM2;
   xFM2 = xFM1;
-  xFM1 = xF;
+  xFM1 = accF3[0];
   uXM3 = uXM2;
   uXM2 = uXM1;
-  uXM1 = val;
+  uXM1 = val[0];
   
-  return xF;
+  accF3[1] = -aButter3[2]*yFM1 -aButter3[3]*yFM2 -aButter3[4]*yFM3 + bButter3[1]*val[1]+bButter3[2]*uYM1+bButter3[3]*uYM2 +bButter3[4]*uYM3;
+  
+  yFM3 = yFM2;
+  yFM2 = yFM1;
+  yFM1 = accF3[1];
+  uYM3 = uYM2;
+  uYM2 = uYM1;
+  uYM1 = val[1];
+  
+  accF3[2] = -aButter3[2]*zFM1 -aButter3[3]*zFM2 -aButter3[4]* zFM3 + bButter3[1]*val[2]+bButter3[2]*uZM1+bButter3[3]*uZM2 +bButter3[4]*uZM3;
+  
+  zFM3 = xFM2;
+  zFM2 = xFM1;
+  zFM1 = accF3[2];
+  uZM3 = uZM2;
+  uZM2 = uZM1;
+  uZM1 = val[2];
+  
+  val[0]=accF3[0];
+  val[1]=accF3[1];
+  val[2]=accF3[2];
 }
 
 
@@ -372,27 +432,13 @@ void getGyroValues()
 
 void accRoutine()
 {  
-   x=analogRead(xaxis);
-   y=analogRead(yaxis);
-   z=analogRead(zaxis);
+   int x = analogRead(0);
+   int y = analogRead(1);
+   int z = analogRead(2);
   
    aax = (((x*5000.0)/1023.0)-XError)/RESOLUTION;
    aay = (((y*5000.0)/1023.0)-YError)/RESOLUTION;
    aaz = (((z*5000.0)/1023.0)-ZError)/RESOLUTION;
-  
-   // gets the value sample time
-   accTimer = millis() - lastAccTimer;
-   // updates last reading timer
-   lastAccTimer = millis(); 
-  
-  #ifdef DEBUGMODE
-   Serial.print(aax);
-   Serial.print(" ");
-   Serial.print(aay);
-   Serial.print(" ");          
-   Serial.print(aaz);
-   Serial.println();
-  #endif
 }
 
 int setupL3G4200D(int scale){
@@ -448,4 +494,9 @@ int readRegister(int deviceAddress, byte address){
 
   v = Wire.read();
   return v;
+}
+ 
+ISR(TIMER1_COMPA_vect)
+{
+    digitalWrite(LEDPIN, !digitalRead(LEDPIN));
 }
