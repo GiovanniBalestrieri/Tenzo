@@ -77,7 +77,8 @@ volatile float uZM3 = 0;
 volatile float uZM2 = 0;
 volatile float uZM1 = 0;
 
-volatile int contatore = 0;
+volatile int contatore = 2;
+int pastCount = 0;
 
 //0.05
 float aButter2[4] = {0,1,-1.7786,0.8008};
@@ -116,6 +117,11 @@ int motorRampDelayFast = 150;
 int throttle = 0;
 
 unsigned long aCont;
+
+// Define various ADC prescaler
+const unsigned char PS_16 = (1 << ADPS2);
+const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
+const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);
 
 float AccelAdjust(int axis)
 {
@@ -170,20 +176,25 @@ void setup()
   // enable global interrupts:
   sei();
   
-  //aCont = millis();
+  // set up the ADC
+  //ADCSRA &= ~PS_128;  // remove bits set by Arduino library
+
+  // you can choose a prescaler from above.
+  // PS_16, PS_32, PS_64 or PS_128
+  //ADCSRA |= PS_32;    // set our own prescaler to 64 
+  Serial.println("Setup Completed");
 }
 
 void loop()
 {
- serialRoutine();
- //motorSpeed(throttle);
- 
- if (millis() % 1000 == 0)
- {
-   Serial.print(" tick: ");
-   Serial.println(contatore);
+ //serialRoutine();
+ //motorSpeed(throttle); 
+ //if (millis() % 1000 == 0)
+ //{
+ Serial.println(contatore);//  pastCount = contatore;
    contatore = 0;
- }
+   delay(1000);
+ //}
 } 
 
 void serialRoutine()
@@ -264,6 +275,13 @@ void serialRoutine()
        Serial.print(aaz);
        Serial.print(",");
        Serial.println(lastAccTimer);
+     }
+     else if (mode == 85) // 'U'
+     {
+       Serial.print(aay);
+       Serial.print("  ");
+       Serial.print(pastCount);
+       Serial.println();
      }
     if(mode == 16)
     {  	
@@ -450,6 +468,6 @@ int readRegister(int deviceAddress, byte address)
  
 ISR(TIMER3_COMPB_vect)
 {
-    accRoutine();
+    //accRoutine();
     contatore++;
 }
