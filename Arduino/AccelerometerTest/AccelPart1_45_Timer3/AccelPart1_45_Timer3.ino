@@ -277,6 +277,8 @@ void serialRoutine()
      {
        Serial.print(aay);
        Serial.print("  ");
+       Serial.print(wx);
+       Serial.print("  ");
        Serial.print(pastCount);
        Serial.println();
      }

@@ -1,4 +1,3 @@
-
 /**********************************************************************
  *             Arduino & L3G4200D gyro & KALMAN & 3 threshold PID     *
  *                running I2C mode, MMA7260Q Accelerometer            *
@@ -87,6 +86,7 @@ unsigned long timeToLand = 20000;
 boolean autoLand = false;
 boolean landing = false;
 int landSpeed = 1;
+
 /**
  * Pid Controller 
  */
@@ -196,8 +196,6 @@ float complementaryConstant = 0.03;
 boolean usingInterrupt = false;
 
 //Initialize condition, true if 'i' sent via serial/xbee
-boolean initializing = false;
-boolean initialized = false;
 
 // Matlab plot
 boolean plotting = false;
