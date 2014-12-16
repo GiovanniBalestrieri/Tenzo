@@ -87,8 +87,6 @@ function DataAcquisiton()
             'Callback',@stopCallback);
     end
 
-
-
     if ((~exist('h','var') || ~ishandle(h))&& asked)
         h = figure(1);
         ax = axes('box','on');    

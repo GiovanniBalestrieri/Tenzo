@@ -41,11 +41,9 @@ xlabel('Normalized frequency [\pi rads/samples]');
 ylabel('Magnitude');
 
 % Designs a second order filter using a butterworth design guidelines
-<<<<<<< HEAD
+
 [b a] = butter(2,0.10,'low');
-=======
 [b a] = butter(2,0.1,'low');
->>>>>>> origin/master
 
 % Plot the frequency response (normalized frequency)
 H = freqz(b,a,floor(num_bins/2));
