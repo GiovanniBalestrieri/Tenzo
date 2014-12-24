@@ -63,7 +63,7 @@ boolean initialized = false;
  * VTOL settings
  */
  // Take Off settings
-int rampTill = 95;
+int rampTill = 86;
 int motorRampDelayFast = 150;
 int motorRampDelayMedium = 350;
 int motorRampDelaySlow = 550;
@@ -87,50 +87,6 @@ boolean enableRollPid = false;
 boolean enablePitchPid = true;
 boolean enableYawPid = false;
 boolean enableAltitudePid = false;
-
-// Define IO and setpoint for control
-double SetpointRoll = 0, InputRoll, errorRoll, OutputRoll;
-double SetpointPitch = 0, InputPitch, errorPitch, OutputPitch;
-double SetpointYaw = 180, InputYaw, errorYaw, OutputYaw;
-double SetpointAltitude = 1, InputAltitude, errorAltitude, OutputAltitude;
-
-// Define the aggressive and conservative Tuning Parameters
-// Roll
-float aggKpRoll=0.10, aggKiRoll=0.06, aggKdRoll=0.04;
-float consKpRoll=0.22, consKiRoll=0.09, consKdRoll=0.02;
-float farKpRoll=0.05, farKiRoll=0.9, farKdRoll=0.03;
-
-// Pitch
-float aggKpPitch=0.07, aggKiPitch=0.06, aggKdPitch=0.04;
-float consKpPitch=0.24, consKiPitch=0.09, consKdPitch=0.02;
-float farKpPitch=0.02, farKiPitch=0.09,  farKdPitch=0.02;
-
-// Yaw
-double aggKpYaw=0.3, aggKiYaw=0.0, aggKdYaw=0.1;
-double consKpYaw=0.3, consKiYaw=0, consKdYaw=0.0;
-
-// Altitude  ->> *** Add it, judst created
-double aggKpAltitude=0.2, aggKiAltitude=0.0, aggKdAltitude=0.1;
-double consKpAltitude=0.1, consKiAltitude=0, consKdAltitude=0.1;
-
-//Specify the links and initial tuning parameters
-PID myRollPID(&InputRoll, &OutputRoll, &SetpointRoll, consKpRoll, consKiRoll, consKdRoll, DIRECT);
-PID myPitchPID(&InputPitch, &OutputPitch, &SetpointPitch, consKpPitch, consKiPitch, consKdPitch, DIRECT);
-PID myYawPID(&InputYaw, &OutputYaw, &SetpointYaw, consKpYaw, consKiYaw, consKdYaw, DIRECT);
-PID myAltitudePID(&InputAltitude, &OutputAltitude, &SetpointAltitude, consKpAltitude, consKiAltitude, consKdAltitude, DIRECT);
-
-// Threshold
-int thresholdRoll = 7;
-int thresholdFarRoll = 20;
-int thresholdPitch = 7; 
-int thresholdFarPitch = 25;
-int thresholdYaw = 15;
-int thresholdAlt = 20;
-
-// initialize pid outputs
-int rollPID = 0;
-int pitchPID = 0;
-int yawPID = 0;
 
 /** 
  * Kalman
@@ -274,11 +230,11 @@ unsigned int sensorValue = 0;
 boolean enableFilter = true;
 boolean enableKalman = true;
 
-int lenBuff = 300;
-float values[300];
-float valuesF[300];
-float theta[300];
-float time[300];
+int lenBuff = 350;
+float values[350];
+float valuesF[350];
+float theta[350];
+float time[350];
 
 int rate = 0;
 int pastTime = 0;
@@ -316,57 +272,8 @@ int loWord,hiWord;
 int versionArduinoProtocol = 5;
 boolean matlab = false;
 int mode = 0;
-long cmd1;
-long cmd2;
-long cmd3;
-long cmd4;
 int numCommandToSend = 0;
 int numFilterValuesToSend = 0;
-
-int inputBuffSize = 30;
-int outputBuffSize = 30;
-byte bufferBytes[30];
-
-// Serial IDs
-int arduinoAdd = 1;
-int MatlabAdd = 2;
-
-int motorsID = 1;
-int accID = 2;
-int gyroID = 3;
-int magnID = 4;
-int estID = 5;
-int sonicID = 6;
-int gpsID = 7;
-int baroID = 8;
-int rollConsID = 9;
-int pitchConsID = 10;
-int yawConsID = 11;
-int altitudeConsID = 12;
-int rollAggID = 13;
-int pitchAggID = 14;
-int yawAggID = 15;
-int altitudeAggID = 16;
-int takeOffID = 17;
-int iHoverID = 18;
-int landID = 19;
-int enableMotorsID = 20;
-int sendConsPidRollID = 21;
-int sendConsPidPitchID = 22;
-int sendConsPidYawID = 23;
-int sendConsPidAltID = 24;
-int sendAggPidRollID = 25;
-int sendAggPidPitchID = 26;
-int sendAggPidYawID = 27;
-int sendAggPidAltID = 28;
-int tenzoStateID = 30;
-int connID = 31;
-int accValuesID = 32;
-
-
-int cmdLength = 17;
-int shortCmdLength = 9;
-int headerLength = 13;
 
 //typedef struct mcTag {  // 13 bytes
 //  unsigned char srcAddr;
@@ -529,7 +436,6 @@ void loop()
     getGyroValues();
     getCompassValues();
     estimateAngle();
-    control();
     serialRoutine();
     //sendDataSensors(matlab);
     
@@ -551,135 +457,6 @@ void loop()
         detectFreq = false;
       }
     }    
-  }
-}
-
-void control()
-{
-  if (enablePid)
-  {
-    // Roll PID
-    if (enableRollPid)
-    {
-      InputRoll = rollK;
-      errorRoll = abs(SetpointRoll - rollK); //distance away from setpoint
-      if(errorRoll<thresholdRoll)
-      {  //we're close to setpoint, use conservative tuning parameters
-        myRollPID.SetTunings(consKpRoll, consKiRoll, consKdRoll);
-      }
-      else if(errorRoll>=thresholdRoll && errorRoll<thresholdFarRoll)
-      {
-        //we're far from setpoint, use aggressive tuning parameters
-        myRollPID.SetTunings(aggKpRoll, aggKiRoll, aggKdRoll);
-      }
-      else if(errorRoll>thresholdFarRoll)
-      {
-        //we're far from setpoint, use aggressive tuning parameters
-        myRollPID.SetTunings(farKpRoll, farKiRoll, farKdRoll);
-      }
-
-      myRollPID.Compute(); // Computes outputRoll
-
-      if (printPIDVals)
-      {
-        Serial.print("ErrorRoll:");
-        Serial.print(errorRoll);
-        Serial.print("Roll PID: ");
-        Serial.print(OutputRoll);
-        Serial.println();
-      }
-    }
-    else
-    {
-      OutputRoll = 0;
-    }
-
-    // Pitch PID
-    if (enablePitchPid)
-    {
-      InputPitch = pitchK;
-      errorPitch = abs(SetpointPitch - pitchK); //distance away from setpoint
-
-      if (errorPitch<thresholdPitch)
-      {  //we're close to setpoint, use conservative tuning parameters
-        myPitchPID.SetTunings(consKpPitch, consKiPitch, consKdPitch);
-      }
-      else if (errorPitch>=thresholdPitch && errorPitch<thresholdFarPitch)
-      {
-        //we're far from setpoint, use aggressive tuning parameters
-        myPitchPID.SetTunings(aggKpPitch, aggKiPitch, aggKdPitch);
-      }
-      else if (errorPitch>=thresholdFarPitch)
-      {
-        //we're really far from setpoint, use other tuning parameters
-        myPitchPID.SetTunings(farKpPitch, farKiPitch, farKdPitch);
-      }
-
-      myPitchPID.Compute(); // Computes outputPitch
-
-      if (printPIDVals)
-      { 
-        Serial.print("  Error Pitch: ");
-        Serial.print(errorPitch);
-        Serial.print("  pidAction: ");
-        Serial.print(OutputPitch);
-        Serial.println();
-      }
-    }  
-    else
-    {
-      OutputPitch = 0;
-    }
-
-    // Yaw PID
-    if (enableYawPid)
-    {
-      if (filterAng == 1)
-      {
-        InputYaw = angPosFilter[2];
-        errorYaw = abs(SetpointYaw - angPosFilter[2]); //distance away from setpoint
-      }
-      else if (filterAng == 0)
-      {
-        InputYaw = bearing1;
-        errorYaw = abs(SetpointYaw - bearing1); 
-      }
-
-      if(errorYaw<thresholdYaw)
-      {
-        //we're close to setpoint, use conservative tuning parameters
-        myYawPID.SetTunings(consKpYaw, consKiYaw, consKdYaw);
-      }
-      else
-      {
-        //we're far from setpoint, use aggressive tuning parameters
-        myYawPID.SetTunings(aggKpYaw, aggKiYaw, aggKdYaw);
-      }    
-      myYawPID.Compute(); // Resturns outputYaw 
-
-      if (printPIDVals)
-      {
-        Serial.print(" ErrorYaw: ");
-        Serial.print(errorYaw);
-        Serial.print(" Yawpid: ");
-        Serial.print(OutputYaw);
-        Serial.println();
-      }     
-    }
-    else
-    {
-      OutputYaw=0;
-    }
-    if (printPIDVals)
-    {
-      Serial.println();      
-    }
-  }
-  else
-  {
-    OutputRoll = 0;
-    OutputPitch = 0;    
-    OutputYaw = 0;
   }
 }
 
@@ -998,8 +775,8 @@ void serialRoutine()
         
         lastAccTimer = micros();
         time[i]=lastAccTimer;
-         //delay(3);
          motorSpeed(throttle);
+         delayMicroseconds(5132);
        }  
        
        landFast();  
@@ -1156,7 +933,7 @@ void serialRoutine()
     } 
     else if (modeS == 'P')
     {
-      dispActualAllPidVals();
+     // dispActualAllPidVals();
     }
   }
    
@@ -1796,69 +1573,9 @@ void serialRoutine()
 //      }
 //    }
 //  }
-  if (initialized||matlab)
-  {
-    //motorSpeed(throttle);
-    motorSpeedPID(throttle,OutputPitch ,OutputRoll, OutputYaw);
-    if (printThrottle)
-    {
-      Serial.println(throttle);
-    }
-  }
+  
 }
 
-void changePidValues()
-{
-  if (enablePid)
-  {
-    // Roll PID
-    if (enableRollPid)
-    {
-      if(errorRoll<thresholdRoll)
-      {  //we're close to setpoint, use conservative tuning parameters
-        myRollPID.SetTunings(consKpRoll, consKiRoll, consKdRoll);
-      }
-      else
-      {
-        //we're far from setpoint, use aggressive tuning parameters
-        myRollPID.SetTunings(aggKpRoll, aggKiRoll, aggKdRoll);
-      }
-    }
-
-    // Pitch PID
-    if (enablePitchPid)
-    {
-      if(errorPitch<thresholdPitch)
-      {  //we're close to setpoint, use conservative tuning parameters
-        myPitchPID.SetTunings(consKpPitch, consKiPitch, consKdPitch);
-      }
-      else
-      {
-        //we're far from setpoint, use aggressive tuning parameters
-        myPitchPID.SetTunings(aggKpPitch, aggKiPitch, aggKdPitch);
-      }
-    }
-
-    // Yaw PID
-    if (enableYawPid)
-    {
-      if(errorYaw<thresholdYaw)
-      {
-        //we're close to setpoint, use conservative tuning parameters
-        myYawPID.SetTunings(consKpYaw, consKiYaw, consKdYaw);
-      }
-      else
-      {
-        //we're far from setpoint, use aggressive tuning parameters
-        myYawPID.SetTunings(aggKpYaw, aggKiYaw, aggKdYaw);
-      } 
-    }
-    if (printPIDVals)
-    {
-      dispActualAllPidVals();     
-    }
-  }
-}
 
 void checkLocalRemoteStates(int to, int h, int l)
 {
@@ -1938,7 +1655,6 @@ void resetMotorsPidOff()
   {
     // Change only if PID is enabled 
     // Tenzo has landed, no need of controls
-    changePidState(false);
   }
 } 
 
@@ -2039,14 +1755,6 @@ void initialize()
       sendTakeOffAck =true;
       numCommandToSend++;
     }
-    if (enablePid)
-    {  
-      changePidState(true);
-    }
-    else
-    {
-      changePidState(false);
-    }
     initializing = false;
   }
   else
@@ -2054,102 +1762,6 @@ void initialize()
     Serial.println();
     Serial.print("First Land ortherwise Tenzo will crash");
     Serial.println();
-  }
-}
-
-void changePidState(boolean cond)
-{
-  if (matlab)
-  {
-    // If pid state is modified, notify Matlab
-    /*
-    if (enablePid == cond && matlab)
-     {
-     sendHoverState = false;
-     }
-     */
-    /*
-     * AEP + TO
-     **/
-    if (enablePid && cond && autoEnablePid) 
-    {
-      Serial.println();
-      Serial.print("   eP + cond + AEP ");
-      Serial.println();
-
-      sendHoverState = true;
-      numCommandToSend++;
-    }
-    else if (!enablePid && !cond && autoEnablePid)
-    {    
-      Serial.println();
-      Serial.print("   !eP + !cond + AEP ");
-      Serial.println();
-
-      sendHoverState = true;
-      numCommandToSend++;
-    }
-    /*
-     * !AEP + TO
-     **/
-    else if (!enablePid && !cond && !autoEnablePid)
-    {
-      Serial.println();
-      Serial.print("   !eP + !cond + !AEP ");
-      Serial.println();
-
-      sendHoverState = false;
-    }
-    /** 
-     *  AEP + Land
-     **/
-    else if (enablePid && !cond && landing)
-    {
-      Serial.println();
-      Serial.print("   eP + !cond + AEP + Land ");
-      Serial.println();
-
-      sendHoverState = true;
-      numCommandToSend++;
-    }
-    else if (enablePid && !cond)
-    {
-      sendHoverState = true;
-      numCommandToSend++;
-    }
-    else if (enablePid != cond )
-    {
-      sendHoverState = true;
-      numCommandToSend++;
-    }
-  }
-  if (cond)
-  {
-    // Enable Pid Actions
-    myRollPID.SetMode(AUTOMATIC);
-    //tell the PID to range between 0 and the full throttle
-    //SetpointRoll = 0;
-    myRollPID.SetOutputLimits(-500, 500);
-
-    // Pitch
-    myPitchPID.SetMode(AUTOMATIC);
-    //SetpointPitch = 0;
-    //tell the PID to range between 0 and the full throttle
-    myPitchPID.SetOutputLimits(-500, 500);
-
-    // Yaw
-    myYawPID.SetMode(AUTOMATIC);
-    //SetpointYaw=0;
-    //tell the PID to range between 0 and the full throttle
-    myYawPID.SetOutputLimits(-500, 500);
-    enablePid = true;
-  }
-  else
-  { 
-    myRollPID.SetMode(MANUAL);
-    myPitchPID.SetMode(MANUAL);
-    myYawPID.SetMode(MANUAL);
-    enablePid = false;
   }
 }
 
@@ -2842,136 +2454,6 @@ void dispAllPidVals()
 {
   Serial.println();
   Serial.print(" Updating PID values");
-  Serial.println();
-  if (enableRollPid)
-  {
-    Serial.println(" Roll:  ");
-    Serial.print("   Cons [p,d,i]: [");
-    Serial.print(consKpRoll);
-    Serial.print(" ; ");
-    Serial.print(consKdRoll);
-    Serial.print(" ; ");
-    Serial.print(consKiRoll);
-    Serial.print(" ]   Agg: [p,d,i]: [");
-    Serial.print(aggKpRoll);
-    Serial.print(" ; ");
-    Serial.print(aggKdRoll);
-    Serial.print(" ; ");
-    Serial.print(aggKiRoll);
-    Serial.print(" ]   Setpoint: ");
-    Serial.println(SetpointRoll);
-  }
-  if (enablePitchPid)
-  {
-    Serial.println(" Pitch:  ");
-    Serial.print("   Cons [p,d,i]: [");
-    Serial.print(consKpPitch);
-    Serial.print(" ; ");
-    Serial.print(consKdPitch);
-    Serial.print(" ; ");
-    Serial.print(consKiPitch);
-    Serial.print(" ]   Agg: [p,d,i]: [");
-    Serial.print(aggKpPitch);
-    Serial.print(" ; ");
-    Serial.print(aggKdPitch);
-    Serial.print(" ; ");
-    Serial.print(aggKiPitch);
-    Serial.print(" ]   Setpoint: ");
-    Serial.println(SetpointPitch);
-  }
-  if (enableYawPid)
-  {
-    Serial.println(" Yaw:  ");
-    Serial.print("   Cons [p,d,i]: [");
-    Serial.print(consKpYaw);
-    Serial.print(" ; ");
-    Serial.print(consKdYaw);
-    Serial.print(" ; ");
-    Serial.print(consKiYaw);
-    Serial.print(" ]   Agg: [p,d,i]: [");
-    Serial.print(aggKpYaw);
-    Serial.print(" ; ");
-    Serial.print(aggKdYaw);
-    Serial.print(" ; ");
-    Serial.print(aggKiYaw);
-    Serial.print(" ]   Setpoint: ");
-    Serial.println(SetpointYaw);
-  }
-  if (enableAltitudePid)
-  {
-    Serial.println(" Alt:  ");
-    Serial.print("   Cons [p,d,i]: [");
-    Serial.print(consKpAltitude);
-    Serial.print(" ; ");
-    Serial.print(consKdAltitude);
-    Serial.print(" ; ");
-    Serial.print(consKiAltitude);
-    Serial.print(" ]   Agg: [p,d,i]: [");
-    Serial.print(aggKpAltitude);
-    Serial.print(" ; ");
-    Serial.print(aggKdAltitude);
-    Serial.print(" ; ");
-    Serial.print(aggKiAltitude);
-    Serial.print(" ]   Setpoint: ");
-    Serial.println(SetpointAltitude);
-  }
-  Serial.println();
-}
-
-void dispActualAllPidVals()
-{
-  Serial.println();
-  Serial.print(" Updating PID values");
-  Serial.println();
-  if (enableRollPid)
-  {
-    Serial.println(" Roll:  ");
-    Serial.print("   [p,d,i]: [");
-    Serial.print(myRollPID.GetKp());
-    Serial.print(" ; ");
-    Serial.print(myRollPID.GetKd());
-    Serial.print(" ; ");
-    Serial.print(myRollPID.GetKi());
-    Serial.print(" ]   Setpoint: ");
-    Serial.println(SetpointRoll);
-  }
-  if (enablePitchPid)
-  {
-    Serial.println(" Pitch:  ");
-    Serial.print("   [p,d,i]: [");
-    Serial.print(myPitchPID.GetKp());
-    Serial.print(" ; ");
-    Serial.print(myPitchPID.GetKd());
-    Serial.print(" ; ");
-    Serial.print(myPitchPID.GetKi());
-    Serial.print(" ]   Setpoint: ");
-    Serial.println(SetpointPitch);
-  }
-  if (enableYawPid)
-  {
-    Serial.println(" Yaw:  ");
-    Serial.print("  [p,d,i]: [");
-    Serial.print(myYawPID.GetKp());
-    Serial.print(" ; ");
-    Serial.print(myPitchPID.GetKd());
-    Serial.print(" ; ");
-    Serial.print(myPitchPID.GetKi());
-    Serial.print(" ]   Setpoint: ");
-    Serial.println(SetpointYaw);
-  }
-  if (enableAltitudePid)
-  {
-    Serial.println(" Alt:  ");
-    Serial.print("   [p,d,i]: [");
-    Serial.print(myAltitudePID.GetKp());
-    Serial.print(" ; ");
-    Serial.print(myAltitudePID.GetKd());
-    Serial.print(" ; ");
-    Serial.print(myAltitudePID.GetKi());
-    Serial.print(" ]   Setpoint: ");
-    Serial.println(SetpointAltitude);
-  }
-  Serial.println();
 }
  
 ISR(TIMER3_COMPB_vect)
