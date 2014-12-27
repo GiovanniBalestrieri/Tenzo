@@ -156,7 +156,7 @@ global requestPending;
 
 %% Version
 
-version = 1.75;
+version = 1.90;
 
 %% Data Acquisition vars
 
@@ -192,7 +192,7 @@ time  = zeros(buffLenDa,1);
 
 %% Serial protocol
 
-versionProtocol = 4;
+versionProtocol = 5;
 % command Map
 motorsID = 1;
 accID = 2;
@@ -224,6 +224,7 @@ rAYPID = 27;
 rAAPID = 28;
 tenzoStateID = 30;
 connID = 31;
+accValuesID = 32;
 
 cmdLength = 17;
 headerLength = 13;
@@ -251,7 +252,6 @@ global KalmanRoll;
 global kr;
 global KalmanPitch;
 global kp;
-version = 1.65;
 landingSpeed = 2;
 
 % Serial Sensors Acks initialization
