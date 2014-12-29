@@ -34,11 +34,12 @@
 #endif
 #include <PID_v1.h>
 
-int versionCode = 31;
+int versionCode = 320;
 
 /**
  * Print sensor's value
  */
+ 
 boolean printSetupInfo = true;
 boolean printAckCommands = true;
 boolean printVerboseSerial = true;
@@ -62,7 +63,7 @@ boolean initialized = false;
  * VTOL settings
  */
  // Take Off settings
-int rampTill = 75;
+int rampTill = 68;
 int motorRampDelayFast = 150;
 int motorRampDelayMedium = 350;
 int motorRampDelaySlow = 550;
@@ -520,6 +521,7 @@ void loop()
 {
   while(true)
   {
+    rateLoop = micros() - lastLoopTimer;
     accRoutine();
     getGyroValues();
     getCompassValues();
@@ -533,19 +535,20 @@ void loop()
     {
       if (contHz<lenBuff)
       {
-        values[contHz] = rate;
+        values[contHz] = rateLoop;
         contHz++;
       }
       else if (cond)
       {
         for (int j = 0; j<lenBuff; j++)
-          //sum = sum + values[j];
+        //sum = sum + values[j];
         Serial.println(values[j]);
         //Serial.println(values[90]);
         cond = false;
         detectFreq = false;
       }
-    }    
+    }
+    lastLoopTimer = micros(); 
   }
 }
 
@@ -2967,11 +2970,13 @@ void dispActualAllPidVals()
   }
   Serial.println();
 }
- 
+
+/*
 ISR(TIMER3_COMPB_vect)
 {
     accRoutine();
 }
+*/
 
 void displayValues(int b, int p, int r)
 {    

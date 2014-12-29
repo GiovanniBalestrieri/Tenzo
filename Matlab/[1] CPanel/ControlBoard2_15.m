@@ -1,5 +1,4 @@
 function ControlBoard()
-
 clear all;
 clc;
 
