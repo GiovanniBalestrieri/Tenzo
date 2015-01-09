@@ -316,8 +316,8 @@ sysCl = ss(A-B*K11,B,C,D);
 C1= C(9,:)
 C2 = C(4:6,:)
 Cn = [C1;C2]
-
-sysClSmall = ss(A-B*K11,B,Cn,D(1:4,:));
+D1=D(1:4,:);
+sysClSmall = ss(A-B*K11,B,Cn,D1);
 %% specifica1 Verificare che esiste un controllore che soddisfa le specifiche A1,B,C1
 %clc;
 
@@ -340,7 +340,7 @@ pause;
 disp('specifica 1) Verifichare che esiste un cotrollore che soddisfa le specifiche A1,B,C1 (teorema 5.4.2):');
 disp('verifica preliminare, autovalori del processo [eig(A)]:')
 stab=1;
-eOp = eig(A);
+eOp = eig(A-B*K11);
 [dn,dm]=size(eOp);
   for i=1:dn,
       if (real(eOp(i))>0 ) 
@@ -357,7 +357,7 @@ if (stab==1)
 end
 disp(eOp);
 
-if (rank(ctrb(A-alpha*eye(size(A)),B))==size(A)) 
+if (rank(ctrb(A-B*K11-alpha*eye(size(A)),B))==size(A)) 
     disp('a1) verificata, la coppia (A,B) è raggiungibile, rank(matrice controllabilità è)');
     disp(rank(ctrb(A,B))); 
 
@@ -368,9 +368,9 @@ else
     disp('Coppia (A1,B1) non raggiungibile');
 end
 
-if (rank(obsv(A+alpha*eye(size(A,1)),C))==rank(A)) 
+if (rank(obsv(A-B*K11+alpha*eye(size(A,1)),C))==rank(A)) 
     disp('a1) verificata, la coppia A,C ï¿½ osservabile, rank(matrice osservabilitï¿½ ï¿½)'); 
-    disp(rank(obsv(A,C))); 
+    disp(rank(obsv(A-B*K11,Cn))); 
 else
     disp('Coppia (A,C) non osservabile');
 end
