@@ -1,8 +1,8 @@
 /* Include files */
 
-#include "tenzo6dof_sfun.h"
-#include "c1_tenzo6dof.h"
-#include "c2_tenzo6dof.h"
+#include "tenzo1_00_sfun.h"
+#include "c1_tenzo1_00.h"
+#include "c2_tenzo1_00.h"
 
 /* Type Definitions */
 
@@ -11,38 +11,38 @@
 /* Variable Declarations */
 
 /* Variable Definitions */
-uint32_T _tenzo6dofMachineNumber_;
+uint32_T _tenzo1_00MachineNumber_;
 real_T _sfTime_;
 
 /* Function Declarations */
 
 /* Function Definitions */
-void tenzo6dof_initializer(void)
+void tenzo1_00_initializer(void)
 {
 }
 
-void tenzo6dof_terminator(void)
+void tenzo1_00_terminator(void)
 {
 }
 
 /* SFunction Glue Code */
-unsigned int sf_tenzo6dof_method_dispatcher(SimStruct *simstructPtr, unsigned
+unsigned int sf_tenzo1_00_method_dispatcher(SimStruct *simstructPtr, unsigned
   int chartFileNumber, const char* specsCksum, int_T method, void *data)
 {
   if (chartFileNumber==1) {
-    c1_tenzo6dof_method_dispatcher(simstructPtr, method, data);
+    c1_tenzo1_00_method_dispatcher(simstructPtr, method, data);
     return 1;
   }
 
   if (chartFileNumber==2) {
-    c2_tenzo6dof_method_dispatcher(simstructPtr, method, data);
+    c2_tenzo1_00_method_dispatcher(simstructPtr, method, data);
     return 1;
   }
 
   return 0;
 }
 
-unsigned int sf_tenzo6dof_process_check_sum_call( int nlhs, mxArray * plhs[],
+unsigned int sf_tenzo1_00_process_check_sum_call( int nlhs, mxArray * plhs[],
   int nrhs, const mxArray * prhs[] )
 {
 
@@ -62,10 +62,10 @@ unsigned int sf_tenzo6dof_process_check_sum_call( int nlhs, mxArray * plhs[],
     mxGetString(prhs[1], commandName,sizeof(commandName)/sizeof(char));
     commandName[(sizeof(commandName)/sizeof(char)-1)] = '\0';
     if (!strcmp(commandName,"machine")) {
-      ((real_T *)mxGetPr((plhs[0])))[0] = (real_T)(2246819652U);
-      ((real_T *)mxGetPr((plhs[0])))[1] = (real_T)(1039622428U);
-      ((real_T *)mxGetPr((plhs[0])))[2] = (real_T)(1156634441U);
-      ((real_T *)mxGetPr((plhs[0])))[3] = (real_T)(1958248166U);
+      ((real_T *)mxGetPr((plhs[0])))[0] = (real_T)(348221445U);
+      ((real_T *)mxGetPr((plhs[0])))[1] = (real_T)(284669705U);
+      ((real_T *)mxGetPr((plhs[0])))[2] = (real_T)(4042124818U);
+      ((real_T *)mxGetPr((plhs[0])))[3] = (real_T)(3311555494U);
     } else if (!strcmp(commandName,"exportedFcn")) {
       ((real_T *)mxGetPr((plhs[0])))[0] = (real_T)(0U);
       ((real_T *)mxGetPr((plhs[0])))[1] = (real_T)(0U);
@@ -82,15 +82,15 @@ unsigned int sf_tenzo6dof_process_check_sum_call( int nlhs, mxArray * plhs[],
       switch (chartFileNumber) {
        case 1:
         {
-          extern void sf_c1_tenzo6dof_get_check_sum(mxArray *plhs[]);
-          sf_c1_tenzo6dof_get_check_sum(plhs);
+          extern void sf_c1_tenzo1_00_get_check_sum(mxArray *plhs[]);
+          sf_c1_tenzo1_00_get_check_sum(plhs);
           break;
         }
 
        case 2:
         {
-          extern void sf_c2_tenzo6dof_get_check_sum(mxArray *plhs[]);
-          sf_c2_tenzo6dof_get_check_sum(plhs);
+          extern void sf_c2_tenzo1_00_get_check_sum(mxArray *plhs[]);
+          sf_c2_tenzo1_00_get_check_sum(plhs);
           break;
         }
 
@@ -109,10 +109,10 @@ unsigned int sf_tenzo6dof_process_check_sum_call( int nlhs, mxArray * plhs[],
       return 0;
     }
   } else {
-    ((real_T *)mxGetPr((plhs[0])))[0] = (real_T)(2013152359U);
-    ((real_T *)mxGetPr((plhs[0])))[1] = (real_T)(974206723U);
-    ((real_T *)mxGetPr((plhs[0])))[2] = (real_T)(2625252024U);
-    ((real_T *)mxGetPr((plhs[0])))[3] = (real_T)(2931413049U);
+    ((real_T *)mxGetPr((plhs[0])))[0] = (real_T)(2791469806U);
+    ((real_T *)mxGetPr((plhs[0])))[1] = (real_T)(438668189U);
+    ((real_T *)mxGetPr((plhs[0])))[2] = (real_T)(3051959063U);
+    ((real_T *)mxGetPr((plhs[0])))[3] = (real_T)(1134976767U);
   }
 
   return 1;
@@ -125,7 +125,7 @@ unsigned int sf_tenzo6dof_process_check_sum_call( int nlhs, mxArray * plhs[],
 
 }
 
-unsigned int sf_tenzo6dof_autoinheritance_info( int nlhs, mxArray * plhs[], int
+unsigned int sf_tenzo1_00_autoinheritance_info( int nlhs, mxArray * plhs[], int
   nrhs, const mxArray * prhs[] )
 {
 
@@ -151,8 +151,8 @@ unsigned int sf_tenzo6dof_autoinheritance_info( int nlhs, mxArray * plhs[], int
      case 1:
       {
         if (strcmp(aiChksum, "opgIXLS58XtJqREY6WdW4") == 0) {
-          extern mxArray *sf_c1_tenzo6dof_get_autoinheritance_info(void);
-          plhs[0] = sf_c1_tenzo6dof_get_autoinheritance_info();
+          extern mxArray *sf_c1_tenzo1_00_get_autoinheritance_info(void);
+          plhs[0] = sf_c1_tenzo1_00_get_autoinheritance_info();
           break;
         }
 
@@ -163,8 +163,8 @@ unsigned int sf_tenzo6dof_autoinheritance_info( int nlhs, mxArray * plhs[], int
      case 2:
       {
         if (strcmp(aiChksum, "r7rvY7a8r5GIrRf6Vq6qpD") == 0) {
-          extern mxArray *sf_c2_tenzo6dof_get_autoinheritance_info(void);
-          plhs[0] = sf_c2_tenzo6dof_get_autoinheritance_info();
+          extern mxArray *sf_c2_tenzo1_00_get_autoinheritance_info(void);
+          plhs[0] = sf_c2_tenzo1_00_get_autoinheritance_info();
           break;
         }
 
@@ -187,7 +187,7 @@ unsigned int sf_tenzo6dof_autoinheritance_info( int nlhs, mxArray * plhs[], int
 
 }
 
-unsigned int sf_tenzo6dof_get_eml_resolved_functions_info( int nlhs, mxArray *
+unsigned int sf_tenzo1_00_get_eml_resolved_functions_info( int nlhs, mxArray *
   plhs[], int nrhs, const mxArray * prhs[] )
 {
 
@@ -209,10 +209,10 @@ unsigned int sf_tenzo6dof_get_eml_resolved_functions_info( int nlhs, mxArray *
     switch (chartFileNumber) {
      case 1:
       {
-        extern const mxArray *sf_c1_tenzo6dof_get_eml_resolved_functions_info
+        extern const mxArray *sf_c1_tenzo1_00_get_eml_resolved_functions_info
           (void);
         mxArray *persistentMxArray = (mxArray *)
-          sf_c1_tenzo6dof_get_eml_resolved_functions_info();
+          sf_c1_tenzo1_00_get_eml_resolved_functions_info();
         plhs[0] = mxDuplicateArray(persistentMxArray);
         mxDestroyArray(persistentMxArray);
         break;
@@ -220,10 +220,10 @@ unsigned int sf_tenzo6dof_get_eml_resolved_functions_info( int nlhs, mxArray *
 
      case 2:
       {
-        extern const mxArray *sf_c2_tenzo6dof_get_eml_resolved_functions_info
+        extern const mxArray *sf_c2_tenzo1_00_get_eml_resolved_functions_info
           (void);
         mxArray *persistentMxArray = (mxArray *)
-          sf_c2_tenzo6dof_get_eml_resolved_functions_info();
+          sf_c2_tenzo1_00_get_eml_resolved_functions_info();
         plhs[0] = mxDuplicateArray(persistentMxArray);
         mxDestroyArray(persistentMxArray);
         break;
@@ -244,31 +244,31 @@ unsigned int sf_tenzo6dof_get_eml_resolved_functions_info( int nlhs, mxArray *
 
 }
 
-void tenzo6dof_debug_initialize(void)
+void tenzo1_00_debug_initialize(void)
 {
-  _tenzo6dofMachineNumber_ = sf_debug_initialize_machine("tenzo6dof","sfun",0,2,
+  _tenzo1_00MachineNumber_ = sf_debug_initialize_machine("tenzo1_00","sfun",0,2,
     0,0,0);
-  sf_debug_set_machine_event_thresholds(_tenzo6dofMachineNumber_,0,0);
-  sf_debug_set_machine_data_thresholds(_tenzo6dofMachineNumber_,0);
+  sf_debug_set_machine_event_thresholds(_tenzo1_00MachineNumber_,0,0);
+  sf_debug_set_machine_data_thresholds(_tenzo1_00MachineNumber_,0);
 }
 
-void tenzo6dof_register_exported_symbols(SimStruct* S)
+void tenzo1_00_register_exported_symbols(SimStruct* S)
 {
 }
 
 static mxArray* sRtwOptimizationInfoStruct= NULL;
-mxArray* load_tenzo6dof_optimization_info(void)
+mxArray* load_tenzo1_00_optimization_info(void)
 {
   if (sRtwOptimizationInfoStruct==NULL) {
-    sRtwOptimizationInfoStruct = sf_load_rtw_optimization_info("tenzo6dof",
-      "tenzo6dof");
+    sRtwOptimizationInfoStruct = sf_load_rtw_optimization_info("tenzo1_00",
+      "tenzo1_00");
     mexMakeArrayPersistent(sRtwOptimizationInfoStruct);
   }
 
   return(sRtwOptimizationInfoStruct);
 }
 
-void unload_tenzo6dof_optimization_info(void)
+void unload_tenzo1_00_optimization_info(void)
 {
   if (sRtwOptimizationInfoStruct!=NULL) {
     mxDestroyArray(sRtwOptimizationInfoStruct);

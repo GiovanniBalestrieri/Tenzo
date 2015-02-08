@@ -397,7 +397,7 @@ unsigned long timerStart;
 unsigned long checkpoint;
 // Safe Mode: after timeToLand ms tenzo will land automatically
 unsigned long timeToLand = 20000;
-boolean autoLand = true;
+boolean autoLand = false;
 boolean landing = false;
 
 /**

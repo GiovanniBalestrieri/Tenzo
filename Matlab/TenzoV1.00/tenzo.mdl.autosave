@@ -1,16 +1,16 @@
 Model {
-  Name			  "tenzo6dof"
+  Name			  "tenzo"
   Version		  7.9
   MdlSubVersion		  0
   GraphicalInterface {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.350"
+    ComputedModelVersion    "1.330"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
-  SavedCharacterEncoding  "UTF-8"
+  SavedCharacterEncoding  "windows-1252"
   slprops.hdlmdlprops {
     $PropName		    "HDLParams"
     $ObjectID		    1
@@ -18,7 +18,7 @@ Model {
       Type		      "Cell"
       Dimension		      2
       Cell		      "HDLSubsystem"
-      Cell		      "tenzo6dof"
+      Cell		      "tenzo"
       PropName		      "mdlProps"
     }
   }
@@ -36,11 +36,11 @@ Model {
   Creator		  "userk"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "userk"
+  LastModifiedBy	  "UserK"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Feb 02 03:37:27 2015"
-  RTWModifiedTimeStamp	  344745206
-  ModelVersionFormat	  "1.%<AutoIncrement:350>"
+  LastModifiedDate	  "Tue Sep 02 01:11:34 2014"
+  RTWModifiedTimeStamp	  342394409
+  ModelVersionFormat	  "1.%<AutoIncrement:330>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,7 +78,6 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "tenzo6dof"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -518,7 +517,7 @@ Model {
 	      IncDataTypeInIds	      off
 	      MangleLength	      1
 	      CustomSymbolStrGlobalVar "$R$N$M"
-	      CustomSymbolStrType     "$N$R$M_T"
+	      CustomSymbolStrType     "$N$R$M"
 	      CustomSymbolStrField    "$N$M"
 	      CustomSymbolStrFcn      "$R$N$M$F"
 	      CustomSymbolStrFcnArg   "rt$I$N$M"
@@ -553,13 +552,13 @@ Model {
 		Cell			"GenerateTestInterfaces"
 		Cell			"ModelStepFunctionPrototypeControlCompliant"
 		Cell			"CPPClassGenCompliant"
-		Cell			"PortableWordSizes"
+		Cell			"MultiInstanceERTCode"
 		Cell			"PurelyIntegerCode"
 		Cell			"SupportComplex"
 		Cell			"SupportAbsoluteTime"
 		Cell			"SupportContinuousTime"
 		Cell			"SupportNonInlinedSFcns"
-		Cell			"GenerateAllocFcn"
+		Cell			"PortableWordSizes"
 		PropName		"DisabledProps"
 	      }
 	      TargetFcnLib	      "ansi_tfl_table_tmw.mat"
@@ -832,13 +831,6 @@ Model {
       SampleTime	      "-1"
     }
     Block {
-      BlockType		      S-Function
-      FunctionName	      "system"
-      SFunctionModules	      "''"
-      PortCounts	      "[]"
-      SFunctionDeploymentMode off
-    }
-    Block {
       BlockType		      Saturate
       UpperLimitSource	      "Dialog"
       UpperLimit	      "0.5"
@@ -953,8 +945,8 @@ Model {
     }
   }
   System {
-    Name		    "tenzo6dof"
-    Location		    [53, 79, 1366, 768]
+    Name		    "tenzo"
+    Location		    [53, 83, 1366, 772]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -968,7 +960,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "682"
+    SIDHighWatermark	    "656"
     Block {
       BlockType		      Concatenate
       Name		      " "
@@ -999,347 +991,6 @@ Model {
       SaturateOnIntegerOverflow	off
     }
     Block {
-      BlockType		      SubSystem
-      Name		      "C"
-      SID		      "224"
-      Ports		      [1, 1]
-      Position		      [980, 182, 1050, 228]
-      ZOrder		      -4
-      LibraryVersion	      "1.32"
-      ErrorFcn		      "Stateflow.Translate.translate"
-      PermitHierarchicalResolution "ExplicitOnly"
-      TreatAsAtomicUnit	      on
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
-      RequestExecContextInheritance off
-      MaskHideContents	      off
-      SFBlockType	      "MATLAB Function"
-      System {
-	Name			"C"
-	Location		[227, 345, 838, 789]
-	Open			off
-	ModelBrowserVisibility	off
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"usletter"
-	PaperUnits		"inches"
-	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	SIDHighWatermark	"25"
-	Block {
-	  BlockType		  Inport
-	  Name			  "X"
-	  SID			  "224::1"
-	  Position		  [20, 101, 40, 119]
-	  ZOrder		  -1
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Demux
-	  Name			  " Demux "
-	  SID			  "224::24"
-	  Ports			  [1, 1]
-	  Position		  [270, 230, 320, 270]
-	  ZOrder		  10
-	  Outputs		  "1"
-	}
-	Block {
-	  BlockType		  S-Function
-	  Name			  " SFunction "
-	  SID			  "224::23"
-	  Tag			  "Stateflow S-Function tenzo6dof 2"
-	  Ports			  [1, 2]
-	  Position		  [180, 100, 230, 160]
-	  ZOrder		  9
-	  FunctionName		  "sf_sfun"
-	  PortCounts		  "[1 2]"
-	  EnableBusSupport	  on
-	  Port {
-	    PortNumber		    2
-	    Name		    "ymis"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	}
-	Block {
-	  BlockType		  Terminator
-	  Name			  " Terminator "
-	  SID			  "224::25"
-	  Position		  [460, 241, 480, 259]
-	  ZOrder		  11
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "ymis"
-	  SID			  "224::5"
-	  Position		  [460, 101, 480, 119]
-	  ZOrder		  -5
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "X"
-	  SrcPort		  1
-	  DstBlock		  " SFunction "
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "ymis"
-	  Labels		  [0, 0]
-	  SrcBlock		  " SFunction "
-	  SrcPort		  2
-	  DstBlock		  "ymis"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  " Demux "
-	  SrcPort		  1
-	  DstBlock		  " Terminator "
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  " SFunction "
-	  SrcPort		  1
-	  DstBlock		  " Demux "
-	  DstPort		  1
-	}
-      }
-    }
-    Block {
-      BlockType		      SubSystem
-      Name		      "C1"
-      SID		      "541"
-      Ports		      [4, 4]
-      Position		      [190, 476, 260, 524]
-      ZOrder		      -4
-      LibraryVersion	      "1.32"
-      ErrorFcn		      "Stateflow.Translate.translate"
-      PermitHierarchicalResolution "ExplicitOnly"
-      TreatAsAtomicUnit	      on
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
-      RequestExecContextInheritance off
-      MaskHideContents	      off
-      SFBlockType	      "MATLAB Function"
-      System {
-	Name			"C1"
-	Location		[227, 345, 838, 789]
-	Open			off
-	ModelBrowserVisibility	off
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"usletter"
-	PaperUnits		"inches"
-	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	SIDHighWatermark	"31"
-	Block {
-	  BlockType		  Inport
-	  Name			  "T"
-	  SID			  "541::1"
-	  Position		  [20, 101, 40, 119]
-	  ZOrder		  -1
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "taux"
-	  SID			  "541::23"
-	  Position		  [20, 136, 40, 154]
-	  ZOrder		  9
-	  Port			  "2"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "tauy"
-	  SID			  "541::24"
-	  Position		  [20, 171, 40, 189]
-	  ZOrder		  10
-	  Port			  "3"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "tauz"
-	  SID			  "541::25"
-	  Position		  [20, 206, 40, 224]
-	  ZOrder		  11
-	  Port			  "4"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Demux
-	  Name			  " Demux "
-	  SID			  "541::30"
-	  Ports			  [1, 1]
-	  Position		  [270, 280, 320, 320]
-	  ZOrder		  16
-	  Outputs		  "1"
-	}
-	Block {
-	  BlockType		  S-Function
-	  Name			  " SFunction "
-	  SID			  "541::29"
-	  Tag			  "Stateflow S-Function tenzo6dof 1"
-	  Ports			  [4, 5]
-	  Position		  [180, 100, 230, 220]
-	  ZOrder		  15
-	  FunctionName		  "sf_sfun"
-	  PortCounts		  "[4 5]"
-	  EnableBusSupport	  on
-	  Port {
-	    PortNumber		    2
-	    Name		    "w1"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	  Port {
-	    PortNumber		    3
-	    Name		    "w2"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	  Port {
-	    PortNumber		    4
-	    Name		    "w3"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	  Port {
-	    PortNumber		    5
-	    Name		    "w4"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	}
-	Block {
-	  BlockType		  Terminator
-	  Name			  " Terminator "
-	  SID			  "541::31"
-	  Position		  [460, 291, 480, 309]
-	  ZOrder		  17
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "w1"
-	  SID			  "541::5"
-	  Position		  [460, 101, 480, 119]
-	  ZOrder		  -8
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "w2"
-	  SID			  "541::26"
-	  Position		  [460, 136, 480, 154]
-	  ZOrder		  12
-	  Port			  "2"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "w3"
-	  SID			  "541::27"
-	  Position		  [460, 171, 480, 189]
-	  ZOrder		  13
-	  Port			  "3"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "w4"
-	  SID			  "541::28"
-	  Position		  [460, 206, 480, 224]
-	  ZOrder		  14
-	  Port			  "4"
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "T"
-	  SrcPort		  1
-	  DstBlock		  " SFunction "
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "taux"
-	  SrcPort		  1
-	  DstBlock		  " SFunction "
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "tauy"
-	  SrcPort		  1
-	  DstBlock		  " SFunction "
-	  DstPort		  3
-	}
-	Line {
-	  SrcBlock		  "tauz"
-	  SrcPort		  1
-	  DstBlock		  " SFunction "
-	  DstPort		  4
-	}
-	Line {
-	  Name			  "w1"
-	  Labels		  [0, 0]
-	  SrcBlock		  " SFunction "
-	  SrcPort		  2
-	  Points		  [0, -25]
-	  DstBlock		  "w1"
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "w2"
-	  Labels		  [0, 0]
-	  SrcBlock		  " SFunction "
-	  SrcPort		  3
-	  DstBlock		  "w2"
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "w3"
-	  Labels		  [0, 0]
-	  SrcBlock		  " SFunction "
-	  SrcPort		  4
-	  DstBlock		  "w3"
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "w4"
-	  Labels		  [0, 0]
-	  SrcBlock		  " SFunction "
-	  SrcPort		  5
-	  DstBlock		  "w4"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  " Demux "
-	  SrcPort		  1
-	  DstBlock		  " Terminator "
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  " SFunction "
-	  SrcPort		  1
-	  DstBlock		  " Demux "
-	  DstPort		  1
-	}
-      }
-    }
-    Block {
       BlockType		      Constant
       Name		      "Constant"
       SID		      "95"
@@ -1363,7 +1014,6 @@ Model {
       SID		      "65"
       Ports		      [1, 1]
       Position		      [450, 184, 535, 246]
-      ZOrder		      -29
       BackgroundColor	      "red"
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -1389,7 +1039,7 @@ Model {
       }
       System {
 	Name			"Coppie"
-	Location		[208, 90, 1158, 677]
+	Location		[256, 331, 1150, 734]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1758,636 +1408,6 @@ Model {
 	  Name			  "U(t)"
 	  SID			  "68"
 	  Position		  [775, 152, 820, 168]
-	  ZOrder		  -25
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "Math\nFunction1"
-	  SrcPort		  1
-	  Points		  [20, 0]
-	  Branch {
-	    DstBlock		    "Gain1"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, -40]
-	    DstBlock		    "F1"
-	    DstPort		    2
-	  }
-	}
-	Line {
-	  SrcBlock		  "Math\nFunction2"
-	  SrcPort		  1
-	  DstBlock		  "Gain2"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Math\nFunction3"
-	  SrcPort		  1
-	  DstBlock		  "Gain3"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Math\nFunction4"
-	  SrcPort		  1
-	  DstBlock		  "Gain4"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Gain1"
-	  SrcPort		  1
-	  Points		  [20, 0]
-	  Branch {
-	    DstBlock		    "Add"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, 155]
-	    Branch {
-	      DstBlock		      "Add2"
-	      DstPort		      1
-	    }
-	    Branch {
-	      Points		      [0, 125]
-	      DstBlock		      "Add3"
-	      DstPort		      1
-	    }
-	  }
-	}
-	Line {
-	  SrcBlock		  "Gain2"
-	  SrcPort		  1
-	  Points		  [60, 0]
-	  Branch {
-	    Points		    [0, -45]
-	    DstBlock		    "Add"
-	    DstPort		    2
-	  }
-	  Branch {
-	    Points		    [0, 35]
-	    Branch {
-	      DstBlock		      "Add1"
-	      DstPort		      1
-	    }
-	    Branch {
-	      Points		      [0, 200]
-	      DstBlock		      "Add3"
-	      DstPort		      2
-	    }
-	  }
-	}
-	Line {
-	  SrcBlock		  "Gain3"
-	  SrcPort		  1
-	  Points		  [40, 0]
-	  Branch {
-	    Points		    [35, 0]
-	    Branch {
-	      Points		      [15, 0; 0, -95]
-	      DstBlock		      "Add"
-	      DstPort		      3
-	    }
-	    Branch {
-	      Points		      [0, 50]
-	      DstBlock		      "Add2"
-	      DstPort		      2
-	    }
-	  }
-	  Branch {
-	    Points		    [0, 185]
-	    DstBlock		    "Add3"
-	    DstPort		    3
-	  }
-	}
-	Line {
-	  SrcBlock		  "Gain4"
-	  SrcPort		  1
-	  Points		  [80, 0]
-	  Branch {
-	    Points		    [40, 0; 0, -70]
-	    Branch {
-	      DstBlock		      "Add"
-	      DstPort		      4
-	    }
-	    Branch {
-	      DstBlock		      "Add1"
-	      DstPort		      2
-	    }
-	  }
-	  Branch {
-	    Points		    [0, 140]
-	    DstBlock		    "Add3"
-	    DstPort		    4
-	  }
-	}
-	Line {
-	  SrcBlock		  "Add"
-	  SrcPort		  1
-	  Points		  [20, 0]
-	  Branch {
-	    DstBlock		    "Mux"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [-5, 0]
-	    DstBlock		    "F"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  SrcBlock		  "Add1"
-	  SrcPort		  1
-	  DstBlock		  "Gain"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Add2"
-	  SrcPort		  1
-	  DstBlock		  "Gain5"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Gain"
-	  SrcPort		  1
-	  Points		  [5, 0; 0, -55; 10, 0]
-	  Branch {
-	    DstBlock		    "Mux"
-	    DstPort		    2
-	  }
-	  Branch {
-	    Points		    [0, -50]
-	    DstBlock		    "Mpsi"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  SrcBlock		  "Gain5"
-	  SrcPort		  1
-	  Points		  [35, 0]
-	  Branch {
-	    Points		    [5, 0; 0, -90]
-	    DstBlock		    "Mux"
-	    DstPort		    3
-	  }
-	  Branch {
-	    DstBlock		    "Mthe"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  SrcBlock		  "Add3"
-	  SrcPort		  1
-	  DstBlock		  "Gain6"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Gain6"
-	  SrcPort		  1
-	  Points		  [65, 0; 0, -40]
-	  Branch {
-	    DstBlock		    "Mux"
-	    DstPort		    4
-	  }
-	  Branch {
-	    DstBlock		    "Mtau"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  SrcBlock		  "Demux"
-	  SrcPort		  1
-	  Points		  [0, -40; 10, 0]
-	  Branch {
-	    DstBlock		    "Math\nFunction1"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, 5; 5, 0; 0, -60]
-	    DstBlock		    "F1"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  SrcBlock		  "Demux"
-	  SrcPort		  2
-	  DstBlock		  "Math\nFunction2"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Mux"
-	  SrcPort		  1
-	  DstBlock		  "U(t)"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Demux"
-	  SrcPort		  3
-	  Points		  [0, 45]
-	  DstBlock		  "Math\nFunction3"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Demux"
-	  SrcPort		  4
-	  Points		  [0, 85]
-	  DstBlock		  "Math\nFunction4"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "w(t)"
-	  SrcPort		  1
-	  DstBlock		  "Demux"
-	  DstPort		  1
-	}
-      }
-    }
-    Block {
-      BlockType		      SubSystem
-      Name		      "Coppie1"
-      SID		      "562"
-      Ports		      [1, 1]
-      Position		      [445, 474, 530, 536]
-      ZOrder		      -30
-      BackgroundColor	      "red"
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
-      RequestExecContextInheritance off
-      MaskHideContents	      off
-      System {
-	Name			"Coppie1"
-	Location		[226, 219, 1176, 806]
-	Open			off
-	ModelBrowserVisibility	off
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"usletter"
-	PaperUnits		"inches"
-	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"80"
-	Block {
-	  BlockType		  Inport
-	  Name			  "w(t)"
-	  SID			  "563"
-	  Position		  [65, 158, 95, 172]
-	  ZOrder		  -1
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Add"
-	  SID			  "564"
-	  Ports			  [4, 1]
-	  Position		  [505, 85, 540, 150]
-	  ZOrder		  -2
-	  Inputs		  "++++"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Add1"
-	  SID			  "565"
-	  Ports			  [2, 1]
-	  Position		  [570, 180, 605, 220]
-	  ZOrder		  -2
-	  Inputs		  "+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Add2"
-	  SID			  "566"
-	  Ports			  [2, 1]
-	  Position		  [560, 240, 595, 280]
-	  ZOrder		  -2
-	  Inputs		  "+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Add3"
-	  SID			  "567"
-	  Ports			  [4, 1]
-	  Position		  [495, 365, 530, 430]
-	  ZOrder		  -2
-	  Inputs		  "+-+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Demux
-	  Name			  "Demux"
-	  SID			  "568"
-	  Ports			  [1, 4]
-	  Position		  [160, 124, 165, 206]
-	  ZOrder		  -7
-	  ShowName		  off
-	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "F"
-	  SID			  "569"
-	  Ports			  [1]
-	  Position		  [575, 64, 605, 96]
-	  ZOrder		  -3
-	  NamePlacement		  "alternate"
-	  Floating		  off
-	  Location		  [54, 53, 1367, 767]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  SaveName		  "ScopeData17"
-	  DataFormat		  "StructureWithTime"
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "F1"
-	  SID			  "570"
-	  Ports			  [2]
-	  Position		  [375, 31, 405, 64]
-	  ZOrder		  -3
-	  NamePlacement		  "alternate"
-	  Floating		  off
-	  Location		  [54, 53, 1367, 767]
-	  Open			  off
-	  NumInputPorts		  "2"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	    axes2		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  YMin			  "-5~-5"
-	  YMax			  "5~5"
-	  SaveName		  "ScopeData19"
-	  DataFormat		  "StructureWithTime"
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Gain"
-	  SID			  "571"
-	  Position		  [625, 185, 655, 215]
-	  ZOrder		  -8
-	  Gain			  "lx"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Gain1"
-	  SID			  "572"
-	  Position		  [330, 80, 360, 110]
-	  ZOrder		  -8
-	  Gain			  "Kt"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Gain2"
-	  SID			  "573"
-	  Position		  [330, 140, 360, 170]
-	  ZOrder		  -8
-	  Gain			  "Kt"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Gain3"
-	  SID			  "574"
-	  Position		  [330, 205, 360, 235]
-	  ZOrder		  -8
-	  Gain			  "Kt"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Gain4"
-	  SID			  "575"
-	  Position		  [325, 266, 365, 294]
-	  ZOrder		  -8
-	  Gain			  "Kt"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Gain5"
-	  SID			  "576"
-	  Position		  [625, 245, 655, 275]
-	  ZOrder		  -8
-	  Gain			  "ly"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Gain6"
-	  SID			  "577"
-	  Position		  [600, 386, 650, 414]
-	  ZOrder		  -8
-	  Gain			  "Ktm"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Math
-	  Name			  "Math\nFunction1"
-	  SID			  "578"
-	  Ports			  [1, 1]
-	  Position		  [225, 79, 255, 111]
-	  ZOrder		  -13
-	  Operator		  "magnitude^2"
-	}
-	Block {
-	  BlockType		  Math
-	  Name			  "Math\nFunction2"
-	  SID			  "579"
-	  Ports			  [1, 1]
-	  Position		  [225, 139, 255, 171]
-	  ZOrder		  -13
-	  Operator		  "magnitude^2"
-	}
-	Block {
-	  BlockType		  Math
-	  Name			  "Math\nFunction3"
-	  SID			  "580"
-	  Ports			  [1, 1]
-	  Position		  [225, 204, 255, 236]
-	  ZOrder		  -13
-	  Operator		  "magnitude^2"
-	}
-	Block {
-	  BlockType		  Math
-	  Name			  "Math\nFunction4"
-	  SID			  "581"
-	  Ports			  [1, 1]
-	  Position		  [225, 264, 255, 296]
-	  ZOrder		  -13
-	  Operator		  "magnitude^2"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Mpsi"
-	  SID			  "582"
-	  Ports			  [1]
-	  Position		  [700, 79, 730, 111]
-	  ZOrder		  -3
-	  NamePlacement		  "alternate"
-	  Floating		  off
-	  Location		  [54, 53, 1367, 767]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  SaveName		  "ScopeData14"
-	  DataFormat		  "StructureWithTime"
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Mtau"
-	  SID			  "583"
-	  Ports			  [1]
-	  Position		  [745, 344, 775, 376]
-	  ZOrder		  -3
-	  NamePlacement		  "alternate"
-	  Floating		  off
-	  Location		  [54, 53, 1367, 767]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  SaveName		  "ScopeData11"
-	  DataFormat		  "StructureWithTime"
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Mthe"
-	  SID			  "584"
-	  Ports			  [1]
-	  Position		  [755, 244, 785, 276]
-	  ZOrder		  -3
-	  NamePlacement		  "alternate"
-	  Floating		  off
-	  Location		  [54, 53, 1367, 767]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  SaveName		  "ScopeData13"
-	  DataFormat		  "StructureWithTime"
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Mux
-	  Name			  "Mux"
-	  SID			  "585"
-	  Ports			  [4, 1]
-	  Position		  [735, 105, 740, 210]
-	  ZOrder		  -16
-	  ShowName		  off
-	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "U(t)"
-	  SID			  "586"
-	  Position		  [775, 152, 820, 168]
-	  ZOrder		  -25
 	  IconDisplay		  "Port number"
 	}
 	Line {
@@ -2653,20 +1673,10 @@ Model {
     }
     Block {
       BlockType		      Demux
-      Name		      "Demux11"
-      SID		      "542"
-      Ports		      [1, 4]
-      Position		      [285, 401, 290, 439]
-      ZOrder		      -6
-      ShowName		      off
-      DisplayOption	      "bar"
-    }
-    Block {
-      BlockType		      Demux
       Name		      "Demux12"
       SID		      "615"
       Ports		      [1, 4]
-      Position		      [525, 901, 530, 939]
+      Position		      [525, 581, 530, 619]
       ZOrder		      -6
       ShowName		      off
       DisplayOption	      "bar"
@@ -2755,12 +1765,25 @@ Model {
       DisplayOption	      "bar"
     }
     Block {
+      BlockType		      Reference
+      Name		      "IN"
+      SID		      "168"
+      Ports		      [2, 1]
+      Position		      [370, 197, 400, 233]
+      ZOrder		      -13
+      LibraryVersion	      "1.260"
+      SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
+      SourceType	      "Manual Switch"
+      sw		      "0"
+      action		      "0"
+      varsize		      off
+    }
+    Block {
       BlockType		      SubSystem
       Name		      "Kalman"
       SID		      "413"
       Ports		      [2, 1]
       Position		      [950, 627, 1050, 678]
-      ZOrder		      -44
       BackgroundColor	      "lightBlue"
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -2771,7 +1794,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Kalman"
-	Location		[870, 156, 1366, 748]
+	Location		[926, 296, 1366, 704]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -2789,7 +1812,6 @@ Model {
 	  Name			  "y"
 	  SID			  "414"
 	  Position		  [65, 83, 95, 97]
-	  ZOrder		  -1
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -2797,7 +1819,6 @@ Model {
 	  Name			  "u"
 	  SID			  "415"
 	  Position		  [65, 45, 95, 60]
-	  ZOrder		  -2
 	  BlockRotation		  270
 	  BlockMirror		  on
 	  Port			  "2"
@@ -2863,7 +1884,6 @@ Model {
 	  SID			  "421"
 	  Ports			  [2, 1]
 	  Position		  [185, 45, 225, 105]
-	  ZOrder		  -11
 	  NamePlacement		  "alternate"
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
@@ -2874,7 +1894,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Kalman"
-	    Location		    [53, 79, 1113, 728]
+	    Location		    [53, 82, 1057, 547]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -2892,7 +1912,6 @@ Model {
 	      Name		      "u"
 	      SID		      "422"
 	      Position		      [235, 48, 265, 62]
-	      ZOrder		      -1
 	      BlockMirror	      on
 	      NamePlacement	      "alternate"
 	      IconDisplay	      "Port number"
@@ -2902,7 +1921,6 @@ Model {
 	      Name		      "y"
 	      SID		      "423"
 	      Position		      [235, 68, 265, 82]
-	      ZOrder		      -2
 	      BlockMirror	      on
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -2913,7 +1931,6 @@ Model {
 	      SID		      "424"
 	      Ports		      [2, 1]
 	      Position		      [195, 46, 200, 84]
-	      ZOrder		      -3
 	      BlockMirror	      on
 	      ShowName		      off
 	      Inputs		      "[4 12]"
@@ -2924,7 +1941,6 @@ Model {
 	      Name		      "filtro di kalman"
 	      SID		      "425"
 	      Position		      [105, 48, 165, 82]
-	      ZOrder		      -4
 	      BlockMirror	      on
 	      A			      "Aoss"
 	      B			      "Boss"
@@ -2937,7 +1953,6 @@ Model {
 	      Name		      "xi0"
 	      SID		      "426"
 	      Position		      [40, 58, 70, 72]
-	      ZOrder		      -5
 	      BlockMirror	      on
 	      IconDisplay	      "Port number"
 	    }
@@ -2973,7 +1988,6 @@ Model {
 	  SID			  "427"
 	  Ports			  [1, 1]
 	  Position		  [190, 285, 220, 315]
-	  ZOrder		  -12
 	  LibraryVersion	  "1.44"
 	  SourceBlock		  "simulink_extras/Transformations/Radians\nto Degrees"
 	  SourceType		  "RadiansToDegrees"
@@ -2984,7 +1998,6 @@ Model {
 	  SID			  "428"
 	  Ports			  [1, 1]
 	  Position		  [215, 340, 245, 370]
-	  ZOrder		  -13
 	  LibraryVersion	  "1.44"
 	  SourceBlock		  "simulink_extras/Transformations/Radians\nto Degrees"
 	  SourceType		  "RadiansToDegrees"
@@ -3307,352 +2320,23 @@ Model {
       }
     }
     Block {
-      BlockType		      SubSystem
-      Name		      "Limite"
-      SID		      "543"
-      Ports		      [1, 1]
-      Position		      [330, 473, 415, 537]
-      ZOrder		      -45
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
-      RequestExecContextInheritance off
-      MaskHideContents	      off
-      System {
-	Name			"Limite"
-	Location		[545, 206, 1016, 779]
-	Open			off
-	ModelBrowserVisibility	off
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"usletter"
-	PaperUnits		"inches"
-	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	Block {
-	  BlockType		  Inport
-	  Name			  "wRif"
-	  SID			  "544"
-	  Position		  [25, 128, 55, 142]
-	  ZOrder		  -1
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  DeadZone
-	  Name			  "DeadZone"
-	  SID			  "545"
-	  Position		  [170, 35, 200, 65]
-	  ZOrder		  -3
-	  LowerValue		  "0"
-	  UpperValue		  "300"
-	}
-	Block {
-	  BlockType		  DeadZone
-	  Name			  "DeadZone1"
-	  SID			  "546"
-	  Position		  [170, 145, 200, 175]
-	  ZOrder		  -3
-	  LowerValue		  "0"
-	  UpperValue		  "300"
-	}
-	Block {
-	  BlockType		  DeadZone
-	  Name			  "DeadZone2"
-	  SID			  "547"
-	  Position		  [170, 200, 200, 230]
-	  ZOrder		  -3
-	  LowerValue		  "0"
-	  UpperValue		  "300"
-	}
-	Block {
-	  BlockType		  DeadZone
-	  Name			  "DeadZone3"
-	  SID			  "548"
-	  Position		  [170, 90, 200, 120]
-	  ZOrder		  -3
-	  LowerValue		  "0"
-	  UpperValue		  "300"
-	}
-	Block {
-	  BlockType		  Demux
-	  Name			  "Demux5"
-	  SID			  "549"
-	  Ports			  [1, 4]
-	  Position		  [80, 26, 85, 239]
-	  ZOrder		  -6
-	  ShowName		  off
-	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  TransferFcn
-	  Name			  "Motore 1"
-	  SID			  "550"
-	  Position		  [230, 32, 290, 68]
-	  ZOrder		  -9
-	  Denominator		  "[tc 1]"
-	}
-	Block {
-	  BlockType		  TransferFcn
-	  Name			  "Motore 2"
-	  SID			  "551"
-	  Position		  [230, 142, 290, 178]
-	  ZOrder		  -9
-	  Denominator		  "[tc 1]"
-	}
-	Block {
-	  BlockType		  TransferFcn
-	  Name			  "Motore 3"
-	  SID			  "552"
-	  Position		  [230, 197, 290, 233]
-	  ZOrder		  -9
-	  Denominator		  "[tc 1]"
-	}
-	Block {
-	  BlockType		  TransferFcn
-	  Name			  "Motore 4"
-	  SID			  "553"
-	  Position		  [230, 87, 290, 123]
-	  ZOrder		  -9
-	  Denominator		  "[tc 1]"
-	}
-	Block {
-	  BlockType		  Mux
-	  Name			  "Mux"
-	  SID			  "554"
-	  Ports			  [4, 1]
-	  Position		  [330, 26, 335, 239]
-	  ZOrder		  -12
-	  ShowName		  off
-	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  Saturate
-	  Name			  "Sat"
-	  SID			  "555"
-	  Ports			  [1, 1]
-	  Position		  [110, 35, 140, 65]
-	  ZOrder		  -15
-	  InputPortMap		  "u0"
-	  UpperLimit		  "10000"
-	  LowerLimit		  "0"
-	}
-	Block {
-	  BlockType		  Saturate
-	  Name			  "Sat1"
-	  SID			  "556"
-	  Ports			  [1, 1]
-	  Position		  [110, 145, 140, 175]
-	  ZOrder		  -15
-	  InputPortMap		  "u0"
-	  UpperLimit		  "10000"
-	  LowerLimit		  "0"
-	}
-	Block {
-	  BlockType		  Saturate
-	  Name			  "Sat2"
-	  SID			  "557"
-	  Ports			  [1, 1]
-	  Position		  [110, 200, 140, 230]
-	  ZOrder		  -15
-	  InputPortMap		  "u0"
-	  UpperLimit		  "10000"
-	  LowerLimit		  "0"
-	}
-	Block {
-	  BlockType		  Saturate
-	  Name			  "Sat3"
-	  SID			  "558"
-	  Ports			  [1, 1]
-	  Position		  [110, 90, 140, 120]
-	  ZOrder		  -15
-	  InputPortMap		  "u0"
-	  UpperLimit		  "10000"
-	  LowerLimit		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "ws"
-	  SID			  "559"
-	  Ports			  [1]
-	  Position		  [340, 284, 370, 316]
-	  ZOrder		  -3
-	  NamePlacement		  "alternate"
-	  Floating		  off
-	  Location		  [54, 53, 1367, 767]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.501960784313725 0.501960784313725 0.501960784313725]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[1 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  YMin			  "904.495"
-	  YMax			  "999.705"
-	  SaveName		  "ScopeData15"
-	  DataFormat		  "StructureWithTime"
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "w"
-	  SID			  "560"
-	  Position		  [360, 128, 390, 142]
-	  ZOrder		  -20
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "Mux"
-	  SrcPort		  1
-	  DstBlock		  "w"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "wRif"
-	  SrcPort		  1
-	  DstBlock		  "Demux5"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Motore 3"
-	  SrcPort		  1
-	  DstBlock		  "Mux"
-	  DstPort		  4
-	}
-	Line {
-	  SrcBlock		  "Demux5"
-	  SrcPort		  4
-	  DstBlock		  "Sat2"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Motore 2"
-	  SrcPort		  1
-	  DstBlock		  "Mux"
-	  DstPort		  3
-	}
-	Line {
-	  SrcBlock		  "Demux5"
-	  SrcPort		  3
-	  DstBlock		  "Sat1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Motore 4"
-	  SrcPort		  1
-	  DstBlock		  "Mux"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "Demux5"
-	  SrcPort		  2
-	  DstBlock		  "Sat3"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "DeadZone3"
-	  SrcPort		  1
-	  DstBlock		  "Motore 4"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Sat3"
-	  SrcPort		  1
-	  DstBlock		  "DeadZone3"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "DeadZone2"
-	  SrcPort		  1
-	  DstBlock		  "Motore 3"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Sat2"
-	  SrcPort		  1
-	  DstBlock		  "DeadZone2"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "DeadZone1"
-	  SrcPort		  1
-	  DstBlock		  "Motore 2"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Sat1"
-	  SrcPort		  1
-	  DstBlock		  "DeadZone1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Motore 1"
-	  SrcPort		  1
-	  Points		  [5, 0]
-	  Branch {
-	    DstBlock		    "Mux"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, 250]
-	    DstBlock		    "ws"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  SrcBlock		  "DeadZone"
-	  SrcPort		  1
-	  DstBlock		  "Motore 1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Sat"
-	  SrcPort		  1
-	  DstBlock		  "DeadZone"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Demux5"
-	  SrcPort		  1
-	  DstBlock		  "Sat"
-	  DstPort		  1
-	}
-      }
-    }
-    Block {
       BlockType		      StateSpace
       Name		      "Linearized Model"
       SID		      "269"
       Position		      [725, 621, 800, 659]
-      ZOrder		      -46
       NamePlacement	      "alternate"
       A			      "A"
       B			      "B"
       C			      "C"
       D			      "D"
-      X0		      "[0 0 0 0 0 0 0 0 0 0 0 0]"
+      X0		      "[0 0 -30 0 0 0 0 0 1 0 0 0]"
     }
     Block {
       BlockType		      Reference
-      Name		      "Manual Switch"
-      SID		      "665"
+      Name		      "Manual Switch2"
+      SID		      "270"
       Ports		      [2, 1]
-      Position		      [110, 272, 140, 308]
+      Position		      [880, 187, 910, 223]
       ZOrder		      -13
       LibraryVersion	      "1.260"
       SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
@@ -3663,24 +2347,11 @@ Model {
     }
     Block {
       BlockType		      Reference
-      Name		      "Manual Switch1"
-      SID		      "666"
-      Ports		      [2, 1]
-      Position		      [370, 197, 400, 233]
-      ZOrder		      -13
-      LibraryVersion	      "1.260"
-      SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
-      SourceType	      "Manual Switch"
-      sw		      "0"
-      action		      "0"
-      varsize		      off
-    }
-    Block {
-      BlockType		      Reference
       Name		      "Manual Switch3"
-      SID		      "667"
+      SID		      "308"
+      RequirementInfo	      "{}  %GIDa_be89b49e_83df_43ca_adea_7a9b38744b8e"
       Ports		      [2, 1]
-      Position		      [885, 187, 915, 223]
+      Position		      [115, 272, 145, 308]
       ZOrder		      -13
       LibraryVersion	      "1.260"
       SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
@@ -3695,7 +2366,6 @@ Model {
       SID		      "111"
       Ports		      [1, 1]
       Position		      [255, 58, 340, 122]
-      ZOrder		      -49
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -3705,7 +2375,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Motori1"
-	Location		[545, 178, 1016, 751]
+	Location		[575, 318, 990, 707]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -3723,7 +2393,6 @@ Model {
 	  Name			  "Pwm"
 	  SID			  "112"
 	  Position		  [25, 128, 55, 142]
-	  ZOrder		  -1
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -3900,7 +2569,6 @@ Model {
 	  Name			  "w"
 	  SID			  "113"
 	  Position		  [360, 128, 390, 142]
-	  ZOrder		  -20
 	  IconDisplay		  "Port number"
 	}
 	Line {
@@ -4027,7 +2695,6 @@ Model {
       SID		      "184"
       Ports		      [1, 1]
       Position		      [175, 213, 260, 277]
-      ZOrder		      -50
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -4037,7 +2704,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Motori2"
-	Location		[545, 178, 1016, 751]
+	Location		[575, 318, 990, 707]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -4055,7 +2722,6 @@ Model {
 	  Name			  "wRif"
 	  SID			  "185"
 	  Position		  [25, 128, 55, 142]
-	  ZOrder		  -1
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -4228,7 +2894,6 @@ Model {
 	  Name			  "w"
 	  SID			  "201"
 	  Position		  [360, 128, 390, 142]
-	  ZOrder		  -20
 	  IconDisplay		  "Port number"
 	}
 	Line {
@@ -4351,30 +3016,10 @@ Model {
     }
     Block {
       BlockType		      Mux
-      Name		      "Mux2"
-      SID		      "537"
+      Name		      "Mux1"
+      SID		      "530"
       Ports		      [4, 1]
-      Position		      [280, 587, 285, 663]
-      ZOrder		      -12
-      ShowName		      off
-      DisplayOption	      "bar"
-    }
-    Block {
-      BlockType		      Mux
-      Name		      "Mux3"
-      SID		      "561"
-      Ports		      [4, 1]
-      Position		      [285, 467, 290, 543]
-      ZOrder		      -12
-      ShowName		      off
-      DisplayOption	      "bar"
-    }
-    Block {
-      BlockType		      Mux
-      Name		      "Mux4"
-      SID		      "681"
-      Ports		      [4, 1]
-      Position		      [565, 602, 570, 678]
+      Position		      [560, 277, 565, 353]
       ZOrder		      -12
       ShowName		      off
       DisplayOption	      "bar"
@@ -4385,7 +3030,6 @@ Model {
       SID		      "484"
       Ports		      [0, 1]
       Position		      [585, 339, 625, 381]
-      ZOrder		      -54
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -4395,7 +3039,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Pids"
-	Location		[53, 51, 1366, 768]
+	Location		[344, 88, 1175, 662]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -4600,7 +3244,7 @@ Model {
 	  Name			  "PID Controller1"
 	  SID			  "477"
 	  Ports			  [1, 1]
-	  Position		  [305, 127, 345, 163]
+	  Position		  [305, 117, 345, 153]
 	  ZOrder		  -6
 	  LibraryVersion	  "1.260"
 	  SourceBlock		  "simulink/Continuous/PID Controller"
@@ -5123,7 +3767,6 @@ Model {
 	  Name			  "u*(t)"
 	  SID			  "488"
 	  Position		  [745, 163, 775, 177]
-	  ZOrder		  -26
 	  IconDisplay		  "Port number"
 	}
 	Line {
@@ -5260,13 +3903,14 @@ Model {
 	Line {
 	  SrcBlock		  "PID Controller1"
 	  SrcPort		  1
+	  Points		  [45, 0; 0, 15; 90, -5]
 	  DstBlock		  "Mux1"
 	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "PID Controller2"
 	  SrcPort		  1
-	  Points		  [25, 0; 0, -45]
+	  Points		  [25, 0; 0, -10; 135, 0; 10, -35]
 	  DstBlock		  "Mux1"
 	  DstPort		  3
 	}
@@ -5298,7 +3942,6 @@ Model {
       SID		      "310"
       Ports		      [0, 1]
       Position		      [40, 140, 80, 200]
-      ZOrder		      -55
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -5308,7 +3951,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"PulsInput"
-	Location		[515, 52, 1081, 749]
+	Location		[545, 89, 1055, 602]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -5508,7 +4151,6 @@ Model {
 	  Name			  "W"
 	  SID			  "311"
 	  Position		  [455, 238, 485, 252]
-	  ZOrder		  -23
 	  IconDisplay		  "Port number"
 	}
 	Line {
@@ -5664,7 +4306,6 @@ Model {
       SID		      "403"
       Ports		      [1, 1]
       Position		      [970, 935, 1000, 965]
-      ZOrder		      -57
       LibraryVersion	      "1.44"
       SourceBlock	      "simulink_extras/Transformations/Radians\nto Degrees"
       SourceType	      "RadiansToDegrees"
@@ -5675,7 +4316,6 @@ Model {
       SID		      "404"
       Ports		      [1, 1]
       Position		      [995, 990, 1025, 1020]
-      ZOrder		      -58
       LibraryVersion	      "1.44"
       SourceBlock	      "simulink_extras/Transformations/Radians\nto Degrees"
       SourceType	      "RadiansToDegrees"
@@ -5686,7 +4326,6 @@ Model {
       SID		      "305"
       Ports		      [0, 1]
       Position		      [40, 338, 75, 372]
-      ZOrder		      -59
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -5696,7 +4335,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Ref0"
-	Location		[43, 198, 304, 654]
+	Location		[73, 310, 278, 582]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -5768,7 +4407,6 @@ Model {
 	  Name			  "Out1"
 	  SID			  "306"
 	  Position		  [150, 128, 180, 142]
-	  ZOrder		  -23
 	  IconDisplay		  "Port number"
 	}
 	Line {
@@ -5818,7 +4456,6 @@ Model {
       Location		      [54, 53, 1367, 767]
       Open		      off
       NumInputPorts	      "3"
-      ZoomMode		      "xonly"
       List {
 	ListType		AxesTitles
 	axes1			"%<SignalLabel>"
@@ -5844,11 +4481,11 @@ Model {
     }
     Block {
       BlockType		      SubSystem
-      Name		      "Signal Builder1"
-      SID		      "538"
+      Name		      "Signal Builder"
+      SID		      "529"
       Tag		      "STV Subsys"
       Ports		      [0, 4]
-      Position		      [170, 586, 260, 664]
+      Position		      [450, 276, 535, 354]
       ZOrder		      -20
       CopyFcn		      "sigbuilder_block('copy');"
       DeleteFcn		      "sigbuilder_block('delete');"
@@ -5861,7 +4498,7 @@ Model {
       StopFcn		      "sigbuilder_block('stop');"
       NameChangeFcn	      "sigbuilder_block('namechange');"
       ClipboardFcn	      "sigbuilder_block('clipboard');"
-      OpenFcn		      "sigbuilder_block('open',[164.8 89.6 550.4 400 ]);"
+      OpenFcn		      "sigbuilder_block('open',[164.8 67.2 550.4 400 ]);"
       CloseFcn		      "sigbuilder_block('close');"
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -5885,8 +4522,8 @@ Model {
       MaskIconUnits	      "autoscale"
       MaskCapabilities	      "slmaskedcaps(gcbh)"
       System {
-	Name			"Signal Builder1"
-	Location		[450, 52, 1006, 537]
+	Name			"Signal Builder"
+	Location		[480, 85, 980, 386]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -5903,7 +4540,7 @@ Model {
 	Block {
 	  BlockType		  Demux
 	  Name			  "Demux"
-	  SID			  "538:1"
+	  SID			  "529:1"
 	  Tag			  "STV Demux"
 	  Ports			  [1, 4]
 	  Position		  [150, 52, 160, 633]
@@ -5912,7 +4549,7 @@ Model {
 	Block {
 	  BlockType		  FromWorkspace
 	  Name			  "FromWs"
-	  SID			  "538:2"
+	  SID			  "529:2"
 	  Tag			  "STV FromWs"
 	  Position		  [30, 300, 115, 350]
 	  ZOrder		  -2
@@ -5925,7 +4562,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Thrust"
-	  SID			  "538:10"
+	  SID			  "529:10"
 	  Tag			  "STV Outport"
 	  Position		  [280, 30, 300, 40]
 	  ZOrder		  7
@@ -5934,7 +4571,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "TauPhi"
-	  SID			  "538:4"
+	  SID			  "529:4"
 	  Tag			  "STV Outport"
 	  Position		  [280, 60, 300, 70]
 	  ZOrder		  1
@@ -5944,7 +4581,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "TauTheta"
-	  SID			  "538:5"
+	  SID			  "529:5"
 	  Tag			  "STV Outport"
 	  Position		  [280, 90, 300, 100]
 	  ZOrder		  2
@@ -5954,160 +4591,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "TauPsi"
-	  SID			  "538:6"
-	  Tag			  "STV Outport"
-	  Position		  [280, 120, 300, 130]
-	  ZOrder		  3
-	  Port			  "4"
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "FromWs"
-	  SrcPort		  1
-	  Points		  [15, 0]
-	  DstBlock		  "Demux"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Demux"
-	  SrcPort		  1
-	  Points		  [100, 0]
-	  DstBlock		  "Thrust"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Demux"
-	  SrcPort		  2
-	  DstBlock		  "TauPhi"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Demux"
-	  SrcPort		  3
-	  DstBlock		  "TauTheta"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Demux"
-	  SrcPort		  4
-	  DstBlock		  "TauPsi"
-	  DstPort		  1
-	}
-      }
-    }
-    Block {
-      BlockType		      SubSystem
-      Name		      "Signal Builder2"
-      SID		      "682"
-      Tag		      "STV Subsys"
-      Ports		      [0, 4]
-      Position		      [455, 605, 540, 685]
-      ZOrder		      -20
-      CopyFcn		      "sigbuilder_block('copy');"
-      DeleteFcn		      "sigbuilder_block('delete');"
-      LoadFcn		      "sigbuilder_block('load');"
-      ModelCloseFcn	      "sigbuilder_block('modelClose');"
-      PreSaveFcn	      "sigbuilder_block('preSave');"
-      StartFcn		      "sigbuilder_block('start');"
-      PauseFcn		      "sigbuilder_block('pause');"
-      ContinueFcn	      "sigbuilder_block('continue');"
-      StopFcn		      "sigbuilder_block('stop');"
-      NameChangeFcn	      "sigbuilder_block('namechange');"
-      ClipboardFcn	      "sigbuilder_block('clipboard');"
-      OpenFcn		      "sigbuilder_block('open',[148 84 550.4 400 ]);"
-      CloseFcn		      "sigbuilder_block('close');"
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
-      RequestExecContextInheritance off
-      MaskHideContents	      on
-      MaskType		      "Sigbuilder block"
-      MaskDescription	      "Simulink:masks:SigbuilderBlock_MD"
-      MaskInitialization      "if ~strcmp(get_param(bdroot(gcbh),'SimulationStatus'),'stopped') tuvar = sigbuilder_blo"
-      "ck('maskInit'); end"
-      MaskSelfModifiable      on
-      MaskDisplay	      "plot(0, 0, 100, 100,[2, 2, 32, 32, 2], [68, 8, 8, 68, 68],[32, 2], [38, 38], [32, 19, 2],[53,"
-      " 60, 44], [32, 17, 17, 2],[16, 16, 31, 31]);txt = getActiveGroup(gcbh);text(2, 100, txt,'verticalAlignment', 'to"
-      "p');"
-      MaskIconFrame	      on
-      MaskIconOpaque	      off
-      MaskIconRotate	      "port"
-      MaskPortRotate	      "default"
-      MaskIconUnits	      "autoscale"
-      MaskCapabilities	      "slmaskedcaps(gcbh)"
-      System {
-	Name			"Signal Builder2"
-	Location		[450, 52, 1006, 537]
-	Open			off
-	ModelBrowserVisibility	off
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"usletter"
-	PaperUnits		"inches"
-	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	SIDHighWatermark	"12"
-	Block {
-	  BlockType		  Demux
-	  Name			  "Demux"
-	  SID			  "682:1"
-	  Tag			  "STV Demux"
-	  Ports			  [1, 4]
-	  Position		  [150, 60, 160, 645]
-	  ZOrder		  -1
-	}
-	Block {
-	  BlockType		  FromWorkspace
-	  Name			  "FromWs"
-	  SID			  "682:2"
-	  Tag			  "STV FromWs"
-	  Position		  [30, 300, 115, 350]
-	  ZOrder		  -2
-	  VariableName		  "tuvar"
-	  SampleTime		  "0"
-	  ZeroCross		  on
-	  SigBuilderData	  "DataTag2"
-	  VnvData		  "DataTag3"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "Thrust"
-	  SID			  "682:10"
-	  Tag			  "STV Outport"
-	  Position		  [280, 30, 300, 40]
-	  ZOrder		  7
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "TauPhi"
-	  SID			  "682:4"
-	  Tag			  "STV Outport"
-	  Position		  [280, 60, 300, 70]
-	  ZOrder		  1
-	  Port			  "2"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "TauTheta"
-	  SID			  "682:5"
-	  Tag			  "STV Outport"
-	  Position		  [280, 90, 300, 100]
-	  ZOrder		  2
-	  Port			  "3"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "TauPsi"
-	  SID			  "682:6"
+	  SID			  "529:6"
 	  Tag			  "STV Outport"
 	  Position		  [280, 120, 300, 130]
 	  ZOrder		  3
@@ -6198,7 +4682,6 @@ Model {
       SID		      "33"
       Ports		      [1, 1]
       Position		      [730, 169, 815, 221]
-      ZOrder		      -66
       BackgroundColor	      "darkGreen"
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -6224,7 +4707,7 @@ Model {
       }
       System {
 	Name			"Tenzo"
-	Location		[53, 51, 1366, 768]
+	Location		[53, 83, 1366, 772]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -6242,7 +4725,6 @@ Model {
 	  Name			  "Inputs"
 	  SID			  "35"
 	  Position		  [95, 363, 125, 377]
-	  ZOrder		  -1
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -6486,7 +4968,6 @@ Model {
 	  SID			  "21"
 	  Ports			  [2, 1]
 	  Position		  [245, 174, 300, 216]
-	  ZOrder		  -24
 	  Multiplication	  "Matrix(*)"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
@@ -6765,21 +5246,21 @@ Model {
 	  SrcPort		  1
 	  Points		  [10, 0]
 	  Branch {
-	    Points		    [10, 0]
+	    Points		    [0, 0]
 	    Branch {
 	      DstBlock		      "Sum"
 	      DstPort		      2
 	    }
 	    Branch {
-	      Points		      [0, 55; -70, 0]
-	      DstBlock		      "Peso"
-	      DstPort		      1
+	      Points		      [0, -70]
+	      DstBlock		      "Ext Forces"
+	      DstPort		      2
 	    }
 	  }
 	  Branch {
-	    Points		    [0, -70]
-	    DstBlock		    "Ext Forces"
-	    DstPort		    2
+	    Points		    [10, 0; 0, 55; -70, 0]
+	    DstBlock		    "Peso"
+	    DstPort		    1
 	  }
 	}
 	Line {
@@ -7123,7 +5604,7 @@ Model {
       Name		      "Vector\nConcatenate4"
       SID		      "616"
       Ports		      [4, 1]
-      Position		      [560, 901, 565, 939]
+      Position		      [560, 581, 565, 619]
       ZOrder		      -22
       NumInputs		      "4"
     }
@@ -7133,7 +5614,6 @@ Model {
       SID		      "252"
       Ports		      [2]
       Position		      [1015, 480, 1050, 515]
-      ZOrder		      -72
       DropShadow	      on
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -7162,7 +5642,6 @@ Model {
 	  Name			  "In1"
 	  SID			  "253"
 	  Position		  [25, 158, 55, 172]
-	  ZOrder		  -1
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -7170,22 +5649,8 @@ Model {
 	  Name			  "In2"
 	  SID			  "316"
 	  Position		  [760, 158, 790, 172]
-	  ZOrder		  -2
 	  Port			  "2"
 	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "\n1"
-	  SID			  "328"
-	  Ports			  [1, 1]
-	  Position		  [920, 352, 1035, 398]
-	  ZOrder		  -18
-	  AttributesFormatString  "Rotation Order: %<rotationOrder>"
-	  LibraryVersion	  "1.275"
-	  SourceBlock		  "aerolibtransform2/Rotation Angles to\nDirection Cosine Matrix"
-	  SourceType		  "Ang2DCM"
-	  rotationOrder		  "ZYX"
 	}
 	Block {
 	  BlockType		  Demux
@@ -7226,6 +5691,17 @@ Model {
 	  SID			  "322"
 	  Ports			  [1, 3]
 	  Position		  [785, 346, 790, 404]
+	  ZOrder		  -6
+	  ShowName		  off
+	  Outputs		  "3"
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  "Demux12"
+	  SID			  "527"
+	  Ports			  [1, 3]
+	  Position		  [1125, 626, 1130, 684]
 	  ZOrder		  -6
 	  ShowName		  off
 	  Outputs		  "3"
@@ -7437,12 +5913,22 @@ Model {
 	  DisplayOption		  "bar"
 	}
 	Block {
+	  BlockType		  Mux
+	  Name			  "Mux5"
+	  SID			  "528"
+	  Ports			  [3, 1]
+	  Position		  [1210, 628, 1215, 682]
+	  ZOrder		  -12
+	  ShowName		  off
+	  Inputs		  "3"
+	  DisplayOption		  "bar"
+	}
+	Block {
 	  BlockType		  Reference
 	  Name			  "R2D"
 	  SID			  "115"
 	  Ports			  [1, 1]
-	  Position		  [255, 175, 285, 205]
-	  ZOrder		  -31
+	  Position		  [125, 175, 155, 205]
 	  LibraryVersion	  "1.44"
 	  SourceBlock		  "simulink_extras/Transformations/Radians\nto Degrees"
 	  SourceType		  "RadiansToDegrees"
@@ -7453,7 +5939,6 @@ Model {
 	  SID			  "116"
 	  Ports			  [1, 1]
 	  Position		  [150, 230, 180, 260]
-	  ZOrder		  -32
 	  LibraryVersion	  "1.44"
 	  SourceBlock		  "simulink_extras/Transformations/Radians\nto Degrees"
 	  SourceType		  "RadiansToDegrees"
@@ -7463,8 +5948,7 @@ Model {
 	  Name			  "R2D2"
 	  SID			  "325"
 	  Ports			  [1, 1]
-	  Position		  [960, 175, 990, 205]
-	  ZOrder		  -33
+	  Position		  [860, 175, 890, 205]
 	  LibraryVersion	  "1.44"
 	  SourceBlock		  "simulink_extras/Transformations/Radians\nto Degrees"
 	  SourceType		  "RadiansToDegrees"
@@ -7475,17 +5959,9 @@ Model {
 	  SID			  "326"
 	  Ports			  [1, 1]
 	  Position		  [885, 230, 915, 260]
-	  ZOrder		  -34
 	  LibraryVersion	  "1.44"
 	  SourceBlock		  "simulink_extras/Transformations/Radians\nto Degrees"
 	  SourceType		  "RadiansToDegrees"
-	}
-	Block {
-	  BlockType		  Constant
-	  Name			  "Red"
-	  SID			  "680"
-	  Position		  [590, 691, 640, 719]
-	  Value			  "[1 0 0]"
 	}
 	Block {
 	  BlockType		  Scope
@@ -7533,7 +6009,6 @@ Model {
 	  Location		  [54, 53, 1367, 767]
 	  Open			  off
 	  NumInputPorts		  "3"
-	  ZoomMode		  "xonly"
 	  List {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
@@ -7551,8 +6026,8 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "0.000125~-0.21~0.0475"
-	  YMax			  "0.000325~-0.09~0.0675"
+	  YMin			  "1000~1000~1000"
+	  YMax			  "2300~2300~2300"
 	  SaveName		  "ScopeData26"
 	  DataFormat		  "StructureWithTime"
 	  LimitDataPoints	  off
@@ -7564,6 +6039,19 @@ Model {
 	  SID			  "174"
 	  Ports			  [1, 1]
 	  Position		  [220, 354, 300, 396]
+	  ZOrder		  -18
+	  AttributesFormatString  "Rotation Order: %<rotationOrder>"
+	  LibraryVersion	  "1.275"
+	  SourceBlock		  "aerolibtransform2/Rotation Angles to\nDirection Cosine Matrix"
+	  SourceType		  "Ang2DCM"
+	  rotationOrder		  "ZYX"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Rotation Angles to\nDirection Cosine Matrix1"
+	  SID			  "328"
+	  Ports			  [1, 1]
+	  Position		  [955, 354, 1035, 396]
 	  ZOrder		  -18
 	  AttributesFormatString  "Rotation Order: %<rotationOrder>"
 	  LibraryVersion	  "1.275"
@@ -7616,30 +6104,6 @@ Model {
 	  AutoView		  off
 	  VideoDimensions	  "[]"
 	  AllowVariableSize	  off
-	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "VR Tracer"
-	  SID			  "679"
-	  Ports			  [2]
-	  Position		  [690, 667, 775, 718]
-	  LibraryVersion	  "1.11"
-	  SourceBlock		  "vrlib/VR Tracer"
-	  SourceType		  "VR Tracer"
-	  VrmlFile		  "aero.wrl"
-	  MarkerName		  "Tetrahedron"
-	  UseLines		  on
-	  UseTriads		  on
-	  MarkerScale		  "[1 1 1]"
-	  MarkerColorSelection	  "Block input"
-	  MarkerColor		  "red"
-	  rgbval		  "[1 0 0]"
-	  ConnectPlane		  on
-	  PlaneCoeff		  "[0 1 0 0]"
-	  ConnectPoint		  "None"
-	  PointCoord		  "[0 0 0]"
-	  Ts			  "0.5"
-	  ForceViewerOpen	  off
 	}
 	Block {
 	  BlockType		  Scope
@@ -7828,7 +6292,6 @@ Model {
 	  Location		  [54, 53, 1367, 767]
 	  Open			  off
 	  NumInputPorts		  "3"
-	  ZoomMode		  "xonly"
 	  List {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
@@ -8002,8 +6465,17 @@ Model {
 	Line {
 	  SrcBlock		  "R2D"
 	  SrcPort		  1
-	  DstBlock		  "Demux3"
-	  DstPort		  1
+	  Points		  [-50, 0]
+	  Branch {
+	    DstBlock		    "Demux3"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Labels		    [1, 0]
+	    Points		    [0, 115; -60, 0]
+	    DstBlock		    "Demux7"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "R2D1"
@@ -8014,16 +6486,8 @@ Model {
 	Line {
 	  SrcBlock		  "Demux2"
 	  SrcPort		  3
-	  Points		  [30, 0]
-	  Branch {
-	    DstBlock		    "R2D"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, 20; -80, 0]
-	    DstBlock		    "Demux7"
-	    DstPort		    1
-	  }
+	  DstBlock		  "R2D"
+	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Rotation Angles to\nDirection Cosine Matrix"
@@ -8157,6 +6621,21 @@ Model {
 	  DstPort		  3
 	}
 	Line {
+	  SrcBlock		  "R2D2"
+	  SrcPort		  1
+	  Points		  [-50, 0]
+	  Branch {
+	    Labels		    [1, 0]
+	    Points		    [0, 115; -75, 0]
+	    DstBlock		    "Demux11"
+	    DstPort		    1
+	  }
+	  Branch {
+	    DstBlock		    "Demux9"
+	    DstPort		    1
+	  }
+	}
+	Line {
 	  SrcBlock		  "R2D3"
 	  SrcPort		  1
 	  DstBlock		  "Demux10"
@@ -8165,22 +6644,26 @@ Model {
 	Line {
 	  SrcBlock		  "Demux8"
 	  SrcPort		  3
-	  Points		  [20, 0]
-	  Branch {
-	    DstBlock		    "R2D2"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, 20; -85, 0]
-	    DstBlock		    "Demux11"
-	    DstPort		    1
-	  }
+	  DstBlock		  "R2D2"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Rotation Angles to\nDirection Cosine Matrix1"
+	  SrcPort		  1
+	  DstBlock		  "Rotation Matrix\nto VRML Rotation1"
+	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Rotation Matrix\nto VRML Rotation1"
 	  SrcPort		  1
 	  Points		  [100, 0; 0, 135; -535, 0; 0, 30]
 	  DstBlock		  "VR Sink"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Mux4"
+	  SrcPort		  1
+	  DstBlock		  "Rotation Angles to\nDirection Cosine Matrix1"
 	  DstPort		  1
 	}
 	Line {
@@ -8209,15 +6692,8 @@ Model {
 	  SrcBlock		  "Mux1"
 	  SrcPort		  1
 	  Points		  [0, 50; -600, 0; 0, 80]
-	  Branch {
-	    DstBlock		    "VR Sink"
-	    DstPort		    2
-	  }
-	  Branch {
-	    Points		    [0, 110]
-	    DstBlock		    "VR Tracer"
-	    DstPort		    1
-	  }
+	  DstBlock		  "VR Sink"
+	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "Inflow1"
@@ -8255,6 +6731,26 @@ Model {
 	  DstPort		  3
 	}
 	Line {
+	  SrcBlock		  "Demux12"
+	  SrcPort		  1
+	  DstBlock		  "Mux5"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Demux12"
+	  SrcPort		  2
+	  Points		  [55, 0; 0, 20]
+	  DstBlock		  "Mux5"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Demux12"
+	  SrcPort		  3
+	  Points		  [60, 0]
+	  DstBlock		  "Mux5"
+	  DstPort		  2
+	}
+	Line {
 	  SrcBlock		  "Demux11"
 	  SrcPort		  3
 	  Points		  [30, 0; 0, -40]
@@ -8274,30 +6770,6 @@ Model {
 	  DstBlock		  "Mux4"
 	  DstPort		  3
 	}
-	Line {
-	  SrcBlock		  "Mux4"
-	  SrcPort		  1
-	  DstBlock		  "\n1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "\n1"
-	  SrcPort		  1
-	  DstBlock		  "Rotation Matrix\nto VRML Rotation1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Red"
-	  SrcPort		  1
-	  DstBlock		  "VR Tracer"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "R2D2"
-	  SrcPort		  1
-	  DstBlock		  "Demux9"
-	  DstPort		  1
-	}
 	Annotation {
 	  SID			  "338"
 	  Name			  "-z"
@@ -8314,53 +6786,6 @@ Model {
 	  Position		  [499, 452]
 	}
       }
-    }
-    Block {
-      BlockType		      Scope
-      Name		      "Ym(t) : output"
-      SID		      "226"
-      Ports		      [1]
-      Position		      [1140, 185, 1170, 225]
-      ZOrder		      -3
-      NamePlacement	      "alternate"
-      Floating		      off
-      Location		      [902, 121, 1186, 382]
-      Open		      off
-      NumInputPorts	      "1"
-      ZoomMode		      "yonly"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      List {
-	ListType		ScopeGraphics
-	FigureColor		"[0.5 0.5 0.5]"
-	AxesColor		"[0 0 0]"
-	AxesTickColor		"[1 1 1]"
-	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	LineStyles		"-|-|-|-|-|-"
-	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-	MarkerStyles		"none|none|none|none|none|none"
-      }
-      ShowLegends	      off
-      TimeRange		      "25"
-      YMin		      "0"
-      YMax		      "200"
-      SaveName		      "ScopeData18"
-      DataFormat	      "StructureWithTime"
-      SampleTime	      "0"
-    }
-    Block {
-      BlockType		      ToWorkspace
-      Name		      "Ymis"
-      SID		      "234"
-      Ports		      [1]
-      Position		      [1140, 116, 1170, 144]
-      ZOrder		      -7
-      VariableName	      "Ymis"
-      MaxDataPoints	      "inf"
-      SampleTime	      "-1"
-      SaveFormat	      "Timeseries"
     }
     Block {
       BlockType		      Scope
@@ -8405,7 +6830,7 @@ Model {
       ZOrder		      -3
       NamePlacement	      "alternate"
       Floating		      off
-      Location		      [44, 15, 1377, 777]
+      Location		      [54, 53, 1367, 767]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -8570,7 +6995,7 @@ Model {
       Name		      "w0  3"
       SID		      "617"
       Ports		      [1]
-      Position		      [590, 904, 620, 936]
+      Position		      [590, 584, 620, 616]
       ZOrder		      -3
       NamePlacement	      "alternate"
       Floating		      off
@@ -8676,7 +7101,7 @@ Model {
       ZOrder		      -3
       NamePlacement	      "alternate"
       Floating		      off
-      Location		      [54, 81, 1347, 747]
+      Location		      [54, 53, 1367, 767]
       Open		      off
       NumInputPorts	      "3"
       List {
@@ -8697,8 +7122,8 @@ Model {
       }
       ShowLegends	      off
       TimeRange		      "3               "
-      YMin		      "-5.22e-05~6.5525e-06~-1.6e-07"
-      YMax		      "-5.07e-05~6.5875e-06~-1.175e-07"
+      YMin		      "1.6e-05~1.6e-05~4.25e-17"
+      YMax		      "3e-05~3e-05~7.75e-17"
       SaveName		      "ScopeData25"
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
@@ -8728,14 +7153,15 @@ Model {
     Line {
       SrcBlock		      "Add1"
       SrcPort		      1
-      Points		      [0, 30; 5, 0; 0, -10]
+      Points		      [0, 30; 5, 0]
       Branch {
+	Points			[0, -10]
 	DstBlock		"Motori1"
 	DstPort			1
       }
       Branch {
 	Labels			[2, 0]
-	Points			[0, -40]
+	Points			[0, -50]
 	DstBlock		"Demux5"
 	DstPort			1
       }
@@ -8745,11 +7171,11 @@ Model {
       SrcPort		      1
       Points		      [10, 0; 0, 35]
       Branch {
-	DstBlock		"Demux6"
+	DstBlock		"IN"
 	DstPort			1
       }
       Branch {
-	DstBlock		"Manual Switch1"
+	DstBlock		"Demux6"
 	DstPort			1
       }
     }
@@ -8814,7 +7240,7 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Manual Switch1"
+      SrcBlock		      "IN"
       SrcPort		      1
       DstBlock		      "Coppie"
       DstPort		      1
@@ -8854,15 +7280,15 @@ Model {
       SrcPort		      1
       Points		      [10, 0]
       Branch {
+	Points			[35, 0; 0, -20]
+	DstBlock		"IN"
+	DstPort			2
+      }
+      Branch {
 	Labels			[1, 0]
 	Points			[0, 75]
 	DstBlock		"Demux9"
 	DstPort			1
-      }
-      Branch {
-	Points			[35, 0; 0, -20]
-	DstBlock		"Manual Switch1"
-	DstPort			2
       }
     }
     Line {
@@ -8896,20 +7322,6 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "C"
-      SrcPort		      1
-      Points		      [15, 0]
-      Branch {
-	Points			[0, -75]
-	DstBlock		"Ymis"
-	DstPort			1
-      }
-      Branch {
-	DstBlock		"Ym(t) : output"
-	DstPort			1
-      }
-    }
-    Line {
       SrcBlock		      "Coppie"
       SrcPort		      1
       Points		      [75, 0; 0, -35; 35, 0; 0, -135]
@@ -8917,37 +7329,30 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Manual Switch3"
+      SrcBlock		      "Manual Switch2"
       SrcPort		      1
-      Points		      [-5, 0]
-      Branch {
-	DstBlock		"C"
-	DstPort			1
-      }
-      Branch {
-	Points			[0, -175]
-	DstBlock		"To Workspace"
-	DstPort			1
-      }
+      Points		      [0, -175]
+      DstBlock		      "To Workspace"
+      DstPort		      1
     }
     Line {
       SrcBlock		      "Ref0"
       SrcPort		      1
       Points		      [10, 0; 0, -55]
-      DstBlock		      "Manual Switch"
+      DstBlock		      "Manual Switch3"
       DstPort		      2
     }
     Line {
       SrcBlock		      "PulsInput"
       SrcPort		      1
       Points		      [5, 0; 0, 110]
-      DstBlock		      "Manual Switch"
+      DstBlock		      "Manual Switch3"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Manual Switch"
+      SrcBlock		      "Manual Switch3"
       SrcPort		      1
-      Points		      [10, 0; 0, -45]
+      Points		      [5, 0; 0, -45]
       Branch {
 	DstBlock		"Motori2"
 	DstPort			1
@@ -8968,14 +7373,15 @@ Model {
     Line {
       SrcBlock		      "Tenzo"
       SrcPort		      1
-      Points		      [5, 0]
+      Points		      [5, 0; 0, 0]
       Branch {
-	Points			[0, 295]
-	DstBlock		"Virtual Reality"
+	Points			[0, 0]
+	DstBlock		"Manual Switch2"
 	DstPort			1
       }
       Branch {
-	DstBlock		"Manual Switch3"
+	Points			[0, 295]
+	DstBlock		"Virtual Reality"
 	DstPort			1
       }
     }
@@ -9126,17 +7532,16 @@ Model {
     Line {
       SrcBlock		      "Linearized Model"
       SrcPort		      1
-      Points		      [60, 0]
+      Points		      [55, 0]
       Branch {
-	Points			[0, -135]
+	Points			[5, 0; 0, -130]
 	Branch {
-	  DstBlock		  "Virtual Reality"
+	  DstBlock		  "Manual Switch2"
 	  DstPort		  2
 	}
 	Branch {
-	  Labels		  [1, 0]
-	  Points		  [0, -290]
-	  DstBlock		  "Manual Switch3"
+	  Points		  [0, -5]
+	  DstBlock		  "Virtual Reality"
 	  DstPort		  2
 	}
       }
@@ -9148,106 +7553,46 @@ Model {
     Line {
       SrcBlock		      "Sum2"
       SrcPort		      1
-      Points		      [0, -35]
+      Points		      [0, -40]
       Branch {
-	Points			[0, -85]
+	Points			[0, -80]
 	DstBlock		"Tenzo"
 	DstPort			1
       }
       Branch {
+	Points			[0, 5]
 	DstBlock		"w0  2"
 	DstPort			1
       }
     }
     Line {
-      SrcBlock		      "Signal Builder1"
+      SrcBlock		      "Signal Builder"
+      SrcPort		      1
+      DstBlock		      "Mux1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Signal Builder"
       SrcPort		      2
-      DstBlock		      "Mux2"
+      DstBlock		      "Mux1"
       DstPort		      2
     }
     Line {
-      SrcBlock		      "Signal Builder1"
+      SrcBlock		      "Signal Builder"
       SrcPort		      3
-      DstBlock		      "Mux2"
+      DstBlock		      "Mux1"
       DstPort		      3
     }
     Line {
-      SrcBlock		      "Signal Builder1"
+      SrcBlock		      "Signal Builder"
       SrcPort		      4
-      DstBlock		      "Mux2"
+      DstBlock		      "Mux1"
       DstPort		      4
     }
     Line {
-      SrcBlock		      "Signal Builder1"
+      SrcBlock		      "Mux1"
       SrcPort		      1
-      DstBlock		      "Mux2"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Demux11"
-      SrcPort		      1
-      Points		      [-120, 0]
-      DstBlock		      "C1"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Demux11"
-      SrcPort		      2
-      Points		      [-120, 0]
-      DstBlock		      "C1"
-      DstPort		      2
-    }
-    Line {
-      SrcBlock		      "Demux11"
-      SrcPort		      3
-      Points		      [-120, 0]
-      DstBlock		      "C1"
-      DstPort		      3
-    }
-    Line {
-      SrcBlock		      "Demux11"
-      SrcPort		      4
-      Points		      [-120, 0]
-      DstBlock		      "C1"
-      DstPort		      4
-    }
-    Line {
-      SrcBlock		      "C1"
-      SrcPort		      1
-      Points		      [5, 0]
-      DstBlock		      "Mux3"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "C1"
-      SrcPort		      2
-      DstBlock		      "Mux3"
-      DstPort		      2
-    }
-    Line {
-      SrcBlock		      "C1"
-      SrcPort		      3
-      Points		      [5, 0]
-      DstBlock		      "Mux3"
-      DstPort		      3
-    }
-    Line {
-      SrcBlock		      "C1"
-      SrcPort		      4
-      Points		      [5, 0]
-      DstBlock		      "Mux3"
-      DstPort		      4
-    }
-    Line {
-      SrcBlock		      "Mux3"
-      SrcPort		      1
-      DstBlock		      "Limite"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Limite"
-      SrcPort		      1
-      DstBlock		      "Coppie1"
+      DstBlock		      "Sum2"
       DstPort		      1
     }
     Line {
@@ -9337,78 +7682,32 @@ Model {
       DstBlock		      "Sum"
       DstPort		      1
     }
-    Line {
-      SrcBlock		      "Signal Builder2"
-      SrcPort		      1
-      Points		      [0, -5]
-      DstBlock		      "Mux4"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Signal Builder2"
-      SrcPort		      2
-      Points		      [0, -5]
-      DstBlock		      "Mux4"
-      DstPort		      2
-    }
-    Line {
-      SrcBlock		      "Signal Builder2"
-      SrcPort		      3
-      Points		      [0, -5]
-      DstBlock		      "Mux4"
-      DstPort		      3
-    }
-    Line {
-      SrcBlock		      "Signal Builder2"
-      SrcPort		      4
-      Points		      [0, -5]
-      DstBlock		      "Mux4"
-      DstPort		      4
-    }
-    Line {
-      SrcBlock		      "Mux4"
-      SrcPort		      1
-      Points		      [25, 0]
-      Branch {
-	DstBlock		"Sum1"
-	DstPort			1
-      }
-      Branch {
-	Points			[0, -65; -35, 0; 0, -260]
-	DstBlock		"Sum2"
-	DstPort			1
-      }
-    }
     Annotation {
       SID		      "373"
       Name		      "u(t)"
       Position		      [810, 530]
     }
-    Annotation {
-      SID		      "664"
-      Position		      [379, 487]
-    }
   }
 }
 MatData {
-  NumRecords		  4
+  NumRecords		  2
   DataRecord {
-    Tag			    DataTag3
+    Tag			    DataTag1
     Data		    "  %)30     .    V ,   8    (     @         %    \"     $    !     0         %  0 $0    $   #,    =F5R:6"
     "9Y0FQK4&%T:',   !V97)I9GE\";&M(86YD;&5S '9N=DUG<DED>           86-T:79E1W)O=7        !R97%$:7-P4')C;G0      &)L:T1"
     "I<W!-;V1E        9W)O=7!#;G0           !G<F]U<%)E<4-N=        &=R;W5P1$]/4E-I9       ;6]D96Q(              !B;&]C:"
     "T@              &]V97)I9&53971T:6YG<P        X    P    !@    @    &          4    (               !          D    "
     "     #@   #     &    \"     8         !0    @               $         \"0         .    ,     8    (    !@         "
     "%    \"                0         )          X    X    !@    @    &          4    (     0    $    !          D    ("
-    "            \\#\\.    .     8    (    !@         %    \"     $    !     0         )    \"    +!W3 WL'>,_#@   #@   "
+    "            \\#\\.    .     8    (    !@         %    \"     $    !     0         )    \"    -Q75N^2!^,_#@   #@   "
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @         0 ((0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (        H \"OL4 .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @         @ ((0 X    X    !@    @    &          4    (     0    $    "
+    "!          D    (          ;0=$ .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
-    Tag			    DataTag2
+    Tag			    DataTag0
     Data		    "  %)30     .    <!4   8    (     @         %    \"     $    !     0         %  0 %@    $   \"P    9W)I9"
     "%-E='1I;F<              &-H86YN96QS                  !A>&5S                        8V]M;6]N                     &1"
     "A=&%3970                   !D871A4V5T261X                :7-697)I9FEC871I;VY6:7-I8FQE '-B;V)J                     "
@@ -9446,202 +7745,79 @@ MatData {
     " 4 !  +     0   #<   !C:&%N;F5L<P   'E,:6T         ;&%B96Q0;W,   !L86)E;$@      &QA8F5L4&%T8V@   X    X    !@    @"
     "    &          4    (     0    $    !          D    (            $$ .    0     8    (    !@         %    \"     $ "
     "   \"     0         )    $            /\"_        \\#\\.    ,     8    (    !          %    \"     $    \"     0  "
-    "       0  ( 5$P   X    X    !@    @    &          4    (     0    $    !          D    (        L #ELD .    .     "
-    "8    (    !@         %    \"     $    !     0         )    \"        # !^[% #@   #@    &    \"     8         !0   "
-    " @    !     0    $         \"0    @            (0 X   !     !@    @    &          4    (     0    (    !          "
-    "D    0            \\+\\       #P/PX    P    !@    @    $          4    (     0    (    !         !   @!43   #@   #"
-    "@    &    \"     8         !0    @    !     0    $         \"0    @       \"P .FR0 X    X    !@    @    &         "
-    " 4    (     0    $    !          D    (        L #HLD .    .     8    (    !@         %    \"     $    !     0    "
-    "     )    \"             ! #@   $     &    \"     8         !0    @    !     @    $         \"0   !     T,S,S,S/CO"
-    "YJ9F9F9F:D_#@   #     &    \"     0         !0    @    !     @    $         $  \" %1,   .    .     8    (    !@   "
-    "      %    \"     $    !     0         )    \"        +  [;) #@   #@    &    \"     8         !0    @    !     0  "
-    "  $         \"0    @       \"P .RR0 X    X    !@    @    &          4    (     0    $    !          D    (        "
-    "    \\#\\.    0     8    (    !@         %    \"     $    \"     0         )    $            /\"_        \\#\\.   "
-    " ,     8    (    !          %    \"     $    \"     0         0  ( 5$P   X    X    !@    @    &          4    (   "
-    "  0    $    !          D    (        N #QLD .    .     8    (    !@         %    \"     $    !     0         )    "
-    "\"        +  \\+) #@   &@\"   &    \"     (         !0    @    !     0    $         !0 $  X    !    8@   &1I<W!4:6"
-    "UE        9&ES<$UO9&4       !M:6Y4:6UE         &UA>%1I;64         869T97)&:6YA;%-T<@!S86UP;&54:6UE     'IE<F]#<F]S"
-    "<P              #@   $     &    \"     8         !0    @    !     @    $         \"0   !                       #1 "
-    "#@   #@    &    \"     8         !0    @    !     0    $         \"0    @           #P/PX    X    !@    @    &    "
-    "      4    (     0    $    !          D    (               .    .     8    (    !@         %    \"     $    !     "
-    "0         )    \"            #1 #@   $     &    \"     0         !0    @    !    \"P    $         $     L   !%>'1R"
-    "87!O;&%T90      #@   #@    &    \"     8         !0    @    !     0    $         \"0    @               X    P    "
-    "!@    @    $          4    (     0    (    !         !   @!O;@  #@   )@!   &    \"     (         !0    @    !     "
-    "0    $         !0 $  X    !    .    &%C=&EV941I<W!)9'@ =&EM95)A;F=E      !N86UE             &1I<W!L87E286YG90  #@ "
-    "  %     &    \"     8         !0    @    !    !     $         \"0   \"             00         A          $        "
-    "#P/PX   !     !@    @    &          4    (     0    (    !          D    0                       T0 X    X    !@  "
-    "  @    $          4    (     0    <    !         !     '    1W)O=7 @,0 .    0     8    (    !@         %    \"    "
-    " $    \"     0         )    $                       -$ .    .     8    (    !@         %    \"     $    !     0   "
-    "      )    \"            / _#@   #@    &    \"     8         !0    @    !     0    $         \"0    @           #P"
-    "/PX   \"     !@    @    1          $          0 $ $U#3U,!    \"    %-I9U-U:71E#@   $@    &    \"     T         !0 "
-    "   @    &     0    $         !@   !@       #= @    $    !     0    ,    .    J X   8    (    \"0         %    \"  "
-    "   $   !X#@   0         \"    > X    !24T     #@   -@-   &    \"     (         !0    @    !     0    $         !0 "
-    "$  4    !    !0   $U#3U,     #@   ) -   &    \"    !$          0         !  0 34-/4P$    -    1FEL95=R87!P97)?7P  "
-    "  X   !0#0  !@    @    !          4    (    $P    $    !          X   #@ @  !@    @    )          4    (    L (   "
-    "$    !          (   \"P @   @    T   \"P    \\    /    \"8 0  > (  + \"             $=R;W5P<P!.86UE %-I9VYA;', 6$1"
-    "A=&$ 641A=&$ 4VEG4W5I=&53:6=N86P 57-E<D1A=&$ 5&EM95)A;F=E %-I9U-U:71E1W)O=7  06-T:79E4VEG;F%L %)E<75I<F5M96YT26YF;"
-    "P!3:6=3=6ET90!!8W1I=F5'<F]U<                                     8                    )                    #      "
-    "                                          P                    $    &     @                    (    %     0       "
-    "             ,    !     0                    0    \"     0                    4    #     0                    8   "
-    " $               !     0    $    /     P    (    !          ,    !    #0    @    !    #@    ,    \"     0    $    "
-    "$     0    (    %     0    ,    #     @    $    $    !     $    %    !0    $    &     P    (    !    !P    0    ! "
-    "   \"     4    !    \"0    ,    \"     0    H    $     0    L    %     0    P                                     "
-    "                                          X         #@   #@    &    \"     0         !0    @    !    !P    $      "
-    "   $     <   !'<F]U<\" Q  X    X    !@    @    $          4    (     0    8    !         !     &    5&AR=7-T   .  "
-    "  0     8    (    !@         %    \"     $    \"     0         )    $                       -$ .    0     8    (  "
-    "  !@         %    \"     $    \"     0         )    $             \"          ( .    .     8    (    !          % "
-    "   \"     $    &     0         0    !@   %1A=5!H:0  #@   &     &    \"     8         !0    @    !    !@    $      "
-    "   \"0   #                        I         \"D#-S,S,S,P70,W,S,S,S!=         -$ .    8     8    (    !@         % "
-    "   \"     $    &     0         )    ,                        (#L4;@>A>OAO^Q1N!Z%Z^&_         (            X    X  "
-    "  !@    @    $          4    (     0    @    !         !     (    5&%U5&AE=&$.    4     8    (    !@         %    "
-    "\"     $    $     0         )    (               9V9F9F9F&D         B0        #1 #@   %     &    \"     8         "
-    "!0    @    !    !     $         \"0   \"                                                X    X    !@    @    $    "
-    "      4    (     0    8    !         !     &    5&%U4'-I   .    4     8    (    !@         %    \"     $    $     "
-    "0         )    (                       $$         80        #1 #@   %     &    \"     8         !0    @    !    ! "
-    "    $         \"0   \"                        \"          (          @ X   !8    !@    @    -          4    (    \""
-    "0    $    !          8    D        W0(    !    !     ,    $    !0    8    !          X   !     !@    @    &       "
-    "   4    (     0    (    !          D    0                       T0 X   !(    !@    @    -          4    (    !@   "
-    " $    !          8    8        W0(    !     0    (    \"    #@   #@%   &    \"     $         !0    @    $     0   "
-    " $         #@   #@    &    \"     (         !0    @    !          $         !0 $  $    !          X   !  0  !@    "
-    "@    \"          4    (     0    $    !          4 !  )     0   \"0   !.86UE      !81&%T80    !91&%T80    !5<V5R1&"
-    "%T80      #@   #     &    \"     0         !0    @               $         $          .    ,     8    (    !@     "
-    "    %    \"                0         )          X    P    !@    @    &          4    (               !          D "
-    "        #@   #     &    \"     8         !0    @               $         \"0         .    $ (   8    (     @      "
-    "   %    \"     $    !     0         %  0 $     $   !@    3F%M90               %-I9VYA;',           !!8W1I=F53:6=N8"
-    "6P     4F5Q=6ER96UE;G1);F9O %5S97)$871A          !4:6UE4F%N9V4         #@   #     &    \"     0         !0    @   "
-    "            $         $          .    2     8    (    #0         %    \"     4    !     0         &    %        -T"
-    "\"               !          X    P    !@    @    &          4    (               !          D         #@   #     &"
-    "    \"     0         !0    @               $         $          .    ,     8    (    !@         %    \"           "
-    "     0         )          X   !     !@    @    &          4    (     0    (    !          D    0                  "
-    "     D0 X   !H 0  !@    @    \"          4    (     0    $    !          4 !  ,     0   #    !.86UE          !'<F]"
-    "U<',       !!8W1I=F5'<F]U< !5<V5R1&%T80     .    ,     8    (    !          %    \"                0         0    "
-    "      X   !(    !@    @    -          4    (    !0    $    !          8    4        W0(               (         #@"
-    "   #@    &    \"     8         !0    @    !     0    $         \"0    @           #P/PX    P    !@    @    &      "
-    "    4    (               !          D         #@   (@    &    \"     D         !0    @    !    6     $          @ "
-    "  %@      4E-      X   !(    !@    @    \"          4    (     0    $    !          4 !  %     0    4   !-0T]3    "
-    "  X         "
-  }
-  DataRecord {
-    Tag			    DataTag1
-    Data		    "  %)30     .    V ,   8    (     @         %    \"     $    !     0         %  0 $0    $   #,    =F5R:6"
-    "9Y0FQK4&%T:',   !V97)I9GE\";&M(86YD;&5S '9N=DUG<DED>           86-T:79E1W)O=7        !R97%$:7-P4')C;G0      &)L:T1"
-    "I<W!-;V1E        9W)O=7!#;G0           !G<F]U<%)E<4-N=        &=R;W5P1$]/4E-I9       ;6]D96Q(              !B;&]C:"
-    "T@              &]V97)I9&53971T:6YG<P        X    P    !@    @    &          4    (               !          D    "
-    "     #@   #     &    \"     8         !0    @               $         \"0         .    ,     8    (    !@         "
-    "%    \"                0         )          X    X    !@    @    &          4    (     0    $    !          D    ("
-    "            \\#\\.    .     8    (    !@         %    \"     $    !     0         )    \"    +!W3 WL'>,_#@   #@   "
-    " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
-    " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
-    "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @         0 ((0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (          7 ?D .    ,     8    (    !@         %    \"                0         )          "
-  }
-  DataRecord {
-    Tag			    DataTag0
-    Data		    "  %)30     .    6!,   8    (     @         %    \"     $    !     0         %  0 %@    $   \"P    9W)I9"
-    "%-E='1I;F<              &-H86YN96QS                  !A>&5S                        8V]M;6]N                     &1"
-    "A=&%3970                   !D871A4V5T261X                :7-697)I9FEC871I;VY6:7-I8FQE '-B;V)J                     "
-    "  .    ,     8    (    !          %    \"     $    \"     0         0  ( ;VX   X   \"X\"0  !@    @    \"          "
-    "4    (     0    0    !          4 !  *     0   %H   !S=&5P6       <W1E<%D      'E-:6X       !Y36%X        8V]L;W( "
-    "     &QI;F53='EL90!L:6YE5VED=&@ ;&%B96P      &]U=$EN9&5X           .    .     8    (    !@         %    \"     $  "
-    "  !     0         )    \"               #@   #@    &    \"     8         !0    @    !     0    $         \"0    @ "
-    "              X    X    !@    @    &          4    (     0    $    !          D    (            \\/\\.    .     8 "
-    "   (    !@         %    \"     $    !     0         )    \"            /!_#@   $@    &    \"     8         !0    @"
-    "    !     P    $         \"0   !@   \"J\\=)-8A#0/P          JO'236(0T#\\.    ,     8    (    !          %    \"   "
-    "  $    !     0         0  $ +0    X    X    !@    @    &          4    (     0    $    !          D    (          "
-    "  ^#\\.    .     8    (    !          %    \"     $    &     0         0    !@   %1H<G5S=   #@   #@    &    \"    "
-    " 8         !0    @    !     0    $         \"0    @           #P/PX    X    !@    @    &          4    (     0    "
-    "$    !          D    (               .    .     8    (    !@         %    \"     $    !     0         )    \"     "
-    "          #@   #@    &    \"     8         !0    @    !     0    $         \"0    @           #P_PX    X    !@    "
-    "@    &          4    (     0    $    !          D    (            \\'\\.    2     8    (    !@         %    \"    "
-    " $    #     0         )    &    -B!<T:4]N8_          #8@7-&E/;F/PX    P    !@    @    $          4    (     0    $"
-    "    !         !   0 M    #@   #@    &    \"     8         !0    @    !     0    $         \"0    @           #X/PX"
-    "    X    !@    @    $          4    (     0    8    !         !     &    5&%U4&AI   .    .     8    (    !@       "
-    "  %    \"     $    !     0         )    \"             ! #@   #@    &    \"     8         !0    @    !     0    $ "
-    "        \"0    @               X    X    !@    @    &          4    (     0    $    !          D    (             "
-    "  .    .     8    (    !@         %    \"     $    !     0         )    \"            /#_#@   #@    &    \"     8 "
-    "        !0    @    !     0    $         \"0    @           #P?PX   !(    !@    @    &          4    (     0    ,  "
-    "  !          D    8                                 / _#@   #     &    \"     0         !0    @    !     0    $   "
-    "      $  ! \"T    .    .     8    (    !@         %    \"     $    !     0         )    \"            /@_#@   #@  "
-    "  &    \"     0         !0    @    !    \"     $         $     @   !48754:&5T80X    X    !@    @    &          4  "
-    "  (     0    $    !          D    (            \"$ .    .     8    (    !@         %    \"     $    !     0       "
-    "  )    \"               #@   #@    &    \"     8         !0    @    !     0    $         \"0    @               X "
-    "   X    !@    @    &          4    (     0    $    !          D    (            \\/\\.    .     8    (    !@      "
-    "   %    \"     $    !     0         )    \"            /!_#@   $@    &    \"     8         !0    @    !     P    $"
-    "         \"0   !@   \"J\\=)-8A#0/P          JO'236(0T#\\.    ,     8    (    !          %    \"     $    !     0  "
-    "       0  $ +0    X    X    !@    @    &          4    (     0    $    !          D    (            ^#\\.    .    "
-    " 8    (    !          %    \"     $    &     0         0    !@   %1A=5!S:0  #@   #@    &    \"     8         !0   "
-    " @    !     0    $         \"0    @            00 X   !8 P  !@    @    \"          4    (     0    0    !         "
-    " 4 !  )     0   !L   !C:&%N;F5L<P!Y3&EM      !L86)E;%!O<P        X    X    !@    @    &          4    (     0    $"
-    "    !          D    (            $$ .    0     8    (    !@         %    \"     $    \"     0         )    $      "
-    "      /\"_        \\#\\.    ,     8    (    !          %    \"     $    \"     0         0  ( 5$P   X    X    !@  "
-    "  @    &          4    (     0    $    !          D    (            \"$ .    0     8    (    !@         %    \"   "
-    "  $    \"     0         )    $    'L4KD?A>H2_[%&X'H7KP3\\.    ,     8    (    !          %    \"     $    \"     0"
-    "         0  ( 5$P   X    X    !@    @    &          4    (     0    $    !          D    (             $ .    0   "
-    "  8    (    !@         %    \"     $    \"     0         )    $    \"E<C\\+U*+R_>Q2N1^%ZA#\\.    ,     8    (    !"
-    "          %    \"     $    \"     0         0  ( 5$P   X    X    !@    @    &          4    (     0    $    !     "
-    "     D    (            \\#\\.    0     8    (    !@         %    \"     $    \"     0         )    $            /\""
-    "_        \\#\\.    ,     8    (    !          %    \"     $    \"     0         0  ( 5$P   X   !H @  !@    @    \""
-    "          4    (     0    $    !          4 !  .     0   &(   !D:7-P5&EM90       &1I<W!-;V1E        ;6EN5&EM90    "
-    "    !M87A4:6UE         &%F=&5R1FEN86Q3='( <V%M<&QE5&EM90    !Z97)O0W)O<W,               X   !     !@    @    &    "
-    "      4    (     0    (    !          D    0                       D0 X    X    !@    @    &          4    (     0"
-    "    $    !          D    (            \\#\\.    .     8    (    !@         %    \"     $    !     0         )    \""
-    "               #@   #@    &    \"     8         !0    @    !     0    $         \"0    @            D0 X   !     !"
-    "@    @    $          4    (     0    L    !         !     +    17AT<F%P;VQA=&4       X    X    !@    @    &       "
-    "   4    (     0    $    !          D    (               .    ,     8    (    !          %    \"     $    \"     0 "
-    "        0  ( ;VX   X   \"8 0  !@    @    \"          4    (     0    $    !          4 !  .     0   #@   !A8W1I=F5"
-    "$:7-P261X '1I;65286YG90      ;F%M90            !D:7-P;&%Y4F%N9V4   X   !0    !@    @    &          4    (     0   "
-    " 0    !          D    @            $$         (0         !         \\#\\.    0     8    (    !@         %    \"   "
-    "  $    \"     0         )    $                       )$ .    .     8    (    !          %    \"     $    '     0  "
-    "       0    !P   $=R;W5P(#$ #@   $     &    \"     8         !0    @    !     @    $         \"0   !              "
-    "         \"1 #@   #@    &    \"     8         !0    @    !     0    $         \"0    @           #P/PX    X    !@ "
-    "   @    &          4    (     0    $    !          D    (            \\#\\.    @     8    (    $0         !       "
-    "   $ ! !-0T]3 0    @   !3:6=3=6ET90X   !(    !@    @    -          4    (    !@    $    !          8    8        W"
-    "0(    !     0    $    #    #@   '@.   &    \"     D         !0    @    !    2 X   $          @   $@.     4E-      "
-    "X   \"H#0  !@    @    \"          4    (     0    $    !          4 !  %     0    4   !-0T]3      X   !@#0  !@    "
-    "@    1          $          0 $ $U#3U,!    #0   $9I;&57<F%P<&5R7U\\    .    ( T   8    (     0         %    \"    !"
-    "(    !     0         .    V (   8    (    \"0         %    \"    *@\"   !     0         \"    J (   (    -    L   "
-    " /    #P    F $  ' \"  \"H @            !'<F]U<', 3F%M90!3:6=N86QS %A$871A %E$871A %-I9U-U:71E4VEG;F%L %5S97)$871A"
-    " %-I9U-U:71E1W)O=7  06-T:79E4VEG;F%L %)E<75I<F5M96YT26YF;P!4:6UE4F%N9V4 4VEG4W5I=&4 06-T:79E1W)O=7                "
-    "                     &                    \"                     P                                               ,"
-    "                    !    !@    (                    \"    !0    $                    #     0    $                 "
-    "   $     @    $                    %     P    $                    &    !                0    $    !    #@    (   "
-    " \"     0         #     0    T          P    (    !     0    0    !     @    4    !     P    ,    \"     0    0   "
-    " $     0    4    %     0    8    #     @    $    '    !     $    (    !0    $    )     P    (    !    \"@    0    "
-    "!    \"P    4    !    #                                                                               #@         ."
-    "    .     8    (    !          %    \"     $    '     0         0    !P   $=R;W5P(#$ #@   #@    &    \"     0     "
-    "    !0    @    !    !@    $         $     8   !4:')U<W0   X   !     !@    @    &          4    (     0    (    !  "
-    "        D    0                       D0 X   !     !@    @    &          4    (     0    (    !          D    0    "
-    "                      X    X    !@    @    $          4    (     0    8    !         !     &    5&%U4&AI   .    8 "
-    "    8    (    !@         %    \"     $    &     0         )    ,                       $$         00(7K4;@>A1% A>M"
-    "1N!Z%$4         D0 X   !@    !@    @    &          4    (     0    8    !          D    P                        @"
-    "$)@Y= BV[F_0F#ET\"+;N;\\                     #@   #@    &    \"     0         !0    @    !    \"     $         $  "
-    "   @   !48754:&5T80X   !@    !@    @    &          4    (     0    8    !          D    P               ?A>M1N!XA0"
-    "!^%ZU&X'B%         (D         B0        \"1 #@   &     &    \"     8         !0    @    !    !@    $         \"0  "
-    " #                          3#>)06#EP#],-XE!8.7 /P                     .    .     8    (    !          %    \"    "
-    " $    &     0         0    !@   %1A=5!S:0  #@   %     &    \"     8         !0    @    !    !     $         \"0   "
-    "\"                       !!         &$         D0 X   !0    !@    @    &          4    (     0    0    !          "
-    "D    @                        @         \"          ( .    6     8    (    #0         %    \"     D    !     0    "
-    "     &    )        -T\"     0    0    #    !     4    &     0         .    2     8    (    #0         %    \"     "
-    "8    !     0         &    &        -T\"     0    $    \"     @    X    X!0  !@    @    !          4    (    !     "
-    "$    !          X    X    !@    @    \"          4    (     0         !          4 !  !     0         .    0 $   8"
-    "    (     @         %    \"     $    !     0         %  0 \"0    $    D    3F%M90      6$1A=&$     641A=&$     57-"
-    "E<D1A=&$       X    P    !@    @    $          4    (               !         !          #@   #     &    \"     8 "
-    "        !0    @               $         \"0         .    ,     8    (    !@         %    \"                0      "
-    "   )          X    P    !@    @    &          4    (               !          D         #@   ! \"   &    \"     ( "
-    "        !0    @    !     0    $         !0 $ !     !    8    $YA;64               !3:6=N86QS            06-T:79E4V"
-    "EG;F%L     %)E<75I<F5M96YT26YF;P!5<V5R1&%T80          5&EM95)A;F=E          X    P    !@    @    $          4    ("
-    "               !         !          #@   $@    &    \"     T         !0    @    %     0    $         !@   !0      "
-    " #= @               0         .    ,     8    (    !@         %    \"                0         )          X    P  "
-    "  !@    @    $          4    (               !         !          #@   #     &    \"     8         !0    @        "
-    "       $         \"0         .    0     8    (    !@         %    \"     $    \"     0         )    $             "
-    "          )$ .    : $   8    (     @         %    \"     $    !     0         %  0 #     $    P    3F%M90         "
-    " 1W)O=7!S        06-T:79E1W)O=7  57-E<D1A=&$     #@   #     &    \"     0         !0    @               $         "
-    "$          .    2     8    (    #0         %    \"     4    !     0         &    %        -T\"               \"   "
-    "       X    X    !@    @    &          4    (     0    $    !          D    (            \\#\\.    ,     8    (   "
-    " !@         %    \"                0         )          X   \"(    !@    @    )          4    (     0   %@    !   "
-    "       (   !8      %)30     .    2     8    (     @         %    \"     $    !     0         %  0 !0    $    %    "
-    "34-/4P     .          "
+    "       0  ( 5$P   X    X    !@    @    &          4    (     0    $    !          D    (        ( \"QLD .    .    "
+    " 8    (    !@         %    \"     $    !     0         )    \"        )  #[% #@   #@    &    \"     8         !0  "
+    "  @    !     0    $         \"0    @            (0 X   !     !@    @    &          4    (     0    (    !         "
+    " D    0    _*GQTDUB4+_Z?FJ\\=).(/PX    P    !@    @    $          4    (     0    (    !         !   @!43   #@   #"
+    "@    &    \"     8         !0    @    !     0    $         \"0    @        0 +6R0 X    X    !@    @    &          "
+    "4    (     0    $    !          D    (        $ \"TLD .    .     8    (    !@         %    \"     $    !     0    "
+    "     )    \"             ! #@   $     &    \"     8         !0    @    !     @    $         \"0   !    \"Z20P\"*X>"
+    "&O_RI\\=)-8E _#@   #     &    \"     0         !0    @    !     @    $         $  \" %1,   .    .     8    (    !@"
+    "         %    \"     $    !     0         )    \"        \"  N;) #@   #@    &    \"     8         !0    @    !    "
+    " 0    $         \"0    @        H +BR0 X    X    !@    @    &          4    (     0    $    !          D    (     "
+    "       \\#\\.    0     8    (    !@         %    \"     $    \"     0         )    $            /\"_        \\#\\."
+    "    ,     8    (    !          %    \"     $    \"     0         0  ( 5$P   X    X    !@    @    &          4    ("
+    "     0    $    !          D    (        ( \"]LD .    .     8    (    !@         %    \"     $    !     0         )"
+    "    \"        \"  O+) #@   &@\"   &    \"     (         !0    @    !     0    $         !0 $  X    !    8@   &1I<W"
+    "!4:6UE        9&ES<$UO9&4       !M:6Y4:6UE         &UA>%1I;64         869T97)&:6YA;%-T<@!S86UP;&54:6UE     'IE<F]#"
+    "<F]S<P              #@   $     &    \"     8         !0    @    !     @    $         \"0   !                      "
+    " \"1 #@   #@    &    \"     8         !0    @    !     0    $         \"0    @           #P/PX    X    !@    @    "
+    "&          4    (     0    $    !          D    (               .    .     8    (    !@         %    \"     $    !"
+    "     0         )    \"            \"1 #@   $     &    \"     0         !0    @    !    \"P    $         $     L   "
+    "!%>'1R87!O;&%T90      #@   #@    &    \"     8         !0    @    !     0    $         \"0    @               X   "
+    " P    !@    @    $          4    (     0    (    !         !   @!O;@  #@   )@!   &    \"     (         !0    @    "
+    "!     0    $         !0 $  X    !    .    &%C=&EV941I<W!)9'@ =&EM95)A;F=E      !N86UE             &1I<W!L87E286YG9"
+    "0  #@   %     &    \"     8         !0    @    !    !     $         \"0   \"             00         A          $  "
+    "      #P/PX   !     !@    @    &          4    (     0    (    !          D    0                       D0 X    X  "
+    "  !@    @    $          4    (     0    <    !         !     '    1W)O=7 @,0 .    0     8    (    !@         %    "
+    "\"     $    \"     0         )    $                       )$ .    .     8    (    !@         %    \"     $    !   "
+    "  0         )    \"            / _#@   #@    &    \"     8         !0    @    !     0    $         \"0    @       "
+    "    #P/PX   \"     !@    @    1          $          0 $ $U#3U,!    \"    %-I9U-U:71E#@   $@    &    \"     T      "
+    "   !0    @    &     0    $         !@   !@       #= @    $    !     0    ,    .    > X   8    (    \"0         %  "
+    "  \"     $   !(#@   0         \"    2 X    !24T     #@   *@-   &    \"     (         !0    @    !     0    $      "
+    "   !0 $  4    !    !0   $U#3U,     #@   & -   &    \"    !$          0         !  0 34-/4P$    -    1FEL95=R87!P97"
+    ")?7P    X    @#0  !@    @    !          4    (    $@    $    !          X   #8 @  !@    @    )          4    (    "
+    "J (   $    !          (   \"H @   @    T   \"P    \\    /    \"8 0  < (  *@\"             $=R;W5P<P!.86UE %-I9VYA;"
+    "', 6$1A=&$ 641A=&$ 4VEG4W5I=&53:6=N86P 57-E<D1A=&$ 4VEG4W5I=&5'<F]U< !!8W1I=F53:6=N86P 4F5Q=6ER96UE;G1);F9O %1I;65"
+    "286YG90!3:6=3=6ET90!!8W1I=F5'<F]U<                                     8                    (                    #"
+    "                                                P                    $    &     @                    (    %     0 "
+    "                   ,    !     0                    0    \"     0                    4    #     0                  "
+    "  8    $               !     0    $    .     @    (    !          ,    !    #0         #     @    $    !    !     "
+    "$    \"    !0    $    #     P    (    !    !     0    !    !0    4    !    !@    ,    \"     0    <    $     0    "
+    "@    %     0    D    #     @    $    *    !     $    +    !0    $    ,                                            "
+    "                                   .          X    X    !@    @    $          4    (     0    <    !         !    "
+    " '    1W)O=7 @,0 .    .     8    (    !          %    \"     $    &     0         0    !@   %1H<G5S=   #@   $     "
+    "&    \"     8         !0    @    !     @    $         \"0   !                       \"1 #@   $     &    \"     8  "
+    "       !0    @    !     @    $         \"0   !                          #@   #@    &    \"     0         !0    @  "
+    "  !    !@    $         $     8   !48750:&D   X   !@    !@    @    &          4    (     0    8    !          D    "
+    "P                       00        !! A>M1N!Z%$4\"%ZU&X'H410        \"1 #@   &     &    \"     8         !0    @   "
+    " !    !@    $         \"0   #                        \" B(5:T[SCA+^(A5K3O..$OP                     .    .     8   "
+    " (    !          %    \"     $    (     0         0    \"    %1A=51H971A#@   &     &    \"     8         !0    @  "
+    "  !    !@    $         \"0   #               !^%ZU&X'B% 'X7K4;@>(4         B0        \")         )$ .    8     8  "
+    "  (    !@         %    \"     $    &     0         )    ,                          ;+]TD!H&%/QLOW20&@84_          "
+    "            X    X    !@    @    $          4    (     0    8    !         !     &    5&%U4'-I   .    4     8    ("
+    "    !@         %    \"     $    $     0         )    (                       $$         80        \"1 #@   %     &"
+    "    \"     8         !0    @    !    !     $         \"0   \"                        \"          (          @ X   "
+    "!8    !@    @    -          4    (    \"0    $    !          8    D        W0(    !    !     ,    $    !0    8    "
+    "!          X   !(    !@    @    -          4    (    !@    $    !          8    8        W0(    !     0    (    \""
+    "    #@   #@%   &    \"     $         !0    @    $     0    $         #@   #@    &    \"     (         !0    @    !"
+    "          $         !0 $  $    !          X   !  0  !@    @    \"          4    (     0    $    !          4 !  ) "
+    "    0   \"0   !.86UE      !81&%T80    !91&%T80    !5<V5R1&%T80      #@   #     &    \"     0         !0    @      "
+    "         $         $          .    ,     8    (    !@         %    \"                0         )          X    P  "
+    "  !@    @    &          4    (               !          D         #@   #     &    \"     8         !0    @        "
+    "       $         \"0         .    $ (   8    (     @         %    \"     $    !     0         %  0 $     $   !@   "
+    " 3F%M90               %-I9VYA;',           !!8W1I=F53:6=N86P     4F5Q=6ER96UE;G1);F9O %5S97)$871A          !4:6UE4"
+    "F%N9V4         #@   #     &    \"     0         !0    @               $         $          .    2     8    (    #0"
+    "         %    \"     4    !     0         &    %        -T\"               !          X    P    !@    @    &      "
+    "    4    (               !          D         #@   #     &    \"     0         !0    @               $         $  "
+    "        .    ,     8    (    !@         %    \"                0         )          X   !     !@    @    &        "
+    "  4    (     0    (    !          D    0                       D0 X   !H 0  !@    @    \"          4    (     0   "
+    " $    !          4 !  ,     0   #    !.86UE          !'<F]U<',       !!8W1I=F5'<F]U< !5<V5R1&%T80     .    ,     8"
+    "    (    !          %    \"                0         0          X   !(    !@    @    -          4    (    !0    $ "
+    "   !          8    4        W0(               (         #@   #@    &    \"     8         !0    @    !     0    $  "
+    "       \"0    @           #P/PX    P    !@    @    &          4    (               !          D         #@   (@   "
+    " &    \"     D         !0    @    !    6     $          @   %@      4E-      X   !(    !@    @    \"          4   "
+    " (     0    $    !          4 !  %     0    4   !-0T]3      X         "
   }
 }
 # Finite State Machines
@@ -9654,393 +7830,14 @@ MatData {
 Stateflow {
   machine {
     id			    1
-    name		    "tenzo6dof"
+    name		    "tenzo"
     created		    "05-Jun-2014 15:20:14"
     isLibrary		    0
-    firstTarget		    22
+    firstTarget		    2
     sfVersion		    76014001.00040001
   }
-  chart {
-    id			    2
-    name		    "C1"
-    windowPosition	    [380.8 136 212.8 384.8]
-    viewLimits		    [0 166.4 0 345.8]
-    screen		    [1 1 1366 768 1.25]
-    treeNode		    [0 3 0 0]
-    firstTransition	    5
-    firstJunction	    4
-    viewObj		    2
-    machine		    1
-    ssIdHighWaterMark	    11
-    decomposition	    CLUSTER_CHART
-    type		    EML_CHART
-    firstData		    6
-    chartFileNumber	    1
-    disableImplicitCasting  1
-    eml {
-      name		      "fcn"
-    }
-  }
-  state {
-    id			    3
-    labelString		    "eML_blk_kernel()"
-    position		    [18 64.5 118 66]
-    fontSize		    12
-    chart		    2
-    treeNode		    [2 0 0 0]
-    superState		    SUBCHART
-    subviewer		    2
-    ssIdNumber		    1
-    type		    FUNC_STATE
-    decomposition	    CLUSTER_STATE
-    eml {
-      isEML		      1
-      script		      "function [w1,w2,w3,w4] = fcn(T,taux,tauy,tauz)\n%#codegen\n%% Physical properties of the environm"
-      "ent\ng=9.81; %Acceleration of gravity (m)\nrho=1.2; %Density of air (m^3.kg^-1)\n\n%% Physical properties of the"
-      " quadrotor\n\n% Total mass of the quadrotor [Kg]\nmq=0.82;\n% Motor length along x-axis (m). All motors have equ"
-      "al sizes.\nlx=28.8e-3;\n% Motor length along y-axis (m)\nly=28.8e-3;\n% Motor length along z-axis (m)\nlz=26e-3;"
-      "\n\n% Distance from the center of gravity to the center of a motor (m).\n% The quadrotor is symmetric regarding "
-      "the XZ and YZ planes, so\n% dcg is the same for all motors.\ndcg=0.288; \n\n\n% Inflow coefficient\nIf = -0.3559"
-      ";\n\n% Thrust coefficient of the propeller and Power coefficient\ncp=0.0743; \nct=0.1154;\n\n% Propeller radius "
-      "(m)\nrp=25.4e-3; \n% Constant value to calculate the moment provided\n% by a propeller given its angular speed ("
-      "kg.m^2.rad^-1)\nKm=cp*4*rho*rp^5/pi()^3; \n% Constant value to calculate the thrust provided\n% by a propeller g"
-      "iven its angular speed (kg.m.rad^-1) \n%Kt=ct*4*rho*rp^4/pi()^2; \nKt=ct*rho*rp^4*pi();\n% Constant that relates"
-      " thrust and moment of a propeller.\nKtm=Km/Kt;\nWTF = [ -Kt -Kt -Kt -Kt;\n         0   -lx*Kt  0  lx*Kt;\n      "
-      "  ly*Kt  0  -ly*Kt  0;\n        Ktm -Ktm Ktm -Ktm];\n    \n    T= WTF^(-1)*[T; taux; tauy; tauz];\n    w1 = T(1)"
-      ";\n    w2 = T(2);\n    w3 = T(3);\n    w4 = T(4);\n"
-      editorLayout	      "100 M4x1[10 5 700 500]"
-    }
-  }
-  junction {
-    id			    4
-    position		    [23.5747 49.5747 7]
-    chart		    2
-    linkNode		    [2 0 0]
-    subviewer		    2
-    ssIdNumber		    3
-    type		    CONNECTIVE_JUNCTION
-  }
-  transition {
-    id			    5
-    labelString		    "{eML_blk_kernel();}"
-    labelPosition	    [32.125 19.875 92.8 11.979]
-    fontSize		    12
-    src {
-      intersection	      [0 0 1 0 23.5747 14.625 0 0]
-    }
-    dst {
-      id		      4
-      intersection	      [1 0 -1 0 23.5747 42.5747 0 0]
-    }
-    midPoint		    [23.5747 24.9468]
-    chart		    2
-    linkNode		    [2 0 0]
-    dataLimits		    [21.175 25.975 14.625 42.575]
-    subviewer		    2
-    drawStyle		    SMART
-    slide {
-      sticky		      BOTH_STICK
-    }
-    executionOrder	    1
-    ssIdNumber		    2
-  }
-  data {
-    id			    6
-    ssIdNumber		    4
-    name		    "T"
-    linkNode		    [2 0 7]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    7
-    ssIdNumber		    5
-    name		    "w1"
-    linkNode		    [2 6 8]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    8
-    ssIdNumber		    6
-    name		    "taux"
-    linkNode		    [2 7 9]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    9
-    ssIdNumber		    7
-    name		    "tauy"
-    linkNode		    [2 8 10]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    10
-    ssIdNumber		    8
-    name		    "tauz"
-    linkNode		    [2 9 11]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    11
-    ssIdNumber		    9
-    name		    "w2"
-    linkNode		    [2 10 12]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    12
-    ssIdNumber		    10
-    name		    "w3"
-    linkNode		    [2 11 13]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    13
-    ssIdNumber		    11
-    name		    "w4"
-    linkNode		    [2 12 0]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  instance {
-    id			    14
-    name		    "C1"
-    machine		    1
-    chart		    2
-  }
-  chart {
-    id			    15
-    name		    "C"
-    windowPosition	    [428 251 213 385]
-    viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1680 1050 1.333333333333333]
-    treeNode		    [0 16 0 0]
-    firstTransition	    18
-    firstJunction	    17
-    viewObj		    15
-    machine		    1
-    ssIdHighWaterMark	    5
-    decomposition	    CLUSTER_CHART
-    type		    EML_CHART
-    firstData		    19
-    chartFileNumber	    2
-    disableImplicitCasting  1
-    eml {
-      name		      "fcn"
-    }
-  }
-  state {
-    id			    16
-    labelString		    "eML_blk_kernel()"
-    position		    [18 64.5 118 66]
-    fontSize		    12
-    chart		    15
-    treeNode		    [15 0 0 0]
-    superState		    SUBCHART
-    subviewer		    15
-    ssIdNumber		    1
-    type		    FUNC_STATE
-    decomposition	    CLUSTER_STATE
-    eml {
-      isEML		      1
-      script		      "function ymis = fcn(X)\n%#codegen\n\nCmis = [0 0 0 0 0 0 1 0 0 0 0 0;\n        0 0 0 0 0 0 0 1 0 "
-      "0 0 0;\n        0 0 0 0 0 0 0 0 1 0 0 0;\n        0 0 1 0 0 0 0 0 0 0 0 0];\nymis = Cmis*X;\n"
-      editorLayout	      "100 M4x1[10 5 700 500]"
-    }
-  }
-  junction {
-    id			    17
-    position		    [23.5747 49.5747 7]
-    chart		    15
-    linkNode		    [15 0 0]
-    subviewer		    15
-    ssIdNumber		    3
-    type		    CONNECTIVE_JUNCTION
-  }
-  transition {
-    id			    18
-    labelString		    "{eML_blk_kernel();}"
-    labelPosition	    [32.125 19.875 102.544 14.964]
-    fontSize		    12
-    src {
-      intersection	      [0 0 1 0 23.5747 14.625 0 0]
-    }
-    dst {
-      id		      17
-      intersection	      [1 0 -1 0 23.5747 42.5747 0 0]
-    }
-    midPoint		    [23.5747 24.9468]
-    chart		    15
-    linkNode		    [15 0 0]
-    dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    15
-    drawStyle		    SMART
-    slide {
-      sticky		      BOTH_STICK
-    }
-    executionOrder	    1
-    ssIdNumber		    2
-  }
-  data {
-    id			    19
-    ssIdNumber		    4
-    name		    "X"
-    linkNode		    [15 0 20]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    20
-    ssIdNumber		    5
-    name		    "ymis"
-    linkNode		    [15 19 0]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  instance {
-    id			    21
-    name		    "C"
-    machine		    1
-    chart		    15
-  }
   target {
-    id			    22
+    id			    2
     name		    "sfun"
     description		    "Default Simulink S-Function Target."
     machine		    1

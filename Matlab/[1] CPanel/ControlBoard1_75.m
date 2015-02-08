@@ -177,7 +177,7 @@ headerLength = 13;
 arduinoAdd = 1;
 matlabAdd = 2;
 portWin = 'Com3';
-portUnix = '\dev\ttyS0';
+portUnix = '\dev\ttyUSB0';
 baudrate = 19200;
 % buffer size should be the same as the one specified on the Arduino side
 inputBuffSize = 47+1;
@@ -675,8 +675,8 @@ delete(instrfindall)
                 cmd(2,:) = weights2*bits;
                 sendMess(cmd);
                 if speakCmd && vocalVerb>=1 
-                        %tts('Decollo programmato',voice);
-                        tts('Starting take off protocol.',voice);
+                        %%tts('Decollo programmato',voice);
+                        %tts('Starting take off protocol.',voice);
                 end
             else
                warndlg('Tenzo already out in space. Connection blocked. Protocol 1','!! DANGER !!') 
@@ -701,8 +701,8 @@ delete(instrfindall)
                 sendMess(cmd);
                 % wait for feedback from Tenzo and change state of btn
                 if speakCmd && vocalVerb>=1 
-                        %tts('atterraggio programmato',voice);
-                        tts('Starting land protocol.',voice);
+                        %%tts('atterraggio programmato',voice);
+                        %tts('Starting land protocol.',voice);
                 end
             else
                warndlg('Tenzo is not in hovering mode. First Take Off then try again. ','!! Warning !!') 
@@ -726,8 +726,8 @@ delete(instrfindall)
                 sendMess(cmd);
                 % wait for feedback from Tenzo and change state of btn
                 if speakCmd && vocalVerb>=1 
-                        %tts('atterraggio programmato',voice);
-                        tts('Starting land protocol.',voice);
+                        %%tts('atterraggio programmato',voice);
+                        %tts('Starting land protocol.',voice);
                 end
             else
                warndlg('Tenzo is not in hovering mode. First Take Off then try again. ','!! Warning !!') 
@@ -750,8 +750,8 @@ delete(instrfindall)
                 cmd(2,:) = weights2*bits;
                 sendMess(cmd);
                 if speakCmd && vocalVerb>=1 
-                        %tts('Decollo programmato',voice);
-                        tts('Starting take off protocol.',voice);
+                        %%tts('Decollo programmato',voice);
+                        %tts('Starting take off protocol.',voice);
                 end
             else
                warndlg('Tenzo already out in space. Connection blocked. Protocol 1','!! DANGER !!') 
@@ -768,8 +768,8 @@ delete(instrfindall)
             if takeOffAck == 1
                 if hoverAck == 0
                     if speakCmd && vocalVerb>=2 
-                            %tts('Abilitazione controllore pid',voice);
-                            tts('Enabling pid.',voice);
+                            %%tts('Abilitazione controllore pid',voice);
+                            %tts('Enabling pid.',voice);
                     end
                     %warndlg('Enabling PID. Safe flight.','Report') 
                     % Initialize the cmd array
@@ -782,8 +782,8 @@ delete(instrfindall)
                     % wait for feedback from Tenzo and change state of btn
                 else
                 if speakCmd && vocalVerb>=2 
-                        %tts('Attenzione. Disabilitazione controllore pid.',voice);
-                        tts('Warning. Disabling PID.',voice);
+                        %%tts('Attenzione. Disabilitazione controllore pid.',voice);
+                        %tts('Warning. Disabling PID.',voice);
                 end
                    %warndlg('Desactivating PID','!! Warning !!') 
                    % Initialize the cmd array
@@ -1127,7 +1127,7 @@ delete(instrfindall)
             %% Check to see if there are existing serial objects 
             % (instrfind) whos 'Port' property is set to 'COM3'
 
-            oldSerial = instrfind('Port', portWin); 
+            oldSerial = instrfind('Port', portUnix); 
             % can also use instrfind() with no input arguments to find 
             % ALL existing serial objects
 
@@ -1140,7 +1140,7 @@ delete(instrfindall)
             %%  Setting up serial communication
             % XBee expects the end of commands to be delineated by a carriage return.
 
-            xbee = serial(portWin,'baudrate',baudrate,'terminator',terminator,'tag',tag);
+            xbee = serial('/dev/ttyUSB0','baudrate',baudrate,'terminator',terminator,'tag',tag);
 
             % Max wait time
             set(xbee, 'TimeOut', 10);  
@@ -1507,8 +1507,8 @@ delete(instrfindall)
                             set(conTxt,'ForegroundColor', [.21 .96 .07],'String','Online');    
                             disp ('Connection established. Rock & Roll!'); 
                             if speakCmd && vocalVerb>=1 
-                                    %tts('Connessione eseguita',voice);
-                                    tts('Connection Established',voice);
+                                    %%tts('Connessione eseguita',voice);
+                                    %%tts('Connection Established',voice);
                             end
                         elseif (conAck == 10)
                             tenzo = false;
@@ -1518,7 +1518,7 @@ delete(instrfindall)
                             disp('Connection closed...');
                             if speakCmd && vocalVerb>=1 
                                     %tts('Connessione chiusa',voice);
-                                    tts('Connection closed',voice);
+                                    %tts('Connection closed',voice);
                             end
                             stop(timerXbee);
                             fclose(xbee);
@@ -1538,7 +1538,7 @@ delete(instrfindall)
                             set(conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
                             if speakCmd && vocalVerb>=1 
                                 %    tts('Problema di connessione',voice);
-                                    tts('Connection problem',voice);
+                                    %tts('Connection problem',voice);
                             end
                             disp ('Communication problem. Check Hardware and retry.');
                             %warndlg('Communication busy. Press OK and reconnect','!! Warning !!')
@@ -1557,8 +1557,8 @@ delete(instrfindall)
                         set(connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
                         set(conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
                         if speakCmd && vocalVerb>=1 
-                            %    tts('Problema di connessione',voice);
-                                tts('Connection problem',voice);
+                            %    %tts('Problema di connessione',voice);
+                                %tts('Connection problem',voice);
                         end
                         disp ('Communication problem. Check Hardware and retry.');
                         %warndlg('Communication busy. Press OK and reconnect','!! Warning !!')
@@ -2065,8 +2065,8 @@ delete(instrfindall)
                             disp(takeOffAck);
                             if takeOffAck == 1
                                 if speakCmd && vocalVerb>=1 
-                                        %tts('Decollato',voice);
-                                        tts('Tenzo is flying',voice);
+                                        %%tts('Decollato',voice);
+                                        %tts('Tenzo is flying',voice);
                                 end
                                 set(takeOffBtn,'String','Flying');
                                 landAck = 0;
@@ -2084,15 +2084,15 @@ delete(instrfindall)
                             disp(hoverAck);
                             if hoverAck == 1
                                 if speakCmd && vocalVerb>=2 
-                                        %tts('Pid abilitato',voice);
-                                        tts('PID enabled.',voice);
+                                        %%tts('Pid abilitato',voice);
+                                        %tts('PID enabled.',voice);
                                 end
                                 set(hoverBtn,'String','NoPid');
                                 disp('Pid enabled');
                             else    
                                 if speakCmd && vocalVerb>=2 
-                                        %tts('pid disabilitato',voice);
-                                        tts('PID disabled',voice);
+                                        %%tts('pid disabilitato',voice);
+                                        %tts('PID disabled',voice);
                                 end                        
                                 set(hoverBtn,'String','iHoverPid');
                                 disp('Unsafe hovering OR Landed');
@@ -2105,8 +2105,8 @@ delete(instrfindall)
                             disp(landAck);
                             if landAck == 1    
                                 if speakCmd && vocalVerb>=1 
-                                        %tts('Atterrato',voice);
-                                        tts('Landed.',voice);
+                                        %%tts('Atterrato',voice);
+                                        %tts('Landed.',voice);
                                 end                       
                                 set(landBtn,'String','Landed'); 
                                 set(takeOffBtn,'String','Take Off');
@@ -2122,8 +2122,8 @@ delete(instrfindall)
                             landAck = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                             if takeOffAck == 1
                                 if speakCmd && vocalVerb>=1 
-                                        %tts('Decollato',voice);
-                                        tts('Tenzo is flying',voice);
+                                        %%tts('Decollato',voice);
+                                        %tts('Tenzo is flying',voice);
                                 end
                                 set(takeOffBtn,'String','Flying');
                                 set(landBtn,'String','Land');
@@ -2133,8 +2133,8 @@ delete(instrfindall)
 
                             if landAck == 1    
                                 if speakCmd && vocalVerb>=1 
-                                        %tts('Atterrato',voice);
-                                        tts('Landed.',voice);
+                                        %%tts('Atterrato',voice);
+                                        %tts('Landed.',voice);
                                 end                       
                                 set(landBtn,'String','Landed'); 
                                 set(takeOffBtn,'String','Take Off');
@@ -2142,15 +2142,15 @@ delete(instrfindall)
                             end
                             if hoverAck == 1
                                 if speakCmd && vocalVerb>=2 
-                                        %tts('Pid abilitato',voice);
-                                        tts('PID enabled.',voice);
+                                        %%tts('Pid abilitato',voice);
+                                        %tts('PID enabled.',voice);
                                 end
                                 set(hoverBtn,'String','NoPid');
                                 disp('Pid enabled');
                             else    
                                 if speakCmd && vocalVerb>=2 
-                                        %tts('pid disabilitato',voice);
-                                        tts('PID disabled',voice);
+                                        %%tts('pid disabilitato',voice);
+                                        %tts('PID disabled',voice);
                                 end                        
                                 set(hoverBtn,'String','iHoverPid');
                                 disp('Unsafe hovering OR Landed');
