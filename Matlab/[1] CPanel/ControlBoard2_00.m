@@ -3,10 +3,11 @@ function ControlBoard()
 clear all;
 clc;
 
+
 global xbee;
 global portWin;
 global portUnix;
-global baudrate;
+global xbeeBR;
 global terminator;
 global inputBuffSize;
 global outputBuffSize;
@@ -136,10 +137,66 @@ global aggYawKi;
 global consYawKp;
 global consYawKd;
 global consYawKi;
+global rt;
+global firing;
+global recording;
+global plotting;
+global asked;
+global axdata;
+global aydata;
+global azdata;
+global axdataDa;
+global aydataDa;
+global azdataDa;
+global AccXDa;
+global AccYDa;
+global AccZDa;
+global time;
+global serialFlag;
+global samplesNumMax;
+global timerArduino;
+global timerConnect;
+global requestPending;
+
+%% Version
+
+version = 1.90;
+
+%% Data Acquisition vars
+
+samplesNumMax = 1000;
+acceleration.s = 0;
+ax=0;
+ay=0;
+az=0;
+t=0;
+serialFlag=0;
+prevTimer = 0;
+deltaT = 0;
+contSamples = 0;
+
+
+buffLenDa = 500;
+longBuffLen = 1000;
+indexDa=1:buffLenDa;
+asked = false;
+rt = false;
+plotting = false;
+receiving = false;
+requestPending = false;
+firing = false;
+
+AccX = zeros(buffLenDa,1);
+AccY = zeros(buffLenDa,1);
+AccZ = zeros(buffLenDa,1);
+axdataDa = zeros(buffLenDa,1);
+aydataDa = zeros(buffLenDa,1);
+azdataDa = zeros(buffLenDa,1);
+time  = zeros(buffLenDa,1);
 
 %% Serial protocol
 
-versionProtocol = 4;
+versionProtocol = 5;
 % command Map
 motorsID = 1;
 accID = 2;
@@ -171,14 +228,15 @@ rAYPID = 27;
 rAAPID = 28;
 tenzoStateID = 30;
 connID = 31;
+accValuesID = 32;
 
 cmdLength = 17;
 headerLength = 13;
 arduinoAdd = 1;
 matlabAdd = 2;
 portWin = 'Com3';
-portUnix = '\dev\ttyUSB0';
-baudrate = 19200;
+portUnix = '\dev\ttyS0';
+xbeeBR = 19200;
 % buffer size should be the same as the one specified on the Arduino side
 inputBuffSize = 47+1;
 outputBuffSize = 31;
@@ -198,7 +256,6 @@ global KalmanRoll;
 global kr;
 global KalmanPitch;
 global kp;
-version = 1.65;
 landingSpeed = 2;
 
 % Serial Sensors Acks initialization
@@ -207,7 +264,22 @@ gyroReceived = false;
 magnReceived = false;
 estReceived = false;
 
+% Data aquisiton boolean vars
+rt = false;
+recording = false;
+firing = false;
+plotting = false;
+asked = false;
+
 doubleAnglePlot = false;
+
+%% Data acquisition variables
+
+contSamples = 0;
+ax = 0;
+ay = 0;
+az = 0;
+time = 0;
 
 %% Vocal settings
 
@@ -265,6 +337,7 @@ filterEst = false;
 filterMagn = false;
 filterAcc = false;
 filterGyro = false;
+rt = false;
 
 pidStrategy ='U';
 pidModeStrategy = 'U';
@@ -286,14 +359,16 @@ disp('Welcome to the CPanel');
 delete(instrfindall)
 
     %% create tabbed GUI
-    hFig = figure('Menubar','none');
+    handles.hFig = figure('Menubar','none');
     s = warning('off', 'MATLAB:uitabgroup:OldVersion');
-    hTabGroup = uitabgroup('Parent',hFig);
+    
+    hTabGroup = uitabgroup('Parent',handles.hFig);
     warning(s);
     hTabs(1) = uitab('Parent',hTabGroup, 'Title','Home');
     hTabs(2) = uitab('Parent',hTabGroup, 'Title','Motors');
     hTabs(3) = uitab('Parent',hTabGroup, 'Title','Sensors');
     hTabs(4) = uitab('Parent',hTabGroup, 'Title','Control');
+    hTabs(5) = uitab('Parent',hTabGroup, 'Title','Acquisition');
     set(hTabGroup, 'SelectedTab',hTabs(1));
     Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     
@@ -306,9 +381,7 @@ delete(instrfindall)
 %     if get(hTabGroup,'SelectedTab') == hTabs(3)
 %         disp('Tab1 selected');
 %     end
-%     if get(hTabGroup,'SelectedTab') == hTabs(4)
-%         disp('Tab1 selected');
-%     end
+
 
     function tabGroupCallBack(~,~)
         %# Set visibility's slider to OFF
@@ -326,9 +399,39 @@ delete(instrfindall)
         set(pidKpSlider,'Visible','on');
         set(pidKdSlider,'Visible','on');
         end
+        if val == hTabs(5)
+        disp('Usb cable required!');
+        warndlg('Usb Cable required to acquire data','Attention');
+        end
+    end
+
+    %% Data Acquisition panel
+
+    if (~exist('handles.plot','var'))
+        handles.record = uicontrol('Style','togglebutton', 'String','Record', ...
+            'Position', [110 90 120 30],...
+            'Parent',hTabs(5),'Callback',@recordCallback);
     end
     
-    %# Home UI components
+    if (~exist('handles.plot','var'))
+        handles.realTime = uicontrol('Style','togglebutton', 'String','Real time', ...
+            'Position', [310 90 120 30],...
+            'Parent',hTabs(5),'Callback',@rtCallback);
+    end
+    
+    if (~exist('handles.start','var'))
+        handles.start = uicontrol('Style','pushbutton', 'String','Start', ...
+            'Position', [110 20 120 30],...
+            'Parent',hTabs(5), 'Callback',@startCallback);
+    end
+    
+    if (~exist('handles.stop','var'))
+        handles.stop = uicontrol('Style','pushbutton', 'String','Stop', ...
+            'Position', [310 20 120 30],...
+            'Parent',hTabs(5), 'Callback',@stopCallback);
+    end
+    
+    %% Home UI components
     uicontrol('Style','text', 'String','Tenzo Control Panel', ...
         'Position', [55 310 420 50],...
         'Parent',hTabs(1), 'FontSize',20,'FontWeight','bold');
@@ -349,11 +452,11 @@ delete(instrfindall)
         'Position', [350 210 120 30],...
         'Parent',hTabs(1), 'Callback',@landCallback);
     
-    conTxt = uicontrol('Style','text', 'String','Offline','ForegroundColor',[.99 .183 0.09], ...
+    handles.conTxt = uicontrol('Style','text', 'String','Offline','ForegroundColor',[.99 .183 0.09], ...
         'Position', [70 20 100 30],...
         'Parent',hTabs(1), 'FontSize',13,'FontWeight','bold');
     
-    connect = uicontrol('Style','togglebutton', 'String','Connect', ...
+    handles.connect = uicontrol('Style','togglebutton', 'String','Connect', ...
         'Position', [400 20 120 30],'BackgroundColor',[.21 .96 .07],...
         'Parent',hTabs(1), 'Callback',@connection);        
     
@@ -578,13 +681,348 @@ delete(instrfindall)
         'String','Select|Gyro|Accelerometer|Angles (est)', ...
         'Parent',hTabs(3), 'Callback',@popupCallback);
     
+    %% Data acquisition panel Callback
+    function startCallback(obj,event,h)
+        disp('start pressed');
+        asked = ~asked;
+        delete(timerfindall);
+        if asked == true
+            if serialFlag == 0 
+                [acceleration.s] = setupSerial();
+            end
+        else 
+            if serialFlag == 1 
+                receiving = false;
+                recording = false;
+                set(handles.start,'String','Start');
+                serialFlag = 0;
+            end
+        end
+        %disp(abs(az));
+        serialFlag;
+    end
     
-    %hAx = axes('Parent',hTabs(3));
-    %hLine = plot(NaN, NaN, 'Parent',hAx, 'Color','r','LineWidth',2);
+    function [s] = setupSerial()
+        %comPortLinux = '/dev/ttyACM0';
+        comPortWin = 'COM4';
+        oldSerial = instrfind('Port', comPortWin); 
+        % if the set of such objects is not(~) empty
+        if (~isempty(oldSerial))  
+            disp('WARNING:  COM4 in use.  Closing.')
+            delete(oldSerial)
+        end
+        s = serial(comPortWin);
 
-    %# Control UI Components
+        % Max wait time
+        set(s, 'TimeOut', 5); 
+        set(s,'terminator','CR');
+        set(s,'BaudRate',xbeeBR);
+        fopen(s);
+
+        disp('Sending Request.');
+        acceleration.s = s;
+        timerArduino = timer('ExecutionMode','fixedRate','Period',0.1,'TimerFcn',{@storeSerial});    
+
+        timerConnect = timer('ExecutionMode','fixedRate','Period',5,'TimerFcn',{@connectSerial});%,'StopFcn',{@stoppedCon});    
+        start(timerConnect);
+    end
+
+
+    function connectSerial(obj,event,h)
+        if serialFlag == 0 && requestPending == false
+            if isvalid(acceleration.s) == 1
+                fwrite(acceleration.s,16); 
+            end
+            if (strcmp(get(timerArduino,'Running'),'off'))
+                start(timerArduino);    
+            end
+        end
+    end
+
+    function stoppedCon(obj,event,h)       
+        serialFlag = 1;
+        requestPending = false;
+        stop(timerArduino);   
+        stop(timerConnect);      
+        set(handles.start,'String','Stop');
+        disp('Connection established');
+    end
+
+    function storeSerial(obj,event,handles)
+        while (get(acceleration.s, 'BytesAvailable')==1)
+            [mess,cont] = fread(acceleration.s);
+            %disp('Received bytes:');
+            %disp(cont);
+            %disp(mess);
+            if (mess == 17)             
+                %display(['Collecting data']);
+                fwrite(acceleration.s,18); 
+                requestPending = true;   
+            elseif (mess == 19)  
+                stoppedCon();
+            end
+        end
+    end
+
+    function stopCallback(obj,event,handles)
+        if (~exist('serialFlag','var')) 
+            %[acceleration.arduino,serialFlag] = setupSerial1_00();
+            disp('disconnect');
+        end 
+    end 
+
+function recordCallback(obj,event,handles)
+        disp('Record Pressed');
+        plotting = ~plotting
+        if plotting
+            while (serialFlag == 1 && abs(az) >= -0.5)               
+                % Request High Res data  
+                if isvalid(acceleration.s) == 1
+                    fwrite(acceleration.s,84);
+                end
+                [ax ay az t,receiving] = readAcc1_05(acceleration);
+                %
+                if (receiving)
+                    figure(4);
+
+                    cla;
+
+                    axdataDa = [ axdataDa(2:end) ; ax ];
+                    aydataDa = [ aydataDa(2:end) ; ay ];
+                    azdataDa = [ azdataDa(2:end) ; az ];    
+                    time   = [time(2:end) ; t/1000];
+
+                    deltaT = t - prevTimer;
+                    prevTimer = t;
+                    h11 = subplot(3,1,1);
+
+                    title('Acc X');    
+                    axis([1 buffLenDa -0.5 0.5]);
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of X acc [m*s^-2]'); 
+                    plot(h11,indexDa,axdataDa,'r');
+                    grid on;
+
+                    h12 = subplot(3,1,2);
+
+                    title('Acc Y');      
+                    axis([1 buffLenDa -0.5 0.5]);          
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Y acc [m*s^-2]');
+                    plot(h12,indexDa,aydataDa,'r');
+                    grid on;         
+
+                    h13 = subplot(3,1,3);
+
+                    title('Acc Z');
+                    axis([1 buffLenDa -1.5 1.5]);                
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Z acc [m*s^-2]');
+                    plot(h13,indexDa,azdataDa,'r');
+                    grid on; 
+                    
+                    if ((time(1) >= 0) && (time(end)>0))
+                        figure(6);       
+                        title('Acc X');
+                        axis([time(1) time(end) -1.5 1.5]);                
+                        xlabel('time [ms]')
+                        ylabel('Magnitude of X acc [m*s^-2]');
+                        plot(time(1:end),axdataDa(1:end),'b');
+                        grid on;        
+                    end
+                    drawnow;
+                    if ~plotting                        
+                        disp('saving samples to file');
+                        accDataToWrite = [axdataDa,time];
+                        csvwrite('accx.txt',accDataToWrite);
+                        disp('saving file to structure');
+                        dat.x = axdataDa;
+                        dat.y = aydataDa;
+                        dat.z = azdataDa;
+                        dat.time = time;
+                        save('AccSamples.mat','-struct','dat');
+                        disp(deltaT);
+                        
+                        % Reset Arrays
+                        AccX = zeros(buffLenDa,1);
+                        AccY = zeros(buffLenDa,1);
+                        AccZ = zeros(buffLenDa,1);
+                        axdataDa = zeros(buffLenDa,1);
+                        aydataDa = zeros(buffLenDa,1);
+                        azdataDa = zeros(buffLenDa,1);
+                        time  = zeros(buffLenDa,1);
+                        break;
+                    end
+                end
+            end
+        end
+    end
     
-    %% button callbacks
+    function recordCallback1(obj,event,handles)
+        disp('Record Pressed');
+        plotting = ~plotting
+        serialFlag;
+        if plotting == 1
+            % waiting for the connection to be established
+            %disp(abs(az));
+            %disp(asked);     
+            while (serialFlag == 1 && abs(az) >= -0.5)               
+                % Request High Res data 
+                fwrite(acceleration.s,84);
+                
+                [ax ay az t,receiving] = readAcc1_05(acceleration)
+                receiving
+                if (receiving)
+                    figure(2);
+
+                    cla;
+
+                    axdata = [ axdata(2:end) ; ax ];
+                    aydata = [ aydata(2:end) ; ay ];
+                    azdata = [ azdata(2:end) ; az ];    
+                    time   = [time(2:end) ; t/1000];
+
+                    deltaT = t - prevTimer
+                    prevTimer = t;
+                    h11 = subplot(3,1,1);
+
+                    title('Acc X');    
+                    axis([1 buffLen -0.5 0.5]);
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of X acc [m*s^-2]'); 
+                    plot(h11,index,axdata(901:1000),'r');
+                    grid on;
+
+                    h12 = subplot(3,1,2);
+
+                    title('Acc Y');      
+                    axis([1 buffLen -0.5 0.5]);          
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Y acc [m*s^-2]');
+                    plot(h12,index,aydata(901:1000),'r');
+                    grid on;         
+
+                    h13 = subplot(3,1,3);
+
+                    title('Acc Z');
+                    axis([1 buffLen -1.5 1.5]);                
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Z acc [m*s^-2]');
+                    plot(h13,index,azdata(901:1000),'r');
+                    grid on;         
+
+                    if ((time(900) >= 0) && (time(1000)>0))
+                        figure(3);       
+                        title('Acc X');
+                        axis([time(950) time(1000) -1.5 1.5]);                
+                        xlabel('time [ms]')
+                        ylabel('Magnitude of X acc [m*s^-2]');
+                        plot (time(901:1000),axdata(901:1000),'b');
+                        grid on;        
+                    end
+                    drawnow;
+                end
+            end
+        end
+    end
+    
+    function rtCallback(obj,event,h)
+        %disp('RT pressed');
+        rt = ~rt;
+    
+        % waiting for the connection to be established
+        disp('RT pressed');
+        rt = ~rt
+        disp(serialFlag);
+        while (serialFlag == 1 && abs(az) >= -0.5)               
+            % Request High Res data             
+            if rt
+                if isvalid(acceleration.s) == 1
+                    fwrite(acceleration.s,82);
+                end
+                [ax ay az t,firing] = readAcc1_05(acceleration);
+                firing
+                while (firing && ax+ay+az ~= 0 && rt)
+                    
+                    figure(4);
+                    cla;
+
+                    axdataDa = [ axdataDa(2:end) ; ax ];
+                    aydataDa = [ aydataDa(2:end) ; ay ];
+                    azdataDa = [ azdataDa(2:end) ; az ];    
+                    time   = [time(2:end) ; t/1000];
+
+                    deltaT = t - prevTimer;
+                    prevTimer = t;
+                    h11 = subplot(3,1,1);
+
+                    title('Acc X');    
+                    axis([1 buffLenDa -0.5 0.5]);
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of X acc [m*s^-2]'); 
+                    plot(h11,indexDa,axdataDa,'r');
+                    grid on;
+
+                    h12 = subplot(3,1,2);
+
+                    title('Acc Y');      
+                    axis([1 buffLenDa -0.5 0.5]);          
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Y acc [m*s^-2]');
+                    plot(h12,indexDa,aydataDa,'r');
+                    grid on;         
+
+                    h13 = subplot(3,1,3);
+
+                    title('Acc Z');
+                    axis([1 buffLenDa -1.5 1.5]);                
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Z acc [m*s^-2]');
+                    plot(h13,indexDa,azdataDa,'r');
+                    grid on;         
+
+                    if ((time(1) >= 0) && (time(end)>0))
+                        figure(6);       
+                        title('Acc X');
+                        axis([time(1) time(end) -1.5 1.5]);                
+                        xlabel('time [ms]')
+                        ylabel('Magnitude of X acc [m*s^-2]');
+                        plot(time(1:end),axdataDa(1:end),'b');
+                        grid on;        
+                    end
+                    drawnow;                    
+                    [ax ay az t,rt,contSamples] = readAcc1_10(acceleration,contSamples);
+                    contSamples
+                end
+            end
+            if ~rt
+                disp('saving samples to file');
+                accDataToWrite = [axdataDa,time];
+                csvwrite('accx.txt',accDataToWrite);
+                disp('saving file to structure');
+                dat.x = axdataDa;
+                dat.y = aydataDa;
+                dat.z = azdataDa;
+                dat.time = time;
+                save('AccSamples.mat','-struct','dat');
+                disp('Sample time:');
+                disp(deltaT); 
+                
+                % Reset Arrays
+                AccX = zeros(buffLenDa,1);
+                AccY = zeros(buffLenDa,1);
+                AccZ = zeros(buffLenDa,1);
+                axdataDa = zeros(buffLenDa,1);
+                aydataDa = zeros(buffLenDa,1);
+                azdataDa = zeros(buffLenDa,1);
+                time  = zeros(buffLenDa,1);
+                break;
+            end
+        end
+    end
+    
+    
+    %% Motors Up btn callbacks
     function upCallback(src,eventData)
        %fprintf(xbee,'w');
        if tenzo == true
@@ -675,8 +1113,8 @@ delete(instrfindall)
                 cmd(2,:) = weights2*bits;
                 sendMess(cmd);
                 if speakCmd && vocalVerb>=1 
-                        %%tts('Decollo programmato',voice);
-                        %tts('Starting take off protocol.',voice);
+                        %tts('Decollo programmato',voice);
+                        tts('Starting take off protocol.',voice);
                 end
             else
                warndlg('Tenzo already out in space. Connection blocked. Protocol 1','!! DANGER !!') 
@@ -701,8 +1139,8 @@ delete(instrfindall)
                 sendMess(cmd);
                 % wait for feedback from Tenzo and change state of btn
                 if speakCmd && vocalVerb>=1 
-                        %%tts('atterraggio programmato',voice);
-                        %tts('Starting land protocol.',voice);
+                        %tts('atterraggio programmato',voice);
+                        tts('Starting land protocol.',voice);
                 end
             else
                warndlg('Tenzo is not in hovering mode. First Take Off then try again. ','!! Warning !!') 
@@ -726,8 +1164,8 @@ delete(instrfindall)
                 sendMess(cmd);
                 % wait for feedback from Tenzo and change state of btn
                 if speakCmd && vocalVerb>=1 
-                        %%tts('atterraggio programmato',voice);
-                        %tts('Starting land protocol.',voice);
+                        %tts('atterraggio programmato',voice);
+                        tts('Starting land protocol.',voice);
                 end
             else
                warndlg('Tenzo is not in hovering mode. First Take Off then try again. ','!! Warning !!') 
@@ -750,8 +1188,8 @@ delete(instrfindall)
                 cmd(2,:) = weights2*bits;
                 sendMess(cmd);
                 if speakCmd && vocalVerb>=1 
-                        %%tts('Decollo programmato',voice);
-                        %tts('Starting take off protocol.',voice);
+                        %tts('Decollo programmato',voice);
+                        tts('Starting take off protocol.',voice);
                 end
             else
                warndlg('Tenzo already out in space. Connection blocked. Protocol 1','!! DANGER !!') 
@@ -768,8 +1206,8 @@ delete(instrfindall)
             if takeOffAck == 1
                 if hoverAck == 0
                     if speakCmd && vocalVerb>=2 
-                            %%tts('Abilitazione controllore pid',voice);
-                            %tts('Enabling pid.',voice);
+                            %tts('Abilitazione controllore pid',voice);
+                            tts('Enabling pid.',voice);
                     end
                     %warndlg('Enabling PID. Safe flight.','Report') 
                     % Initialize the cmd array
@@ -782,8 +1220,8 @@ delete(instrfindall)
                     % wait for feedback from Tenzo and change state of btn
                 else
                 if speakCmd && vocalVerb>=2 
-                        %%tts('Attenzione. Disabilitazione controllore pid.',voice);
-                        %tts('Warning. Disabling PID.',voice);
+                        %tts('Attenzione. Disabilitazione controllore pid.',voice);
+                        tts('Warning. Disabling PID.',voice);
                 end
                    %warndlg('Desactivating PID','!! Warning !!') 
                    % Initialize the cmd array
@@ -1119,15 +1557,16 @@ delete(instrfindall)
         end
     end
     
-    function connection(~,~)        
-        if get(connect,'Value') == 1
+    function connection(obj,event,handles) 
+        handles = guidata(gcf);
+        if get(handles.connect,'Value') == 1
             disp('Connecting...');
             
             delete(instrfindall);
             %% Check to see if there are existing serial objects 
             % (instrfind) whos 'Port' property is set to 'COM3'
 
-            oldSerial = instrfind('Port', portUnix); 
+            oldSerial = instrfind('Port', portWin); 
             % can also use instrfind() with no input arguments to find 
             % ALL existing serial objects
 
@@ -1140,7 +1579,7 @@ delete(instrfindall)
             %%  Setting up serial communication
             % XBee expects the end of commands to be delineated by a carriage return.
 
-            xbee = serial('/dev/ttyUSB0','baudrate',baudrate,'terminator',terminator,'tag',tag);
+            xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
 
             % Max wait time
             set(xbee, 'TimeOut', 10);  
@@ -1168,7 +1607,7 @@ delete(instrfindall)
             
         end
 
-        if get(connect,'Value') == 0
+        if get(handles.connect,'Value') == 0
             disp ('Disconnecting...');             
             
             % Initialize the cmd array
@@ -1234,17 +1673,17 @@ delete(instrfindall)
         bufferSend(16) = obj(2,2);
         bufferSend(17) = obj(2,3);
         bufferSend(18) = obj(2,4);
-        % cmd 1
+        % cmd 2
         bufferSend(19) = obj(3,1);
         bufferSend(20) = obj(3,2);
         bufferSend(21) = obj(3,3);
         bufferSend(22) = obj(3,4);
-        % cmd 1
+        % cmd 3
         bufferSend(23) = obj(4,1);
         bufferSend(24) = obj(4,2);
         bufferSend(25) = obj(4,3);
         bufferSend(26) = obj(4,4);
-        % cmd 1
+        % cmd 4
         bufferSend(27) = obj(5,1);
         bufferSend(28) = obj(5,2);
         bufferSend(29) = obj(5,3);
@@ -1252,7 +1691,8 @@ delete(instrfindall)
 
         disp(bufferSend);
         fwrite(xbee,bufferSend,'uint8');    
-        %xbee.ValuesSent
+        disp('Tot bytes sent');
+        xbee.ValuesSent
         
         %% Command
 
@@ -1458,7 +1898,20 @@ delete(instrfindall)
         end
     end
 
-    function storeDataFromSerial(obj,event,handles)       
+    function sendStates()
+        cmd = zeros(8,4,'uint8');
+        cmd(1,1) = uint8(tenzoStateID);
+        bits = reshape(bitget(double(takeOffAck),32:-1:1),8,[]);
+        cmd(2,:) = weights2*bits;
+        bits = reshape(bitget(double(hoverAck),32:-1:1),8,[]);
+        cmd(3,:) = weights2*bits;
+        bits = reshape(bitget(double(landAck),32:-1:1),8,[]);
+        cmd(4,:) = weights2*bits;
+        sendMess(cmd); 
+    end
+
+    function storeDataFromSerial(obj,event,handles)
+        handles = guidata(gcf);
        while (get(xbee, 'BytesAvailable')~=0)
             % read until terminator
             [mess,count] = fread(xbee);
@@ -1503,22 +1956,26 @@ delete(instrfindall)
                         conAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32')
                         if (conAck == 2)
                             tenzo = true;
-                            set(connect,'BackgroundColor',[.99 .183 0.09],'String','Disconnect');
-                            set(conTxt,'ForegroundColor', [.21 .96 .07],'String','Online');    
+                            
+                            %set(connect,'BackgroundColor',[.99 .183 0.09],'String','Disconnect');
+                            
+                            set(handles.connect,'String','Disconnect');
+                            set(handles.conTxt,'ForegroundColor', [.21 .96 .07],'String','Online');    
                             disp ('Connection established. Rock & Roll!'); 
                             if speakCmd && vocalVerb>=1 
-                                    %%tts('Connessione eseguita',voice);
-                                    %%tts('Connection Established',voice);
+                                    %tts('Connessione eseguita',voice);
+                                    tts('Connection Established',voice);
                             end
                         elseif (conAck == 10)
                             tenzo = false;
                             %delete(timerXbee);
-                            set(connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
-                            set(conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
+                            %set(connect,'String','Connect');
+                            set(handles.connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
+                            set(handles.conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
                             disp('Connection closed...');
                             if speakCmd && vocalVerb>=1 
                                     %tts('Connessione chiusa',voice);
-                                    %tts('Connection closed',voice);
+                                    tts('Connection closed',voice);
                             end
                             stop(timerXbee);
                             fclose(xbee);
@@ -1527,20 +1984,13 @@ delete(instrfindall)
                         else
                             disp ('Bogh!');
                             % Received something else 
-                            cmd = zeros(8,4,'uint8');
-                            cmd(1,1) = uint8(connID);
-                            bits = reshape(bitget(3,32:-1:1),8,[]);
-                            cmd(2,:) = weights2*bits;
-                            sendMess(cmd);
+                            sendStates();
                             
-                            tenzo = false;
-                            set(connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
-                            set(conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
                             if speakCmd && vocalVerb>=1 
                                 %    tts('Problema di connessione',voice);
-                                    %tts('Connection problem',voice);
+                                    tts('Third condition detected. Warning. ',voice);
                             end
-                            disp ('Communication problem. Check Hardware and retry.');
+                            disp ('Communication problem. Third condition detected..');
                             %warndlg('Communication busy. Press OK and reconnect','!! Warning !!')
                             %set(connect,'Value',1);
                         end                        
@@ -1554,11 +2004,11 @@ delete(instrfindall)
                         sendMess(cmd);
 
                         tenzo = false;
-                        set(connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
-                        set(conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
+                        set(handles.connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
+                        set(handles.conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
                         if speakCmd && vocalVerb>=1 
-                            %    %tts('Problema di connessione',voice);
-                                %tts('Connection problem',voice);
+                            %    tts('Problema di connessione',voice);
+                                tts('Connection problem',voice);
                         end
                         disp ('Communication problem. Check Hardware and retry.');
                         %warndlg('Communication busy. Press OK and reconnect','!! Warning !!')
@@ -2065,8 +2515,8 @@ delete(instrfindall)
                             disp(takeOffAck);
                             if takeOffAck == 1
                                 if speakCmd && vocalVerb>=1 
-                                        %%tts('Decollato',voice);
-                                        %tts('Tenzo is flying',voice);
+                                        %tts('Decollato',voice);
+                                        tts('Tenzo is flying',voice);
                                 end
                                 set(takeOffBtn,'String','Flying');
                                 landAck = 0;
@@ -2084,15 +2534,15 @@ delete(instrfindall)
                             disp(hoverAck);
                             if hoverAck == 1
                                 if speakCmd && vocalVerb>=2 
-                                        %%tts('Pid abilitato',voice);
-                                        %tts('PID enabled.',voice);
+                                        %tts('Pid abilitato',voice);
+                                        tts('PID enabled.',voice);
                                 end
                                 set(hoverBtn,'String','NoPid');
                                 disp('Pid enabled');
                             else    
                                 if speakCmd && vocalVerb>=2 
-                                        %%tts('pid disabilitato',voice);
-                                        %tts('PID disabled',voice);
+                                        %tts('pid disabilitato',voice);
+                                        tts('PID disabled',voice);
                                 end                        
                                 set(hoverBtn,'String','iHoverPid');
                                 disp('Unsafe hovering OR Landed');
@@ -2105,8 +2555,8 @@ delete(instrfindall)
                             disp(landAck);
                             if landAck == 1    
                                 if speakCmd && vocalVerb>=1 
-                                        %%tts('Atterrato',voice);
-                                        %tts('Landed.',voice);
+                                        %tts('Atterrato',voice);
+                                        tts('Landed.',voice);
                                 end                       
                                 set(landBtn,'String','Landed'); 
                                 set(takeOffBtn,'String','Take Off');
@@ -2115,15 +2565,15 @@ delete(instrfindall)
                             break;
                         end
                         if type == tenzoStateID 
-                            % Tenzo State
+                            % Setting Tenzo State
                             disp('Reading state'); 
                             takeOffAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                             hoverAck = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
                             landAck = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
                             if takeOffAck == 1
                                 if speakCmd && vocalVerb>=1 
-                                        %%tts('Decollato',voice);
-                                        %tts('Tenzo is flying',voice);
+                                        %tts('Decollato',voice);
+                                        tts('Tenzo is flying',voice);
                                 end
                                 set(takeOffBtn,'String','Flying');
                                 set(landBtn,'String','Land');
@@ -2133,8 +2583,8 @@ delete(instrfindall)
 
                             if landAck == 1    
                                 if speakCmd && vocalVerb>=1 
-                                        %%tts('Atterrato',voice);
-                                        %tts('Landed.',voice);
+                                        %tts('Atterrato',voice);
+                                        tts('Landed.',voice);
                                 end                       
                                 set(landBtn,'String','Landed'); 
                                 set(takeOffBtn,'String','Take Off');
@@ -2142,23 +2592,25 @@ delete(instrfindall)
                             end
                             if hoverAck == 1
                                 if speakCmd && vocalVerb>=2 
-                                        %%tts('Pid abilitato',voice);
-                                        %tts('PID enabled.',voice);
+                                        %tts('Pid abilitato',voice);
+                                        tts('PID enabled.',voice);
                                 end
                                 set(hoverBtn,'String','NoPid');
                                 disp('Pid enabled');
                             else    
                                 if speakCmd && vocalVerb>=2 
-                                        %%tts('pid disabilitato',voice);
-                                        %tts('PID disabled',voice);
+                                        %tts('pid disabilitato',voice);
+                                        tts('PID disabled',voice);
                                 end                        
                                 set(hoverBtn,'String','iHoverPid');
                                 disp('Unsafe hovering OR Landed');
                             end
+                            sendStates();
                         end 
                     end
                 end
             end %Message delivered from Arduino
        end
-    end  
+    end 
+guidata(handles.hFig,handles);
 end

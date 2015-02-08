@@ -11,9 +11,11 @@
 
 uint8_t pinRx = 12 , pinTx = 13; // the pin on Arduino
 long BaudRateSerial = 9600;
-long BaudRateXbee = 57600;
+long BaudRateXbee = 38400;
 char GotChar;
 byte getData;
+byte bufferBytes[30];
+int inputBuffSize = 30;
 
 // Compare function variables
 char inData[20]; // Allocate some space for the string
@@ -71,8 +73,22 @@ void loop()
   }
   
   while(xbee.available())
-  {  
-    getData = xbee.read();  
+  { 
+    Serial.print("- Received Tot: ");
+    Serial.println(xbee.available());
+
+    if (xbee.available() >= inputBuffSize)
+    { 
+        for (int j=0;j<=inputBuffSize;j++)
+        {
+          bufferBytes[j]=xbee.read();
+          Serial.print("Received: ");
+          Serial.print(bufferBytes[j]);
+          Serial.println();
+        }  
+    } 
+   
+    //getData = xbee.read();  
     
     Serial.println();
     Serial.print("Received: ");
@@ -129,7 +145,7 @@ void sendCommand()
   pCtrlHdr->totalLen= sizeof(MyControlHdr ) + (sizeof(MyCommand) * pCtrlHdr->numCmds); 
   pCtrlHdr->crc = 0;   // dummy temp value
 
-  xbee.write(buffer);  
+  //xbee.write(buffer);  
 }
 
 //CRC-8 - algoritmo basato sulle formule di CRC-8 di Dallas/Maxim
