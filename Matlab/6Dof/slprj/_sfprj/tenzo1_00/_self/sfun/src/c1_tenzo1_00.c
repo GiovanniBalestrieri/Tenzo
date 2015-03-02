@@ -1,12 +1,12 @@
 /* Include files */
 
 #include "blascompat32.h"
-#include "tenzo6dof_sfun.h"
-#include "c1_tenzo6dof.h"
+#include "tenzo1_00_sfun.h"
+#include "c1_tenzo1_00.h"
 #include "mwmathutil.h"
 #define CHARTINSTANCE_CHARTNUMBER      (chartInstance->chartNumber)
 #define CHARTINSTANCE_INSTANCENUMBER   (chartInstance->instanceNumber)
-#include "tenzo6dof_sfun_debug_macros.h"
+#include "tenzo1_00_sfun_debug_macros.h"
 
 /* Type Definitions */
 
@@ -21,35 +21,35 @@ static const char * c1_debug_family_names[25] = { "g", "rho", "mq", "lx", "ly",
   "nargout", "taux", "tauy", "tauz", "w1", "w2", "w3", "w4" };
 
 /* Function Declarations */
-static void initialize_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct *chartInstance);
-static void initialize_params_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
+static void initialize_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct *chartInstance);
+static void initialize_params_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct
   *chartInstance);
-static void enable_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct *chartInstance);
-static void disable_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct *chartInstance);
-static void c1_update_debugger_state_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
+static void enable_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct *chartInstance);
+static void disable_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct *chartInstance);
+static void c1_update_debugger_state_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct
   *chartInstance);
-static const mxArray *get_sim_state_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
+static const mxArray *get_sim_state_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct
   *chartInstance);
-static void set_sim_state_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
+static void set_sim_state_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct
   *chartInstance, const mxArray *c1_st);
-static void finalize_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct *chartInstance);
-static void sf_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct *chartInstance);
-static void c1_chartstep_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
+static void finalize_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct *chartInstance);
+static void sf_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct *chartInstance);
+static void c1_chartstep_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct
   *chartInstance);
-static void initSimStructsc1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
+static void initSimStructsc1_tenzo1_00(SFc1_tenzo1_00InstanceStruct
   *chartInstance);
 static void init_script_number_translation(uint32_T c1_machineNumber, uint32_T
   c1_chartNumber);
 static const mxArray *c1_sf_marshallOut(void *chartInstanceVoid, void *c1_inData);
-static real_T c1_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static real_T c1_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_w4, const char_T *c1_identifier);
-static real_T c1_b_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static real_T c1_b_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_u, const emlrtMsgIdentifier *c1_parentId);
 static void c1_sf_marshallIn(void *chartInstanceVoid, const mxArray
   *c1_mxArrayInData, const char_T *c1_varName, void *c1_outData);
 static const mxArray *c1_b_sf_marshallOut(void *chartInstanceVoid, void
   *c1_inData);
-static void c1_c_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static void c1_c_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_u, const emlrtMsgIdentifier *c1_parentId, real_T c1_y[4]);
 static void c1_b_sf_marshallIn(void *chartInstanceVoid, const mxArray
   *c1_mxArrayInData, const char_T *c1_varName, void *c1_outData);
@@ -58,89 +58,89 @@ static const mxArray *c1_c_sf_marshallOut(void *chartInstanceVoid, void
 static void c1_info_helper(c1_ResolvedFunctionInfo c1_info[133]);
 static void c1_b_info_helper(c1_ResolvedFunctionInfo c1_info[133]);
 static void c1_c_info_helper(c1_ResolvedFunctionInfo c1_info[133]);
-static void c1_eml_scalar_eg(SFc1_tenzo6dofInstanceStruct *chartInstance);
-static void c1_b_eml_scalar_eg(SFc1_tenzo6dofInstanceStruct *chartInstance);
-static void c1_realmin(SFc1_tenzo6dofInstanceStruct *chartInstance);
-static void c1_eps(SFc1_tenzo6dofInstanceStruct *chartInstance);
-static void c1_eml_int_forloop_overflow_check(SFc1_tenzo6dofInstanceStruct
+static void c1_eml_scalar_eg(SFc1_tenzo1_00InstanceStruct *chartInstance);
+static void c1_b_eml_scalar_eg(SFc1_tenzo1_00InstanceStruct *chartInstance);
+static void c1_realmin(SFc1_tenzo1_00InstanceStruct *chartInstance);
+static void c1_eps(SFc1_tenzo1_00InstanceStruct *chartInstance);
+static void c1_eml_int_forloop_overflow_check(SFc1_tenzo1_00InstanceStruct
   *chartInstance);
-static void c1_matrix_to_integer_power(SFc1_tenzo6dofInstanceStruct
+static void c1_matrix_to_integer_power(SFc1_tenzo1_00InstanceStruct
   *chartInstance, real_T c1_c[16]);
-static void c1_invNxN(SFc1_tenzo6dofInstanceStruct *chartInstance, real_T c1_x
+static void c1_invNxN(SFc1_tenzo1_00InstanceStruct *chartInstance, real_T c1_x
                       [16], real_T c1_y[16]);
-static void c1_eml_matlab_zgetrf(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static void c1_eml_matlab_zgetrf(SFc1_tenzo1_00InstanceStruct *chartInstance,
   real_T c1_A[16], real_T c1_b_A[16], int32_T c1_ipiv[4], int32_T *c1_info);
-static void c1_b_eml_int_forloop_overflow_check(SFc1_tenzo6dofInstanceStruct
+static void c1_b_eml_int_forloop_overflow_check(SFc1_tenzo1_00InstanceStruct
   *chartInstance, int32_T c1_b);
-static void c1_c_eml_int_forloop_overflow_check(SFc1_tenzo6dofInstanceStruct
+static void c1_c_eml_int_forloop_overflow_check(SFc1_tenzo1_00InstanceStruct
   *chartInstance);
-static void c1_d_eml_int_forloop_overflow_check(SFc1_tenzo6dofInstanceStruct
+static void c1_d_eml_int_forloop_overflow_check(SFc1_tenzo1_00InstanceStruct
   *chartInstance, int32_T c1_a, int32_T c1_b);
-static void c1_eml_xgeru(SFc1_tenzo6dofInstanceStruct *chartInstance, int32_T
+static void c1_eml_xgeru(SFc1_tenzo1_00InstanceStruct *chartInstance, int32_T
   c1_m, int32_T c1_n, real_T c1_alpha1, int32_T c1_ix0, int32_T c1_iy0, real_T
   c1_A[16], int32_T c1_ia0, real_T c1_b_A[16]);
-static void c1_eml_xtrsm(SFc1_tenzo6dofInstanceStruct *chartInstance, real_T
+static void c1_eml_xtrsm(SFc1_tenzo1_00InstanceStruct *chartInstance, real_T
   c1_A[16], real_T c1_B[16], real_T c1_b_B[16]);
-static void c1_e_eml_int_forloop_overflow_check(SFc1_tenzo6dofInstanceStruct
+static void c1_e_eml_int_forloop_overflow_check(SFc1_tenzo1_00InstanceStruct
   *chartInstance);
-static real_T c1_norm(SFc1_tenzo6dofInstanceStruct *chartInstance, real_T c1_x
+static real_T c1_norm(SFc1_tenzo1_00InstanceStruct *chartInstance, real_T c1_x
                       [16]);
-static void c1_eml_warning(SFc1_tenzo6dofInstanceStruct *chartInstance);
-static void c1_b_eml_warning(SFc1_tenzo6dofInstanceStruct *chartInstance, char_T
+static void c1_eml_warning(SFc1_tenzo1_00InstanceStruct *chartInstance);
+static void c1_b_eml_warning(SFc1_tenzo1_00InstanceStruct *chartInstance, char_T
   c1_varargin_2[14]);
-static void c1_c_eml_scalar_eg(SFc1_tenzo6dofInstanceStruct *chartInstance);
-static void c1_d_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static void c1_c_eml_scalar_eg(SFc1_tenzo1_00InstanceStruct *chartInstance);
+static void c1_d_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_sprintf, const char_T *c1_identifier, char_T c1_y[14]);
-static void c1_e_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static void c1_e_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_u, const emlrtMsgIdentifier *c1_parentId, char_T c1_y[14]);
 static const mxArray *c1_d_sf_marshallOut(void *chartInstanceVoid, void
   *c1_inData);
-static int32_T c1_f_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static int32_T c1_f_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_u, const emlrtMsgIdentifier *c1_parentId);
 static void c1_c_sf_marshallIn(void *chartInstanceVoid, const mxArray
   *c1_mxArrayInData, const char_T *c1_varName, void *c1_outData);
-static uint8_T c1_g_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
-  const mxArray *c1_b_is_active_c1_tenzo6dof, const char_T *c1_identifier);
-static uint8_T c1_h_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static uint8_T c1_g_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
+  const mxArray *c1_b_is_active_c1_tenzo1_00, const char_T *c1_identifier);
+static uint8_T c1_h_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_u, const emlrtMsgIdentifier *c1_parentId);
-static void c1_b_eml_matlab_zgetrf(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static void c1_b_eml_matlab_zgetrf(SFc1_tenzo1_00InstanceStruct *chartInstance,
   real_T c1_A[16], int32_T c1_ipiv[4], int32_T *c1_info);
-static void c1_b_eml_xgeru(SFc1_tenzo6dofInstanceStruct *chartInstance, int32_T
+static void c1_b_eml_xgeru(SFc1_tenzo1_00InstanceStruct *chartInstance, int32_T
   c1_m, int32_T c1_n, real_T c1_alpha1, int32_T c1_ix0, int32_T c1_iy0, real_T
   c1_A[16], int32_T c1_ia0);
-static void c1_b_eml_xtrsm(SFc1_tenzo6dofInstanceStruct *chartInstance, real_T
+static void c1_b_eml_xtrsm(SFc1_tenzo1_00InstanceStruct *chartInstance, real_T
   c1_A[16], real_T c1_B[16]);
-static void init_dsm_address_info(SFc1_tenzo6dofInstanceStruct *chartInstance);
+static void init_dsm_address_info(SFc1_tenzo1_00InstanceStruct *chartInstance);
 
 /* Function Definitions */
-static void initialize_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct *chartInstance)
+static void initialize_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct *chartInstance)
 {
   chartInstance->c1_sfEvent = CALL_EVENT;
   _sfTime_ = (real_T)ssGetT(chartInstance->S);
-  chartInstance->c1_is_active_c1_tenzo6dof = 0U;
+  chartInstance->c1_is_active_c1_tenzo1_00 = 0U;
 }
 
-static void initialize_params_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
+static void initialize_params_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct
   *chartInstance)
 {
 }
 
-static void enable_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct *chartInstance)
+static void enable_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct *chartInstance)
 {
   _sfTime_ = (real_T)ssGetT(chartInstance->S);
 }
 
-static void disable_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct *chartInstance)
+static void disable_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct *chartInstance)
 {
   _sfTime_ = (real_T)ssGetT(chartInstance->S);
 }
 
-static void c1_update_debugger_state_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
+static void c1_update_debugger_state_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct
   *chartInstance)
 {
 }
 
-static const mxArray *get_sim_state_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
+static const mxArray *get_sim_state_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct
   *chartInstance)
 {
   const mxArray *c1_st;
@@ -192,7 +192,7 @@ static const mxArray *get_sim_state_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
   c1_e_y = NULL;
   sf_mex_assign(&c1_e_y, sf_mex_create("y", &c1_d_u, 0, 0U, 0U, 0U, 0), FALSE);
   sf_mex_setcell(c1_y, 3, c1_e_y);
-  c1_e_hoistedGlobal = chartInstance->c1_is_active_c1_tenzo6dof;
+  c1_e_hoistedGlobal = chartInstance->c1_is_active_c1_tenzo1_00;
   c1_e_u = c1_e_hoistedGlobal;
   c1_f_y = NULL;
   sf_mex_assign(&c1_f_y, sf_mex_create("y", &c1_e_u, 3, 0U, 0U, 0U, 0), FALSE);
@@ -201,7 +201,7 @@ static const mxArray *get_sim_state_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
   return c1_st;
 }
 
-static void set_sim_state_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
+static void set_sim_state_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct
   *chartInstance, const mxArray *c1_st)
 {
   const mxArray *c1_u;
@@ -223,18 +223,18 @@ static void set_sim_state_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
     "w3");
   *c1_w4 = c1_emlrt_marshallIn(chartInstance, sf_mex_dup(sf_mex_getcell(c1_u, 3)),
     "w4");
-  chartInstance->c1_is_active_c1_tenzo6dof = c1_g_emlrt_marshallIn(chartInstance,
-    sf_mex_dup(sf_mex_getcell(c1_u, 4)), "is_active_c1_tenzo6dof");
+  chartInstance->c1_is_active_c1_tenzo1_00 = c1_g_emlrt_marshallIn(chartInstance,
+    sf_mex_dup(sf_mex_getcell(c1_u, 4)), "is_active_c1_tenzo1_00");
   sf_mex_destroy(&c1_u);
-  c1_update_debugger_state_c1_tenzo6dof(chartInstance);
+  c1_update_debugger_state_c1_tenzo1_00(chartInstance);
   sf_mex_destroy(&c1_st);
 }
 
-static void finalize_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct *chartInstance)
+static void finalize_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct *chartInstance)
 {
 }
 
-static void sf_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct *chartInstance)
+static void sf_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct *chartInstance)
 {
   real_T *c1_T;
   real_T *c1_w1;
@@ -263,12 +263,12 @@ static void sf_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct *chartInstance)
   _SFD_DATA_RANGE_CHECK(*c1_w3, 6U);
   _SFD_DATA_RANGE_CHECK(*c1_w4, 7U);
   chartInstance->c1_sfEvent = CALL_EVENT;
-  c1_chartstep_c1_tenzo6dof(chartInstance);
-  sf_debug_check_for_state_inconsistency(_tenzo6dofMachineNumber_,
+  c1_chartstep_c1_tenzo1_00(chartInstance);
+  sf_debug_check_for_state_inconsistency(_tenzo1_00MachineNumber_,
     chartInstance->chartNumber, chartInstance->instanceNumber);
 }
 
-static void c1_chartstep_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
+static void c1_chartstep_c1_tenzo1_00(SFc1_tenzo1_00InstanceStruct
   *chartInstance)
 {
   real_T c1_hoistedGlobal;
@@ -479,7 +479,7 @@ static void c1_chartstep_c1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
   _SFD_CC_CALL(EXIT_OUT_OF_FUNCTION_TAG, 0U, chartInstance->c1_sfEvent);
 }
 
-static void initSimStructsc1_tenzo6dof(SFc1_tenzo6dofInstanceStruct
+static void initSimStructsc1_tenzo1_00(SFc1_tenzo1_00InstanceStruct
   *chartInstance)
 {
 }
@@ -494,8 +494,8 @@ static const mxArray *c1_sf_marshallOut(void *chartInstanceVoid, void *c1_inData
   const mxArray *c1_mxArrayOutData = NULL;
   real_T c1_u;
   const mxArray *c1_y = NULL;
-  SFc1_tenzo6dofInstanceStruct *chartInstance;
-  chartInstance = (SFc1_tenzo6dofInstanceStruct *)chartInstanceVoid;
+  SFc1_tenzo1_00InstanceStruct *chartInstance;
+  chartInstance = (SFc1_tenzo1_00InstanceStruct *)chartInstanceVoid;
   c1_mxArrayOutData = NULL;
   c1_u = *(real_T *)c1_inData;
   c1_y = NULL;
@@ -504,7 +504,7 @@ static const mxArray *c1_sf_marshallOut(void *chartInstanceVoid, void *c1_inData
   return c1_mxArrayOutData;
 }
 
-static real_T c1_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static real_T c1_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_w4, const char_T *c1_identifier)
 {
   real_T c1_y;
@@ -516,7 +516,7 @@ static real_T c1_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
   return c1_y;
 }
 
-static real_T c1_b_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static real_T c1_b_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_u, const emlrtMsgIdentifier *c1_parentId)
 {
   real_T c1_y;
@@ -534,8 +534,8 @@ static void c1_sf_marshallIn(void *chartInstanceVoid, const mxArray
   const char_T *c1_identifier;
   emlrtMsgIdentifier c1_thisId;
   real_T c1_y;
-  SFc1_tenzo6dofInstanceStruct *chartInstance;
-  chartInstance = (SFc1_tenzo6dofInstanceStruct *)chartInstanceVoid;
+  SFc1_tenzo1_00InstanceStruct *chartInstance;
+  chartInstance = (SFc1_tenzo1_00InstanceStruct *)chartInstanceVoid;
   c1_w4 = sf_mex_dup(c1_mxArrayInData);
   c1_identifier = c1_varName;
   c1_thisId.fIdentifier = c1_identifier;
@@ -555,8 +555,8 @@ static const mxArray *c1_b_sf_marshallOut(void *chartInstanceVoid, void
   int32_T c1_i11;
   real_T c1_u[4];
   const mxArray *c1_y = NULL;
-  SFc1_tenzo6dofInstanceStruct *chartInstance;
-  chartInstance = (SFc1_tenzo6dofInstanceStruct *)chartInstanceVoid;
+  SFc1_tenzo1_00InstanceStruct *chartInstance;
+  chartInstance = (SFc1_tenzo1_00InstanceStruct *)chartInstanceVoid;
   c1_mxArrayOutData = NULL;
   for (c1_i10 = 0; c1_i10 < 4; c1_i10++) {
     c1_b_inData[c1_i10] = (*(real_T (*)[4])c1_inData)[c1_i10];
@@ -572,7 +572,7 @@ static const mxArray *c1_b_sf_marshallOut(void *chartInstanceVoid, void
   return c1_mxArrayOutData;
 }
 
-static void c1_c_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static void c1_c_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_u, const emlrtMsgIdentifier *c1_parentId, real_T c1_y[4])
 {
   real_T c1_dv1[4];
@@ -593,8 +593,8 @@ static void c1_b_sf_marshallIn(void *chartInstanceVoid, const mxArray
   emlrtMsgIdentifier c1_thisId;
   real_T c1_y[4];
   int32_T c1_i13;
-  SFc1_tenzo6dofInstanceStruct *chartInstance;
-  chartInstance = (SFc1_tenzo6dofInstanceStruct *)chartInstanceVoid;
+  SFc1_tenzo1_00InstanceStruct *chartInstance;
+  chartInstance = (SFc1_tenzo1_00InstanceStruct *)chartInstanceVoid;
   c1_T = sf_mex_dup(c1_mxArrayInData);
   c1_identifier = c1_varName;
   c1_thisId.fIdentifier = c1_identifier;
@@ -621,8 +621,8 @@ static const mxArray *c1_c_sf_marshallOut(void *chartInstanceVoid, void
   int32_T c1_i19;
   real_T c1_u[16];
   const mxArray *c1_y = NULL;
-  SFc1_tenzo6dofInstanceStruct *chartInstance;
-  chartInstance = (SFc1_tenzo6dofInstanceStruct *)chartInstanceVoid;
+  SFc1_tenzo1_00InstanceStruct *chartInstance;
+  chartInstance = (SFc1_tenzo1_00InstanceStruct *)chartInstanceVoid;
   c1_mxArrayOutData = NULL;
   c1_i14 = 0;
   for (c1_i15 = 0; c1_i15 < 4; c1_i15++) {
@@ -649,7 +649,7 @@ static const mxArray *c1_c_sf_marshallOut(void *chartInstanceVoid, void
   return c1_mxArrayOutData;
 }
 
-const mxArray *sf_c1_tenzo6dof_get_eml_resolved_functions_info(void)
+const mxArray *sf_c1_tenzo1_00_get_eml_resolved_functions_info(void)
 {
   const mxArray *c1_nameCaptureInfo;
   c1_ResolvedFunctionInfo c1_info[133];
@@ -2029,28 +2029,28 @@ static void c1_c_info_helper(c1_ResolvedFunctionInfo c1_info[133])
   c1_info[132].mFileTimeHi = 0U;
 }
 
-static void c1_eml_scalar_eg(SFc1_tenzo6dofInstanceStruct *chartInstance)
+static void c1_eml_scalar_eg(SFc1_tenzo1_00InstanceStruct *chartInstance)
 {
 }
 
-static void c1_b_eml_scalar_eg(SFc1_tenzo6dofInstanceStruct *chartInstance)
+static void c1_b_eml_scalar_eg(SFc1_tenzo1_00InstanceStruct *chartInstance)
 {
 }
 
-static void c1_realmin(SFc1_tenzo6dofInstanceStruct *chartInstance)
+static void c1_realmin(SFc1_tenzo1_00InstanceStruct *chartInstance)
 {
 }
 
-static void c1_eps(SFc1_tenzo6dofInstanceStruct *chartInstance)
+static void c1_eps(SFc1_tenzo1_00InstanceStruct *chartInstance)
 {
 }
 
-static void c1_eml_int_forloop_overflow_check(SFc1_tenzo6dofInstanceStruct
+static void c1_eml_int_forloop_overflow_check(SFc1_tenzo1_00InstanceStruct
   *chartInstance)
 {
 }
 
-static void c1_matrix_to_integer_power(SFc1_tenzo6dofInstanceStruct
+static void c1_matrix_to_integer_power(SFc1_tenzo1_00InstanceStruct
   *chartInstance, real_T c1_c[16])
 {
   int32_T c1_i21;
@@ -2272,7 +2272,7 @@ static void c1_matrix_to_integer_power(SFc1_tenzo6dofInstanceStruct
   }
 }
 
-static void c1_invNxN(SFc1_tenzo6dofInstanceStruct *chartInstance, real_T c1_x
+static void c1_invNxN(SFc1_tenzo1_00InstanceStruct *chartInstance, real_T c1_x
                       [16], real_T c1_y[16])
 {
   int32_T c1_i41;
@@ -2373,7 +2373,7 @@ static void c1_invNxN(SFc1_tenzo6dofInstanceStruct *chartInstance, real_T c1_x
   c1_b_eml_xtrsm(chartInstance, c1_b_x, c1_y);
 }
 
-static void c1_eml_matlab_zgetrf(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static void c1_eml_matlab_zgetrf(SFc1_tenzo1_00InstanceStruct *chartInstance,
   real_T c1_A[16], real_T c1_b_A[16], int32_T c1_ipiv[4], int32_T *c1_info)
 {
   int32_T c1_i45;
@@ -2384,7 +2384,7 @@ static void c1_eml_matlab_zgetrf(SFc1_tenzo6dofInstanceStruct *chartInstance,
   c1_b_eml_matlab_zgetrf(chartInstance, c1_b_A, c1_ipiv, c1_info);
 }
 
-static void c1_b_eml_int_forloop_overflow_check(SFc1_tenzo6dofInstanceStruct
+static void c1_b_eml_int_forloop_overflow_check(SFc1_tenzo1_00InstanceStruct
   *chartInstance, int32_T c1_b)
 {
   int32_T c1_b_b;
@@ -2431,12 +2431,12 @@ static void c1_b_eml_int_forloop_overflow_check(SFc1_tenzo6dofInstanceStruct
   }
 }
 
-static void c1_c_eml_int_forloop_overflow_check(SFc1_tenzo6dofInstanceStruct
+static void c1_c_eml_int_forloop_overflow_check(SFc1_tenzo1_00InstanceStruct
   *chartInstance)
 {
 }
 
-static void c1_d_eml_int_forloop_overflow_check(SFc1_tenzo6dofInstanceStruct
+static void c1_d_eml_int_forloop_overflow_check(SFc1_tenzo1_00InstanceStruct
   *chartInstance, int32_T c1_a, int32_T c1_b)
 {
   int32_T c1_b_a;
@@ -2485,7 +2485,7 @@ static void c1_d_eml_int_forloop_overflow_check(SFc1_tenzo6dofInstanceStruct
   }
 }
 
-static void c1_eml_xgeru(SFc1_tenzo6dofInstanceStruct *chartInstance, int32_T
+static void c1_eml_xgeru(SFc1_tenzo1_00InstanceStruct *chartInstance, int32_T
   c1_m, int32_T c1_n, real_T c1_alpha1, int32_T c1_ix0, int32_T c1_iy0, real_T
   c1_A[16], int32_T c1_ia0, real_T c1_b_A[16])
 {
@@ -2498,7 +2498,7 @@ static void c1_eml_xgeru(SFc1_tenzo6dofInstanceStruct *chartInstance, int32_T
                  c1_ia0);
 }
 
-static void c1_eml_xtrsm(SFc1_tenzo6dofInstanceStruct *chartInstance, real_T
+static void c1_eml_xtrsm(SFc1_tenzo1_00InstanceStruct *chartInstance, real_T
   c1_A[16], real_T c1_B[16], real_T c1_b_B[16])
 {
   int32_T c1_i51;
@@ -2515,12 +2515,12 @@ static void c1_eml_xtrsm(SFc1_tenzo6dofInstanceStruct *chartInstance, real_T
   c1_b_eml_xtrsm(chartInstance, c1_b_A, c1_b_B);
 }
 
-static void c1_e_eml_int_forloop_overflow_check(SFc1_tenzo6dofInstanceStruct
+static void c1_e_eml_int_forloop_overflow_check(SFc1_tenzo1_00InstanceStruct
   *chartInstance)
 {
 }
 
-static real_T c1_norm(SFc1_tenzo6dofInstanceStruct *chartInstance, real_T c1_x
+static real_T c1_norm(SFc1_tenzo1_00InstanceStruct *chartInstance, real_T c1_x
                       [16])
 {
   real_T c1_y;
@@ -2568,7 +2568,7 @@ static real_T c1_norm(SFc1_tenzo6dofInstanceStruct *chartInstance, real_T c1_x
   return c1_y;
 }
 
-static void c1_eml_warning(SFc1_tenzo6dofInstanceStruct *chartInstance)
+static void c1_eml_warning(SFc1_tenzo1_00InstanceStruct *chartInstance)
 {
   int32_T c1_i53;
   static char_T c1_varargin_1[27] = { 'C', 'o', 'd', 'e', 'r', ':', 'M', 'A',
@@ -2587,7 +2587,7 @@ static void c1_eml_warning(SFc1_tenzo6dofInstanceStruct *chartInstance)
     14, c1_y));
 }
 
-static void c1_b_eml_warning(SFc1_tenzo6dofInstanceStruct *chartInstance, char_T
+static void c1_b_eml_warning(SFc1_tenzo1_00InstanceStruct *chartInstance, char_T
   c1_varargin_2[14])
 {
   int32_T c1_i54;
@@ -2617,11 +2617,11 @@ static void c1_b_eml_warning(SFc1_tenzo6dofInstanceStruct *chartInstance, char_T
     14, c1_y, 14, c1_b_y));
 }
 
-static void c1_c_eml_scalar_eg(SFc1_tenzo6dofInstanceStruct *chartInstance)
+static void c1_c_eml_scalar_eg(SFc1_tenzo1_00InstanceStruct *chartInstance)
 {
 }
 
-static void c1_d_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static void c1_d_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_sprintf, const char_T *c1_identifier, char_T c1_y[14])
 {
   emlrtMsgIdentifier c1_thisId;
@@ -2631,7 +2631,7 @@ static void c1_d_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
   sf_mex_destroy(&c1_sprintf);
 }
 
-static void c1_e_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static void c1_e_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_u, const emlrtMsgIdentifier *c1_parentId, char_T c1_y[14])
 {
   char_T c1_cv5[14];
@@ -2651,8 +2651,8 @@ static const mxArray *c1_d_sf_marshallOut(void *chartInstanceVoid, void
   const mxArray *c1_mxArrayOutData = NULL;
   int32_T c1_u;
   const mxArray *c1_y = NULL;
-  SFc1_tenzo6dofInstanceStruct *chartInstance;
-  chartInstance = (SFc1_tenzo6dofInstanceStruct *)chartInstanceVoid;
+  SFc1_tenzo1_00InstanceStruct *chartInstance;
+  chartInstance = (SFc1_tenzo1_00InstanceStruct *)chartInstanceVoid;
   c1_mxArrayOutData = NULL;
   c1_u = *(int32_T *)c1_inData;
   c1_y = NULL;
@@ -2661,7 +2661,7 @@ static const mxArray *c1_d_sf_marshallOut(void *chartInstanceVoid, void
   return c1_mxArrayOutData;
 }
 
-static int32_T c1_f_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static int32_T c1_f_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_u, const emlrtMsgIdentifier *c1_parentId)
 {
   int32_T c1_y;
@@ -2679,8 +2679,8 @@ static void c1_c_sf_marshallIn(void *chartInstanceVoid, const mxArray
   const char_T *c1_identifier;
   emlrtMsgIdentifier c1_thisId;
   int32_T c1_y;
-  SFc1_tenzo6dofInstanceStruct *chartInstance;
-  chartInstance = (SFc1_tenzo6dofInstanceStruct *)chartInstanceVoid;
+  SFc1_tenzo1_00InstanceStruct *chartInstance;
+  chartInstance = (SFc1_tenzo1_00InstanceStruct *)chartInstanceVoid;
   c1_b_sfEvent = sf_mex_dup(c1_mxArrayInData);
   c1_identifier = c1_varName;
   c1_thisId.fIdentifier = c1_identifier;
@@ -2692,20 +2692,20 @@ static void c1_c_sf_marshallIn(void *chartInstanceVoid, const mxArray
   sf_mex_destroy(&c1_mxArrayInData);
 }
 
-static uint8_T c1_g_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
-  const mxArray *c1_b_is_active_c1_tenzo6dof, const char_T *c1_identifier)
+static uint8_T c1_g_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
+  const mxArray *c1_b_is_active_c1_tenzo1_00, const char_T *c1_identifier)
 {
   uint8_T c1_y;
   emlrtMsgIdentifier c1_thisId;
   c1_thisId.fIdentifier = c1_identifier;
   c1_thisId.fParent = NULL;
   c1_y = c1_h_emlrt_marshallIn(chartInstance, sf_mex_dup
-    (c1_b_is_active_c1_tenzo6dof), &c1_thisId);
-  sf_mex_destroy(&c1_b_is_active_c1_tenzo6dof);
+    (c1_b_is_active_c1_tenzo1_00), &c1_thisId);
+  sf_mex_destroy(&c1_b_is_active_c1_tenzo1_00);
   return c1_y;
 }
 
-static uint8_T c1_h_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static uint8_T c1_h_emlrt_marshallIn(SFc1_tenzo1_00InstanceStruct *chartInstance,
   const mxArray *c1_u, const emlrtMsgIdentifier *c1_parentId)
 {
   uint8_T c1_y;
@@ -2716,7 +2716,7 @@ static uint8_T c1_h_emlrt_marshallIn(SFc1_tenzo6dofInstanceStruct *chartInstance
   return c1_y;
 }
 
-static void c1_b_eml_matlab_zgetrf(SFc1_tenzo6dofInstanceStruct *chartInstance,
+static void c1_b_eml_matlab_zgetrf(SFc1_tenzo1_00InstanceStruct *chartInstance,
   real_T c1_A[16], int32_T c1_ipiv[4], int32_T *c1_info)
 {
   int32_T c1_i58;
@@ -2953,7 +2953,7 @@ static void c1_b_eml_matlab_zgetrf(SFc1_tenzo6dofInstanceStruct *chartInstance,
   }
 }
 
-static void c1_b_eml_xgeru(SFc1_tenzo6dofInstanceStruct *chartInstance, int32_T
+static void c1_b_eml_xgeru(SFc1_tenzo1_00InstanceStruct *chartInstance, int32_T
   c1_m, int32_T c1_n, real_T c1_alpha1, int32_T c1_ix0, int32_T c1_iy0, real_T
   c1_A[16], int32_T c1_ia0)
 {
@@ -3065,7 +3065,7 @@ static void c1_b_eml_xgeru(SFc1_tenzo6dofInstanceStruct *chartInstance, int32_T
   }
 }
 
-static void c1_b_eml_xtrsm(SFc1_tenzo6dofInstanceStruct *chartInstance, real_T
+static void c1_b_eml_xtrsm(SFc1_tenzo1_00InstanceStruct *chartInstance, real_T
   c1_A[16], real_T c1_B[16])
 {
   int32_T c1_j;
@@ -3185,12 +3185,12 @@ static void c1_b_eml_xtrsm(SFc1_tenzo6dofInstanceStruct *chartInstance, real_T
   }
 }
 
-static void init_dsm_address_info(SFc1_tenzo6dofInstanceStruct *chartInstance)
+static void init_dsm_address_info(SFc1_tenzo1_00InstanceStruct *chartInstance)
 {
 }
 
 /* SFunction Glue Code */
-void sf_c1_tenzo6dof_get_check_sum(mxArray *plhs[])
+void sf_c1_tenzo1_00_get_check_sum(mxArray *plhs[])
 {
   ((real_T *)mxGetPr((plhs[0])))[0] = (real_T)(282576269U);
   ((real_T *)mxGetPr((plhs[0])))[1] = (real_T)(849168224U);
@@ -3198,7 +3198,7 @@ void sf_c1_tenzo6dof_get_check_sum(mxArray *plhs[])
   ((real_T *)mxGetPr((plhs[0])))[3] = (real_T)(1383769892U);
 }
 
-mxArray *sf_c1_tenzo6dof_get_autoinheritance_info(void)
+mxArray *sf_c1_tenzo1_00_get_autoinheritance_info(void)
 {
   const char *autoinheritanceFields[] = { "checksum", "inputs", "parameters",
     "outputs", "locals" };
@@ -3389,18 +3389,18 @@ mxArray *sf_c1_tenzo6dof_get_autoinheritance_info(void)
   return(mxAutoinheritanceInfo);
 }
 
-static const mxArray *sf_get_sim_state_info_c1_tenzo6dof(void)
+static const mxArray *sf_get_sim_state_info_c1_tenzo1_00(void)
 {
   const char *infoFields[] = { "chartChecksum", "varInfo" };
 
   mxArray *mxInfo = mxCreateStructMatrix(1, 1, 2, infoFields);
   const char *infoEncStr[] = {
-    "100 S1x5'type','srcId','name','auxInfo'{{M[1],M[5],T\"w1\",},{M[1],M[9],T\"w2\",},{M[1],M[10],T\"w3\",},{M[1],M[11],T\"w4\",},{M[8],M[0],T\"is_active_c1_tenzo6dof\",}}"
+    "100 S1x5'type','srcId','name','auxInfo'{{M[1],M[5],T\"w1\",},{M[1],M[9],T\"w2\",},{M[1],M[10],T\"w3\",},{M[1],M[11],T\"w4\",},{M[8],M[0],T\"is_active_c1_tenzo1_00\",}}"
   };
 
   mxArray *mxVarInfo = sf_mex_decode_encoded_mx_struct_array(infoEncStr, 5, 10);
   mxArray *mxChecksum = mxCreateDoubleMatrix(1, 4, mxREAL);
-  sf_c1_tenzo6dof_get_check_sum(&mxChecksum);
+  sf_c1_tenzo1_00_get_check_sum(&mxChecksum);
   mxSetField(mxInfo, 0, infoFields[0], mxChecksum);
   mxSetField(mxInfo, 0, infoFields[1], mxVarInfo);
   return mxInfo;
@@ -3410,14 +3410,14 @@ static void chart_debug_initialization(SimStruct *S, unsigned int
   fullDebuggerInitialization)
 {
   if (!sim_mode_is_rtw_gen(S)) {
-    SFc1_tenzo6dofInstanceStruct *chartInstance;
-    chartInstance = (SFc1_tenzo6dofInstanceStruct *) ((ChartInfoStruct *)
+    SFc1_tenzo1_00InstanceStruct *chartInstance;
+    chartInstance = (SFc1_tenzo1_00InstanceStruct *) ((ChartInfoStruct *)
       (ssGetUserData(S)))->chartInstance;
     if (ssIsFirstInitCond(S) && fullDebuggerInitialization==1) {
       /* do this only if simulation is starting */
       {
         unsigned int chartAlreadyPresent;
-        chartAlreadyPresent = sf_debug_initialize_chart(_tenzo6dofMachineNumber_,
+        chartAlreadyPresent = sf_debug_initialize_chart(_tenzo1_00MachineNumber_,
           1,
           1,
           1,
@@ -3433,11 +3433,11 @@ static void chart_debug_initialization(SimStruct *S, unsigned int
           (void *)S);
         if (chartAlreadyPresent==0) {
           /* this is the first instance */
-          init_script_number_translation(_tenzo6dofMachineNumber_,
+          init_script_number_translation(_tenzo1_00MachineNumber_,
             chartInstance->chartNumber);
-          sf_debug_set_chart_disable_implicit_casting(_tenzo6dofMachineNumber_,
+          sf_debug_set_chart_disable_implicit_casting(_tenzo1_00MachineNumber_,
             chartInstance->chartNumber,1);
-          sf_debug_set_chart_event_thresholds(_tenzo6dofMachineNumber_,
+          sf_debug_set_chart_event_thresholds(_tenzo1_00MachineNumber_,
             chartInstance->chartNumber,
             0,
             0,
@@ -3520,7 +3520,7 @@ static void chart_debug_initialization(SimStruct *S, unsigned int
         }
       }
     } else {
-      sf_debug_reset_current_state_configuration(_tenzo6dofMachineNumber_,
+      sf_debug_reset_current_state_configuration(_tenzo1_00MachineNumber_,
         chartInstance->chartNumber,chartInstance->instanceNumber);
     }
   }
@@ -3531,31 +3531,31 @@ static const char* sf_get_instance_specialization()
   return "CW02MH7MDNL8ZOBTOWfnVG";
 }
 
-static void sf_opaque_initialize_c1_tenzo6dof(void *chartInstanceVar)
+static void sf_opaque_initialize_c1_tenzo1_00(void *chartInstanceVar)
 {
-  chart_debug_initialization(((SFc1_tenzo6dofInstanceStruct*) chartInstanceVar
+  chart_debug_initialization(((SFc1_tenzo1_00InstanceStruct*) chartInstanceVar
     )->S,0);
-  initialize_params_c1_tenzo6dof((SFc1_tenzo6dofInstanceStruct*)
+  initialize_params_c1_tenzo1_00((SFc1_tenzo1_00InstanceStruct*)
     chartInstanceVar);
-  initialize_c1_tenzo6dof((SFc1_tenzo6dofInstanceStruct*) chartInstanceVar);
+  initialize_c1_tenzo1_00((SFc1_tenzo1_00InstanceStruct*) chartInstanceVar);
 }
 
-static void sf_opaque_enable_c1_tenzo6dof(void *chartInstanceVar)
+static void sf_opaque_enable_c1_tenzo1_00(void *chartInstanceVar)
 {
-  enable_c1_tenzo6dof((SFc1_tenzo6dofInstanceStruct*) chartInstanceVar);
+  enable_c1_tenzo1_00((SFc1_tenzo1_00InstanceStruct*) chartInstanceVar);
 }
 
-static void sf_opaque_disable_c1_tenzo6dof(void *chartInstanceVar)
+static void sf_opaque_disable_c1_tenzo1_00(void *chartInstanceVar)
 {
-  disable_c1_tenzo6dof((SFc1_tenzo6dofInstanceStruct*) chartInstanceVar);
+  disable_c1_tenzo1_00((SFc1_tenzo1_00InstanceStruct*) chartInstanceVar);
 }
 
-static void sf_opaque_gateway_c1_tenzo6dof(void *chartInstanceVar)
+static void sf_opaque_gateway_c1_tenzo1_00(void *chartInstanceVar)
 {
-  sf_c1_tenzo6dof((SFc1_tenzo6dofInstanceStruct*) chartInstanceVar);
+  sf_c1_tenzo1_00((SFc1_tenzo1_00InstanceStruct*) chartInstanceVar);
 }
 
-extern const mxArray* sf_internal_get_sim_state_c1_tenzo6dof(SimStruct* S)
+extern const mxArray* sf_internal_get_sim_state_c1_tenzo1_00(SimStruct* S)
 {
   ChartInfoStruct *chartInfo = (ChartInfoStruct*) ssGetUserData(S);
   mxArray *plhs[1] = { NULL };
@@ -3564,9 +3564,9 @@ extern const mxArray* sf_internal_get_sim_state_c1_tenzo6dof(SimStruct* S)
   int mxError = 0;
   prhs[0] = mxCreateString("chart_simctx_raw2high");
   prhs[1] = mxCreateDoubleScalar(ssGetSFuncBlockHandle(S));
-  prhs[2] = (mxArray*) get_sim_state_c1_tenzo6dof((SFc1_tenzo6dofInstanceStruct*)
+  prhs[2] = (mxArray*) get_sim_state_c1_tenzo1_00((SFc1_tenzo1_00InstanceStruct*)
     chartInfo->chartInstance);         /* raw sim ctx */
-  prhs[3] = (mxArray*) sf_get_sim_state_info_c1_tenzo6dof();/* state var info */
+  prhs[3] = (mxArray*) sf_get_sim_state_info_c1_tenzo1_00();/* state var info */
   mxError = sf_mex_call_matlab(1, plhs, 4, prhs, "sfprivate");
   mxDestroyArray(prhs[0]);
   mxDestroyArray(prhs[1]);
@@ -3579,7 +3579,7 @@ extern const mxArray* sf_internal_get_sim_state_c1_tenzo6dof(SimStruct* S)
   return plhs[0];
 }
 
-extern void sf_internal_set_sim_state_c1_tenzo6dof(SimStruct* S, const mxArray
+extern void sf_internal_set_sim_state_c1_tenzo1_00(SimStruct* S, const mxArray
   *st)
 {
   ChartInfoStruct *chartInfo = (ChartInfoStruct*) ssGetUserData(S);
@@ -3590,7 +3590,7 @@ extern void sf_internal_set_sim_state_c1_tenzo6dof(SimStruct* S, const mxArray
   prhs[0] = mxCreateString("chart_simctx_high2raw");
   prhs[1] = mxCreateDoubleScalar(ssGetSFuncBlockHandle(S));
   prhs[2] = mxDuplicateArray(st);      /* high level simctx */
-  prhs[3] = (mxArray*) sf_get_sim_state_info_c1_tenzo6dof();/* state var info */
+  prhs[3] = (mxArray*) sf_get_sim_state_info_c1_tenzo1_00();/* state var info */
   mxError = sf_mex_call_matlab(1, plhs, 4, prhs, "sfprivate");
   mxDestroyArray(prhs[0]);
   mxDestroyArray(prhs[1]);
@@ -3600,44 +3600,44 @@ extern void sf_internal_set_sim_state_c1_tenzo6dof(SimStruct* S, const mxArray
     sf_mex_error_message("Stateflow Internal Error: \nError calling 'chart_simctx_high2raw'.\n");
   }
 
-  set_sim_state_c1_tenzo6dof((SFc1_tenzo6dofInstanceStruct*)
+  set_sim_state_c1_tenzo1_00((SFc1_tenzo1_00InstanceStruct*)
     chartInfo->chartInstance, mxDuplicateArray(plhs[0]));
   mxDestroyArray(plhs[0]);
 }
 
-static const mxArray* sf_opaque_get_sim_state_c1_tenzo6dof(SimStruct* S)
+static const mxArray* sf_opaque_get_sim_state_c1_tenzo1_00(SimStruct* S)
 {
-  return sf_internal_get_sim_state_c1_tenzo6dof(S);
+  return sf_internal_get_sim_state_c1_tenzo1_00(S);
 }
 
-static void sf_opaque_set_sim_state_c1_tenzo6dof(SimStruct* S, const mxArray *st)
+static void sf_opaque_set_sim_state_c1_tenzo1_00(SimStruct* S, const mxArray *st)
 {
-  sf_internal_set_sim_state_c1_tenzo6dof(S, st);
+  sf_internal_set_sim_state_c1_tenzo1_00(S, st);
 }
 
-static void sf_opaque_terminate_c1_tenzo6dof(void *chartInstanceVar)
+static void sf_opaque_terminate_c1_tenzo1_00(void *chartInstanceVar)
 {
   if (chartInstanceVar!=NULL) {
-    SimStruct *S = ((SFc1_tenzo6dofInstanceStruct*) chartInstanceVar)->S;
+    SimStruct *S = ((SFc1_tenzo1_00InstanceStruct*) chartInstanceVar)->S;
     if (sim_mode_is_rtw_gen(S) || sim_mode_is_external(S)) {
       sf_clear_rtw_identifier(S);
     }
 
-    finalize_c1_tenzo6dof((SFc1_tenzo6dofInstanceStruct*) chartInstanceVar);
+    finalize_c1_tenzo1_00((SFc1_tenzo1_00InstanceStruct*) chartInstanceVar);
     free((void *)chartInstanceVar);
     ssSetUserData(S,NULL);
   }
 
-  unload_tenzo6dof_optimization_info();
+  unload_tenzo1_00_optimization_info();
 }
 
 static void sf_opaque_init_subchart_simstructs(void *chartInstanceVar)
 {
-  initSimStructsc1_tenzo6dof((SFc1_tenzo6dofInstanceStruct*) chartInstanceVar);
+  initSimStructsc1_tenzo1_00((SFc1_tenzo1_00InstanceStruct*) chartInstanceVar);
 }
 
 extern unsigned int sf_machine_global_initializer_called(void);
-static void mdlProcessParameters_c1_tenzo6dof(SimStruct *S)
+static void mdlProcessParameters_c1_tenzo1_00(SimStruct *S)
 {
   int i;
   for (i=0;i<ssGetNumRunTimeParams(S);i++) {
@@ -3647,15 +3647,15 @@ static void mdlProcessParameters_c1_tenzo6dof(SimStruct *S)
   }
 
   if (sf_machine_global_initializer_called()) {
-    initialize_params_c1_tenzo6dof((SFc1_tenzo6dofInstanceStruct*)
+    initialize_params_c1_tenzo1_00((SFc1_tenzo1_00InstanceStruct*)
       (((ChartInfoStruct *)ssGetUserData(S))->chartInstance));
   }
 }
 
-static void mdlSetWorkWidths_c1_tenzo6dof(SimStruct *S)
+static void mdlSetWorkWidths_c1_tenzo1_00(SimStruct *S)
 {
   if (sim_mode_is_rtw_gen(S) || sim_mode_is_external(S)) {
-    mxArray *infoStruct = load_tenzo6dof_optimization_info();
+    mxArray *infoStruct = load_tenzo1_00_optimization_info();
     int_T chartIsInlinable =
       (int_T)sf_is_chart_inlinable(S,sf_get_instance_specialization(),infoStruct,
       1);
@@ -3692,19 +3692,19 @@ static void mdlSetWorkWidths_c1_tenzo6dof(SimStruct *S)
   ssSetExplicitFCSSCtrl(S,1);
 }
 
-static void mdlRTW_c1_tenzo6dof(SimStruct *S)
+static void mdlRTW_c1_tenzo1_00(SimStruct *S)
 {
   if (sim_mode_is_rtw_gen(S)) {
     ssWriteRTWStrParam(S, "StateflowChartType", "Embedded MATLAB");
   }
 }
 
-static void mdlStart_c1_tenzo6dof(SimStruct *S)
+static void mdlStart_c1_tenzo1_00(SimStruct *S)
 {
-  SFc1_tenzo6dofInstanceStruct *chartInstance;
-  chartInstance = (SFc1_tenzo6dofInstanceStruct *)malloc(sizeof
-    (SFc1_tenzo6dofInstanceStruct));
-  memset(chartInstance, 0, sizeof(SFc1_tenzo6dofInstanceStruct));
+  SFc1_tenzo1_00InstanceStruct *chartInstance;
+  chartInstance = (SFc1_tenzo1_00InstanceStruct *)malloc(sizeof
+    (SFc1_tenzo1_00InstanceStruct));
+  memset(chartInstance, 0, sizeof(SFc1_tenzo1_00InstanceStruct));
   if (chartInstance==NULL) {
     sf_mex_error_message("Could not allocate memory for chart instance.");
   }
@@ -3712,20 +3712,20 @@ static void mdlStart_c1_tenzo6dof(SimStruct *S)
   chartInstance->chartInfo.chartInstance = chartInstance;
   chartInstance->chartInfo.isEMLChart = 1;
   chartInstance->chartInfo.chartInitialized = 0;
-  chartInstance->chartInfo.sFunctionGateway = sf_opaque_gateway_c1_tenzo6dof;
-  chartInstance->chartInfo.initializeChart = sf_opaque_initialize_c1_tenzo6dof;
-  chartInstance->chartInfo.terminateChart = sf_opaque_terminate_c1_tenzo6dof;
-  chartInstance->chartInfo.enableChart = sf_opaque_enable_c1_tenzo6dof;
-  chartInstance->chartInfo.disableChart = sf_opaque_disable_c1_tenzo6dof;
-  chartInstance->chartInfo.getSimState = sf_opaque_get_sim_state_c1_tenzo6dof;
-  chartInstance->chartInfo.setSimState = sf_opaque_set_sim_state_c1_tenzo6dof;
-  chartInstance->chartInfo.getSimStateInfo = sf_get_sim_state_info_c1_tenzo6dof;
+  chartInstance->chartInfo.sFunctionGateway = sf_opaque_gateway_c1_tenzo1_00;
+  chartInstance->chartInfo.initializeChart = sf_opaque_initialize_c1_tenzo1_00;
+  chartInstance->chartInfo.terminateChart = sf_opaque_terminate_c1_tenzo1_00;
+  chartInstance->chartInfo.enableChart = sf_opaque_enable_c1_tenzo1_00;
+  chartInstance->chartInfo.disableChart = sf_opaque_disable_c1_tenzo1_00;
+  chartInstance->chartInfo.getSimState = sf_opaque_get_sim_state_c1_tenzo1_00;
+  chartInstance->chartInfo.setSimState = sf_opaque_set_sim_state_c1_tenzo1_00;
+  chartInstance->chartInfo.getSimStateInfo = sf_get_sim_state_info_c1_tenzo1_00;
   chartInstance->chartInfo.zeroCrossings = NULL;
   chartInstance->chartInfo.outputs = NULL;
   chartInstance->chartInfo.derivatives = NULL;
-  chartInstance->chartInfo.mdlRTW = mdlRTW_c1_tenzo6dof;
-  chartInstance->chartInfo.mdlStart = mdlStart_c1_tenzo6dof;
-  chartInstance->chartInfo.mdlSetWorkWidths = mdlSetWorkWidths_c1_tenzo6dof;
+  chartInstance->chartInfo.mdlRTW = mdlRTW_c1_tenzo1_00;
+  chartInstance->chartInfo.mdlStart = mdlStart_c1_tenzo1_00;
+  chartInstance->chartInfo.mdlSetWorkWidths = mdlSetWorkWidths_c1_tenzo1_00;
   chartInstance->chartInfo.extModeExec = NULL;
   chartInstance->chartInfo.restoreLastMajorStepConfiguration = NULL;
   chartInstance->chartInfo.restoreBeforeLastMajorStepConfiguration = NULL;
@@ -3740,25 +3740,25 @@ static void mdlStart_c1_tenzo6dof(SimStruct *S)
   chart_debug_initialization(S,1);
 }
 
-void c1_tenzo6dof_method_dispatcher(SimStruct *S, int_T method, void *data)
+void c1_tenzo1_00_method_dispatcher(SimStruct *S, int_T method, void *data)
 {
   switch (method) {
    case SS_CALL_MDL_START:
-    mdlStart_c1_tenzo6dof(S);
+    mdlStart_c1_tenzo1_00(S);
     break;
 
    case SS_CALL_MDL_SET_WORK_WIDTHS:
-    mdlSetWorkWidths_c1_tenzo6dof(S);
+    mdlSetWorkWidths_c1_tenzo1_00(S);
     break;
 
    case SS_CALL_MDL_PROCESS_PARAMETERS:
-    mdlProcessParameters_c1_tenzo6dof(S);
+    mdlProcessParameters_c1_tenzo1_00(S);
     break;
 
    default:
     /* Unhandled method */
     sf_mex_error_message("Stateflow Internal Error:\n"
-                         "Error calling c1_tenzo6dof_method_dispatcher.\n"
+                         "Error calling c1_tenzo1_00_method_dispatcher.\n"
                          "Can't handle method %d.\n", method);
     break;
   }

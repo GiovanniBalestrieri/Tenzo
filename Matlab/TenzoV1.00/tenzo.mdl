@@ -6,11 +6,11 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.330"
+    ComputedModelVersion    "1.331"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
-  SavedCharacterEncoding  "windows-1252"
+  SavedCharacterEncoding  "UTF-8"
   slprops.hdlmdlprops {
     $PropName		    "HDLParams"
     $ObjectID		    1
@@ -36,11 +36,11 @@ Model {
   Creator		  "userk"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "UserK"
+  LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Sep 02 01:11:34 2014"
-  RTWModifiedTimeStamp	  331503080
-  ModelVersionFormat	  "1.%<AutoIncrement:330>"
+  LastModifiedDate	  "Tue Jan 06 15:49:14 2015"
+  RTWModifiedTimeStamp	  342394409
+  ModelVersionFormat	  "1.%<AutoIncrement:331>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,7 +78,6 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "tenzo6dof"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -961,7 +960,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "652"
+    SIDHighWatermark	    "656"
     Block {
       BlockType		      Concatenate
       Name		      " "
@@ -7704,8 +7703,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @       #@22ND0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (        (  <K$ .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @         @ ((0 X    X    !@    @    &          4    (     0    $    "
+    "!          D    (          ;0=$ .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0
@@ -7823,7 +7822,7 @@ MatData {
 }
 # Finite State Machines
 #
-#    Stateflow Version 7.6 (R2011b) dated Jan 25 2012, 21:03:37
+#    Stateflow Version 7.6 (R2011b) dated Jan 25 2012, 12:15:34
 #
 #
 

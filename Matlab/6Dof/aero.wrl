@@ -1,8 +1,29 @@
 #VRML V2.0 utf8
 
+EXTERNPROTO Marker_Tetrahedron [
+  exposedField SFVec3f markerScale
+  exposedField SFColor markerColor
+  exposedField SFVec3f markerTranslation
+]
+"/home/userk/Programs/Matlab/toolbox/sl3d/sl3d/vr_markers.wrl#Marker_Tetrahedron" 
+
+EXTERNPROTO MarkerLine [
+  exposedField MFVec3f markerPoint
+  exposedField SFColor markerColor
+  exposedField SFVec3f markerTranslation
+]
+"/home/userk/Programs/Matlab/toolbox/sl3d/sl3d/vr_markers.wrl#MarkerLine" 
+
+EXTERNPROTO MarkerTriad [
+  exposedField SFVec3f markerScale
+  exposedField SFVec3f markerTranslation
+]
+"/home/userk/Programs/Matlab/toolbox/sl3d/sl3d/vr_markers.wrl#MarkerTriad" 
+
 DEF Lin Transform {
+  translation -9.20789e-06 30 7.989e-06
   scale 0.4 0.4 0.4
-  rotation 0 0 0 0
+  rotation 0.0645913 0.188698 0.979909 9.63383e-05
   center 10 10 30
   children [
     Transform {
@@ -146,8 +167,9 @@ DEF Lin Transform {
   ]
 }
 DEF NonLin Transform {
+  translation -10.0641 28.5766 -2.54449
   scale 0.1 0.1 0.1
-  rotation 0 0 0 0
+  rotation -0.738045 0.674751 -0.000756 0.00103856
   center 0 5 0
   children [
     Transform {
@@ -405,11 +427,991 @@ DEF B1 Transform {
     }
   }
 }
-DEF A Viewpoint {
-  description ""
-  position 40 25 10
-  orientation 0 1 1 0
+DEF Marker_Tetrahedron_40B3E50048000000_617 Marker_Tetrahedron {
+  markerTranslation 0 -0 0
 }
-DEF B Viewpoint {
-  description ""
+DEF ProjectionLine_40B3E50048000000_617 MarkerLine {
+  markerPoint [0 -0 0, 0 -0 0 ]
+}
+DEF MarkerTriad_40B3E50048000000_617 MarkerTriad {
+  markerTranslation 0 -0 0
+}
+DEF Marker_Tetrahedron_40B3E50048000000_618 Marker_Tetrahedron {
+  markerTranslation 0.0268995 9.85068 6.12386e-05
+}
+DEF MarkerLine_40B3E50048000000_618 MarkerLine {
+  markerPoint [0 -0 0, 0.0268995 9.85068 6.12386e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_618 MarkerLine {
+  markerPoint [0.0268995 0 6.12386e-05, 0.0268995 9.85068 6.12386e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_618 MarkerTriad {
+  markerTranslation 0.0268995 9.85068 6.12386e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_619 Marker_Tetrahedron {
+  markerTranslation 0.0102058 22.681 3.31401e-05
+}
+DEF MarkerLine_40B3E50048000000_619 MarkerLine {
+  markerPoint [0.0268995 9.85068 6.12386e-05, 0.0102058 22.681 3.31401e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_619 MarkerLine {
+  markerPoint [0.0102058 0 3.31401e-05, 0.0102058 22.681 3.31401e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_619 MarkerTriad {
+  markerTranslation 0.0102058 22.681 3.31401e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_620 Marker_Tetrahedron {
+  markerTranslation 0.00598485 29.4319 2.27675e-05
+}
+DEF MarkerLine_40B3E50048000000_620 MarkerLine {
+  markerPoint [0.0102058 22.681 3.31401e-05, 0.00598485 29.4319 2.27675e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_620 MarkerLine {
+  markerPoint [0.00598485 0 2.27675e-05, 0.00598485 29.4319 2.27675e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_620 MarkerTriad {
+  markerTranslation 0.00598485 29.4319 2.27675e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_621 Marker_Tetrahedron {
+  markerTranslation 0.00362216 31.2562 1.54321e-05
+}
+DEF MarkerLine_40B3E50048000000_621 MarkerLine {
+  markerPoint [0.00598485 29.4319 2.27675e-05, 0.00362216 31.2562 1.54321e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_621 MarkerLine {
+  markerPoint [0.00362216 0 1.54321e-05, 0.00362216 31.2562 1.54321e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_621 MarkerTriad {
+  markerTranslation 0.00362216 31.2562 1.54321e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_622 Marker_Tetrahedron {
+  markerTranslation 0.00219609 31.0073 1.00325e-05
+}
+DEF MarkerLine_40B3E50048000000_622 MarkerLine {
+  markerPoint [0.00362216 31.2562 1.54321e-05, 0.00219609 31.0073 1.00325e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_622 MarkerLine {
+  markerPoint [0.00219609 0 1.00325e-05, 0.00219609 31.0073 1.00325e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_622 MarkerTriad {
+  markerTranslation 0.00219609 31.0073 1.00325e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_623 Marker_Tetrahedron {
+  markerTranslation 0.00133194 30.4209 6.13694e-06
+}
+DEF MarkerLine_40B3E50048000000_623 MarkerLine {
+  markerPoint [0.00219609 31.0073 1.00325e-05, 0.00133194 30.4209 6.13694e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_623 MarkerLine {
+  markerPoint [0.00133194 0 6.13694e-06, 0.00133194 30.4209 6.13694e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_623 MarkerTriad {
+  markerTranslation 0.00133194 30.4209 6.13694e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_624 Marker_Tetrahedron {
+  markerTranslation 0.000808177 30.0669 3.40327e-06
+}
+DEF MarkerLine_40B3E50048000000_624 MarkerLine {
+  markerPoint [0.00133194 30.4209 6.13694e-06, 0.000808177 30.0669 3.40327e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_624 MarkerLine {
+  markerPoint [0.000808177 0 3.40327e-06, 0.000808177 30.0669 3.40327e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_624 MarkerTriad {
+  markerTranslation 0.000808177 30.0669 3.40327e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_625 Marker_Tetrahedron {
+  markerTranslation 0.000490697 29.9517 1.54984e-06
+}
+DEF MarkerLine_40B3E50048000000_625 MarkerLine {
+  markerPoint [0.000808177 30.0669 3.40327e-06, 0.000490697 29.9517 1.54984e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_625 MarkerLine {
+  markerPoint [0.000490697 0 1.54984e-06, 0.000490697 29.9517 1.54984e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_625 MarkerTriad {
+  markerTranslation 0.000490697 29.9517 1.54984e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_626 Marker_Tetrahedron {
+  markerTranslation 0.00234181 29.9511 4.02524e-06
+}
+DEF MarkerLine_40B3E50048000000_626 MarkerLine {
+  markerPoint [0.000490697 29.9517 1.54984e-06, 0.00234181 29.9511 4.02524e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_626 MarkerLine {
+  markerPoint [0.00234181 0 4.02524e-06, 0.00234181 29.9511 4.02524e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_626 MarkerTriad {
+  markerTranslation 0.00234181 29.9511 4.02524e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_627 Marker_Tetrahedron {
+  markerTranslation 0.00014191 29.9767 -1.48814e-06
+}
+DEF MarkerLine_40B3E50048000000_627 MarkerLine {
+  markerPoint [0.00234181 29.9511 4.02524e-06, 0.00014191 29.9767 -1.48814e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_627 MarkerLine {
+  markerPoint [0.00014191 0 -1.48814e-06, 0.00014191 29.9767 -1.48814e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_627 MarkerTriad {
+  markerTranslation 0.00014191 29.9767 -1.48814e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_628 Marker_Tetrahedron {
+  markerTranslation 7.26868e-05 29.9947 -1.74199e-06
+}
+DEF MarkerLine_40B3E50048000000_628 MarkerLine {
+  markerPoint [0.00014191 29.9767 -1.48814e-06, 7.26868e-05 29.9947 -1.74199e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_628 MarkerLine {
+  markerPoint [7.26868e-05 0 -1.74199e-06, 7.26868e-05 29.9947 -1.74199e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_628 MarkerTriad {
+  markerTranslation 7.26868e-05 29.9947 -1.74199e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_629 Marker_Tetrahedron {
+  markerTranslation 4.45502e-05 30.0016 -1.66784e-06
+}
+DEF MarkerLine_40B3E50048000000_629 MarkerLine {
+  markerPoint [7.26868e-05 29.9947 -1.74199e-06, 4.45502e-05 30.0016 -1.66784e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_629 MarkerLine {
+  markerPoint [4.45502e-05 0 -1.66784e-06, 4.45502e-05 30.0016 -1.66784e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_629 MarkerTriad {
+  markerTranslation 4.45502e-05 30.0016 -1.66784e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_630 Marker_Tetrahedron {
+  markerTranslation 2.75107e-05 30.0023 -1.49745e-06
+}
+DEF MarkerLine_40B3E50048000000_630 MarkerLine {
+  markerPoint [4.45502e-05 30.0016 -1.66784e-06, 2.75107e-05 30.0023 -1.49745e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_630 MarkerLine {
+  markerPoint [2.75107e-05 0 -1.49745e-06, 2.75107e-05 30.0023 -1.49745e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_630 MarkerTriad {
+  markerTranslation 2.75107e-05 30.0023 -1.49745e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_631 Marker_Tetrahedron {
+  markerTranslation 1.70642e-05 30.0012 -1.28601e-06
+}
+DEF MarkerLine_40B3E50048000000_631 MarkerLine {
+  markerPoint [2.75107e-05 30.0023 -1.49745e-06, 1.70642e-05 30.0012 -1.28601e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_631 MarkerLine {
+  markerPoint [1.70642e-05 0 -1.28601e-06, 1.70642e-05 30.0012 -1.28601e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_631 MarkerTriad {
+  markerTranslation 1.70642e-05 30.0012 -1.28601e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_632 Marker_Tetrahedron {
+  markerTranslation 1.06358e-05 30.0004 -1.06589e-06
+}
+DEF MarkerLine_40B3E50048000000_632 MarkerLine {
+  markerPoint [1.70642e-05 30.0012 -1.28601e-06, 1.06358e-05 30.0004 -1.06589e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_632 MarkerLine {
+  markerPoint [1.06358e-05 0 -1.06589e-06, 1.06358e-05 30.0004 -1.06589e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_632 MarkerTriad {
+  markerTranslation 1.06358e-05 30.0004 -1.06589e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_633 Marker_Tetrahedron {
+  markerTranslation 6.66129e-06 30 -8.5685e-07
+}
+DEF MarkerLine_40B3E50048000000_633 MarkerLine {
+  markerPoint [1.06358e-05 30.0004 -1.06589e-06, 6.66129e-06 30 -8.5685e-07 ]
+}
+DEF ProjectionLine_40B3E50048000000_633 MarkerLine {
+  markerPoint [6.66129e-06 0 -8.5685e-07, 6.66129e-06 30 -8.5685e-07 ]
+}
+DEF MarkerTriad_40B3E50048000000_633 MarkerTriad {
+  markerTranslation 6.66129e-06 30 -8.5685e-07
+}
+DEF Marker_Tetrahedron_40B3E50048000000_634 Marker_Tetrahedron {
+  markerTranslation 4.19037e-06 29.9999 -6.69803e-07
+}
+DEF MarkerLine_40B3E50048000000_634 MarkerLine {
+  markerPoint [6.66129e-06 30 -8.5685e-07, 4.19037e-06 29.9999 -6.69803e-07 ]
+}
+DEF ProjectionLine_40B3E50048000000_634 MarkerLine {
+  markerPoint [4.19037e-06 0 -6.69803e-07, 4.19037e-06 29.9999 -6.69803e-07 ]
+}
+DEF MarkerTriad_40B3E50048000000_634 MarkerTriad {
+  markerTranslation 4.19037e-06 29.9999 -6.69803e-07
+}
+DEF Marker_Tetrahedron_40B3E50048000000_635 Marker_Tetrahedron {
+  markerTranslation -3.94981e-06 29.9999 -0.000478165
+}
+DEF MarkerLine_40B3E50048000000_635 MarkerLine {
+  markerPoint [4.19037e-06 29.9999 -6.69803e-07, -3.94981e-06 29.9999 -0.000478165 ]
+}
+DEF ProjectionLine_40B3E50048000000_635 MarkerLine {
+  markerPoint [-3.94981e-06 0 -0.000478165, -3.94981e-06 29.9999 -0.000478165 ]
+}
+DEF MarkerTriad_40B3E50048000000_635 MarkerTriad {
+  markerTranslation -3.94981e-06 29.9999 -0.000478165
+}
+DEF Marker_Tetrahedron_40B3E50048000000_636 Marker_Tetrahedron {
+  markerTranslation 3.29894e-06 30 0.000230543
+}
+DEF MarkerLine_40B3E50048000000_636 MarkerLine {
+  markerPoint [-3.94981e-06 29.9999 -0.000478165, 3.29894e-06 30 0.000230543 ]
+}
+DEF ProjectionLine_40B3E50048000000_636 MarkerLine {
+  markerPoint [3.29894e-06 0 0.000230543, 3.29894e-06 30 0.000230543 ]
+}
+DEF MarkerTriad_40B3E50048000000_636 MarkerTriad {
+  markerTranslation 3.29894e-06 30 0.000230543
+}
+DEF Marker_Tetrahedron_40B3E50048000000_637 Marker_Tetrahedron {
+  markerTranslation 2.27751e-06 30 5.45765e-05
+}
+DEF MarkerLine_40B3E50048000000_637 MarkerLine {
+  markerPoint [3.29894e-06 30 0.000230543, 2.27751e-06 30 5.45765e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_637 MarkerLine {
+  markerPoint [2.27751e-06 0 5.45765e-05, 2.27751e-06 30 5.45765e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_637 MarkerTriad {
+  markerTranslation 2.27751e-06 30 5.45765e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_638 Marker_Tetrahedron {
+  markerTranslation 1.56219e-06 30 3.00758e-05
+}
+DEF MarkerLine_40B3E50048000000_638 MarkerLine {
+  markerPoint [2.27751e-06 30 5.45765e-05, 1.56219e-06 30 3.00758e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_638 MarkerLine {
+  markerPoint [1.56219e-06 0 3.00758e-05, 1.56219e-06 30 3.00758e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_638 MarkerTriad {
+  markerTranslation 1.56219e-06 30 3.00758e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_639 Marker_Tetrahedron {
+  markerTranslation 1.05937e-06 30 1.80421e-05
+}
+DEF MarkerLine_40B3E50048000000_639 MarkerLine {
+  markerPoint [1.56219e-06 30 3.00758e-05, 1.05937e-06 30 1.80421e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_639 MarkerLine {
+  markerPoint [1.05937e-06 0 1.80421e-05, 1.05937e-06 30 1.80421e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_639 MarkerTriad {
+  markerTranslation 1.05937e-06 30 1.80421e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_640 Marker_Tetrahedron {
+  markerTranslation 7.04104e-07 30 1.08789e-05
+}
+DEF MarkerLine_40B3E50048000000_640 MarkerLine {
+  markerPoint [1.05937e-06 30 1.80421e-05, 7.04104e-07 30 1.08789e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_640 MarkerLine {
+  markerPoint [7.04104e-07 0 1.08789e-05, 7.04104e-07 30 1.08789e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_640 MarkerTriad {
+  markerTranslation 7.04104e-07 30 1.08789e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_641 Marker_Tetrahedron {
+  markerTranslation 4.5425e-07 30 6.57111e-06
+}
+DEF MarkerLine_40B3E50048000000_641 MarkerLine {
+  markerPoint [7.04104e-07 30 1.08789e-05, 4.5425e-07 30 6.57111e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_641 MarkerLine {
+  markerPoint [4.5425e-07 0 6.57111e-06, 4.5425e-07 30 6.57111e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_641 MarkerTriad {
+  markerTranslation 4.5425e-07 30 6.57111e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_642 Marker_Tetrahedron {
+  markerTranslation 2.80373e-07 30 3.98071e-06
+}
+DEF MarkerLine_40B3E50048000000_642 MarkerLine {
+  markerPoint [4.5425e-07 30 6.57111e-06, 2.80373e-07 30 3.98071e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_642 MarkerLine {
+  markerPoint [2.80373e-07 0 3.98071e-06, 2.80373e-07 30 3.98071e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_642 MarkerTriad {
+  markerTranslation 2.80373e-07 30 3.98071e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_643 Marker_Tetrahedron {
+  markerTranslation 1.61358e-07 30 2.42311e-06
+}
+DEF MarkerLine_40B3E50048000000_643 MarkerLine {
+  markerPoint [2.80373e-07 30 3.98071e-06, 1.61358e-07 30 2.42311e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_643 MarkerLine {
+  markerPoint [1.61358e-07 0 2.42311e-06, 1.61358e-07 30 2.42311e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_643 MarkerTriad {
+  markerTranslation 1.61358e-07 30 2.42311e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_644 Marker_Tetrahedron {
+  markerTranslation 8.18112e-08 30 1.48575e-06
+}
+DEF MarkerLine_40B3E50048000000_644 MarkerLine {
+  markerPoint [1.61358e-07 30 2.42311e-06, 8.18112e-08 30 1.48575e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_644 MarkerLine {
+  markerPoint [8.18112e-08 0 1.48575e-06, 8.18112e-08 30 1.48575e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_644 MarkerTriad {
+  markerTranslation 8.18112e-08 30 1.48575e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_645 Marker_Tetrahedron {
+  markerTranslation 3.04101e-08 30 9.20359e-07
+}
+DEF MarkerLine_40B3E50048000000_645 MarkerLine {
+  markerPoint [8.18112e-08 30 1.48575e-06, 3.04101e-08 30 9.20359e-07 ]
+}
+DEF ProjectionLine_40B3E50048000000_645 MarkerLine {
+  markerPoint [3.04101e-08 0 9.20359e-07, 3.04101e-08 30 9.20359e-07 ]
+}
+DEF MarkerTriad_40B3E50048000000_645 MarkerTriad {
+  markerTranslation 3.04101e-08 30 9.20359e-07
+}
+DEF Marker_Tetrahedron_40B3E50048000000_646 Marker_Tetrahedron {
+  markerTranslation -1.20071e-09 30 5.7787e-07
+}
+DEF MarkerLine_40B3E50048000000_646 MarkerLine {
+  markerPoint [3.04101e-08 30 9.20359e-07, -1.20071e-09 30 5.7787e-07 ]
+}
+DEF ProjectionLine_40B3E50048000000_646 MarkerLine {
+  markerPoint [-1.20071e-09 0 5.7787e-07, -1.20071e-09 30 5.7787e-07 ]
+}
+DEF MarkerTriad_40B3E50048000000_646 MarkerTriad {
+  markerTranslation -1.20071e-09 30 5.7787e-07
+}
+DEF Marker_Tetrahedron_40B3E50048000000_647 Marker_Tetrahedron {
+  markerTranslation -1.91694e-08 30 3.68936e-07
+}
+DEF MarkerLine_40B3E50048000000_647 MarkerLine {
+  markerPoint [-1.20071e-09 30 5.7787e-07, -1.91694e-08 30 3.68936e-07 ]
+}
+DEF ProjectionLine_40B3E50048000000_647 MarkerLine {
+  markerPoint [-1.91694e-08 0 3.68936e-07, -1.91694e-08 30 3.68936e-07 ]
+}
+DEF MarkerTriad_40B3E50048000000_647 MarkerTriad {
+  markerTranslation -1.91694e-08 30 3.68936e-07
+}
+DEF Marker_Tetrahedron_40B3E50048000000_648 Marker_Tetrahedron {
+  markerTranslation -2.79853e-08 30 2.40129e-07
+}
+DEF MarkerLine_40B3E50048000000_648 MarkerLine {
+  markerPoint [-1.91694e-08 30 3.68936e-07, -2.79853e-08 30 2.40129e-07 ]
+}
+DEF ProjectionLine_40B3E50048000000_648 MarkerLine {
+  markerPoint [-2.79853e-08 0 2.40129e-07, -2.79853e-08 30 2.40129e-07 ]
+}
+DEF MarkerTriad_40B3E50048000000_648 MarkerTriad {
+  markerTranslation -2.79853e-08 30 2.40129e-07
+}
+DEF Marker_Tetrahedron_40B3E50048000000_649 Marker_Tetrahedron {
+  markerTranslation -3.08857e-08 30 1.59557e-07
+}
+DEF MarkerLine_40B3E50048000000_649 MarkerLine {
+  markerPoint [-2.79853e-08 30 2.40129e-07, -3.08857e-08 30 1.59557e-07 ]
+}
+DEF ProjectionLine_40B3E50048000000_649 MarkerLine {
+  markerPoint [-3.08857e-08 0 1.59557e-07, -3.08857e-08 30 1.59557e-07 ]
+}
+DEF MarkerTriad_40B3E50048000000_649 MarkerTriad {
+  markerTranslation -3.08857e-08 30 1.59557e-07
+}
+DEF Marker_Tetrahedron_40B3E50048000000_650 Marker_Tetrahedron {
+  markerTranslation -3.0165e-08 30 1.08208e-07
+}
+DEF MarkerLine_40B3E50048000000_650 MarkerLine {
+  markerPoint [-3.08857e-08 30 1.59557e-07, -3.0165e-08 30 1.08208e-07 ]
+}
+DEF ProjectionLine_40B3E50048000000_650 MarkerLine {
+  markerPoint [-3.0165e-08 0 1.08208e-07, -3.0165e-08 30 1.08208e-07 ]
+}
+DEF MarkerTriad_40B3E50048000000_650 MarkerTriad {
+  markerTranslation -3.0165e-08 30 1.08208e-07
+}
+DEF Marker_Tetrahedron_40B3E50048000000_651 Marker_Tetrahedron {
+  markerTranslation -2.74129e-08 30 7.47482e-08
+}
+DEF MarkerLine_40B3E50048000000_651 MarkerLine {
+  markerPoint [-3.0165e-08 30 1.08208e-07, -2.74129e-08 30 7.47482e-08 ]
+}
+DEF ProjectionLine_40B3E50048000000_651 MarkerLine {
+  markerPoint [-2.74129e-08 0 7.47482e-08, -2.74129e-08 30 7.47482e-08 ]
+}
+DEF MarkerTriad_40B3E50048000000_651 MarkerTriad {
+  markerTranslation -2.74129e-08 30 7.47482e-08
+}
+DEF Marker_Tetrahedron_40B3E50048000000_652 Marker_Tetrahedron {
+  markerTranslation -2.36982e-08 30 5.24084e-08
+}
+DEF MarkerLine_40B3E50048000000_652 MarkerLine {
+  markerPoint [-2.74129e-08 30 7.47482e-08, -2.36982e-08 30 5.24084e-08 ]
+}
+DEF ProjectionLine_40B3E50048000000_652 MarkerLine {
+  markerPoint [-2.36982e-08 0 5.24084e-08, -2.36982e-08 30 5.24084e-08 ]
+}
+DEF MarkerTriad_40B3E50048000000_652 MarkerTriad {
+  markerTranslation -2.36982e-08 30 5.24084e-08
+}
+DEF Marker_Tetrahedron_40B3E50048000000_653 Marker_Tetrahedron {
+  markerTranslation -1.97109e-08 30 3.71245e-08
+}
+DEF MarkerLine_40B3E50048000000_653 MarkerLine {
+  markerPoint [-2.36982e-08 30 5.24084e-08, -1.97109e-08 30 3.71245e-08 ]
+}
+DEF ProjectionLine_40B3E50048000000_653 MarkerLine {
+  markerPoint [-1.97109e-08 0 3.71245e-08, -1.97109e-08 30 3.71245e-08 ]
+}
+DEF MarkerTriad_40B3E50048000000_653 MarkerTriad {
+  markerTranslation -1.97109e-08 30 3.71245e-08
+}
+DEF Marker_Tetrahedron_40B3E50048000000_654 Marker_Tetrahedron {
+  markerTranslation -1.58713e-08 30 2.64331e-08
+}
+DEF MarkerLine_40B3E50048000000_654 MarkerLine {
+  markerPoint [-1.97109e-08 30 3.71245e-08, -1.58713e-08 30 2.64331e-08 ]
+}
+DEF ProjectionLine_40B3E50048000000_654 MarkerLine {
+  markerPoint [-1.58713e-08 0 2.64331e-08, -1.58713e-08 30 2.64331e-08 ]
+}
+DEF MarkerTriad_40B3E50048000000_654 MarkerTriad {
+  markerTranslation -1.58713e-08 30 2.64331e-08
+}
+DEF Marker_Tetrahedron_40B3E50048000000_655 Marker_Tetrahedron {
+  markerTranslation -1.24116e-08 30 1.88176e-08
+}
+DEF MarkerLine_40B3E50048000000_655 MarkerLine {
+  markerPoint [-1.58713e-08 30 2.64331e-08, -1.24116e-08 30 1.88176e-08 ]
+}
+DEF ProjectionLine_40B3E50048000000_655 MarkerLine {
+  markerPoint [-1.24116e-08 0 1.88176e-08, -1.24116e-08 30 1.88176e-08 ]
+}
+DEF MarkerTriad_40B3E50048000000_655 MarkerTriad {
+  markerTranslation -1.24116e-08 30 1.88176e-08
+}
+DEF Marker_Tetrahedron_40B3E50048000000_656 Marker_Tetrahedron {
+  markerTranslation -9.43805e-09 30 1.33235e-08
+}
+DEF MarkerLine_40B3E50048000000_656 MarkerLine {
+  markerPoint [-1.24116e-08 30 1.88176e-08, -9.43805e-09 30 1.33235e-08 ]
+}
+DEF ProjectionLine_40B3E50048000000_656 MarkerLine {
+  markerPoint [-9.43805e-09 0 1.33235e-08, -9.43805e-09 30 1.33235e-08 ]
+}
+DEF MarkerTriad_40B3E50048000000_656 MarkerTriad {
+  markerTranslation -9.43805e-09 30 1.33235e-08
+}
+DEF Marker_Tetrahedron_40B3E50048000000_657 Marker_Tetrahedron {
+  markerTranslation -6.97554e-09 30 9.33218e-09
+}
+DEF MarkerLine_40B3E50048000000_657 MarkerLine {
+  markerPoint [-9.43805e-09 30 1.33235e-08, -6.97554e-09 30 9.33218e-09 ]
+}
+DEF ProjectionLine_40B3E50048000000_657 MarkerLine {
+  markerPoint [-6.97554e-09 0 9.33218e-09, -6.97554e-09 30 9.33218e-09 ]
+}
+DEF MarkerTriad_40B3E50048000000_657 MarkerTriad {
+  markerTranslation -6.97554e-09 30 9.33218e-09
+}
+DEF Top Viewpoint {
+  description "Top"
+  position 41.9671 62.0183 11.131
+  orientation -0.321568 0.900543 0.292604 1.58117
+}
+DEF Marker_Tetrahedron_40B3E50048000000_945 Marker_Tetrahedron {
+  markerTranslation 0 -0 0
+}
+DEF ProjectionLine_40B3E50048000000_945 MarkerLine {
+  markerPoint [0 -0 0, 0 -0 0 ]
+}
+DEF MarkerTriad_40B3E50048000000_945 MarkerTriad {
+  markerTranslation 0 -0 0
+}
+DEF Marker_Tetrahedron_40B3E50048000000_946 Marker_Tetrahedron {
+  markerTranslation 0.0268995 9.85068 6.12386e-05
+}
+DEF MarkerLine_40B3E50048000000_946 MarkerLine {
+  markerPoint [0 -0 0, 0.0268995 9.85068 6.12386e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_946 MarkerLine {
+  markerPoint [0.0268995 0 6.12386e-05, 0.0268995 9.85068 6.12386e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_946 MarkerTriad {
+  markerTranslation 0.0268995 9.85068 6.12386e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_947 Marker_Tetrahedron {
+  markerTranslation 0.0102058 22.681 3.31401e-05
+}
+DEF MarkerLine_40B3E50048000000_947 MarkerLine {
+  markerPoint [0.0268995 9.85068 6.12386e-05, 0.0102058 22.681 3.31401e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_947 MarkerLine {
+  markerPoint [0.0102058 0 3.31401e-05, 0.0102058 22.681 3.31401e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_947 MarkerTriad {
+  markerTranslation 0.0102058 22.681 3.31401e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_948 Marker_Tetrahedron {
+  markerTranslation 0.00598485 29.4319 2.27675e-05
+}
+DEF MarkerLine_40B3E50048000000_948 MarkerLine {
+  markerPoint [0.0102058 22.681 3.31401e-05, 0.00598485 29.4319 2.27675e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_948 MarkerLine {
+  markerPoint [0.00598485 0 2.27675e-05, 0.00598485 29.4319 2.27675e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_948 MarkerTriad {
+  markerTranslation 0.00598485 29.4319 2.27675e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_949 Marker_Tetrahedron {
+  markerTranslation 0.00362216 31.2562 1.54321e-05
+}
+DEF MarkerLine_40B3E50048000000_949 MarkerLine {
+  markerPoint [0.00598485 29.4319 2.27675e-05, 0.00362216 31.2562 1.54321e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_949 MarkerLine {
+  markerPoint [0.00362216 0 1.54321e-05, 0.00362216 31.2562 1.54321e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_949 MarkerTriad {
+  markerTranslation 0.00362216 31.2562 1.54321e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_950 Marker_Tetrahedron {
+  markerTranslation 0.00219609 31.0073 1.00325e-05
+}
+DEF MarkerLine_40B3E50048000000_950 MarkerLine {
+  markerPoint [0.00362216 31.2562 1.54321e-05, 0.00219609 31.0073 1.00325e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_950 MarkerLine {
+  markerPoint [0.00219609 0 1.00325e-05, 0.00219609 31.0073 1.00325e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_950 MarkerTriad {
+  markerTranslation 0.00219609 31.0073 1.00325e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_951 Marker_Tetrahedron {
+  markerTranslation 0.00133194 30.4209 6.13694e-06
+}
+DEF MarkerLine_40B3E50048000000_951 MarkerLine {
+  markerPoint [0.00219609 31.0073 1.00325e-05, 0.00133194 30.4209 6.13694e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_951 MarkerLine {
+  markerPoint [0.00133194 0 6.13694e-06, 0.00133194 30.4209 6.13694e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_951 MarkerTriad {
+  markerTranslation 0.00133194 30.4209 6.13694e-06
+}
+DEF Marker_Tetrahedron_40B3E50048000000_952 Marker_Tetrahedron {
+  markerTranslation -0.208059 30.0669 0.0019314
+}
+DEF MarkerLine_40B3E50048000000_952 MarkerLine {
+  markerPoint [0.00133194 30.4209 6.13694e-06, -0.208059 30.0669 0.0019314 ]
+}
+DEF ProjectionLine_40B3E50048000000_952 MarkerLine {
+  markerPoint [-0.208059 0 0.0019314, -0.208059 30.0669 0.0019314 ]
+}
+DEF MarkerTriad_40B3E50048000000_952 MarkerTriad {
+  markerTranslation -0.208059 30.0669 0.0019314
+}
+DEF Marker_Tetrahedron_40B3E50048000000_953 Marker_Tetrahedron {
+  markerTranslation 0.0435097 29.9517 0.00141997
+}
+DEF MarkerLine_40B3E50048000000_953 MarkerLine {
+  markerPoint [-0.208059 30.0669 0.0019314, 0.0435097 29.9517 0.00141997 ]
+}
+DEF ProjectionLine_40B3E50048000000_953 MarkerLine {
+  markerPoint [0.0435097 0 0.00141997, 0.0435097 29.9517 0.00141997 ]
+}
+DEF MarkerTriad_40B3E50048000000_953 MarkerTriad {
+  markerTranslation 0.0435097 29.9517 0.00141997
+}
+DEF Marker_Tetrahedron_40B3E50048000000_954 Marker_Tetrahedron {
+  markerTranslation 0.0310251 26.2735 0.000975418
+}
+DEF MarkerLine_40B3E50048000000_954 MarkerLine {
+  markerPoint [0.0435097 29.9517 0.00141997, 0.0310251 26.2735 0.000975418 ]
+}
+DEF ProjectionLine_40B3E50048000000_954 MarkerLine {
+  markerPoint [0.0310251 0 0.000975418, 0.0310251 26.2735 0.000975418 ]
+}
+DEF MarkerTriad_40B3E50048000000_954 MarkerTriad {
+  markerTranslation 0.0310251 26.2735 0.000975418
+}
+DEF Marker_Tetrahedron_40B3E50048000000_955 Marker_Tetrahedron {
+  markerTranslation 0.0189166 21.5091 0.000640767
+}
+DEF MarkerLine_40B3E50048000000_955 MarkerLine {
+  markerPoint [0.0310251 26.2735 0.000975418, 0.0189166 21.5091 0.000640767 ]
+}
+DEF ProjectionLine_40B3E50048000000_955 MarkerLine {
+  markerPoint [0.0189166 0 0.000640767, 0.0189166 21.5091 0.000640767 ]
+}
+DEF MarkerTriad_40B3E50048000000_955 MarkerTriad {
+  markerTranslation 0.0189166 21.5091 0.000640767
+}
+DEF Marker_Tetrahedron_40B3E50048000000_956 Marker_Tetrahedron {
+  markerTranslation 0.0114694 19.0068 0.000397125
+}
+DEF MarkerLine_40B3E50048000000_956 MarkerLine {
+  markerPoint [0.0189166 21.5091 0.000640767, 0.0114694 19.0068 0.000397125 ]
+}
+DEF ProjectionLine_40B3E50048000000_956 MarkerLine {
+  markerPoint [0.0114694 0 0.000397125, 0.0114694 19.0068 0.000397125 ]
+}
+DEF MarkerTriad_40B3E50048000000_956 MarkerTriad {
+  markerTranslation 0.0114694 19.0068 0.000397125
+}
+DEF Marker_Tetrahedron_40B3E50048000000_957 Marker_Tetrahedron {
+  markerTranslation 0.00697271 18.3326 0.000224812
+}
+DEF MarkerLine_40B3E50048000000_957 MarkerLine {
+  markerPoint [0.0114694 19.0068 0.000397125, 0.00697271 18.3326 0.000224812 ]
+}
+DEF ProjectionLine_40B3E50048000000_957 MarkerLine {
+  markerPoint [0.00697271 0 0.000224812, 0.00697271 18.3326 0.000224812 ]
+}
+DEF MarkerTriad_40B3E50048000000_957 MarkerTriad {
+  markerTranslation 0.00697271 18.3326 0.000224812
+}
+DEF Marker_Tetrahedron_40B3E50048000000_958 Marker_Tetrahedron {
+  markerTranslation 0.00425851 22.1038 0.000107005
+}
+DEF MarkerLine_40B3E50048000000_958 MarkerLine {
+  markerPoint [0.00697271 18.3326 0.000224812, 0.00425851 22.1038 0.000107005 ]
+}
+DEF ProjectionLine_40B3E50048000000_958 MarkerLine {
+  markerPoint [0.00425851 0 0.000107005, 0.00425851 22.1038 0.000107005 ]
+}
+DEF MarkerTriad_40B3E50048000000_958 MarkerTriad {
+  markerTranslation 0.00425851 22.1038 0.000107005
+}
+DEF Marker_Tetrahedron_40B3E50048000000_959 Marker_Tetrahedron {
+  markerTranslation 0.00186164 27.1117 -0.0499468
+}
+DEF MarkerLine_40B3E50048000000_959 MarkerLine {
+  markerPoint [0.00425851 22.1038 0.000107005, 0.00186164 27.1117 -0.0499468 ]
+}
+DEF ProjectionLine_40B3E50048000000_959 MarkerLine {
+  markerPoint [0.00186164 0 -0.0499468, 0.00186164 27.1117 -0.0499468 ]
+}
+DEF MarkerTriad_40B3E50048000000_959 MarkerTriad {
+  markerTranslation 0.00186164 27.1117 -0.0499468
+}
+DEF Marker_Tetrahedron_40B3E50048000000_960 Marker_Tetrahedron {
+  markerTranslation 0.00113969 29.7633 -0.0171605
+}
+DEF MarkerLine_40B3E50048000000_960 MarkerLine {
+  markerPoint [0.00186164 27.1117 -0.0499468, 0.00113969 29.7633 -0.0171605 ]
+}
+DEF ProjectionLine_40B3E50048000000_960 MarkerLine {
+  markerPoint [0.00113969 0 -0.0171605, 0.00113969 29.7633 -0.0171605 ]
+}
+DEF MarkerTriad_40B3E50048000000_960 MarkerTriad {
+  markerTranslation 0.00113969 29.7633 -0.0171605
+}
+DEF Marker_Tetrahedron_40B3E50048000000_961 Marker_Tetrahedron {
+  markerTranslation 0.000692631 30.487 -0.0100893
+}
+DEF MarkerLine_40B3E50048000000_961 MarkerLine {
+  markerPoint [0.00113969 29.7633 -0.0171605, 0.000692631 30.487 -0.0100893 ]
+}
+DEF ProjectionLine_40B3E50048000000_961 MarkerLine {
+  markerPoint [0.000692631 0 -0.0100893, 0.000692631 30.487 -0.0100893 ]
+}
+DEF MarkerTriad_40B3E50048000000_961 MarkerTriad {
+  markerTranslation 0.000692631 30.487 -0.0100893
+}
+DEF Marker_Tetrahedron_40B3E50048000000_962 Marker_Tetrahedron {
+  markerTranslation 0.000436593 30.3942 -0.00613013
+}
+DEF MarkerLine_40B3E50048000000_962 MarkerLine {
+  markerPoint [0.000692631 30.487 -0.0100893, 0.000436593 30.3942 -0.00613013 ]
+}
+DEF ProjectionLine_40B3E50048000000_962 MarkerLine {
+  markerPoint [0.000436593 0 -0.00613013, 0.000436593 30.3942 -0.00613013 ]
+}
+DEF MarkerTriad_40B3E50048000000_962 MarkerTriad {
+  markerTranslation 0.000436593 30.3942 -0.00613013
+}
+DEF Marker_Tetrahedron_40B3E50048000000_963 Marker_Tetrahedron {
+  markerTranslation 0.000290013 30.1658 -0.00374326
+}
+DEF MarkerLine_40B3E50048000000_963 MarkerLine {
+  markerPoint [0.000436593 30.3942 -0.00613013, 0.000290013 30.1658 -0.00374326 ]
+}
+DEF ProjectionLine_40B3E50048000000_963 MarkerLine {
+  markerPoint [0.000290013 0 -0.00374326, 0.000290013 30.1658 -0.00374326 ]
+}
+DEF MarkerTriad_40B3E50048000000_963 MarkerTriad {
+  markerTranslation 0.000290013 30.1658 -0.00374326
+}
+DEF Marker_Tetrahedron_40B3E50048000000_964 Marker_Tetrahedron {
+  markerTranslation -0.109341 30.0269 0.0374963
+}
+DEF MarkerLine_40B3E50048000000_964 MarkerLine {
+  markerPoint [0.000290013 30.1658 -0.00374326, -0.109341 30.0269 0.0374963 ]
+}
+DEF ProjectionLine_40B3E50048000000_964 MarkerLine {
+  markerPoint [-0.109341 0 0.0374963, -0.109341 30.0269 0.0374963 ]
+}
+DEF MarkerTriad_40B3E50048000000_964 MarkerTriad {
+  markerTranslation -0.109341 30.0269 0.0374963
+}
+DEF Marker_Tetrahedron_40B3E50048000000_965 Marker_Tetrahedron {
+  markerTranslation -0.0407115 29.9814 0.0129521
+}
+DEF MarkerLine_40B3E50048000000_965 MarkerLine {
+  markerPoint [-0.109341 30.0269 0.0374963, -0.0407115 29.9814 0.0129521 ]
+}
+DEF ProjectionLine_40B3E50048000000_965 MarkerLine {
+  markerPoint [-0.0407115 0 0.0129521, -0.0407115 29.9814 0.0129521 ]
+}
+DEF MarkerTriad_40B3E50048000000_965 MarkerTriad {
+  markerTranslation -0.0407115 29.9814 0.0129521
+}
+DEF Marker_Tetrahedron_40B3E50048000000_966 Marker_Tetrahedron {
+  markerTranslation -0.0237202 29.9809 0.00740739
+}
+DEF MarkerLine_40B3E50048000000_966 MarkerLine {
+  markerPoint [-0.0407115 29.9814 0.0129521, -0.0237202 29.9809 0.00740739 ]
+}
+DEF ProjectionLine_40B3E50048000000_966 MarkerLine {
+  markerPoint [-0.0237202 0 0.00740739, -0.0237202 29.9809 0.00740739 ]
+}
+DEF MarkerTriad_40B3E50048000000_966 MarkerTriad {
+  markerTranslation -0.0237202 29.9809 0.00740739
+}
+DEF Marker_Tetrahedron_40B3E50048000000_967 Marker_Tetrahedron {
+  markerTranslation -0.0143013 29.9908 0.00442318
+}
+DEF MarkerLine_40B3E50048000000_967 MarkerLine {
+  markerPoint [-0.0237202 29.9809 0.00740739, -0.0143013 29.9908 0.00442318 ]
+}
+DEF ProjectionLine_40B3E50048000000_967 MarkerLine {
+  markerPoint [-0.0143013 0 0.00442318, -0.0143013 29.9908 0.00442318 ]
+}
+DEF MarkerTriad_40B3E50048000000_967 MarkerTriad {
+  markerTranslation -0.0143013 29.9908 0.00442318
+}
+DEF Marker_Tetrahedron_40B3E50048000000_968 Marker_Tetrahedron {
+  markerTranslation -0.00866093 29.9979 0.00267003
+}
+DEF MarkerLine_40B3E50048000000_968 MarkerLine {
+  markerPoint [-0.0143013 29.9908 0.00442318, -0.00866093 29.9979 0.00267003 ]
+}
+DEF ProjectionLine_40B3E50048000000_968 MarkerLine {
+  markerPoint [-0.00866093 0 0.00267003, -0.00866093 29.9979 0.00267003 ]
+}
+DEF MarkerTriad_40B3E50048000000_968 MarkerTriad {
+  markerTranslation -0.00866093 29.9979 0.00267003
+}
+DEF Marker_Tetrahedron_40B3E50048000000_969 Marker_Tetrahedron {
+  markerTranslation -0.00526961 30.0006 0.00163597
+}
+DEF MarkerLine_40B3E50048000000_969 MarkerLine {
+  markerPoint [-0.00866093 29.9979 0.00267003, -0.00526961 30.0006 0.00163597 ]
+}
+DEF ProjectionLine_40B3E50048000000_969 MarkerLine {
+  markerPoint [-0.00526961 0 0.00163597, -0.00526961 30.0006 0.00163597 ]
+}
+DEF MarkerTriad_40B3E50048000000_969 MarkerTriad {
+  markerTranslation -0.00526961 30.0006 0.00163597
+}
+DEF Marker_Tetrahedron_40B3E50048000000_970 Marker_Tetrahedron {
+  markerTranslation -0.00322859 30.0009 0.00102468
+}
+DEF MarkerLine_40B3E50048000000_970 MarkerLine {
+  markerPoint [-0.00526961 30.0006 0.00163597, -0.00322859 30.0009 0.00102468 ]
+}
+DEF ProjectionLine_40B3E50048000000_970 MarkerLine {
+  markerPoint [-0.00322859 0 0.00102468, -0.00322859 30.0009 0.00102468 ]
+}
+DEF MarkerTriad_40B3E50048000000_970 MarkerTriad {
+  markerTranslation -0.00322859 30.0009 0.00102468
+}
+DEF Marker_Tetrahedron_40B3E50048000000_971 Marker_Tetrahedron {
+  markerTranslation -0.00199763 30.0005 0.000660901
+}
+DEF MarkerLine_40B3E50048000000_971 MarkerLine {
+  markerPoint [-0.00322859 30.0009 0.00102468, -0.00199763 30.0005 0.000660901 ]
+}
+DEF ProjectionLine_40B3E50048000000_971 MarkerLine {
+  markerPoint [-0.00199763 0 0.000660901, -0.00199763 30.0005 0.000660901 ]
+}
+DEF MarkerTriad_40B3E50048000000_971 MarkerTriad {
+  markerTranslation -0.00199763 30.0005 0.000660901
+}
+DEF Marker_Tetrahedron_40B3E50048000000_972 Marker_Tetrahedron {
+  markerTranslation -0.00125222 30.0001 0.000441452
+}
+DEF MarkerLine_40B3E50048000000_972 MarkerLine {
+  markerPoint [-0.00199763 30.0005 0.000660901, -0.00125222 30.0001 0.000441452 ]
+}
+DEF ProjectionLine_40B3E50048000000_972 MarkerLine {
+  markerPoint [-0.00125222 0 0.000441452, -0.00125222 30.0001 0.000441452 ]
+}
+DEF MarkerTriad_40B3E50048000000_972 MarkerTriad {
+  markerTranslation -0.00125222 30.0001 0.000441452
+}
+DEF Marker_Tetrahedron_40B3E50048000000_973 Marker_Tetrahedron {
+  markerTranslation -0.000797791 30 0.000306037
+}
+DEF MarkerLine_40B3E50048000000_973 MarkerLine {
+  markerPoint [-0.00125222 30.0001 0.000441452, -0.000797791 30 0.000306037 ]
+}
+DEF ProjectionLine_40B3E50048000000_973 MarkerLine {
+  markerPoint [-0.000797791 0 0.000306037, -0.000797791 30 0.000306037 ]
+}
+DEF MarkerTriad_40B3E50048000000_973 MarkerTriad {
+  markerTranslation -0.000797791 30 0.000306037
+}
+DEF Marker_Tetrahedron_40B3E50048000000_974 Marker_Tetrahedron {
+  markerTranslation -0.000517954 30 0.00021969
+}
+DEF MarkerLine_40B3E50048000000_974 MarkerLine {
+  markerPoint [-0.000797791 30 0.000306037, -0.000517954 30 0.00021969 ]
+}
+DEF ProjectionLine_40B3E50048000000_974 MarkerLine {
+  markerPoint [-0.000517954 0 0.00021969, -0.000517954 30 0.00021969 ]
+}
+DEF MarkerTriad_40B3E50048000000_974 MarkerTriad {
+  markerTranslation -0.000517954 30 0.00021969
+}
+DEF Marker_Tetrahedron_40B3E50048000000_975 Marker_Tetrahedron {
+  markerTranslation -0.000343202 30 0.000162296
+}
+DEF MarkerLine_40B3E50048000000_975 MarkerLine {
+  markerPoint [-0.000517954 30 0.00021969, -0.000343202 30 0.000162296 ]
+}
+DEF ProjectionLine_40B3E50048000000_975 MarkerLine {
+  markerPoint [-0.000343202 0 0.000162296, -0.000343202 30 0.000162296 ]
+}
+DEF MarkerTriad_40B3E50048000000_975 MarkerTriad {
+  markerTranslation -0.000343202 30 0.000162296
+}
+DEF Marker_Tetrahedron_40B3E50048000000_976 Marker_Tetrahedron {
+  markerTranslation -0.000232083 30 0.000122358
+}
+DEF MarkerLine_40B3E50048000000_976 MarkerLine {
+  markerPoint [-0.000343202 30 0.000162296, -0.000232083 30 0.000122358 ]
+}
+DEF ProjectionLine_40B3E50048000000_976 MarkerLine {
+  markerPoint [-0.000232083 0 0.000122358, -0.000232083 30 0.000122358 ]
+}
+DEF MarkerTriad_40B3E50048000000_976 MarkerTriad {
+  markerTranslation -0.000232083 30 0.000122358
+}
+DEF Marker_Tetrahedron_40B3E50048000000_977 Marker_Tetrahedron {
+  markerTranslation -0.000159878 30 9.33273e-05
+}
+DEF MarkerLine_40B3E50048000000_977 MarkerLine {
+  markerPoint [-0.000232083 30 0.000122358, -0.000159878 30 9.33273e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_977 MarkerLine {
+  markerPoint [-0.000159878 0 9.33273e-05, -0.000159878 30 9.33273e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_977 MarkerTriad {
+  markerTranslation -0.000159878 30 9.33273e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_978 Marker_Tetrahedron {
+  markerTranslation -0.000111823 30 7.1458e-05
+}
+DEF MarkerLine_40B3E50048000000_978 MarkerLine {
+  markerPoint [-0.000159878 30 9.33273e-05, -0.000111823 30 7.1458e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_978 MarkerLine {
+  markerPoint [-0.000111823 0 7.1458e-05, -0.000111823 30 7.1458e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_978 MarkerTriad {
+  markerTranslation -0.000111823 30 7.1458e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_979 Marker_Tetrahedron {
+  markerTranslation -7.90546e-05 30 5.4572e-05
+}
+DEF MarkerLine_40B3E50048000000_979 MarkerLine {
+  markerPoint [-0.000111823 30 7.1458e-05, -7.90546e-05 30 5.4572e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_979 MarkerLine {
+  markerPoint [-7.90546e-05 0 5.4572e-05, -7.90546e-05 30 5.4572e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_979 MarkerTriad {
+  markerTranslation -7.90546e-05 30 5.4572e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_980 Marker_Tetrahedron {
+  markerTranslation -5.62051e-05 30 4.13557e-05
+}
+DEF MarkerLine_40B3E50048000000_980 MarkerLine {
+  markerPoint [-7.90546e-05 30 5.4572e-05, -5.62051e-05 30 4.13557e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_980 MarkerLine {
+  markerPoint [-5.62051e-05 0 4.13557e-05, -5.62051e-05 30 4.13557e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_980 MarkerTriad {
+  markerTranslation -5.62051e-05 30 4.13557e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_981 Marker_Tetrahedron {
+  markerTranslation -3.99751e-05 30 3.09685e-05
+}
+DEF MarkerLine_40B3E50048000000_981 MarkerLine {
+  markerPoint [-5.62051e-05 30 4.13557e-05, -3.99751e-05 30 3.09685e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_981 MarkerLine {
+  markerPoint [-3.99751e-05 0 3.09685e-05, -3.99751e-05 30 3.09685e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_981 MarkerTriad {
+  markerTranslation -3.99751e-05 30 3.09685e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_982 Marker_Tetrahedron {
+  markerTranslation -2.82929e-05 30 2.28301e-05
+}
+DEF MarkerLine_40B3E50048000000_982 MarkerLine {
+  markerPoint [-3.99751e-05 30 3.09685e-05, -2.82929e-05 30 2.28301e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_982 MarkerLine {
+  markerPoint [-2.82929e-05 0 2.28301e-05, -2.82929e-05 30 2.28301e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_982 MarkerTriad {
+  markerTranslation -2.82929e-05 30 2.28301e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_983 Marker_Tetrahedron {
+  markerTranslation -1.98204e-05 30 1.65071e-05
+}
+DEF MarkerLine_40B3E50048000000_983 MarkerLine {
+  markerPoint [-2.82929e-05 30 2.28301e-05, -1.98204e-05 30 1.65071e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_983 MarkerLine {
+  markerPoint [-1.98204e-05 0 1.65071e-05, -1.98204e-05 30 1.65071e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_983 MarkerTriad {
+  markerTranslation -1.98204e-05 30 1.65071e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_984 Marker_Tetrahedron {
+  markerTranslation -1.36646e-05 30 1.16549e-05
+}
+DEF MarkerLine_40B3E50048000000_984 MarkerLine {
+  markerPoint [-1.98204e-05 30 1.65071e-05, -1.36646e-05 30 1.16549e-05 ]
+}
+DEF ProjectionLine_40B3E50048000000_984 MarkerLine {
+  markerPoint [-1.36646e-05 0 1.16549e-05, -1.36646e-05 30 1.16549e-05 ]
+}
+DEF MarkerTriad_40B3E50048000000_984 MarkerTriad {
+  markerTranslation -1.36646e-05 30 1.16549e-05
+}
+DEF Marker_Tetrahedron_40B3E50048000000_985 Marker_Tetrahedron {
+  markerTranslation -9.20789e-06 30 7.989e-06
+}
+DEF MarkerLine_40B3E50048000000_985 MarkerLine {
+  markerPoint [-1.36646e-05 30 1.16549e-05, -9.20789e-06 30 7.989e-06 ]
+}
+DEF ProjectionLine_40B3E50048000000_985 MarkerLine {
+  markerPoint [-9.20789e-06 0 7.989e-06, -9.20789e-06 30 7.989e-06 ]
+}
+DEF MarkerTriad_40B3E50048000000_985 MarkerTriad {
+  markerTranslation -9.20789e-06 30 7.989e-06
+}
+DEF Visitqtore1 Viewpoint {
+  description "Visitqtore1"
+  position 45.2929 41.6644 -29.7852
+  orientation -0.0408936 0.986539 0.158328 2.12871
 }

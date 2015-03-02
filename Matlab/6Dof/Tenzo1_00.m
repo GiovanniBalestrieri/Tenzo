@@ -1,5 +1,3 @@
-
-
 %Description: This m-file initializes all necessary variables required to
 %buid the dynamic model of a quadrotor in the state-space form.
 %
@@ -18,6 +16,7 @@ w4=3100;
 % w24=0;
 rif = [ w1 w2 w3 w4];
 refs=[0 0 -20 0 0 0 0 0 0 0 0 0]; 
+states = {'xe','ye','ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb'};
 % Ref Signal 
 pulseAmp = 500;
 pulsePh = 0;
@@ -120,19 +119,23 @@ w0c=sqrt(g*mq/Kt);
 %X0c=w0c;
 Ft0=mq*g;
 %% Arduino variables
+
 freq = 20; %Sampling frequency (Hz);
 ardres = 10; %Arduino analog resolution (bits)
-% %% Sensors
-daccel_x = 0.003; %Accelerometer distance to the quadrotorâ€™s center of
+% Sensors
+daccel_x = 0.003; 
+%Accelerometer distance to the quadrotorâ€™s center of
 %gravity along the x-axis (m)
-daccel_y = 0; %Accelerometer distance to the quadrotorâ€™s center of
+daccel_y = 0; 
+%Accelerometer distance to the quadrotorâ€™s center of
 %gravity along the y-axis (m)
-daccel_z = -0.0490; %Accelerometer distance to the quadrotorâ€™s center of
+daccel_z = -0.0490; 
+%Accelerometer distance to the quadrotorâ€™s center of
 %gravity along the z-axis (m)
 daccel=[daccel_x daccel_y daccel_z];
-accel_max = 3*g; %Accelerometer maximum possible reading
-accel_min = -3*g; %Accelerometer minimum possible reading
-
+%Accelerometer min & maximum possible reading
+accel_max = 3*g; 
+accel_min = -3*g; 
 % Accelerometer reading resolution
 ares = (accel_max-accel_min)/(2^ardres);
 
@@ -230,7 +233,6 @@ C=loadC.C;
 D=loadD.D;
 
 
-states = {'xe','ye','ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb'};
 inputs = {'Thrust','TauX','Tauy','Tauz'};
 %outputs = {'phi'; 'theta';'psi';'ze'};
 outputs = {'xe','ye','ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb'};
@@ -243,81 +245,10 @@ outputs = {'xe','ye','ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb
 %D=zeros(4,4);
 
 tenzo=ss(A,B,C,D,'statename',states,'inputname',inputs,'outputname',outputs);
+% B=tenzoSS.b;
+% C=tenzoSS.c;
+% D=tenzoSS.d;
 
-% Attitude sub-system 
-A111 = A(3,3);
-A112 = A(3,7:9)
-A11 = [A111 A112];
-A121 = A(7:9,3);
-A122 = A(7:9,7:9);
-A12 = [A121 A122];
-A1 = A122;
-%A1 = [A11 ; A12];
-
-% B111 = B(3,3);
-% B112 = B(3,7:9);
-% B11 = [B111 B112];
-B11 = B(3,:);
-B12 = B(7:9,:);
-%B1 = [B11 ; B12];
-B1 = B12;
-
-C111 = C(3,3);
-C112 = C(3,7:9);
-C11 = [C111 C112];
-C121 = C(7:9,3);
-C122 = C(7:9,7:9);
-C12 = [C121 C122];
-%C1 = [C11 ; C12];
-C1 = C122
-
-D1 = zeros(3,4);
-
-states1 = {'phi','theta','psi'};
-inputs1 = {'Thrust','TauX','Tauy','Tauz'};
-outputs1 = {'phi','theta','psi'};
-% states1 = {'ze','phi','theta','psi'};
-% inputs1 = {'Thrust','TauX','Tauy','Tauz'};
-% outputs1 = {'ze','phi','theta','psi'};
-
-tenzoAtt=ss(A1,B1,C1,D1,'statename',states1,'inputname',inputs1,'outputname',outputs1);
-
-% % Position&Yaw sub-system 
-% 
-% A21 = A(1:3,:);
-% A22 = A(9,:);
-% A2 = [A21 ; A22];
-% 
-% B21 = B(1:3,:);
-% B22 = B(9,:);
-% B2 = [B21 ; B22];
-% 
-% C21 = C(1:3,:);
-% C22 = C(9,:);
-% C2 = [C21 ; C22];
-% 
-% D2 = zeros(4,4);
-% 
-% states2 = {'xe','ye','ze','psi'};
-% inputs2 = {'Thrust','TauX','Tauy','Tauz'};
-% outputs2 = {'xe','ye','ze','psi'};
-% 
-% tenzoPos=ss(A2,B2,C2,D2,'statename',states2,'inputname',inputs2,'outputname',outputs2);
-
-%% Assegnazione degli autovalori mediante feedback
-
-poles = [ -1 -2 -3 -4 -5 -5 -6 -3 -2 -2 -1 -7];
-K11 = place(A,B,poles)
-disp('Nuovi poli del sistema complessivo A-B*K ');
-disp(eig(A-B*K11));
-sysCl = ss(A-B*K11,B,C,D);
-
-% Costruzione nuova C
-C1= C(9,:)
-C2 = C(4:6,:)
-Cn = [C1;C2]
-
-sysClSmall = ss(A-B*K11,B,Cn,D(1:4,:));
 %% specifica1 Verificare che esiste un controllore che soddisfa le specifiche A1,B,C1
 %clc;
 
@@ -343,61 +274,29 @@ stab=1;
 eOp = eig(A);
 [dn,dm]=size(eOp);
   for i=1:dn,
-      if (real(eOp(i))>0 ) 
-          stab=0; 
-          disp('elemento a parte reale positiva:'); 
-          disp(eOp(i)); 
-      end    
+      if (real(eOp(i))>0 ) stab=0; disp('elemento a parte reale positiva:'); disp(eOp(i)); end    
   end
-if (stab==0) 
-    disp('Sistema instabile: gli autovalori a ciclo aperto sono: [comando eig(A)]');
-end
-if (stab==1) 
-    disp('Sistema stabile: gli autovalori a ciclo aperto sono: [comando eig(A)]'); 
-end
+if (stab==0) disp('Sistema instabile: gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
+if (stab==1) disp('Sistema stabile: gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
 disp(eOp);
 
-<<<<<<< HEAD
-if (rank(ctrb(A1-alpha*eye(size(A1)),B1))==size(A1)) 
-    disp('a1) verificata, la coppia (A1,B1) ï¿½ raggiungibile, rank(matrice controllabilitï¿½ ï¿½)');
-    disp(rank(ctrb(A1,B1))); 
-=======
 if (rank(ctrb(A-alpha*eye(size(A)),B))==size(A)) 
-    disp('a1) verificata, la coppia (A,B) è raggiungibile, rank(matrice controllabilità è)');
+    disp('a1) verificata, la coppia A,B ï¿½ raggiungibile, rank(matrice controllabilitï¿½ ï¿½)');
     disp(rank(ctrb(A,B))); 
->>>>>>> a2b02a07f690d833c9af769a3b010b8842cf7f15
 
 % if (rank(ctrb(A+alpha*eye(size(A,1)),B))==rank(A)) 
 %     disp('a1) verificata, la coppia A,B ï¿½ raggiungibile, rank(matrice controllabilitï¿½ ï¿½)');
 %     disp(rank(ctrb(A,B))); 
-else
-    disp('Coppia (A1,B1) non raggiungibile');
 end
-
-<<<<<<< HEAD
 % if (rank(obsv(A+alpha*eye(size(A,1)),C))==rank(A)) 
 %     disp('a1) verificata, la coppia A,C ï¿½ osservabile, rank(matrice osservabilitï¿½ ï¿½)'); 
 %     disp(rank(obsv(A,C))); 
 % end
 
-if (rank(obsv(A1-alpha*eye(size(A1)),C1))==size(A1)) 
-    disp('a1) verificata, la coppia (A1,C1) ï¿½ osservabile, rank(matrice osservabilitï¿½ ï¿½)'); 
-    disp(rank(obsv(A1,C1))); 
-=======
-if (rank(obsv(A+alpha*eye(size(A,1)),C))==rank(A)) 
+if (rank(obsv(A-alpha*eye(size(A)),C))==size(A)) 
     disp('a1) verificata, la coppia A,C ï¿½ osservabile, rank(matrice osservabilitï¿½ ï¿½)'); 
     disp(rank(obsv(A,C))); 
->>>>>>> a2b02a07f690d833c9af769a3b010b8842cf7f15
-else
-    disp('Coppia (A,C) non osservabile');
 end
-
-% if (rank(obsv(A1-alpha*eye(size(A1)),C1))==size(A1)) 
-%     disp('a1) verificata, la coppia (A1,C1) è osservabile, rank(matrice osservabilità è)'); 
-%     disp(rank(obsv(A1,C1))); 
-% else
-%     disp('Coppia (A1,C1) non osservabile');
-% end
 
 disp('Premere un tasto per continuare...');
 pause;
@@ -405,34 +304,31 @@ clc;
 
 % compute the feedback gain matrix 
 % needed to place the closed-loop poles at p = [-1] 
-% 
-% poles = [-1 -4 -8 -9];
-% K11=place(A1,B1,poles);
-% 
-% disp('Eigenvalues of the closed loop sys');
-% eig(A1-B1*K11)
+
+poles = [-1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -11];
+K11=place(A,B,poles);
+
+disp('Eigenvalues of the closed loop sys');
+eig(A-B*K11)
 
 %% Astatismo
 
 disp('Verifica condizione di astatismo:');
-% 
-% R1=[ A1-B1*K11-gamma1*eye(size(A1)) B1 ; C1 D1];
-R1=[ A1-gamma1*eye(size(A1)) B1 ; C1 D1];
+
+R1=[ A-B*K11-gamma1*eye(size(A)) B ; C D];
 disp('Rank R1:');
 disp(rank(R1));
-if (rank(R1)==size(A1,1) + size(C1,2))  
-    disp('b) verificata, rango della matrice (5.4.23) per gamma1 ï¿½:');
+if (rank(R1)==size(A,1)+size(C,2))  
+    disp('b) verificata ,rango della matrice 5.4.23 per gamma1 ï¿½:');
     disp(rank(R1));
 else
     disp('test fallito per gamma1');
 end
-
-R2=[ A1-gamma2*eye(size(A1)) B1 ; C1 D1];
-% R2=[ A1-B1*K11-gamma2*eye(size(A1)) B1 ; C1 D1];
+R2=[ A-B*K11-gamma2*eye(size(A)) B ; C D];
 disp('Rank R2:');
 disp(rank(R2)); 
-if (rank(R2)==size(A1,1)+ size(C1,2)) 
-    disp('b) verificata, rango della matrice (5.4.23) per gamma2 ï¿½:');
+if (rank(R2)==size(A,1)+12) 
+    disp('b) verificata ,rango della matrice 5.4.23 per gamma2 ï¿½:');
     disp(rank(R2)); 
 else
     disp('Test Fallito per gamma2');
@@ -473,30 +369,30 @@ BPhi=[0;0;1];
 disp(BPhi);
 
 disp('la matrice dinamica AK1 del modello interno KM1 :');
-AK1=blkdiag(APhi,APhi,Aphi,Aphi);
+AK1=blkdiag(APhi,APhi,Aphi,Aphi,Aphi,Aphi,Aphi,Aphi,Aphi,Aphi,Aphi,Aphi);
 %disp(AK1);
 disp('la matrice dinamica BK1, con q blocchi diagonali, del modello interno KM1 :');
-BK1=blkdiag(BPhi,BPhi,BPhi,BPhi);
+BK1=blkdiag(BPhi,BPhi,BPhi,BPhi,BPhi,BPhi,BPhi,BPhi,BPhi,BPhi,BPhi,BPhi);
 %disp(BK1);
 
 disp('Premere un tasto per continuare...');
 pause;
 
-% %% Stabilizzazione LQR
-% disp('Controllability of the system');
-% rkCtrb = rank(ctrb(A1,B1))
-% C=eye(4);
-% alphaK = 2;
-% Qie = blkdiag(0.00001,100*eye(3));
-% Q = eye(size(A1));
-% R = [1 0 0 0; 0 0.00001 0 0; 0 0 0.00001 0; 0 0 0 0.00001];
-% %R = eye(size(B,2));
-% K = lqr(A1,B1,Qie,R);
-% disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
-% eig(A1-B1*K)
-% 
-% disp('Premere un tasto per continuare...');
-% pause;
+%% Stabilizzazione LQR
+disp('Controllability of the system');
+rkCtrb = rank(ctrb(A,B))
+C=eye(12);
+alphaK = 2;
+Qie = blkdiag([0.00001 0 0; 0 0.00001 0; 0 0 0.00001],zeros(3),100*eye(3),eye(3));
+Q = eye(size(A));
+R = [1 0 0 0; 0 0.00001 0 0; 0 0 0.00001 0; 0 0 0 0.00001];
+%R = eye(size(B,2));
+K = lqr(A,B,Qie,R);
+disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
+eig(A-B*K)
+
+disp('Premere un tasto per continuare...');
+pause;
 
 %% Stabilizzazione LQR e inseguimento del riferimento
 %
@@ -523,159 +419,119 @@ pause;
 % pause;
 % clc;
 %% Stabilizzazione LQR e inseguimento del riferimento 1
-% % 
-% % disp('Calcolo del controllo ottimo LQR + reference tracking');
-% % %alphaK = 1;
-% % Cr=eye(12);
-% % Ap = [A zeros(A);Cr*C-C*A Cr];
-% % %Ap=blkdiag(A,zeros(size(A)));
-% % Bp=[B;-C*B];
-% % %Bp=[B;zeros(size(B))];
-% % %Cr=blkdiag(eye(3),zeros(3),[0 0 0; 0 0 0; 0 0 1],zeros(3));
-% % Cp=[zeros(12) eye(12)];
-% % %Cp=[-C Cr];
-% % Qie = blkdiag([100 0 0; 0 100 0; 0 0 100],eye(3),100*eye(3),1*eye(3));
-% % Q = eye(size(A));
-% % %Qr=blkdiag(eye(12),zeros(12));
-% % Qr=Cp'*Qie*Cp;
-% % Qr=eye(24);
-% % %R = [100 0 0 0; 0 0.0000001 0 0; 0 0 0.0000001 0; 0 0 0 0.0000001];
-% % 
-% % Kr = lqr(Ap,Bp,Qr,R);
-% % size(Kr)
-% % disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
-% % eig(Ap-Bp*Kr)
-% % %Kr=Kr(1:4,1:end)
-% % disp('Premere un tasto per continuare...');
-% % pause;
-% % clc;
-% %% Stabilizzazione LQR e inseguimento del riferimento
-% % 
-% % disp('Calcolo del controllo ottimo LQR + reference tracking');
-% % alphaK = 1;
-% % Ap=blkdiag(A,zeros(size(A)));
-% % Bp=[B;zeros(size(B))];
-% % Cr=blkdiag(eye(3),zeros(3),[0 0 0; 0 0 0; 0 0 1],zeros(3));
-% % Cr=eye(12);
-% % Cp=[-C Cr];
-% % Qie = blkdiag([100 0 0; 0 100 0; 0 0 100],eye(3),100*eye(3),1*eye(3));
-% % Q = eye(size(A));
-% % Qr=blkdiag(eye(12),zeros(12));
-% % Qr=Cp'*Q*Cp;
-% % R = [100 0 0 0; 0 0.0000001 0 0; 0 0 0.0000001 0; 0 0 0 0.0000001];
-% % 
-% % Kr = lqr(Ap,Bp,Qr,R);
-% % size(Kr)
-% % disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
-% % eig(Ap-Bp*Kr)
-% % Kr=Kr(1:4,1:end)
-% % disp('Premere un tasto per continuare...');
-% % pause;
-% % clc;
 % 
-% % %% Calcolo delle matrici F1,F2 per stabilizzare la cascata in anello aperto, V per Kalman 
-% % disp('Calcolo delle matrici F1,F2 per stabilizzare la cascata S1-S2, ovvero l anello aperto,e  V per Kalman ');
-% % Asig =[ A zeros(size(A),size(AK1,2)); -BK1*C AK1];
-% % Bsig = [ B; -BK1*D];
-% % Q = eye(size(A)+size(AK1));
-% % R = eye(size(Bsig,2));
-% % F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
-% % 
-% % disp('matrici stablizzanti:')
-% % F2=F(:,1:10)
-% % disp('dimensioni [pxn]:'); disp(size(F2));
-% % F1=F(:,11:16)
-% % disp('dimensioni [pxq*mu]:'); disp(size(F1));
+% disp('Calcolo del controllo ottimo LQR + reference tracking');
+% %alphaK = 1;
+% Cr=eye(12);
+% Ap = [A zeros(A);Cr*C-C*A Cr];
+% %Ap=blkdiag(A,zeros(size(A)));
+% Bp=[B;-C*B];
+% %Bp=[B;zeros(size(B))];
+% %Cr=blkdiag(eye(3),zeros(3),[0 0 0; 0 0 0; 0 0 1],zeros(3));
+% Cp=[zeros(12) eye(12)];
+% %Cp=[-C Cr];
+% Qie = blkdiag([100 0 0; 0 100 0; 0 0 100],eye(3),100*eye(3),1*eye(3));
+% Q = eye(size(A));
+% %Qr=blkdiag(eye(12),zeros(12));
+% Qr=Cp'*Qie*Cp;
+% Qr=eye(24);
+% %R = [100 0 0 0; 0 0.0000001 0 0; 0 0 0.0000001 0; 0 0 0 0.0000001];
 % 
-% %si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
-% alphaK = 100;
-% Q = eye(size(A1));
-% W = eye(size(A1));
-% R = eye(size(C1,2));
-% disp('matrice per Kalman:')
-% V=lqr((A1+alphaK*eye(size(A1)))',C1',Q,R)'
-% disp('dimensione attesa [nxq]');
-% disp(size(V));
-% Aoss=A1-V*C1;
-% Boss=[B1-V*D1 V]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
-% Coss=eye(size(A1));
-% Doss=zeros(size(Boss));
-% % 
-% % disp('verifica spostamento autovalori:');
-% % disp('autovalori A+B*F2');
-% %disp(eig(A+B*F2));
-% 
-% disp('autovalori A1-V*C1');
-% disp(eig(A1-V*C1));
-% 
+% Kr = lqr(Ap,Bp,Qr,R);
+% size(Kr)
+% disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
+% eig(Ap-Bp*Kr)
+% %Kr=Kr(1:4,1:end)
 % disp('Premere un tasto per continuare...');
 % pause;
-% % %% specifica 3 ) definizione matrici per simulink:
-% % disp('specifica 3 ) definizione matrici per simulink:');
-% % %per disturbo sul processo defibnisco Bmod:
-% % %Bmod=[M B]; %nota prima d e poi u scambio la somma per comoditï¿½
-% % %Dmod=[N D];
-% % 
-% % %si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
-% % Aoss=A-V*C;
-% % Boss=[B-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
-% % Coss=eye(n);
-% % Doss=zeros(size(Boss));
-% % 
-% % %ricordando che delta xi1=AK1*xi+ Bk1*e
-% % AMI=AK1;
-% % BMI=BK1;
-% % CMI=eye(q*mu);
-% % DMI=zeros(q*mu,q);
-% % 
-% % disp('avvio simulazione 1');
-% % open('progetto2_mi_dist_kalm.mdl')
-% % sim('progetto2_mi_dist_kalm.mdl')
-% % disp('Premere un tasto per continuare...');
-% % pause;
+% clc;
+%% Stabilizzazione LQR e inseguimento del riferimento
+% 
+% disp('Calcolo del controllo ottimo LQR + reference tracking');
+% alphaK = 1;
+% Ap=blkdiag(A,zeros(size(A)));
+% Bp=[B;zeros(size(B))];
+% Cr=blkdiag(eye(3),zeros(3),[0 0 0; 0 0 0; 0 0 1],zeros(3));
+% Cr=eye(12);
+% Cp=[-C Cr];
+% Qie = blkdiag([100 0 0; 0 100 0; 0 0 100],eye(3),100*eye(3),1*eye(3));
+% Q = eye(size(A));
+% Qr=blkdiag(eye(12),zeros(12));
+% Qr=Cp'*Q*Cp;
+% R = [100 0 0 0; 0 0.0000001 0 0; 0 0 0.0000001 0; 0 0 0 0.0000001];
+% 
+% Kr = lqr(Ap,Bp,Qr,R);
+% size(Kr)
+% disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
+% eig(Ap-Bp*Kr)
+% Kr=Kr(1:4,1:end)
+% disp('Premere un tasto per continuare...');
+% pause;
+% clc;
+
+% %% Calcolo delle matrici F1,F2 per stabilizzare la cascata in anello aperto, V per Kalman 
+% disp('Calcolo delle matrici F1,F2 per stabilizzare la cascata S1-S2, ovvero l anello aperto,e  V per Kalman ');
+% Asig =[ A zeros(size(A),size(AK1,2)); -BK1*C AK1];
+% Bsig = [ B; -BK1*D];
+% Q = eye(size(A)+size(AK1));
+% R = eye(size(Bsig,2));
+% F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
+% 
+% disp('matrici stablizzanti:')
+% F2=F(:,1:10)
+% disp('dimensioni [pxn]:'); disp(size(F2));
+% F1=F(:,11:16)
+% disp('dimensioni [pxq*mu]:'); disp(size(F1));
+
+%si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
+alphaK = 100;
+Q = eye(size(A));
+W = eye(size(A));
+R = eye(size(C,2));
+disp('matrice per Kalman:')
+V=lqr((A+alphaK*eye(size(A)))',C',Q,R)'
+disp('dimensione attesa [nxq]');
+disp(size(V));
+Aoss=A-V*C;
+Boss=[B-V*D V]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
+Coss=eye(size(A));
+Doss=zeros(size(Boss));
+% 
+% disp('verifica spostamento autovalori:');
+% disp('autovalori A+B*F2');
+%disp(eig(A+B*F2));
+
+disp('autovalori A-V*C');
+disp(eig(A-V*C));
+
+disp('Premere un tasto per continuare...');
+pause;
+% %% specifica 3 ) definizione matrici per simulink:
+% disp('specifica 3 ) definizione matrici per simulink:');
+% %per disturbo sul processo defibnisco Bmod:
+% %Bmod=[M B]; %nota prima d e poi u scambio la somma per comoditï¿½
+% %Dmod=[N D];
+% 
+% %si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
+% Aoss=A-V*C;
+% Boss=[B-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
+% Coss=eye(n);
+% Doss=zeros(size(Boss));
+% 
+% %ricordando che delta xi1=AK1*xi+ Bk1*e
+% AMI=AK1;
+% BMI=BK1;
+% CMI=eye(q*mu);
+% DMI=zeros(q*mu,q);
+% 
+% disp('avvio simulazione 1');
+% open('progetto2_mi_dist_kalm.mdl')
+% sim('progetto2_mi_dist_kalm.mdl')
+% disp('Premere un tasto per continuare...');
+% pause;
 
 %% Open symulink model
-% 
-% sys = 'tenzo';
-% open_system(sys)
-% SimOut = sim(sys);
 
-%%
-% disp('avvio il programma per il calcolo ottimizzato');
-% alpha=1;
-
-
-% %Initial state quaternion
-% q0=angle2quat(PHI0,THETA0,PSI0); 
-% 
-% %Initial state vector
-% X0=[U0 V0 W0 P0 Q0 R0 X0 Y0 Z0 q0(1) q0(2) q0(3) q0(4)];
-% 
-% Z0lin = -1; %Linearization point with the quadrotor stabilized (m)
-% PHIlin = 0; %Linearization point pitch angle of the quadrotor (rad)
-% THETAlin = 0; %Linearization point roll angle of the quadrotor (rad)
-% PSIlin = 0; %Linearization point yaw angle of the quadrotor (rad)
-% qlin=angle2quat(PHIlin,THETAlin,PSIlin); %Initial state quaternion
-% 
-% %Linearization point for generating the state-space system representation of the quadrotor
-% %X0lin=[0 0 0 0 0 0 0 0 Z0lin PHIlin THETAlin PSIlin];
-% X0lin=[0 0 0 0 0 0 0 0 Z0lin qlin];
-% 
-% [A,B,C,D]=quadss(X0lin,mq,I,w0,Kt,Ktm,dcg);%,daccel); %Get linearized state
-% %space matrices of the quadrotor
-% 
-% %Initial quadrotor reference
-% Y0ref = [0 0 0 0 0 0]; 
-% 
-% %Get Kalman filter
-% quadkalm; 
-% %Get LQR controller
-% quadLQRcontrol; 
-% 
-% %quadLQRcontrol_12states %Uncomment this line if you wish 12 states control
-% %with pure feedback (i.e. no Kalman filter nor sensors)
-% 
-% damp(A-B*[zeros(4,3) Klqr(:,1:3) zeros(4,3) Klqr(:,4:6)]) % Eigen values of
-% % the closed loop. If an eigenvalue is not stable, the dynamics of this
-% % eigenvalue will be present in the closed-loop system which therefore will
-% % be unstable.
+sys = 'tenzo1_00';
+open_system(sys)
+SimOut = sim(sys);
