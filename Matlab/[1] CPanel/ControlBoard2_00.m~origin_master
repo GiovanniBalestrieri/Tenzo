@@ -7,7 +7,7 @@ clc;
 global xbee;
 global portWin;
 global portUnix;
-global baudrate;
+global xbeeBR;
 global terminator;
 global inputBuffSize;
 global outputBuffSize;
@@ -236,7 +236,7 @@ arduinoAdd = 1;
 matlabAdd = 2;
 portWin = 'Com3';
 portUnix = '\dev\ttyS0';
-baudrate = 19200;
+xbeeBR = 19200;
 % buffer size should be the same as the one specified on the Arduino side
 inputBuffSize = 47+1;
 outputBuffSize = 31;
@@ -716,7 +716,7 @@ delete(instrfindall)
         % Max wait time
         set(s, 'TimeOut', 5); 
         set(s,'terminator','CR');
-        set(s,'BaudRate',9600);
+        set(s,'BaudRate',xbeeBR);
         fopen(s);
 
         disp('Sending Request.');
@@ -1579,7 +1579,7 @@ function recordCallback(obj,event,handles)
             %%  Setting up serial communication
             % XBee expects the end of commands to be delineated by a carriage return.
 
-            xbee = serial(portWin,'baudrate',baudrate,'terminator',terminator,'tag',tag);
+            xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
 
             % Max wait time
             set(xbee, 'TimeOut', 10);  
@@ -1673,17 +1673,17 @@ function recordCallback(obj,event,handles)
         bufferSend(16) = obj(2,2);
         bufferSend(17) = obj(2,3);
         bufferSend(18) = obj(2,4);
-        % cmd 1
+        % cmd 2
         bufferSend(19) = obj(3,1);
         bufferSend(20) = obj(3,2);
         bufferSend(21) = obj(3,3);
         bufferSend(22) = obj(3,4);
-        % cmd 1
+        % cmd 3
         bufferSend(23) = obj(4,1);
         bufferSend(24) = obj(4,2);
         bufferSend(25) = obj(4,3);
         bufferSend(26) = obj(4,4);
-        % cmd 1
+        % cmd 4
         bufferSend(27) = obj(5,1);
         bufferSend(28) = obj(5,2);
         bufferSend(29) = obj(5,3);
@@ -1691,7 +1691,8 @@ function recordCallback(obj,event,handles)
 
         disp(bufferSend);
         fwrite(xbee,bufferSend,'uint8');    
-        %xbee.ValuesSent
+        disp('Tot bytes sent');
+        xbee.ValuesSent
         
         %% Command
 

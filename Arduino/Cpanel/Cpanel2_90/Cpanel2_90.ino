@@ -1,4 +1,3 @@
-
 /**********************************************************************
  *             Arduino & L3G4200D gyro & KALMAN & 3 threshold PID     *
  *                running I2C mode, MMA7260Q Accelerometer            *
@@ -47,9 +46,9 @@ boolean printRawGyro= false;
 boolean printGyro = false;
 boolean printRawCompass= false;
 boolean printCompass = false;
-boolean printRawKalman= false;
+boolean printRawKalman= true;
 boolean printKalman = false; 
-boolean printPIDVals = true;
+boolean printPIDVals = false;
 boolean printMotorsVals = false;
 // Timers
 boolean printTimers = false;
@@ -59,7 +58,7 @@ boolean printAccTimers = true;
 
 boolean printThrottle = false;
 boolean printAckCommands = false;
-boolean printVerboseSerial = true;
+boolean printVerboseSerial = false;
 
 // Data acquisition variables
 float aax;
@@ -87,12 +86,13 @@ unsigned long timeToLand = 20000;
 boolean autoLand = false;
 boolean landing = false;
 int landSpeed = 1;
+
 /**
  * Pid Controller 
  */
 boolean autoEnablePid = true;
 boolean enablePid = false; // Lascia false autoEnablePid lo gestisce.
-boolean enableRollPid = false;
+boolean enableRollPid = true;
 boolean enablePitchPid = true;
 boolean enableYawPid = false;
 boolean enableAltitudePid = false;
@@ -112,7 +112,7 @@ float farKpRoll=0.05, farKiRoll=0.9, farKdRoll=0.03;
 
 // Pitch
 float aggKpPitch=0.07, aggKiPitch=0.06, aggKdPitch=0.04;
-float consKpPitch=0.22, consKiPitch=0.08, consKdPitch=0.06;
+float consKpPitch=0.24, consKiPitch=0.09, consKdPitch=0.06;
 float farKpPitch=0.02, farKiPitch=0.09,  farKdPitch=0.10;
 
 // Yaw
@@ -196,8 +196,6 @@ float complementaryConstant = 0.03;
 boolean usingInterrupt = false;
 
 //Initialize condition, true if 'i' sent via serial/xbee
-boolean initializing = false;
-boolean initialized = false;
 
 // Matlab plot
 boolean plotting = false;
@@ -352,14 +350,14 @@ float uZM1 = 0;
 
 // Digital ButterWorth 2nd order filter coefficients
 //0.10
-
+/*
 float aButter2[4] = {0,1,-1.5610,0.6414};
 float bButter2[4] = {0,0.0201,0.0402,0.0201};
-/*
+*/
 //0.05
 float aButter2[4] = {0,1,-1.7786,0.8008};
 float bButter2[4] = {0,0.0055,0.0111,0.0055};
-*/
+
 #ifdef ACQUISITION
 
 unsigned char bufferAcc[354];  // 13 + (n*17)
@@ -794,13 +792,9 @@ void control()
       InputPitch = pitchK;
       errorPitch = abs(SetpointPitch - pitchK); //distance away from setpoint
 
-      /*
       if (errorPitch<thresholdPitch)
       {  //we're close to setpoint, use conservative tuning parameters
-        
-        */
         myPitchPID.SetTunings(consKpPitch, consKiPitch, consKdPitch);
-        /*
       }
       else if (errorPitch>=thresholdPitch && errorPitch<thresholdFarPitch)
       {
@@ -812,12 +806,12 @@ void control()
         //we're really far from setpoint, use other tuning parameters
         myPitchPID.SetTunings(farKpPitch, farKiPitch, farKdPitch);
       }
-*/
+
       myPitchPID.Compute(); // Computes outputPitch
 
       if (printPIDVals)
       { 
-        Serial.print("                             Error Pitch: ");
+        Serial.print("  Error Pitch: ");
         Serial.print(errorPitch);
         Serial.print("  pidAction: ");
         Serial.print(OutputPitch);
@@ -2950,20 +2944,6 @@ void getAccValues()
   // updates last reading 
   lastFiltAccTimer = millis();   
   
-  #ifdef ACQUISITION
-  // Fills the buffers to send
-  if (storeAccData)
-  {
-    buffXAccToSend[contBuffAcc-1] = accX;
-     contBuffAcc++;
-  }
-  if (contBuffAcc%(sizeBuffAcc+1) == 0)
-  {
-    Serial.println();
-    sendBuffAcc(buffXAccToSend);
-    accDataReady=true; // deprecated
-  }
-  #endif
   if (printTimers && printAccTimers)
   {
     Serial.println();

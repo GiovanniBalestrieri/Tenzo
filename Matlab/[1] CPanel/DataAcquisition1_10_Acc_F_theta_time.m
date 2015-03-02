@@ -2,6 +2,8 @@ function DataAcquisiton()
     clc; 
     global axdata;
     global aydata;
+    global axFData;
+    global angleData;
     global azdata;
     global AccX;
     global AccY;
@@ -9,6 +11,8 @@ function DataAcquisiton()
     global time;
     global serialFlag;
     global samplesNum;
+    global axF;
+    global angle;
     global samplesNumMax;
     global timerArduino;
     global timerConnect;
@@ -24,14 +28,16 @@ function DataAcquisiton()
     ax=0;
     ay=0;
     az=0;
+    axF=0;
+    angle=0;
     t=0;
     serialFlag=0;
     prevTimer = 0;
     deltaT = 0;
     contSamples = 0;
     
-    buffLen = 600;
-    longBuffLen = 1000;
+    buffLen = 300;
+    longBuffLen = 300;
     index=1:buffLen;
     asked = false;
     rt = false;
@@ -46,6 +52,8 @@ function DataAcquisiton()
     axdata = zeros(buffLen,1);
     aydata = zeros(buffLen,1);
     azdata = zeros(buffLen,1);
+    axFData = zeros(buffLen,1);
+    angleData = zeros(buffLen,1);
     time  = zeros(buffLen,1);
     
     delete(instrfindall);
@@ -98,22 +106,23 @@ function DataAcquisiton()
     
         % waiting for the connection to be established
         disp(serialFlag);
-        while (serialFlag == 1 && abs(az) >= -0.5)               
+        while (abs(az) >= -0.5)               
             % Request High Res data             
             if rt
-                fwrite(acceleration.s,82);
+                fwrite(acceleration.s,83);
                 
-                [ax ay az t,firing] = readAcc1_05(acceleration);
-                firing
-                while (firing && ax+ay+az ~= 0 && rt)
+                [ax axF angle t,firing,contSamplesS] = readAcc1_15_F_Angle(acceleration,contSamples);
+                %firing
+                %contSamples
+                while (firing && rt)
                     
                     figure(6);
                     cla;
 
                     axdata = [ axdata(2:end) ; ax ];
-                    aydata = [ aydata(2:end) ; ay ];
-                    azdata = [ azdata(2:end) ; az ];    
-                    time   = [time(2:end) ; t/1000];
+                    axFData = [ axFData(2:end) ; axF ];
+                    angleData = [ angleData(2:end) ; angle ];    
+                    time   = [time(2:end) ; t];
 
                     deltaT = t - prevTimer;
                     prevTimer = t;
@@ -128,20 +137,20 @@ function DataAcquisiton()
 
                     h12 = subplot(3,1,2);
 
-                    title('Acc Y');      
+                    title('Acc X Filtered');      
                     axis([1 buffLen -0.5 0.5]);          
                     xlabel('time [ms]')
-                    ylabel('Magnitude of Y acc [m*s^-2]');
-                    plot(h12,index,aydata,'r');
+                    ylabel('Magnitude of X acc [m*s^-2]');
+                    plot(h12,index,axFData,'r');
                     grid on;         
 
                     h13 = subplot(3,1,3);
 
-                    title('Acc Z');
+                    title('Theta');
                     axis([1 buffLen -1.5 1.5]);                
                     xlabel('time [ms]')
-                    ylabel('Magnitude of Z acc [m*s^-2]');
-                    plot(h13,index,azdata,'r');
+                    ylabel('Theta angle [m*s^-2]');
+                    plot(h13,index,angleData,'r');
                     grid on;         
 
                     if ((time(1) >= 0) && (time(end)>0))
@@ -150,32 +159,31 @@ function DataAcquisiton()
                         axis([time(1) time(end) -1.5 1.5]);                
                         xlabel('time [ms]')
                         ylabel('Magnitude of X acc [m*s^-2]');
-                        plot(time(1:end),axdata(1:end),'b');
+                        plot(time(1:end),angleData(1:end),'b');
                         grid on;        
                     end
                     drawnow;                    
-                    [ax ay az t,rt,contSamples] = readAcc1_10(acceleration,contSamples);
+                    [ax axF angle t,firing,contSamples] = readAcc1_15_F_Angle(acceleration,contSamples);
                     contSamples
+                    firing
+                    rt=firing;
                 end
             end
             if ~rt
                 disp('saving samples to file');
                 accDataToWrite = [axdata,time];
-                csvwrite('accx.txt',accDataToWrite);
+                csvwrite('accs.txt',accDataToWrite);
                 disp('saving file to structure accSamples.mat');
                 dat.x = axdata;
-                dat.y = aydata;
-                dat.z = azdata;
+                dat.y = axFData;
+                dat.z = angleData;
                 dat.time = time;
-                save('accSamples.mat','-struct','dat');
+                save('accData1.0.mat','-struct','dat');
                 disp(deltaT);
                 % Reset Arrays
-                AccX = zeros(buffLen,1);
-                AccY = zeros(buffLen,1);
-                AccZ = zeros(buffLen,1);
                 axdata= zeros(buffLen,1);
-                aydata = zeros(buffLen,1);
-                azdata = zeros(buffLen,1);
+                axFData = zeros(buffLen,1);
+                angleData = zeros(buffLen,1);
                 time  = zeros(buffLen,1);
                 break;
             end
@@ -314,14 +322,14 @@ function DataAcquisiton()
         timerArduino = timer('ExecutionMode','fixedRate','Period',0.1,'TimerFcn',{@storeSerial});    
 
         timerConnect = timer('ExecutionMode','fixedRate','Period',5,'TimerFcn',{@connect});%,'StopFcn',{@stoppedCon});    
-        start(timerConnect);
+        %start(timerConnect);
     end
 
 
         function connect(obj,event,h)
             if serialFlag == 0 && requestPending == false
                 if isvalid(acceleration.s) == 1
-                    fwrite(acceleration.s,16); 
+                    fwrite(acceleration.s,90); 
                 end
                 if (strcmp(get(timerArduino,'Running'),'off'))
                     start(timerArduino);    
@@ -338,9 +346,9 @@ function DataAcquisiton()
             disp('Connection established');
         end
 
-        function storeSerial(obj,event,handles)
+        function storeSerial(obj,event,handles)            
             while (get(acceleration.s, 'BytesAvailable')==1)
-                [mess,cont] = fread(acceleration.s);
+                [mess,cont] = fread(acceleration.s)
                 %disp('Received bytes:');
                 %disp(cont);
                 %disp(mess);

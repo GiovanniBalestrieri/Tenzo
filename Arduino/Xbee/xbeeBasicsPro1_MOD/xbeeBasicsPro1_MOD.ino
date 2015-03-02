@@ -11,10 +11,11 @@
 
 uint8_t pinRx = 12 , pinTx = 13; // the pin on Arduino
 long BaudRateSerial = 9600;
-long BaudRateXbee = 57600;
+long BaudRateXbee = 38400;
 char GotChar;
 byte getData;
 byte bufferBytes[30];
+int inputBuffSize = 30;
 
 // Compare function variables
 char inData[20]; // Allocate some space for the string
@@ -75,18 +76,9 @@ void loop()
   { 
     Serial.print("- Received Tot: ");
     Serial.println(xbee.available());
-      
-    for (int j=0;j<=25;j++)
-    {
-      bufferBytes[j]=xbee.read();
-      Serial.print("Received: ");
-      Serial.print(bufferBytes[j]);
-      Serial.println();
-    } 
-    if (xbee.available() >= 25)
-    {     
-      if (printVerboseSerial)
-      {
+
+    if (xbee.available() >= inputBuffSize)
+    { 
         for (int j=0;j<=inputBuffSize;j++)
         {
           bufferBytes[j]=xbee.read();
@@ -94,7 +86,8 @@ void loop()
           Serial.print(bufferBytes[j]);
           Serial.println();
         }  
-      } 
+    } 
+   
     //getData = xbee.read();  
     
     Serial.println();

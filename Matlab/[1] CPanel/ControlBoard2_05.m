@@ -3,11 +3,10 @@ function ControlBoard()
 clear all;
 clc;
 
-
 global xbee;
 global portWin;
 global portUnix;
-global baudrate;
+global xbeeBR;
 global terminator;
 global inputBuffSize;
 global outputBuffSize;
@@ -236,7 +235,7 @@ arduinoAdd = 1;
 matlabAdd = 2;
 portWin = 'Com3';
 portUnix = '\dev\ttyS0';
-baudrate = 19200;
+xbeeBR = 19200;
 % buffer size should be the same as the one specified on the Arduino side
 inputBuffSize = 47+1;
 outputBuffSize = 31;
@@ -542,18 +541,18 @@ delete(instrfindall)
         'Parent',hTabs(4), 'FontSize',13,'FontWeight','normal');
     
     pidKpSlider = uicontrol('Style','slider','Visible','off',...
-    'min',0,'max',2,'Callback',@(s,e) disp('KpSlider'),...
-    'SliderStep',[0.01 0.10],'Position', [140 185 350 20]);
+    'min',0,'max',1,'Callback',@(s,e) disp('KpSlider'),...
+    'SliderStep',[0.01 0.05],'Position', [140 185 350 20]);
     KpListener = addlistener(pidKpSlider,'Value','PostSet',@pidKpSliderCallBack);
     
     pidKdSlider = uicontrol('Style','slider','Visible','off',...
-    'min',0,'max',2,'Callback',@(s,e) disp('KdSlider'),...
-    'SliderStep',[0.01 0.10],'Position', [140 110 350 20]);
+    'min',0,'max',0.5,'Callback',@(s,e) disp('KdSlider'),...
+    'SliderStep',[0.01 0.05],'Position', [140 110 350 20]);
     KdListener = addlistener(pidKdSlider,'Value','PostSet',@pidKdSliderCallBack);
     
     pidKiSlider = uicontrol('Style','slider','Visible','off',...
-    'min',0,'max',2,'Callback',@(s,e) disp('KiSlider'),...
-    'SliderStep',[0.01 0.10],'Position',[140 30 350 20]);
+    'min',0,'max',0.5,'Callback',@(s,e) disp('KiSlider'),...
+    'SliderStep',[0.01 0.05],'Position',[140 30 350 20]);
     KiListener = addlistener(pidKiSlider,'Value','PostSet',@pidKiSliderCallBack);
     
     pidKpTxt = uicontrol('Style','text','Visible','off',...
@@ -716,7 +715,7 @@ delete(instrfindall)
         % Max wait time
         set(s, 'TimeOut', 5); 
         set(s,'terminator','CR');
-        set(s,'BaudRate',9600);
+        set(s,'BaudRate',xbeeBR);
         fopen(s);
 
         disp('Sending Request.');
@@ -1579,7 +1578,7 @@ function recordCallback(obj,event,handles)
             %%  Setting up serial communication
             % XBee expects the end of commands to be delineated by a carriage return.
 
-            xbee = serial(portWin,'baudrate',baudrate,'terminator',terminator,'tag',tag);
+            xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
 
             % Max wait time
             set(xbee, 'TimeOut', 10);  
@@ -1673,17 +1672,17 @@ function recordCallback(obj,event,handles)
         bufferSend(16) = obj(2,2);
         bufferSend(17) = obj(2,3);
         bufferSend(18) = obj(2,4);
-        % cmd 1
+        % cmd 2
         bufferSend(19) = obj(3,1);
         bufferSend(20) = obj(3,2);
         bufferSend(21) = obj(3,3);
         bufferSend(22) = obj(3,4);
-        % cmd 1
+        % cmd 3
         bufferSend(23) = obj(4,1);
         bufferSend(24) = obj(4,2);
         bufferSend(25) = obj(4,3);
         bufferSend(26) = obj(4,4);
-        % cmd 1
+        % cmd 4
         bufferSend(27) = obj(5,1);
         bufferSend(28) = obj(5,2);
         bufferSend(29) = obj(5,3);
@@ -1691,7 +1690,8 @@ function recordCallback(obj,event,handles)
 
         disp(bufferSend);
         fwrite(xbee,bufferSend,'uint8');    
-        %xbee.ValuesSent
+        disp('Tot bytes sent');
+        xbee.ValuesSent
         
         %% Command
 
@@ -1772,11 +1772,25 @@ function recordCallback(obj,event,handles)
                             disp(double(round(get(pidKdSlider,'Value')*1000)));
                             disp('Rounded Ki val');
                             disp(double(round(get(pidKiSlider,'Value')*1000)));
-                            bits = reshape(bitget(double(round(get(pidKpSlider,'Value')*1000)),32:-1:1),8,[]);
+                            if get(pidKpSlider,'Value')<=0.5
+                                bits = reshape(bitget(double(round(get(pidKpSlider,'Value')*1000)),32:-1:1),8,[]);
+                            else
+                                bits = reshape(bitget(double(round(0.5*1000)),32:-1:1),8,[]);
+                            end
                             cmd(2,:) = weights2*bits;
-                            bits = reshape(bitget(double(round(get(pidKdSlider,'Value')*1000)),32:-1:1,'int32'),8,[]);
+                            if get(pidKdSlider,'Value')<=0.5
+                                bits = reshape(bitget(double(round(get(pidKdSlider,'Value')*1000)),32:-1:1),8,[]);
+                            else
+                                bits = reshape(bitget(double(round(0.5*1000)),32:-1:1),8,[]);
+                            end
+                            %bits = reshape(bitget(double(round(get(pidKdSlider,'Value')*1000)),32:-1:1,'int32'),8,[]);
                             cmd(3,:) = weights2*bits;
-                            bits = reshape(bitget(double(round(get(pidKiSlider,'Value')*1000)),32:-1:1,'int32'),8,[]);
+                            if get(pidKiSlider,'Value')<=0.5
+                                bits = reshape(bitget(double(round(get(pidKiSlider,'Value')*1000)),32:-1:1),8,[]);
+                            else
+                                bits = reshape(bitget(double(round(0.5*1000)),32:-1:1),8,[]);
+                            end
+                            %bits = reshape(bitget(double(round(get(pidKiSlider,'Value')*1000)),32:-1:1,'int32'),8,[]);
                             cmd(4,:) = weights2*bits;
                             bits = reshape(bitget(str2double(get(referencePIDVal,'String')),32:-1:1,'int32'),8,[]);
                             cmd(5,:) = weights2*bits;
