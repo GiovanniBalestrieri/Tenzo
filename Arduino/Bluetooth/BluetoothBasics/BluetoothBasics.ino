@@ -41,12 +41,13 @@ void loop()
   //Read from bluetooth and write to usb serial
   if(bluetooth.available())
   {    
-    getData =  bluetooth.read();
-    Serial.println();
-    Serial.print("Receiving [byte]");
-    Serial.print(getData);
-    Serial.print(" [char] ");    
-    Serial.print((char) getData);
+    //getData =  bluetooth.read();
+    char getData =  bluetooth.read();
+    Serial.println(getData);
+//    Serial.print("Receiving [byte]");
+//    Serial.print(getData);
+//    Serial.print(" [char] ");    
+//    Serial.print((char) getData);
     Serial.println(" from Bluetooth");
   }
   
