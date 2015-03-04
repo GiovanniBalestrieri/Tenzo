@@ -90,9 +90,10 @@ D = zeros(4,4);
 tenzo=ss(A,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal);
 %tenzo=ss(A,B,CFull,DFull);
 
-disp('Transfer matrix of the model')
-modello_tf=tf(tenzo)
+%disp('Transfer matrix of the model')
+%modello_tf=tf(tenzo)
 
+pause;
 %% Eigenvalues of the system
 
 disp('specifica 1) Verifichare che esiste un cotrollore che soddisfa le specifiche A1,B,C1 (teorema 5.4.2):');
@@ -107,11 +108,22 @@ if (stab==0) disp('Sistema instabile: gli autovalori a ciclo aperto sono: [coman
 if (stab==1) disp('Sistema stabile: gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
 disp(eOp);
 
+% Verifica Raggiungibilità
+
+disp('Verifica raggiungibilà: rank([A-gI,B]) : per tutti g € spec(A)')
+disp(rank(ctrb(A,B)));
+
+
+disp('Verifica osservabilità. Rango della matrice di osservabilità:')
+disp(rank(obsv(A,Clocal)));
+
+pause();
 %% Stabilizzazione mediante retroazione dallo stato
+disp('Stabilizzazione mediante retroazione dallo stato');
 
 poles = [-1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -11];
 K11=place(A,B,poles);
-
+K11=0*K11;
 disp('Eigenvalues of the closed loop sys');
 eig(A-B*K11)
 
@@ -120,9 +132,10 @@ tenzoRetro=ss(A-B*K11,B,Clocal,D,'statename',states,'inputname',inputs,'outputna
 step(tenzoRetro);
 
 
-disp('Transfer matrix of the model')
-modello_tf=tf(tenzoRetro)
+% disp('Transfer matrix of the model')
+% modello_tf=tf(tenzoRetro)
 
+pause;
 %% Proprietà strutturali
 
 if (rank(ctrb(A-B*K11,B))==size(A)) 
@@ -145,13 +158,13 @@ else
 end
 
 
-figure
-sigma(tenzoRetro)
-grid on
+% figure
+% sigma(tenzoRetro)
+% grid on
 
 % verifica minimum phase
-disp('Transmission zeros')
-tzero(tenzoRetro)
+% disp('Transmission zeros')
+% tzero(tenzoRetro)
 
 
 disp('Premere un tasto per continuare...');
@@ -176,10 +189,10 @@ disp('gamma2='); disp(gamma2);
 
 disp('Verifica condizione di astatismo:');
 
-R1=[ A-B*K11-gamma1*eye(size(A)) B ; Clocal D];
+R1=[ A-B*K11-alpha*eye(size(A)) B ; Clocal D];
 disp('Rank R1:');
 disp(rank(R1));
-if (rank(R1)==size(A,1)+size(Clocal,2))  
+if (rank(R1)==size(A,1)+size(Clocal,1))  
     disp('b) verificata ,rango della matrice 5.4.23 per gamma1 �:');
     disp(rank(R1));
 else
@@ -188,7 +201,7 @@ end
 R2=[ A-B*K11-gamma2*eye(size(A)) B ; Clocal D];
 disp('Rank R2:');
 disp(rank(R2)); 
-if (rank(R2)==size(A,1)+12) 
+if (rank(R2)==size(A,1)+size(Clocal,1)) 
     disp('b) verificata ,rango della matrice 5.4.23 per gamma2 �:');
     disp(rank(R2)); 
 else
@@ -198,7 +211,6 @@ end
 disp('Premere un tasto per continuare...');
 pause;
 clc;
-
-sys = 'tenzo6dof';
+sys = 'tenzo1_05';
 open_system(sys)
-SimOut = sim('tenzo6dof');
+SimOut = sim(sys);

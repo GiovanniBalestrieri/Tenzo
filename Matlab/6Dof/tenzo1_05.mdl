@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.363"
+    ComputedModelVersion    "1.364"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Jan 29 17:01:24 2015"
-  RTWModifiedTimeStamp	  344311077
-  ModelVersionFormat	  "1.%<AutoIncrement:363>"
+  LastModifiedDate	  "Tue Feb 10 15:58:21 2015"
+  RTWModifiedTimeStamp	  345484698
+  ModelVersionFormat	  "1.%<AutoIncrement:364>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,7 +78,6 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "tenzo1_05"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -7327,7 +7326,7 @@ Model {
 	  Name			  "VR Sink"
 	  SID			  "134"
 	  Ports			  [4]
-	  Position		  [290, 19, 460, 191]
+	  Position		  [290, 21, 460, 194]
 	  ZOrder		  -7
 	  BackgroundColor	  "orange"
 	  LibraryVersion	  "1.11"
@@ -7405,7 +7404,7 @@ Model {
       System {
 	Name			"Tenzo L"
 	Location		[373, 244, 1366, 746]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -8124,7 +8123,7 @@ Model {
 	  NamePlacement		  "alternate"
 	  A			  "A"
 	  B			  "B"
-	  C			  "C"
+	  C			  "Clocal"
 	  D			  "D"
 	  X0			  "[0 0 -30 0 0 0 0 0 1 0 0 0]"
 	}
@@ -9453,8 +9452,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @        ( $6Q0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (        $  QLT .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       \"  -6P0 X    X    !@    @    &          4    (     0    $   "
+    " !          D    (        * !!M4 .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0

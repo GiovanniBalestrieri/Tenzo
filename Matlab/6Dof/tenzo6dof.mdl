@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.350"
+    ComputedModelVersion    "1.355"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Feb 02 03:37:27 2015"
-  RTWModifiedTimeStamp	  344745206
-  ModelVersionFormat	  "1.%<AutoIncrement:350>"
+  LastModifiedDate	  "Fri Feb 20 18:29:46 2015"
+  RTWModifiedTimeStamp	  346357633
+  ModelVersionFormat	  "1.%<AutoIncrement:355>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,7 +78,6 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "tenzo6dof"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -968,22 +967,13 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "682"
+    SIDHighWatermark	    "690"
     Block {
       BlockType		      Concatenate
       Name		      " "
       SID		      "152"
       Ports		      [4, 1]
       Position		      [580, 31, 585, 69]
-      ZOrder		      -22
-      NumInputs		      "4"
-    }
-    Block {
-      BlockType		      Concatenate
-      Name		      "."
-      SID		      "371"
-      Ports		      [4, 1]
-      Position		      [770, 536, 775, 574]
       ZOrder		      -22
       NumInputs		      "4"
     }
@@ -2629,16 +2619,6 @@ Model {
 	  DstPort		  1
 	}
       }
-    }
-    Block {
-      BlockType		      Demux
-      Name		      "Demux1"
-      SID		      "370"
-      Ports		      [1, 4]
-      Position		      [735, 536, 740, 574]
-      ZOrder		      -6
-      ShowName		      off
-      DisplayOption	      "bar"
     }
     Block {
       BlockType		      Demux
@@ -4374,7 +4354,7 @@ Model {
       Name		      "Mux4"
       SID		      "681"
       Ports		      [4, 1]
-      Position		      [565, 602, 570, 678]
+      Position		      [285, 707, 290, 783]
       ZOrder		      -12
       ShowName		      off
       DisplayOption	      "bar"
@@ -5815,7 +5795,7 @@ Model {
       Position		      [1375, 927, 1405, 973]
       ZOrder		      -3
       Floating		      off
-      Location		      [54, 53, 1367, 767]
+      Location		      [64, 81, 1357, 747]
       Open		      off
       NumInputPorts	      "3"
       ZoomMode		      "xonly"
@@ -6001,7 +5981,7 @@ Model {
       SID		      "682"
       Tag		      "STV Subsys"
       Ports		      [0, 4]
-      Position		      [455, 605, 540, 685]
+      Position		      [175, 710, 260, 790]
       ZOrder		      -20
       CopyFcn		      "sigbuilder_block('copy');"
       DeleteFcn		      "sigbuilder_block('delete');"
@@ -7145,7 +7125,7 @@ Model {
       System {
 	Name			"Virtual Reality"
 	Location		[53, 79, 1366, 768]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -8490,45 +8470,11 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "2500"
-      YMax		      "7000"
+      YMin		      "2700"
+      YMax		      "3200"
       SaveName		      "ScopeData16"
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
-      SampleTime	      "0"
-    }
-    Block {
-      BlockType		      Scope
-      Name		      "w0  1"
-      SID		      "372"
-      Ports		      [1]
-      Position		      [795, 539, 825, 571]
-      ZOrder		      -3
-      NamePlacement	      "alternate"
-      ShowName		      off
-      Floating		      off
-      Location		      [54, 53, 1367, 767]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      List {
-	ListType		ScopeGraphics
-	FigureColor		"[0.501960784313725 0.501960784313725 0.501960784313725]"
-	AxesColor		"[0 0 0]"
-	AxesTickColor		"[1 1 1]"
-	LineColors		"[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	LineStyles		"-|-|-|-|-|-"
-	LineWidths		"[1 0.5 0.5 0.5 0.5 0.5]"
-	MarkerStyles		"none|none|none|none|none|none"
-      }
-      ShowLegends	      off
-      YMin		      "-2.75e+08"
-      YMax		      "2.75e+08"
-      SaveName		      "ScopeData20"
-      DataFormat	      "StructureWithTime"
       SampleTime	      "0"
     }
     Block {
@@ -8559,8 +8505,8 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "-2.75e+08"
-      YMax		      "2.75e+08"
+      YMin		      "-1e+15"
+      YMax		      "2.2e+16"
       SaveName		      "ScopeData35"
       DataFormat	      "StructureWithTime"
       SampleTime	      "0"
@@ -8676,7 +8622,7 @@ Model {
       ZOrder		      -3
       NamePlacement	      "alternate"
       Floating		      off
-      Location		      [54, 81, 1347, 747]
+      Location		      [54, 53, 1367, 767]
       Open		      off
       NumInputPorts	      "3"
       List {
@@ -8978,36 +8924,6 @@ Model {
 	DstBlock		"Manual Switch3"
 	DstPort			1
       }
-    }
-    Line {
-      SrcBlock		      "Demux1"
-      SrcPort		      1
-      DstBlock		      "."
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Demux1"
-      SrcPort		      2
-      DstBlock		      "."
-      DstPort		      2
-    }
-    Line {
-      SrcBlock		      "Demux1"
-      SrcPort		      3
-      DstBlock		      "."
-      DstPort		      3
-    }
-    Line {
-      SrcBlock		      "Demux1"
-      SrcPort		      4
-      DstBlock		      "."
-      DstPort		      4
-    }
-    Line {
-      SrcBlock		      "."
-      SrcPort		      1
-      DstBlock		      "w0  1"
-      DstPort		      1
     }
     Line {
       SrcBlock		      "Constant3"
@@ -9365,25 +9281,6 @@ Model {
       DstBlock		      "Mux4"
       DstPort		      4
     }
-    Line {
-      SrcBlock		      "Mux4"
-      SrcPort		      1
-      Points		      [25, 0]
-      Branch {
-	DstBlock		"Sum1"
-	DstPort			1
-      }
-      Branch {
-	Points			[0, -65; -35, 0; 0, -260]
-	DstBlock		"Sum2"
-	DstPort			1
-      }
-    }
-    Annotation {
-      SID		      "373"
-      Name		      "u(t)"
-      Position		      [810, 530]
-    }
     Annotation {
       SID		      "664"
       Position		      [379, 487]
@@ -9405,7 +9302,7 @@ MatData {
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
     "      !0    @    !     0    $         \"0    @         0 ((0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (        H \"OL4 .    ,     8    (    !@         %    \"                0         )          "
+    "!          D    (          6@?D .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag2
@@ -9534,7 +9431,7 @@ MatData {
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
     "      !0    @    !     0    $         \"0    @         0 ((0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (          7 ?D .    ,     8    (    !@         %    \"                0         )          "
+    "!          D    (          3@?4 .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0
