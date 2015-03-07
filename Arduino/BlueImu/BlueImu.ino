@@ -65,11 +65,13 @@ uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\
 // ===               INTERRUPT DETECTION ROUTINE                ===
 // ================================================================
 
+/*
 volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
 void dmpDataReady() 
 {
     mpuInterrupt = true;
 }
+*/
 
 // ================================================================
 // ===               BLUETOOTH MODULE VARIABLES                 ===
@@ -123,7 +125,7 @@ void setup()
 
         // enable Arduino interrupt detection
         Serial.println(F("Enabling interrupt detection (Arduino external interrupt 0)..."));
-        attachInterrupt(0, dmpDataReady, RISING);
+        //attachInterrupt(0, dmpDataReady, RISING);
         mpuIntStatus = mpu.getIntStatus();
 
         // set our DMP Ready flag so the main loop() function knows it's okay to use it
@@ -149,24 +151,45 @@ void setup()
     delay(200);  // Short delay, wait for the Mate to send back CMD
     bluetooth.println("U,9600,N");  
     bluetooth.begin(9600);  // Start bluetooth serial at 9600
-    bluetooth.println("Ok");
 }
 
 void loop() 
 {
     // if programming failed, don't try to do anything
     if (!dmpReady) return;
+    //tempo = millis();
     // other program behavior stuff here      
       
     // wait for MPU interrupt or extra packet(s) available
-    while (!mpuInterrupt && fifoCount < packetSize) 
-    { 
-      /*
-      if(bluetooth.available())  // If the bluetooth sent any characters
+    //while (!mpuInterrupt && fifoCount < packetSize) 
+    //{ 
+        /*
+        if(bluetooth.available())  // If the bluetooth sent any characters
+        {
+          // Send any characters the bluetooth prints to the serial monitor
+          Serial.print("Receiving from  Bt:    ");  
+          Serial.println((char)bluetooth.read());  
+        }
+        
+        if(Serial.available())  // If stuff was typed in the serial monitor
+        {
+          // Send any characters the Serial monitor prints to the bluetooth
+          bluetooth.print((char)Serial.read());
+        }
+        */
+    ///}
+
+    // reset interrupt flag and get INT_STATUS byte
+    //mpuInterrupt = false;
+    mpuIntStatus = mpu.getIntStatus();
+
+    // get current FIFO count
+    fifoCount = mpu.getFIFOCount();
+    
+    if(bluetooth.available())  // If the bluetooth sent any characters
       {
         // Send any characters the bluetooth prints to the serial monitor
-        Serial.print("Receiving from  Bt:    ");  
-        Serial.println((char)bluetooth.read());  
+        Serial.print((char)bluetooth.read());  
       }
       
       if(Serial.available())  // If stuff was typed in the serial monitor
@@ -174,27 +197,23 @@ void loop()
         // Send any characters the Serial monitor prints to the bluetooth
         bluetooth.print((char)Serial.read());
       }
-      */
-    }
-
-    // reset interrupt flag and get INT_STATUS byte
-    mpuInterrupt = false;
-    mpuIntStatus = mpu.getIntStatus();
-
-    // get current FIFO count
-    fifoCount = mpu.getFIFOCount();
+      /*
 
     // check for overflow (this should never happen unless our code is too inefficient)
     if ((mpuIntStatus & 0x10) || fifoCount == 1024) 
     {
         // reset so we can continue cleanly
         mpu.resetFIFO();
-        Serial.println(F("FIFO overflow!"));
+        //Serial.println(F("FIFO overflow!"));
 
     // otherwise, check for DMP data ready interrupt (this should happen frequently)
     } 
     else if (mpuIntStatus & 0x02) 
     {
+      //Serial.println("K");
+      //bluetooth.print("K");
+      
+      
         // wait for correct available data length, should be a VERY short wait
         while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
         
@@ -251,7 +270,7 @@ void loop()
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
             bluetooth.println(ypr[0] * 180/M_PI);
-            Serial.print(ypr[0] * 180/M_PI);
+            //Serial.print(ypr[0] * 180/M_PI);
             //Serial.print("ypr\t");
             //Serial.print(ypr[0] * 180/M_PI);
             //Serial.print("\t");
@@ -303,9 +322,7 @@ void loop()
             Serial.write(teapotPacket, 14);
             teapotPacket[11]++; // packetCount, loops at 0xFF on purpose
         #endif
-
-        // blink LED to indicate activity
-        //blinkState = !blinkState;
-        //digitalWrite(LED_PIN, blinkState);
+        
     }
+    */
 }

@@ -141,18 +141,19 @@ float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gra
 // packet structure for InvenSense teapot demo
 uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
 
-
+long tim, timM1;
+int delta;
 
 // ================================================================
 // ===               INTERRUPT DETECTION ROUTINE                ===
 // ================================================================
 
-/*
+
 volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
 void dmpDataReady() {
     mpuInterrupt = true;
 }
-*/
+
 
 // ================================================================
 // ===                      INITIAL SETUP                       ===
@@ -208,7 +209,7 @@ void setup() {
 
         // enable Arduino interrupt detection
         Serial.println(F("Enabling interrupt detection (Arduino external interrupt 0)..."));
-        //attachInterrupt(0, dmpDataReady, RISING);
+        attachInterrupt(0, dmpDataReady, RISING);
         mpuIntStatus = mpu.getIntStatus();
 
         // set our DMP Ready flag so the main loop() function knows it's okay to use it
@@ -226,7 +227,9 @@ void setup() {
         Serial.print(devStatus);
         Serial.println(F(")"));
     }
-
+    delta = 0;
+    tim = 0;
+    timM1 = 0;
     // configure LED for output
     //pinMode(LED_PIN, OUTPUT);
 }
@@ -239,11 +242,15 @@ void setup() {
 
 void loop() 
 {
+  while (true)
+  {
+    tim = micros();
     // if programming failed, don't try to do anything
     if (!dmpReady) return;
 
     // wait for MPU interrupt or extra packet(s) available
-    //while (!mpuInterrupt && fifoCount < packetSize) {
+    while (!mpuInterrupt && fifoCount < packetSize) 
+    {
         // other program behavior stuff here
         // .
         // .
@@ -254,10 +261,10 @@ void loop()
         // .
         // .
         // .
-    //}
+    }
 
     // reset interrupt flag and get INT_STATUS byte
-    //mpuInterrupt = false;
+    mpuInterrupt = false;
     mpuIntStatus = mpu.getIntStatus();
 
     // get current FIFO count
@@ -270,7 +277,9 @@ void loop()
         Serial.println(F("FIFO overflow!"));
 
     // otherwise, check for DMP data ready interrupt (this should happen frequently)
-    } else if (mpuIntStatus & 0x02) {
+    } 
+    else if (mpuIntStatus & 0x02) 
+    {
         // wait for correct available data length, should be a VERY short wait
         while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
 
@@ -298,12 +307,16 @@ void loop()
             // display Euler angles in degrees
             mpu.dmpGetQuaternion(&q, fifoBuffer);
             mpu.dmpGetEuler(euler, &q);
-            Serial.print("euler\t");
+            delta = micros() - tim;
+            tim= micros();
+            //Serial.print("euler\t");
             Serial.print(euler[0] * 180/M_PI);
-            Serial.print("\t");
-            Serial.print(euler[1] * 180/M_PI);
-            Serial.print("\t");
-            Serial.println(euler[2] * 180/M_PI);
+            Serial.print("   delta: ");  
+            Serial.println(delta);
+            //Serial.print("\t");
+            //Serial.print(euler[1] * 180/M_PI);
+            //Serial.print("\t");
+            //Serial.println(euler[2] * 180/M_PI);
         #endif
 
         #ifdef OUTPUT_READABLE_YAWPITCHROLL
@@ -367,4 +380,5 @@ void loop()
         //blinkState = !blinkState;
         //digitalWrite(LED_PIN, blinkState);
     }
+  }
 }
