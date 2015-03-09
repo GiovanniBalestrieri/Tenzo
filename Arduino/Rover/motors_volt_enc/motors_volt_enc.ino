@@ -13,6 +13,15 @@ Arduino VIN    ->  Sabertooth 5V (OPTIONAL, Sabertooth powers Arduino)
 
 */
 
+#define NUMEROIMPULSI 2078.4
+
+volatile long encoderPos = 0;
+long encoderPosOld = 0;
+
+volatile long periodo = 0;
+volatile long oldEdge = 0;
+char verso = 1;
+int count = 0;
 #include <Servo.h>
 
 // Sabertooth control pins
@@ -31,6 +40,8 @@ float IFinal;
 void setup() 
 {
   Serial.begin(9600);
+  attachInterrupt(0, encoder, RISING);
+  
   
     
 // Notice these attach() calls. The second and third arguments are important.
@@ -44,7 +55,7 @@ void setup()
 void loop() 
 { 
   sabertooth();
-  attoPilot();  
+  //attoPilot();  
 }
 
 void attoPilot()
@@ -62,8 +73,17 @@ void attoPilot()
   Serial.println("   Volts");
   Serial.print(IFinal);
   Serial.println("   Amps");
+  Serial.println("encoder");
+  
+
+  Serial.println(encoderPos-encoderPosOld);
+  encoderPosOld = encoderPos;
+  Serial.println("vel");
+  float vel = (float)(1000000)/(NUMEROIMPULSI*((float)periodo));
+  Serial.println(vel*180/PI);
   Serial.println("");
   Serial.println("");
+  
   delay(200);   
 }
 
@@ -73,20 +93,46 @@ void sabertooth()
   
   // Ramp both servo channels from 0 to 180 (full reverse to full forward),
   // waiting 20 ms (1/50th of a second) per value.
-  for (power = 0; power <= 180; power ++)
-  {
-    ST1.write(power);
-    ST2.write(power);
+  //for (power = 0; power <= 180; power ++)
+  //{
+    count += 1;
+    if (power >= 90){
+       verso = 1; 
+    }else{
+       verso = -1; 
+    }
+    ST1.write(110);
+    ST2.write(110);
     delay(20);
-  }
+    if(count >= 20){
+       attoPilot();
+       count = 0; 
+    }
+  //}
   
   // Now go back the way we came.
-  for (power = 180; power >= 0; power --)
-  {
-    ST1.write(power);
-    ST2.write(power);
-    delay(20);
-  }
+//  for (power = 180; power >= 0; power --)
+//  {
+//    count += 1;
+//    if (power >= 90){
+//       verso = 1; 
+//    }else{
+//       verso = -1; 
+//    }
+//    ST1.write(power);
+//    ST2.write(power);
+//    delay(20);
+//    if(count >= 20){
+//       attoPilot();
+//       count = 0; 
+//    }
+//  }
 }
 
-
+void encoder(){
+   periodo = verso*(micros() - oldEdge); 
+   oldEdge = micros();
+   encoderPos += verso;
+   
+  
+}
