@@ -18,11 +18,11 @@ Arduino VIN    ->  Sabertooth 5V (OPTIONAL, Sabertooth powers Arduino)
 #define RAGGIORUOTA 0.13
 #define KRAPP 1
 
-#define TCAMP 5000
+#define TCAMP 50000
 
 //variabili per encoder motore 1 (Lx)
 volatile long int M1encoderPos = 0;
-int M1deltaPos = 0;
+long int M1deltaPos = 0;
 long int M1oldPos = 0;
 char M1verso = 1;
 
@@ -30,9 +30,9 @@ float M1velAng = 0;
 float M1velLin = 0;
 
 //variabili per encoder motore 2 (Dx)
-volatile int M2encoderPos = 0;
-int M2deltaPos = 0;
-int M2oldPos = 0;
+volatile long int M2encoderPos = 0;
+long int M2deltaPos = 0;
+long int M2oldPos = 0;
 char M2verso = 1;
 
 float M2velAng = 0;
@@ -111,8 +111,8 @@ void misure(){
   M2deltaPos = (M2encoderPos - M2oldPos); 
   M2oldPos = M2encoderPos;
   
-  M1velAng = (PI*M1deltaPos)/(180*NUMEROIMPULSI)*1000000/TCAMP;
-  M2velAng = (PI*M2deltaPos)/(180*NUMEROIMPULSI)*1000000/TCAMP;;
+  M1velAng = 0.97*M1velAng + 0.03*(2*PI*M1deltaPos)/(NUMEROIMPULSI)*1000000/TCAMP;
+  M2velAng = 0.97*M2velAng + 0.03*(2*PI*M2deltaPos)/(NUMEROIMPULSI)*1000000/TCAMP;;
   
   M1velLin = M1velAng*RAGGIORUOTA;
   M2velLin = M2velAng*RAGGIORUOTA;
@@ -146,10 +146,15 @@ void odometry(){
     Serial.print(M1velLin);
     Serial.print(" M1velAng: ");
     Serial.print(M1velAng);
+    Serial.print(" M1pos: ");
+    Serial.print(M1encoderPos);
     Serial.print(" M2velLin: ");
     Serial.print(M2velLin);
     Serial.print(" M2velAng: ");
-    Serial.println(M2velAng);
+    Serial.print(M2velAng);
+    Serial.print(" M2pos: ");
+    Serial.println(M2encoderPos);
+    
     
 
 }
@@ -188,8 +193,10 @@ void sabertooth()
     }else{
        M1verso = -1; 
     }
-    ST1.write(120);
-    ST2.write(120);
+    
+      ST1.write(145);
+      ST2.write(145);
+   
     //delay(20);
     
   //}
@@ -214,7 +221,7 @@ void sabertooth()
 }
 
 void M1encoder(){
-   M1encoderPos += M1verso;  
+   M1encoderPos += M1verso;
 }
 
 
