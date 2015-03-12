@@ -22,7 +22,7 @@ float phi=0;
 float theta=0;
 float psi=0;
 
-int deltaT = 5;
+int deltaT = 5, count = 0;
 long k=0, kM1=0, kM2=0;
 
 void setup()
@@ -42,14 +42,15 @@ void loop()
   if (millis()-kM1>=deltaT)
   {
     kM1 = millis();
+    count += 1;
     calcAngle();
+    if (count >= 200)
+    {
+      count = 0;
+      printAngle();
+    }
   }
   
-  if (millis()-kM2>=1)
-  {
-    kM2 = millis();
-    printAngle();
-  }
   //printOmega();
 }
 
@@ -78,9 +79,12 @@ void calcBias()
 void calcAngle()
 {
  int dt = millis()-k;
- phi=phi+x*dt;
- theta=theta+y*dt;
- psi=psi+z*dt;
+ phi=phi+x*dt/1000;
+ theta=theta+y*dt/1000;
+ psi=psi+z*dt/1000;
+// Serial.print("SSSSS  ");
+// Serial.print(dt);
+// Serial.println("  SSSS  ");
  k=millis();  
 }
 
@@ -97,7 +101,7 @@ void getGyroValues()
   byte zMSB = readRegister(L3G4200D_Address, 0x2D);
   byte zLSB = readRegister(L3G4200D_Address, 0x2C);
   z = ((zMSB << 8) | zLSB);
-  
+
   removeBias();
 }
 
@@ -135,7 +139,7 @@ int setupL3G4200D(int scale)
 
   // CTRL_REG5 controls high-pass filtering of outputs, use it
   // if you'd like:
-  writeRegister(L3G4200D_Address, CTRL_REG5, 0b00000000);
+  writeRegister(L3G4200D_Address, CTRL_REG5, 0b00010000);
 }
 
 void writeRegister(int deviceAddress, byte address, byte val) 
