@@ -38,6 +38,8 @@ char M2verso = 1;
 float M2velAng = 0;
 float M2velLin = 0;
 
+// Filter costante
+float alpha = 0.08;
 
 
 //variabili rover
@@ -52,10 +54,6 @@ float thetaZAss = 0;
 
 //variabili controllore
 long tOld = 0;
-
-
-
-
 
 int count = 0;
 #include <Servo.h>
@@ -111,8 +109,8 @@ void misure(){
   M2deltaPos = (M2encoderPos - M2oldPos); 
   M2oldPos = M2encoderPos;
   
-  M1velAng = 0.97*M1velAng + 0.03*(2*PI*M1deltaPos)/(NUMEROIMPULSI)*1000000/TCAMP;
-  M2velAng = 0.97*M2velAng + 0.03*(2*PI*M2deltaPos)/(NUMEROIMPULSI)*1000000/TCAMP;;
+  M1velAng = (1-alpha)*M1velAng + alpha*(2*PI*M1deltaPos)/(NUMEROIMPULSI)*1000000/TCAMP;
+  M2velAng = (1-alpha)*M2velAng + alpha*(2*PI*M2deltaPos)/(NUMEROIMPULSI)*1000000/TCAMP;;
   
   M1velLin = M1velAng*RAGGIORUOTA;
   M2velLin = M2velAng*RAGGIORUOTA;

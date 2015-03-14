@@ -22,7 +22,7 @@ float phi=0;
 float theta=0;
 float psi=0;
 
-int deltaT = 5, count = 0;
+float deltaT = 2.5, count = 0;
 long k=0, kM1=0, kM2=0;
 
 void setup()
@@ -48,6 +48,7 @@ void loop()
     {
       count = 0;
       printAngle();
+      printOmega();
     }
   }
   
@@ -79,9 +80,9 @@ void calcBias()
 void calcAngle()
 {
  int dt = millis()-k;
- phi=phi+x*dt/1000;
- theta=theta+y*dt/1000;
- psi=psi+z*dt/1000;
+ phi=phi+x*(double)dt/1000.0;
+ theta=theta+y*(double)dt/1000.0;
+ psi=psi+z*(double)dt/1000.0;
 // Serial.print("SSSSS  ");
 // Serial.print(dt);
 // Serial.println("  SSSS  ");
@@ -131,17 +132,23 @@ int setupL3G4200D(int scale)
 
   // CTRL_REG4 controls the full-scale range, among other things:
 
-  if(scale == 250){
+  if(scale == 250)
+  {
     writeRegister(L3G4200D_Address, CTRL_REG4, 0b00000000);
-  }else if(scale == 500){
+  }
+  else if(scale == 500)
+  {
     writeRegister(L3G4200D_Address, CTRL_REG4, 0b00010000);
-  }else{
+  }
+  else
+  {
     writeRegister(L3G4200D_Address, CTRL_REG4, 0b00110000);
   }
 
   // CTRL_REG5 controls high-pass filtering of outputs, use it
   // if you'd like:
   writeRegister(L3G4200D_Address, CTRL_REG5, 0b00010000);
+  //writeRegister(L3G4200D_Address, CTRL_REG5, 0b00000000);
 }
 
 void writeRegister(int deviceAddress, byte address, byte val) 
