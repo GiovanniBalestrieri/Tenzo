@@ -15,17 +15,21 @@ int x;
 int y;
 int z;
 
-int bx,by,bz;
+int bx = 0,by=0,bz=0;
 long bxS,byS,bzS;
 
 float phi=0;
 float theta=0;
 float psi=0;
 
-float deltaT = 2.5, timerLoop = 0, timerReading = 0, timer2 = 0, count = 0;
-long k=0, kM1=0, kM2=0;
+// delta T control the routine frequency
+float deltaT = 5;
+float timerLoop = 0, timerReading = 0;
+float timerRoutine = 0, count = 0;
+float redingTime = 0, samplingTime = 0, calcTime =0, printTime = 0;
+float k=0, kM1=0, kMReading = 0, kMRoutine=0, kMLoop=0;
 // sampling time angle computation
-int dt=0;
+float dt=0;
 
 void setup()
 {
@@ -34,17 +38,21 @@ void setup()
   Serial.println("starting up L3G4200D");
   setupL3G4200D(2000); // Configure L3G4200  - 250, 500 or 2000 deg/sec
   delay(1500); //wait for the sensor to be ready   
-  calcBias();
-  k = millis();
+  //calcBias();
+  k = micros();
 }
 
 void loop()
 {
-  getGyroValues();  // This will update x, y, and z with new values
-  timerLoop = millis()-kM1;
-  if (timerLoop >= deltaT)
+  timerLoop = micros()-kMLoop;
+  kMLoop = micros();
+  timerRoutine = micros()-kMRoutine;
+  if (timerRoutine >= deltaT*1000)
   {
-    kM1 = millis();
+    kMRoutine = micros();    
+    // Update x, y, and z with new values 2.5ms
+    getGyroValues();  
+    
     count += 1;
     calcAngle();
     if (count >= 200)
@@ -52,15 +60,132 @@ void loop()
       count = 0;
       //printAngle();
       //printOmega();
-      printTime();
+      //printT();
     }
   }
+}
+
+void calcAngle()
+{
+ //calcTime = micros();
+ dt = micros()-k;
+ //phi=phi+x*(double)dt/1000000.0;
+ //theta=theta+y*(double)dt/1000000.0;
+ 
+  Serial.print(" Wz: ");
+  Serial.print(z);
+
+  Serial.print("       ThetaOLD:");
+  Serial.print(psi);
+ 
+ 
+ psi=psi+z*(double)dt/1000000.0;
+ 
+  Serial.print("       ThetaNEW:");
+  Serial.print(psi);
+ 
+// Serial.print("SSSSS  ");
+// Serial.print(dt);
+// Serial.println("  SSSS  ");
+ k=micros();  
+ //calcTime = micros() - calcTime;
+}
+
+void printT()
+{
+  Serial.print("  timer loop: "); 
+  Serial.print(timerLoop);
+  Serial.print("  timer reading: "); 
+  Serial.print(timerReading);
+  Serial.print("  timer routine: "); 
+  Serial.print(timerRoutine);
+  //Serial.print("  Calc time: "); 
+  //Serial.print(calcTime);
+//  Serial.print("  Sampling time: "); 
+//  Serial.print(samplingTime);
+  Serial.print("  dt: "); 
+  Serial.println(dt);
+}
+
+void getGyroValues()
+{
+  timerReading = micros() - kMReading;
+  kMReading = micros();
+  // starting samplingTimer
+  //samplingTime = micros();
   
-  //printOmega();
+  byte xMSB = readRegister(L3G4200D_Address, 0x29);
+  byte xLSB = readRegister(L3G4200D_Address, 0x28);
+  x = ((xMSB << 8) | xLSB);
+
+  byte yMSB = readRegister(L3G4200D_Address, 0x2B);
+  byte yLSB = readRegister(L3G4200D_Address, 0x2A);
+  y = ((yMSB << 8) | yLSB);
+
+  byte zMSB = readRegister(L3G4200D_Address, 0x2D);
+  byte zLSB = readRegister(L3G4200D_Address, 0x2C);
+  z = ((zMSB << 8) | zLSB);
+
+  removeBias();
+  
+  //samplingTime = micros() - samplingTime;
+}
+
+
+void writeRegister(int deviceAddress, byte address, byte val) 
+{
+    Wire.beginTransmission(deviceAddress); // start transmission to device 
+    Wire.write(address);       // send register address
+    Wire.write(val);         // send value to write
+    Wire.endTransmission();     // end transmission
+}
+
+int readRegister(int deviceAddress, byte address)
+{
+    int v;
+    Wire.beginTransmission(deviceAddress);
+    Wire.write(address); // register to read
+    Wire.endTransmission();
+
+    Wire.requestFrom(deviceAddress, 1); // read a byte
+
+    while(!Wire.available()) 
+    {
+        // waiting
+        Serial.println("No Data");
+    }
+
+    v = Wire.read();
+    return v;
+}
+
+void printOmega()
+{
+  Serial.print("       Wx:");
+  Serial.print(x);
+
+  Serial.print("       Wy:");
+  Serial.print(y);
+
+  Serial.print("       Wz:");
+  Serial.println(z);
+}
+
+void printAngle()
+{
+//  Serial.print("Phi:");
+//  Serial.print(phi);
+//
+//  Serial.print("       Theta:");
+//  Serial.print(theta);
+
+  Serial.print("       Psi:");
+  Serial.println(psi);
 }
 
 void calcBias()
 {  
+  Serial.println(" Bias estimation ...");
   int c = 2000;
   for (int i = 0; i<c; i++)
   {
@@ -78,46 +203,8 @@ void calcBias()
   Serial.print("  ;  ");
   Serial.print(by);
   Serial.print("  :  ");
-  Serial.println(bz);
-}
-
-void calcAngle()
-{
- dt = millis()-k;
- phi=phi+x*(double)dt/1000.0;
- theta=theta+y*(double)dt/1000.0;
- psi=psi+z*(double)dt/1000.0;
-// Serial.print("SSSSS  ");
-// Serial.print(dt);
-// Serial.println("  SSSS  ");
- k=millis();  
-}
-
-void printTime()
-{
-  Serial.print("  timer loop: "); 
-  Serial.print(timerLoop);
-  Serial.print("  timer reading: "); 
-  Serial.print(timerReading);
-  Serial.print("  dt: "); 
-  Serial.println(dt);
-}
-
-void getGyroValues()
-{
-  byte xMSB = readRegister(L3G4200D_Address, 0x29);
-  byte xLSB = readRegister(L3G4200D_Address, 0x28);
-  x = ((xMSB << 8) | xLSB);
-
-  byte yMSB = readRegister(L3G4200D_Address, 0x2B);
-  byte yLSB = readRegister(L3G4200D_Address, 0x2A);
-  y = ((yMSB << 8) | yLSB);
-
-  byte zMSB = readRegister(L3G4200D_Address, 0x2D);
-  byte zLSB = readRegister(L3G4200D_Address, 0x2C);
-  z = ((zMSB << 8) | zLSB);
-
-  removeBias();
+  Serial.print(bz);
+  Serial.println(" ]");
 }
 
 void removeBias()
@@ -171,55 +258,4 @@ int setupL3G4200D(int scale)
   // if you'd like:
   writeRegister(L3G4200D_Address, CTRL_REG5, 0b00010000);
   //writeRegister(L3G4200D_Address, CTRL_REG5, 0b00000000);
-}
-
-void writeRegister(int deviceAddress, byte address, byte val) 
-{
-    Wire.beginTransmission(deviceAddress); // start transmission to device 
-    Wire.write(address);       // send register address
-    Wire.write(val);         // send value to write
-    Wire.endTransmission();     // end transmission
-}
-
-int readRegister(int deviceAddress, byte address)
-{
-    int v;
-    Wire.beginTransmission(deviceAddress);
-    Wire.write(address); // register to read
-    Wire.endTransmission();
-
-    Wire.requestFrom(deviceAddress, 1); // read a byte
-
-    while(!Wire.available()) 
-    {
-        // waiting
-        Serial.println("No Data");
-    }
-
-    v = Wire.read();
-    return v;
-}
-
-void printOmega()
-{
-  Serial.print("       Wx:");
-  Serial.print(x);
-
-  Serial.print("       Wy:");
-  Serial.print(y);
-
-  Serial.print("       Wz:");
-  Serial.println(z);
-}
-
-void printAngle()
-{
-  Serial.print("Phi:");
-  Serial.print(phi);
-
-  Serial.print("       Theta:");
-  Serial.print(theta);
-
-  Serial.print("       Psi:");
-  Serial.println(psi);
 }
