@@ -51,7 +51,7 @@ void loop()
     {
       count = 0;
       //printAngle();
-      //printOmega();
+      printOmega();
       printTime();
     }
   }

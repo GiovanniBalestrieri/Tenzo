@@ -29,11 +29,15 @@ float k=0, kM1=0, kMReading = 0, kMRoutine=0, kMLoop=0;
 // sampling time angle computation
 float dt=0;
 
+//Boolean
+boolean processing = true;
+
 void setup()
 {
   Wire.begin();
-  Serial.begin(9600);
-  Serial.println("starting up L3G4200D");
+  Serial.begin(115200);
+  if (!processing)
+   Serial.println("starting up L3G4200D");
   setupL3G4200D(2000); // Configure L3G4200  - 250, 500 or 2000 deg/sec
   delay(1500); //wait for the sensor to be ready   
   calcBias();
@@ -50,14 +54,13 @@ void loop()
   {
     kMRoutine = micros();    
     // Update x, y, and z with new values 2.5ms
-    getGyroValues();  
-    
+    getGyroValues();      
     count += 1;
     calcAngle();
     if (count >= 200)
     {
       count = 0;
-      printAngle();
+      printSerialAngle();
       //printOmega();
       //printT();
     }
@@ -84,17 +87,20 @@ void calcAngle()
 {
  dt = micros()-k;
  phi=phi+x*(double)dt/1000000.0;
+ /*
  Serial.print("  Dt: "); 
  Serial.print(dt);
  Serial.print("  Wy "); 
  Serial.print(y);
  Serial.print("  thetaOLD "); 
  Serial.print(theta);
- 
+ */
  theta=theta+y*(double)dt/1000000.0;
+ /*
  Serial.print("  thetaNEW "); 
  Serial.println(theta);
- //psi=psi+z*(double)dt/1000000.0;
+ */
+ psi=psi+z*(double)dt/1000000.0;
  
  k=micros();  
 }
@@ -119,49 +125,18 @@ void getGyroValues()
 {
   timerReading = micros() - kMReading;
   kMReading = micros();
-  // starting samplingTimer
-  //samplingTime = micros();
   
   byte xMSB = readRegister(L3G4200D_Address, 0x29);
   byte xLSB = readRegister(L3G4200D_Address, 0x28);
- //  xCand = ((xMSB << 8) | xLSB);
    x = ((xMSB << 8) | xLSB);
   
   byte yMSB = readRegister(L3G4200D_Address, 0x2B);
   byte yLSB = readRegister(L3G4200D_Address, 0x2A);
-  // yCand = ((yMSB << 8) | yLSB);
   y = ((yMSB << 8) | yLSB);
   
   byte zMSB = readRegister(L3G4200D_Address, 0x2D);
   byte zLSB = readRegister(L3G4200D_Address, 0x2C);
- // zCand = ((zMSB << 8) | zLSB);
     z = ((zMSB << 8) | zLSB);
-  /*
-  if ((xCand - xOld)<=threshold && (yCand - yOld)<=threshold && (xCand - xOld)<=threshold)
-  {
-    x = xCand;
-    y = yCand;
-    z = zCand;
-    removeBias();
-    
-    xOld = x;
-    yOld = y;
-    zOld = z;
-    
-    Serial.print("x :");
-    Serial.print(xCand-xOld);
-    Serial.print("  y :");
-    Serial.print(yCand-yOld);
-    Serial.print("  z :");
-    Serial.print(zCand-zOld);
-  }
-  else 
-  {
-    Serial.println("NN");
-  }
-  */ 
-  
-  //samplingTime = micros() - samplingTime;
 }
 
 
@@ -227,7 +202,8 @@ void printSerialAngle()
 
 void calcBias()
 {  
-  Serial.println(" Bias estimation ...");
+  if (!processing)
+    Serial.println(" Bias estimation ...");
   int c = 2000;
   for (int i = 0; i<c; i++)
   {
@@ -240,13 +216,16 @@ void calcBias()
   by = byS / c;
   bz = bzS / c;
   
-  Serial.print(" Bias: [ ");
-  Serial.print(bx);
-  Serial.print("  ;  ");
-  Serial.print(by);
-  Serial.print("  :  ");
-  Serial.print(bz);
-  Serial.println(" ]");
+  if (!processing)
+  {
+    Serial.print(" Bias: [ ");
+    Serial.print(bx);
+    Serial.print("  ;  ");
+    Serial.print(by);
+    Serial.print("  :  ");
+    Serial.print(bz);
+    Serial.println(" ]");
+  }
 }
 
 void removeBias()

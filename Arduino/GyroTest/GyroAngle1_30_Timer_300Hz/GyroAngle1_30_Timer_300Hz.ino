@@ -9,15 +9,12 @@
 //use address 104 if CS is not connected
 int L3G4200D_Address = 105; //I2C address of the L3G4200D
 
-int x,y,z,zOld, xOld, yOld, xCand, yCand, zCand;
+int zOld, xOld, yOld, xCand, yCand, zCand;
 int threshold = 200;
 
-int bx = 0,by=0,bz=0;
+float bx = 0,by=0,bz=0;
 long bxS,byS,bzS;
 
-float phi=0;
-float theta=0;
-float psi=0;
 
 // delta T control the routine frequency
 float deltaT = 5;
@@ -26,42 +23,160 @@ float timerRoutine = 0, count = 0;
 float redingTime = 0, samplingTime = 0, calcTime =0, printTime = 0;
 float k=0, kM1=0, kMReading = 0, kMRoutine=0, kMLoop=0;
 
-// sampling time angle computation
-float dt=0;
+//Boolean
+boolean processing = false;
+
+// Timer variables
+volatile float phi=0;
+volatile float theta=0;
+volatile float psi=0;
+volatile int x=0;
+volatile int y = 0;
+volatile int z= 0;
+volatile int cont=0;
+volatile int dt=0;
+//volatile int dtM1=0;
+//volatile int dtM2=0;
+//volatile int dtM3=0;
+//volatile int dtM4=0;
+//volatile int dtM5=0;
+//volatile int dtM6=0;
+//volatile int dtM7=0;
+//volatile int dtM8=0;
+//volatile int dtM9=0;
+ 
+volatile int dtM1=0;
+volatile int dtM2=0;
+volatile int dtM3=0;
+volatile int dtM4=0;
+volatile int dtM5=0;
+volatile int yM1=0;
+volatile int yM2=0;
+volatile int yM3=0;
+volatile int yM4=0;
+volatile int yM5=0;
+volatile float thetaM1=0;
+volatile float thetaM2=0;
+volatile float thetaM3=0;
+volatile float thetaM4=0;
+volatile float thetaM5=0;
 
 void setup()
 {
   Wire.begin();
-  Serial.begin(9600);
-  Serial.println("starting up L3G4200D");
+  Serial.begin(115200);
+  if (!processing)
+  {
+   Serial.println("starting up L3G4200D");
+   //Serial.println("Setting up timer3");
+  }
+   
+   
   setupL3G4200D(2000); // Configure L3G4200  - 250, 500 or 2000 deg/sec
   delay(1500); //wait for the sensor to be ready   
   calcBias();
+  Serial.print("Readings take: (us)");
+  Serial.println(samplingTime);
+   
+   
+  // Initialize Timer
+  cli();
+  TCCR3A = 0;
+  TCCR3B = 0;
+  
+  // Set compare match register to the desired timer count
+  OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
+  //OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
+  //OCR3A=780; //16*10^6/(20Hz*1024)-1 = 780 -> 20 Hz 
+  //OCR3A=50; //16*10^6/(308Hz*1024)-1 = 50 -> 308 Hz 
+  
+  TCCR3B |= (1 << WGM32);
+  // Set CS10 and CS12 bits for 1024 prescaler:
+  TCCR3B |= (1 << CS30) | (1 << CS32);
+  // enable timer compare interrupt:
+  TIMSK3 |= (1 << OCIE3B);
+    
+  // enable global interrupts:
+  sei(); 
+  
+  //Serial.println("Interrupt enabled");
+  
   k = micros();
 }
 
 void loop()
 {
-  SerialRoutine();
-  timerLoop = micros()-kMLoop;
-  kMLoop = micros();
+  //SerialRoutine();
+  //timerLoop = micros()-kMLoop;
+  //kMLoop = micros();
+  
   timerRoutine = micros()-kMRoutine;
   if (timerRoutine >= deltaT*1000)
   {
+    //getGyroValues();      
     kMRoutine = micros();    
-    // Update x, y, and z with new values 2.5ms
-    getGyroValues();  
-    
     count += 1;
-    calcAngle();
-    if (count >= 200)
+    //calcAngle();
+    if (count >= 5)
     {
+      //Serial.println(cont);
+      Serial.print("theta_y_dt:   ");
+      Serial.print("  ");
+      Serial.print(theta);
+      Serial.print("  ");
+      Serial.print(y);
+      Serial.print("  ");
+      Serial.println(dt);
+      Serial.print("              ");
+      Serial.print(thetaM1);
+      Serial.print("  ");
+      Serial.print(yM1);
+      Serial.print("  ");
+      Serial.println(dtM1);
+      Serial.print("              ");
+      Serial.print(thetaM2);
+      Serial.print("  ");
+      Serial.print(yM2);
+      Serial.print("  ");
+      Serial.println(dtM2);
+      Serial.print("              ");
+      Serial.print(thetaM3);
+      Serial.print("  ");
+      Serial.print(yM3);
+      Serial.print("  ");
+      Serial.println(dtM3);
+      Serial.print("              ");
+      Serial.print(thetaM4);
+      Serial.print("  ");
+      Serial.print(yM4);
+      Serial.print("  ");
+      Serial.println(dtM4);
+      Serial.print("              ");
+      Serial.print(thetaM5);
+      Serial.print("  ");
+      Serial.print(yM5);
+      Serial.print("  ");
+      Serial.println(dtM5);
+
+
+      
       count = 0;
-      printAngle();
+      printSerialAngle();
       //printOmega();
       //printT();
+      cont=0;
     }
   }
+}
+
+ISR(TIMER3_COMPB_vect)
+{  
+  // Mettilo altrimenti non funziona
+  sei();
+  // Update x, y, and z with new values 2.5ms     
+  getGyroValues(); 
+  calcAngle();
+  cont++;
 }
 
 void SerialRoutine()
@@ -83,18 +198,45 @@ void SerialRoutine()
 void calcAngle()
 {
  dt = micros()-k;
- phi=phi+x*(double)dt/1000000.0;
+ //phi=phi+x*(double)dt/1000000.0;
+ /*
  Serial.print("  Dt: "); 
  Serial.print(dt);
  Serial.print("  Wy "); 
  Serial.print(y);
  Serial.print("  thetaOLD "); 
  Serial.print(theta);
- 
- theta=theta+y*(double)dt/1000000.0;
+ */
+ theta=theta+y*(float) dt/1000000.0;
+ /*
  Serial.print("  thetaNEW "); 
  Serial.println(theta);
+ */
  //psi=psi+z*(double)dt/1000000.0;
+ 
+ 
+ 
+// dtM9=dtM8;
+// dtM8=dtM7; 
+// dtM7=dtM6;
+// dtM6=dtM5; 
+ dtM5=dtM4;
+ dtM4=dtM3; 
+ dtM3=dtM2;
+ dtM2=dtM1;
+ dtM1=dt;
+ 
+ yM5=yM4;
+ yM4=yM3; 
+ yM3=yM2;
+ yM2=yM1;
+ yM1=y;
+ 
+ thetaM5=thetaM4;
+ thetaM4=thetaM3; 
+ thetaM3=thetaM2;
+ thetaM2=thetaM1;
+ thetaM1=theta;
  
  k=micros();  
 }
@@ -116,52 +258,24 @@ void printT()
 }
 
 void getGyroValues()
-{
-  timerReading = micros() - kMReading;
-  kMReading = micros();
-  // starting samplingTimer
-  //samplingTime = micros();
+{  
   
+  //starting samplingTimer
+  samplingTime = micros();
   byte xMSB = readRegister(L3G4200D_Address, 0x29);
   byte xLSB = readRegister(L3G4200D_Address, 0x28);
- //  xCand = ((xMSB << 8) | xLSB);
-   x = ((xMSB << 8) | xLSB);
+  x = ((xMSB << 8) | xLSB);
   
   byte yMSB = readRegister(L3G4200D_Address, 0x2B);
   byte yLSB = readRegister(L3G4200D_Address, 0x2A);
-  // yCand = ((yMSB << 8) | yLSB);
   y = ((yMSB << 8) | yLSB);
   
   byte zMSB = readRegister(L3G4200D_Address, 0x2D);
   byte zLSB = readRegister(L3G4200D_Address, 0x2C);
- // zCand = ((zMSB << 8) | zLSB);
-    z = ((zMSB << 8) | zLSB);
-  /*
-  if ((xCand - xOld)<=threshold && (yCand - yOld)<=threshold && (xCand - xOld)<=threshold)
-  {
-    x = xCand;
-    y = yCand;
-    z = zCand;
-    removeBias();
+  z = ((zMSB << 8) | zLSB);
     
-    xOld = x;
-    yOld = y;
-    zOld = z;
-    
-    Serial.print("x :");
-    Serial.print(xCand-xOld);
-    Serial.print("  y :");
-    Serial.print(yCand-yOld);
-    Serial.print("  z :");
-    Serial.print(zCand-zOld);
-  }
-  else 
-  {
-    Serial.println("NN");
-  }
-  */ 
-  
-  //samplingTime = micros() - samplingTime;
+  removeBias();
+  samplingTime = micros()- samplingTime;
 }
 
 
@@ -185,7 +299,7 @@ int readRegister(int deviceAddress, byte address)
     while(!Wire.available()) 
     {
         // waiting
-        Serial.println("No Data");
+       // Serial.println("No Data");
     }
 
     v = Wire.read();
@@ -227,7 +341,8 @@ void printSerialAngle()
 
 void calcBias()
 {  
-  Serial.println(" Bias estimation ...");
+  if (!processing)
+    Serial.println("Bias");
   int c = 2000;
   for (int i = 0; i<c; i++)
   {
@@ -236,17 +351,17 @@ void calcBias()
     byS = byS + y;
     bzS = bzS + z;
   }
+  
   bx = bxS / c;
   by = byS / c;
   bz = bzS / c;
   
-  Serial.print(" Bias: [ ");
-  Serial.print(bx);
-  Serial.print("  ;  ");
-  Serial.print(by);
-  Serial.print("  :  ");
-  Serial.print(bz);
-  Serial.println(" ]");
+  if (!processing)
+  {
+    Serial.println(bx);
+    Serial.println(by);
+    Serial.println(bz);
+  }  
 }
 
 void removeBias()
