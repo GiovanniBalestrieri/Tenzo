@@ -21,14 +21,22 @@ float aax,aay,aaz;
 unsigned long accTimer;
 unsigned long lastAccTimer;
 unsigned long timeToRead = 0;
+unsigned long lastTimeToRead = 0;
 
 int contSamples = 0;
-int lastTimeToRead = 500;
+int lastTimeToRead = 0;//500;
 int samplesNum = 0;
 
 byte mode;
 unsigned int sensorValue = 0;
 boolean connectEd = false;
+
+// Define various ADC prescaler
+const unsigned char PS_16 = (1 << ADPS2);
+const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
+const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);
+const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+
 
 float AccelAdjust(int axis)
 {
@@ -42,21 +50,11 @@ float AccelAdjust(int axis)
  return acc/NADJ;
 }
 
-typedef struct ctrTag { // 17 bytes
-  unsigned char cmd;
-  long param1;
-  long param2;
-  long param3;
-  long param4;   
-} 
-MyCommand;
 
-
-char buffer[20];
 
 void setup()
 {  
- Serial.begin(9600); // 9600 bps
+ Serial.begin(115200); // 9600 bps
  pinMode(xaxis,INPUT);
  pinMode(yaxis,INPUT);
  pinMode(zaxis,INPUT);
@@ -65,6 +63,13 @@ void setup()
  YError =  AccelAdjust(yaxis);
  ZError =  AccelAdjust(zaxis);
  ZError = ZError - ZOUT_1G;
+ 
+ 
+ // set up the ADC
+ ADCSRA &= ~PS_128;  // remove bits set by Arduino library
+ // you can choose a prescaler from above.
+ // PS_16, PS_32, PS_64 or PS_128
+ ADCSRA |= PS_32;    // set our own prescaler to 64 
 }
 
 void loop()
@@ -76,19 +81,48 @@ void loop()
 
 void serialRoutine()
 {
+   lastTimeToRead = micros();
+   x=analogRead(xaxis);
+   y=analogRead(yaxis);
+   z=analogRead(zaxis);
+   timeToRead = micros() - lastTimeToRead;
+   
+   aax = (((x*5000.0)/1023.0)-XError)/RESOLUTION;
+   aay = (((y*5000.0)/1023.0)-YError)/RESOLUTION;
+   aaz = (((z*5000.0)/1023.0)-ZError)/RESOLUTION;
+  
+   // gets the value sample time
+   accTimer = micros() - lastAccTimer;
+   // updates last reading timer
+   lastAccTimer = micros(); 
+   
+   Serial.print("S");
+   Serial.print(",");
+   Serial.print(aax);
+   Serial.print(",");
+   Serial.print(aay);
+   Serial.print(",");
+   Serial.print(aaz);
+   Serial.print(",");
+   Serial.print(accTimer);
+   Serial.print(",");
+   Serial.print(timeToRead);
+   Serial.print(",");
+   Serial.println("E");
+  /*
    if (Serial.available()>1)
    {
      mode = Serial.read();
      if (mode == 82)
      {
-       lastTimeToRead = millis();
+       lastTimeToRead = micros();
        Serial.print("T");
        Serial.print(",");
        Serial.println("A");
        delay(100);
        while (contSamples <= samplesNum)
        {
-         timeToRead = millis() - lastTimeToRead;
+         timeToRead = micros() - lastTimeToRead;
          x=analogRead(xaxis);
          y=analogRead(yaxis);
          z=analogRead(zaxis);
@@ -98,9 +132,9 @@ void serialRoutine()
          aaz = (((z*5000.0)/1023.0)-ZError)/RESOLUTION;
         
          // gets the value sample time
-         accTimer = millis() - lastAccTimer;
+         accTimer = micros() - lastAccTimer;
          // updates last reading timer
-         lastAccTimer = millis(); 
+         lastAccTimer = micros(); 
          
          Serial.print("S");
          Serial.print(",");
@@ -143,6 +177,7 @@ void serialRoutine()
       Serial.write(19);
     }
    }
+   */
 }
 
 void accRoutine()
@@ -157,9 +192,9 @@ void accRoutine()
    aaz = (((z*5000.0)/1023.0)-ZError)/RESOLUTION;
   
    // gets the value sample time
-   accTimer = millis() - lastAccTimer;
+   accTimer = micros() - lastAccTimer;
    // updates last reading timer
-   lastAccTimer = millis(); 
+   lastAccTimer = micros(); 
   
   #ifdef DEBUGMODE
    Serial.print(aax);

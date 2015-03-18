@@ -1,5 +1,9 @@
 #include <Wire.h>
 
+/**
+ ** Gyro
+ **/
+
 #define CTRL_REG1 0x20
 #define CTRL_REG2 0x21
 #define CTRL_REG3 0x22
@@ -26,6 +30,30 @@ float scale2000 = 70;
 float bx= 0,by=0,bz=0;
 long bxS,byS,bzS;
 
+/**
+ ** Acc 
+ **/
+
+const float RESOLUTION=800; //0.8 v/g -> resolucion de 1.5g -> 800mV/g
+const float VOLTAGE=3.3;  //voltage al que está conectado el acelerómetro
+
+const float ZOUT_1G = 850;   // mv Voltage en Zout a 1G
+
+const int NADJ  = 50;        // Número de lecturas para calcular el error
+
+// Entradas analógicas donde van los sensores
+const int xaxis = 0;
+const int yaxis = 1;
+const int zaxis = 2;
+
+float XError,YError,ZError;
+
+// Acc Timers
+unsigned long accTimer;
+unsigned long lastAccTimer;
+unsigned long timeToRead = 0;
+unsigned long lastTimeToRead = 0;
+
 
 // delta T control the routine frequency
 float deltaT = 5;
@@ -34,12 +62,23 @@ float timerRoutine = 0, count = 0;
 float redingTime = 0, samplingTime = 0, calcTime =0, printTime = 0;
 float k=0, kM1=0, kMReading = 0, kMRoutine=0, kMLoop=0, secRoutine=0;
 
-//Boolean
-boolean processing = false;
+byte mode;
+
+// Define various ADC prescaler
+const unsigned char PS_16 = (1 << ADPS2);
+const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
+const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);
+const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+
+
+
+boolean processing = true;
 // Timer variables
 volatile int cont = 0;
 volatile int contSamples=0;
 volatile int contCalc=0;
+
+volatile float thetaOLD = 0;
 volatile float phi=0;
 volatile float theta=0;
 volatile float psi=0;
@@ -47,62 +86,46 @@ volatile int x=0;
 volatile int y = 0;
 volatile int z= 0;
 volatile int dt=0;
-//volatile int dtM1=0;
-//volatile int dtM2=0;
-//volatile int dtM3=0;
-//volatile int dtM4=0;
-//volatile int dtM5=0;
-//volatile int dtM6=0;
-//volatile int dtM7=0;
-//volatile int dtM8=0;
-//volatile int dtM9=0;
-
-volatile int dtM1=0;
-volatile int dtM2=0;
-volatile int dtM3=0;
-volatile int dtM4=0;
-volatile int dtM5=0;
-volatile int yM1=0;
-volatile int yM2=0;
-volatile int yM3=0;
-volatile int yM4=0;
-volatile int yM5=0;
-volatile float thetaM1=0;
-volatile float thetaM2=0;
-volatile float thetaM3=0;
-volatile float thetaM4=0;
-volatile float thetaM5=0;
-volatile float thetaOLD = 0;
-volatile float thetaOLDM1=0;
-volatile float thetaOLDM2=0;
-volatile float thetaOLDM3=0;
-volatile float thetaOLDM4=0;
-volatile float thetaOLDM5=0;
 
 volatile float wF[3];
 boolean enFil = true;
 
-// Filter coeff
-volatile float alphaW = 1;
+
+volatile float angleXAcc;
+volatile float angleYAcc;
+
+volatile float aax,aay,aaz;
+volatile float alphaA = 0.2, alphaW = 0.8;
 
 void setup()
-{
+{  
   Wire.begin();
-  Serial.begin(115200);
+  Serial.begin(115200); // 9600 bps
+  pinMode(xaxis,INPUT);
+  pinMode(yaxis,INPUT);
+  pinMode(zaxis,INPUT);
+  
+  
   if (!processing)
   {
     Serial.println("starting up L3G4200D");
     //Serial.println("Setting up timer3");
   }
-
-
+  
   setupL3G4200D(2000); // Configure L3G4200  - 250, 500 or 2000 deg/sec
   delay(1500); //wait for the sensor to be ready   
   calcBias();
-  Serial.print("Readings take: (us)");
-  Serial.println(samplingTime);
-
-
+  if (!processing)
+  {
+    Serial.print("Readings take: (us)");
+    Serial.println(samplingTime);
+  }
+  XError =  AccelAdjust(xaxis);
+  YError =  AccelAdjust(yaxis);
+  ZError =  AccelAdjust(zaxis);
+  ZError = ZError - ZOUT_1G;
+ 
+  // Timer settings
   // Initialize Timer
   cli();
   TCCR3A = 0;
@@ -122,131 +145,27 @@ void setup()
 
   // enable global interrupts:
   sei(); 
-
-  //Serial.println("Interrupt enabled");
-
+ 
+  // ADC Tuning
+  ADCSRA &= ~PS_128;  // remove bits set by Arduino library
+  // you can choose a prescaler from above.
+  // PS_16, PS_32, PS_64 or PS_128
+  ADCSRA |= PS_32;    // set our own prescaler to 64 
+  
   k = micros();
 }
 
 void loop()
 {
-  //SerialRoutine();
-  //timerLoop = micros()-kMLoop;
-  //kMLoop = micros();
-
-  timerSec = micros()-secRoutine;
-
-  if (timerSec >= 1000000)
-  {
-    secRoutine = micros();
-    Serial.print(cont);
-    Serial.print("    Smpl: ");
-    Serial.print(contSamples);
-    Serial.print("    calc: ");
-    Serial.println(contCalc);
-    Serial.print("    wX: ");
-    Serial.print(wF[0]);
-    Serial.print("    Wy: ");
-    Serial.println(wF[1]);
-    Serial.print("    Wz: ");
-    Serial.println(wF[2]);
-    cont=0;      
-    contSamples=0;      
-    contCalc=0;      
-  }
-
-
-  timerRoutine = micros()-kMRoutine;
-  if (timerRoutine >= deltaT*1000)
-  {
-    //getGyroValues();      
-    kMRoutine = micros();    
-    count += 1;
-    if (count >= 3)
-    {
-      count = 0;
-      printSerialAngle();
-      //falseprintOmega();
-      //printT();
-    }
-  }
-}
-
-
-void wFilter(volatile float val[])
-{
-  //ArrayList val = new ArrayList();
-  val[0] = (1-alphaW)*x + alphaW*val[0];
-  val[1] = (1-alphaW)*y + alphaW*val[1];
-  val[2] = (1-alphaW)*z + alphaW*val[2];
-
-  /*
- val[0] = wxF;
-   val[1] = wyF;
-   val[2] = wzF; 
-  /*/
-}
-
-void debug()
-{
-  Serial.print("thetaOld + y*dt = theta: ");
-  Serial.print("  ");
-  Serial.print(thetaOLD);
-  Serial.print(" + ");
-  Serial.print(y);
-  Serial.print("  ");
-  Serial.print(dt);
-  Serial.print(" =  ");
-  Serial.println(theta);
-  Serial.print("              ");
-  Serial.print("  ");
-  Serial.print(thetaOLDM1);
-  Serial.print(" + ");
-  Serial.print(yM1);
-  Serial.print("  ");
-  Serial.print(dtM1);
-  Serial.print(" =  ");
-  Serial.println(thetaM1);
-  Serial.print("             ");
-  Serial.print(thetaOLDM2);
-  Serial.print(" + ");
-  Serial.print(yM2);
-  Serial.print("  ");
-  Serial.print(dtM2);
-  Serial.print(" =  ");
-  Serial.println(thetaM2);
-  Serial.print("              ");
-  Serial.print(thetaOLDM3);
-  Serial.print(" + ");
-  Serial.print(yM3);
-  Serial.print("  ");
-  Serial.print(dtM3);
-  Serial.print(" =  ");
-  Serial.println(thetaM3);
-  Serial.print("              ");
-  Serial.print(thetaOLDM4);
-  Serial.print(" + ");
-  Serial.print(yM4);
-  Serial.print("  ");
-  Serial.print(dtM4);
-  Serial.print(" =  ");
-  Serial.println(thetaM4);
-  Serial.print("              ");
-  Serial.print(thetaOLDM5);
-  Serial.print(" + ");
-  Serial.print(yM5);
-  Serial.print("  ");
-  Serial.print(dtM5);
-  Serial.print(" =  ");
-  Serial.println(thetaM5);
-}
+ //accRoutine(); 
+ serialRoutine();
+ delay(20);
+} 
 
 ISR(TIMER3_COMPB_vect)
 {  
   // Mettilo altrimenti non funziona
   sei();
-  // Update x, y, and z with new values 2.5ms     
-  //wait until new z data available and no overrun
   volatile byte statusflag = readRegister(L3G4200D_Address, STATUS_REG);
   while(!(statusflag & ZDA_REG) && (statusflag & ZOR_REG)&&!(statusflag & YDA_REG) && (statusflag & YOR_REG)&& !(statusflag & XDA_REG) && (statusflag & XOR_REG)) 
   {
@@ -254,28 +173,30 @@ ISR(TIMER3_COMPB_vect)
   }
   //read values
   getGyroValues(); 
+  getAcc();
   calcAngle();
   cont++;
 }
 
-void SerialRoutine()
+void getAcc() //ISR
 {
-  if (Serial.available()>0)
-  {
-    byte in = Serial.read();
-    if (in=='A')
-    {
-      Serial.println("Ciao");
-    }
-    else if (in == 'B')
-    {
-      Serial.println("Bella");
-    }
-  }    
+   x=analogRead(xaxis);
+   y=analogRead(yaxis);
+   z=analogRead(zaxis);
+  
+   aax = (((x*5000.0)/1023.0)-XError)/RESOLUTION;
+   aay = (((y*5000.0)/1023.0)-YError)/RESOLUTION;
+   aaz = (((z*5000.0)/1023.0)-ZError)/RESOLUTION;
+  
+   // gets the value sample time
+   accTimer = micros() - lastAccTimer;
+   // updates last reading timer
+   lastAccTimer = micros();  
 }
 
-void calcAngle()
+void calcAngle() //ISR
 {
+  // From Gyro
   dt = micros()-k;
   if (!enFil)
   {
@@ -295,55 +216,88 @@ void calcAngle()
 
     psi=psi+wF[2]*(float)scale2000/1000* (float) dt/1000000.0;  
   }
+  
+  /*
+   volatile float accs[3];        
+   accs[0] = (((aax*5000.0)/1023.0)-XError)/RESOLUTION;  
+   accs[1] = (((aay*5000.0)/1023.0)-YError)/RESOLUTION;
+   accs[2] = (((aaz*5000.0)/1023.0)-ZError)/RESOLUTION;
+   */
+   /*
+   accButter3(accs);
+   axF = accs[0];
+   ayF = accs[1];
+   azF = accs[2];
+   
+   */
+//  angleXAcc = (atan2(-accs[0],accs[2])) * RAD_TO_DEG;
+//  angleYAcc = (atan2(accs[1],accs[2])) * RAD_TO_DEG;
 
-  contCalc++;
-
-  dtM5=dtM4;
-  dtM4=dtM3; 
-  dtM3=dtM2;
-  dtM2=dtM1;
-  dtM1=dt;
-
-  yM5=yM4;
-  yM4=yM3; 
-  yM3=yM2;
-  yM2=yM1;
-  yM1=y;
-
-  thetaM5=thetaM4;
-  thetaM4=thetaM3; 
-  thetaM3=thetaM2;
-  thetaM2=thetaM1;
-  thetaM1=theta;
-
-  thetaOLDM5=thetaOLDM4;
-  thetaOLDM4=thetaOLDM3; 
-  thetaOLDM3=thetaOLDM2;
-  thetaOLDM2=thetaOLDM1;
-  thetaOLDM1=thetaOLD;
-
-  k=micros();  
+  // From Acc
+  angleXAcc = (atan2(-aax,aaz)) * RAD_TO_DEG;
+  angleYAcc = (atan2(aay,aaz)) * RAD_TO_DEG;
+   k=micros();  
 }
 
-void printT()
+void wFilter(volatile float val[])
 {
-  Serial.print("  timer loop: "); 
-  Serial.print(timerLoop);
-  Serial.print("  timer reading: "); 
-  Serial.print(timerReading);
-  Serial.print("  timer routine: "); 
-  Serial.print(timerRoutine);
-  //Serial.print("  Calc time: "); 
-  //Serial.print(calcTime);
-  //Serial.print("  Sampling time: "); 
-  //Serial.print(samplingTime);
-  Serial.print("  dt: "); 
-  Serial.println(dt);
+  val[0] = (1-alphaW)*x + alphaW*val[0];
+  val[1] = (1-alphaW)*y + alphaW*val[1];
+  val[2] = (1-alphaW)*z + alphaW*val[2];
+}
+
+void accFilter(volatile float val[])
+{
+  val[0] = (1-alphaA)*aax + alphaW*val[0];
+  val[1] = (1-alphaA)*aay + alphaW*val[1];
+  val[2] = (1-alphaA)*aaz + alphaW*val[2];
+}
+
+void serialRoutine()
+{
+  
+  timerSec = micros()-secRoutine;
+   lastTimeToRead = micros();
+   
+   if (timerSec >= 1000000)
+  {
+    secRoutine = micros();
+    Serial.print(cont);
+    Serial.print("    Smpl: ");
+    Serial.print(contSamples);
+    Serial.print("    calc: ");
+    Serial.println(contCalc);
+    /*
+    Serial.print("    wX: ");
+    Serial.print(wF[0]);
+    Serial.print("    Wy: ");
+    Serial.println(wF[1]);
+    Serial.print("    Wz: ");
+    Serial.println(wF[2]);
+    */
+    cont=0;      
+    contSamples=0;      
+    contCalc=0;      
+  }
+
+  timerRoutine = micros()-kMRoutine;
+  if (timerRoutine >= deltaT*1000)
+  {      
+    kMRoutine = micros();    
+    count += 1;
+    if (count >= 3)
+    {
+      count = 0;
+      printSerialAngle();
+      //printAcc();
+      //printOmega();
+      //printT();
+    }
+  }
 }
 
 void getGyroValues()
 {  
-
   //starting samplingTimer
   //samplingTime = micros();
 
@@ -374,33 +328,6 @@ void getGyroValues()
 }
 
 
-void writeRegister(int deviceAddress, byte address, byte val) 
-{
-  Wire.beginTransmission(deviceAddress); // start transmission to device 
-  Wire.write(address);       // send register address
-  Wire.write(val);         // send value to write
-  Wire.endTransmission();     // end transmission
-}
-
-int readRegister(int deviceAddress, byte address)
-{
-  int v;
-  Wire.beginTransmission(deviceAddress);
-  Wire.write(address); // register to read
-  Wire.endTransmission();
-
-  Wire.requestFrom(deviceAddress, 1); // read a byte
-
-  while(!Wire.available()) 
-  {
-    // waiting
-    // Serial.println("No Data");
-  }
-
-  v = Wire.read();
-  return v;
-}
-
 void printOmega()
 {
   Serial.print("       Wx:");
@@ -421,16 +348,15 @@ void printOmega()
   Serial.println(z);
 }
 
-void printAngle()
+void printAcc()
 {
-  Serial.print("Phi:");
-  Serial.print(phi);
-
-  Serial.print("       Theta:");
-  Serial.print(theta);
-
-  Serial.print("       Psi:");
-  Serial.println(psi);
+  Serial.print(aax);
+   Serial.print(",");
+   Serial.print(aay);
+   Serial.print(",");
+   Serial.print(aaz);
+   Serial.print(",");
+   Serial.println("E");
 }
 
 void printSerialAngle()
@@ -439,8 +365,19 @@ void printSerialAngle()
   Serial.print(",");
   Serial.print(theta);
   Serial.print(",");
-  Serial.println(psi);
+  Serial.print(psi);
+  Serial.print(",");
+  Serial.print(angleXAcc);
+  Serial.print(",");
+  Serial.println(angleYAcc);
 }
+
+void removeBias()
+{
+  x = x - bx;
+  y = y - by;
+  z = z - bz; 
+} 
 
 void calcBias()
 {  
@@ -467,12 +404,45 @@ void calcBias()
   }  
 }
 
-void removeBias()
+
+float AccelAdjust(int axis)
 {
-  x = x - bx;
-  y = y - by;
-  z = z - bz; 
-} 
+ float acc = 0;
+ for (int j=0;j<NADJ;j++)
+ {
+   float lectura=analogRead(axis);
+   acc = acc + ((lectura*5000)/1023.0);
+   delay(11); //número primo para evitar ciclos de lectura proporcionales
+ }
+ return acc/NADJ;
+}
+
+void writeRegister(int deviceAddress, byte address, byte val) 
+{
+  Wire.beginTransmission(deviceAddress); // start transmission to device 
+  Wire.write(address);       // send register address
+  Wire.write(val);         // send value to write
+  Wire.endTransmission();     // end transmission
+}
+
+int readRegister(int deviceAddress, byte address)
+{
+  int v;
+  Wire.beginTransmission(deviceAddress);
+  Wire.write(address); // register to read
+  Wire.endTransmission();
+
+  Wire.requestFrom(deviceAddress, 1); // read a byte
+
+  while(!Wire.available()) 
+  {
+    // waiting
+    // Serial.println("No Data");
+  }
+
+  v = Wire.read();
+  return v;
+}
 
 int setupL3G4200D(int scale)
 {
