@@ -31,14 +31,16 @@ float[] q = new float[4];
 //Quaternion quat = new Quaternion(1, 0, 0, 0);
 float[] gravity = new float[3];
 float[] euler = new float[3];
-float[] ypr = new float[3];
-float[] rpy = new float[3];
+float[] ypr = new float[8];
+float[] rpy = new float[8];
 int interval = 0;
 int rotzfactor = 0;
 int rotxfactor = 0;
 int rotyfactor = 0;
 
 float rotx,roty,rotz;
+float accRotx,accRoty,accRotz;
+float mixRotx,mixRoty,mixRotz;
 
 void setup() 
 {
@@ -92,8 +94,50 @@ void SerialRoutine()
       println("Saving angles ");
         rpy[0] =  Float.parseFloat(vals[0]);
         rpy[1] =  Float.parseFloat(vals[1]);
-        rotz = rpy[0]*PI/180;
+        accRotz = rpy[0]*PI/180;
+        accRotx = -rpy[1]*PI/180;
+      }      
+      if (vals.length==5)
+      {
+        println("Saving angles ");
+        rpy[0] =  Float.parseFloat(vals[0]);
+        rpy[1] =  Float.parseFloat(vals[1]);
+        rpy[2] =  Float.parseFloat(vals[2]);
+        rpy[3] =  Float.parseFloat(vals[3]);
+        rpy[4] =  Float.parseFloat(vals[4]);
+       
         rotx = rpy[1]*PI/180;
+        roty = rpy[2]*PI/180;
+        rotz = rpy[0]*PI/180;
+        accRotz = -rpy[4]*PI/180;
+        accRotx = rpy[3]*PI/180;
+        /*
+         rotx = rpy[0]*PI/180;
+        roty = rpy[2]*PI/180;
+        rotz = rpy[1]*PI/180;
+        accRotz = rpy[3]*PI/180;
+        accRotx = -rpy[4]*PI/180;
+        */
+      }
+      if (vals.length==7)
+      {
+        println("Saving angles ");
+        rpy[0] =  Float.parseFloat(vals[0]);
+        rpy[1] =  Float.parseFloat(vals[1]);
+        rpy[2] =  Float.parseFloat(vals[2]);
+        rpy[3] =  Float.parseFloat(vals[3]);
+        rpy[4] =  Float.parseFloat(vals[4]);
+        rpy[5] =  Float.parseFloat(vals[5]);
+        rpy[6] =  Float.parseFloat(vals[6]);
+        rpy[7] =  Float.parseFloat(vals[7]);
+        rotx = rpy[0]*PI/180;
+        roty = rpy[2]*PI/180;
+        rotz = rpy[1]*PI/180;
+        accRotz = rpy[0]*PI/180;
+        accRotx = rpy[1]*PI/180;
+        mixRotx = rpy[5]*PI/180;
+        mixRoty = rpy[7]*PI/180;
+        mixRotz = rpy[6]*PI/180;
       }
     }
   } 
@@ -172,9 +216,9 @@ void drawObjects()
         box(fixedFrameL); // Draw stationary box
         
         
-        rotateX(rotx); 
-        rotateY(roty); 
-        rotateZ(rotz); 
+        rotateX(accRotx); 
+        rotateY(accRoty); 
+        rotateZ(accRotz); 
         stroke(255,0,255);
         line(0, 0, 0, 0, 0, 50); 
         
@@ -241,9 +285,9 @@ void drawObjects()
         box(fixedFrameL); // Draw stationary box
         
         
-        rotateX(rotx); 
-        rotateY(roty); 
-        rotateZ(rotz); 
+        rotateX(mixRotx); 
+        rotateY(mixRoty); 
+        rotateZ(mixRotz); 
         stroke(255,0,255);
         line(0, 0, 0, 0, 0, 50); 
         
