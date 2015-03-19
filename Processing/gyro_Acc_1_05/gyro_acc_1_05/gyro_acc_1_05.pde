@@ -58,11 +58,12 @@ void setup()
 void draw() 
 {
   SerialRoutine();
-  background(0);
-  displayInfos();
-  // Camera control  
-  camera(mouseX, height/2.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0, height/2.0, 0, 0, 1, 0);
+  background(0);  
+  //camera(mouseX, height/2.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0, height/2.0, 0, 0, 1, 0);
 
+  // Camera control
+
+  displayInfos();
   rotateX(-25*PI/180);
   translate(0,0,200);
   
@@ -123,7 +124,7 @@ void SerialRoutine()
       }
       if (vals.length==7)
       {
-        println("Saving angles ");
+        println("Acc - Gyro - Fusion ");
         rpy[0] =  Float.parseFloat(vals[0]);
         rpy[1] =  Float.parseFloat(vals[1]);
         rpy[2] =  Float.parseFloat(vals[2]);
@@ -132,12 +133,12 @@ void SerialRoutine()
         rpy[5] =  Float.parseFloat(vals[5]);
         rpy[6] =  Float.parseFloat(vals[6]);
         //rpy[7] =  Float.parseFloat(vals[7]);
-        rotx = rpy[0]*PI/180;
+        rotx = -rpy[0]*PI/180;
         roty = rpy[2]*PI/180;
         rotz = rpy[1]*PI/180;
-        accRotz = rpy[0]*PI/180;
-        accRotx = rpy[1]*PI/180;
-        mixRotx = rpy[5]*PI/180;
+        accRotz = rpy[3]*PI/180;
+        accRotx = rpy[4]*PI/180;
+        mixRotx = -rpy[5]*PI/180;
         //mixRoty = rpy[7]*PI/180;
         mixRotz = rpy[6]*PI/180;
       }
@@ -157,21 +158,27 @@ void SerialRoutine()
 
 void displayInfos()
 {
-  //float rotx = (mouseY/360.0)*-2*PI+PI;
-  //float roty = (mouseX/420.0)*2*PI-PI;
-  //rotx = rotxfactor*PI/36;
-  //roty = rotyfactor*PI/36;
-  //rotz = rotzfactor*PI/36;
-
   stroke(0, 200, 200);
   line (0,20,sizeX,20); // monitor bar
   fill(255);
   textSize(10);
-  text ("Rotation:", sizeX*0.05,sizeY*0.1-20);
-  text (" X: " + rotx*180/PI + "°"  , sizeX*0.05,sizeY*0.1);
-  text (" Y: " + roty*180/PI  + "°", sizeX*0.05,sizeY*0.1+20);
-  //text (" Z: "+ rotzfactor*180/36+" pi/36) ", sizeX*0.05,sizeY*0.1+40);
-  text (" Z: "+ rotz*180/PI+" pi/36) ", sizeX*0.05,sizeY*0.1+40);
+  text ("Rotation:", sizeX*0.25,sizeY*0.1-20);
+  text (" X: " + accRotx*180/PI + "°"  , sizeX*0.25,sizeY*0.1);
+  text (" Y: " + accRoty*180/PI  + "°", sizeX*0.25,sizeY*0.1+20);
+  //text (" Z: "+ rotzfactor*180/36+" pi/36) ", sizeX*0.25,sizeY*0.1+40);
+  text (" Z: "+ accRotz*180/PI+" pi/36) ", sizeX*0.25,sizeY*0.1+40);
+  
+  text ("Rotation:", sizeX*0.50,sizeY*0.1-20);
+  text (" X: " + rotx*180/PI + "°"  , sizeX*0.50,sizeY*0.1);
+  text (" Y: " + roty*180/PI  + "°", sizeX*0.50,sizeY*0.1+20);
+  //text (" Z: "+ rotzfactor*180/36+" pi/36) ", sizeX*0.50,sizeY*0.1+40);
+  text (" Z: "+ rotz*180/PI+" pi/36) ", sizeX*0.50,sizeY*0.1+40);
+  
+  text ("Rotation:", sizeX*0.75,sizeY*0.1-20);
+  text (" X: " + mixRotx*180/PI + "°"  , sizeX*0.75,sizeY*0.1);
+  text (" Y: " + mixRoty*180/PI  + "°", sizeX*0.75,sizeY*0.1+20);
+  //text (" Z: "+ rotzfactor*180/36+" pi/36) ", sizeX*0.75,sizeY*0.1+40);
+  text (" Z: "+ rotz*180/PI+" pi/36) ", sizeX*0.75,sizeY*0.1+40);
   
   fill(0, 0, 200);
   
