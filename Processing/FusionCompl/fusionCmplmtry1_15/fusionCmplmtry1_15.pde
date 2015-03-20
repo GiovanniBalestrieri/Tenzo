@@ -4,18 +4,13 @@ import processing.opengl.*;
 
 /**
  ** Display settings
- **/
- 
+ **/ 
 int sizeX = 1100,sizeY = 600;
-// System
 
 /**
  ** Visual settings
  **/
-
 int  fixedFrameL = 170;
-
-
 int  quadL = 100;
 
 /**
@@ -42,6 +37,12 @@ float rotx,roty,rotz;
 float accRotx,accRoty,accRotz;
 float mixRotx,mixRoty,mixRotz;
 
+/**
+ ** Orientation variables
+ **/
+float throttle = 0;
+ 
+ 
 void setup() 
 {
   // 300px square viewport using OpenGL rendering
@@ -138,6 +139,27 @@ void SerialRoutine()
         //mixRoty = rpy[7]*PI/180;
         mixRotz = -rpy[5]*PI/180;
       }
+      if (vals.length==9)
+      {
+        println("Acc - Gyro - Fusion ");
+        rpy[0] =  Float.parseFloat(vals[0]);
+        rpy[1] =  Float.parseFloat(vals[1]);
+        rpy[2] =  Float.parseFloat(vals[2]);
+        rpy[3] =  Float.parseFloat(vals[3]);
+        rpy[4] =  Float.parseFloat(vals[4]);
+        rpy[5] =  Float.parseFloat(vals[5]);
+        rpy[6] =  Float.parseFloat(vals[6]);
+        //rpy[7] =  Float.parseFloat(vals[7]);
+        throttle =  Float.parseFloat(vals[8]);
+        rotx = rpy[0]*PI/180;
+        roty = rpy[2]*PI/180;
+        rotz = -rpy[1]*PI/180;
+        accRotz = -rpy[3]*PI/180;
+        accRotx = -rpy[4]*PI/180;
+        mixRotx = -rpy[6]*PI/180;
+        //mixRoty = rpy[7]*PI/180;
+        mixRotz = -rpy[5]*PI/180;
+      }
     }
   } 
 
@@ -177,6 +199,8 @@ void displayInfos()
   text (" Z: "+ rotz*180/PI+" pi/36) ", sizeX*0.75,sizeY*0.1+40);
   
   fill(0, 0, 200);
+  textSize(29);
+  text (throttle, sizeX*0.15,sizeY*0.90);
   
   textSize(12);
   text ("Quadcopter Orientation by UserK ", sizeX*0.7,sizeY*0.95);
@@ -336,34 +360,38 @@ void keyPressed()
   println("testM4");
     port.write("4");
     break;
-  case 'r':
-  println("pitch+");
-    rotxfactor++;
-    break;
       case 'k':
   println("takeoff+");
     port.write("a");
     break;
+  case 'L':
+  println("Landing");
+    port.write("L");
+    break; 
+  case 'w':
+  println("+5");
+    port.write("w");
+    break; 
+  case 's':
+    println("-5");
+    port.write("s");
+    break; 
   case 'e':
-  println("pitch-");
-    rotxfactor--;
+  println("+1");
+    port.write("e");
+    break; 
+  case 'd':
+    println("-1");
+    port.write("d");
     break; 
   case 'p':
-  println("roll+");
-    rotyfactor++;
-    break;  
-  case 'o':
-  println("roll-");
-    rotyfactor--;
-    break;  
-  case 'y':
-  println("yaw+");
-    rotzfactor++;
-    break;  
-  case 't':
-  println("yaw-");
-    rotzfactor--;
-    break;     
+    println("Enable Pid");
+    port.write("p");
+    break; 
+  case 'l':
+    println("DISABLE Pid");
+    port.write("l");
+    break; 
   default:  
     break;
     }

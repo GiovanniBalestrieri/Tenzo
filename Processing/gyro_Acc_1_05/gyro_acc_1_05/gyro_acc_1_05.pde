@@ -59,13 +59,9 @@ void draw()
 {
   SerialRoutine();
   background(0);  
-  //camera(mouseX, height/2.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0, height/2.0, 0, 0, 1, 0);
-
   // Camera control
 
   displayInfos();
-  rotateX(-25*PI/180);
-  translate(0,0,200);
   
   drawObjects(); 
   
@@ -188,131 +184,134 @@ void displayInfos()
 
 void drawObjects()
 {
-      pushMatrix();
+  rotateX(-25*PI/180);
+  translate(0,0,200);
+  
+  pushMatrix();
+    camera(0, 0, 0, mouseX, height/2.0, 0, 0, 1, 0);
+    //Draw axes inertial frame
+    pushMatrix();
+      translate(sizeX*0.8,sizeY*0.2);
+      text("x",50,10);
+      stroke(255,0,0);
+      line(0,0,0,50,0,0);
+      text("y",10,50);
+      stroke(0,255,0);
+      line(0,0,0,0,50,0);
+      text("z",20,20);
+      stroke(255,0,255);
+      line(0,0,0,0,0,100);
+    popMatrix();
+    
+    fill(0, 0, 200);
+    
+    
+    pushMatrix();
+    
+      // Acc
+      translate(0,0, 0); 
+      translate(sizeX/2*0.5, sizeY/3, 0); 
+       
+       // Draw body frame
+      strokeWeight(1);
+      stroke(50);
+      line(-fixedFrameL/2, 0, fixedFrameL/2, 0);       //
+      line(0, fixedFrameL/2, 0, -fixedFrameL/2);       // draw stationary axis lines
+      line(0, 0, -fixedFrameL/2, 0, 0, fixedFrameL/2); //
+      strokeWeight(2);
+      stroke(0,255,0);
+      noFill();
+      box(fixedFrameL); // Draw stationary box
       
-      //Draw axes inertial frame
-      pushMatrix();
-        translate(sizeX*0.8,sizeY*0.2);
-        text("x",50,10);
-        stroke(255,0,0);
-        line(0,0,0,50,0,0);
-        text("y",10,50);
-        stroke(0,255,0);
-        line(0,0,0,0,50,0);
-        text("z",20,20);
-        stroke(255,0,255);
-        line(0,0,0,0,0,100);
-      popMatrix();
       
-      fill(0, 0, 200);
+      rotateX(accRotx); 
+      rotateY(accRoty); 
+      rotateZ(accRotz); 
+      stroke(255,0,255);
+      line(0, 0, 0, 0, 0, 50); 
+      
+      stroke(255, 0, 0);
+      noFill();
+      
+      strokeWeight(2);
+      stroke(255);
+      fill(200);
+      box(quadL,5,5);
+      rotateY(PI/2);
+      box(quadL,5,5);
+    
+    popMatrix();
+    
+    pushMatrix();
+      translate(sizeX/2, sizeY/3, 0); 
+       
+       // Draw body frame
+      strokeWeight(1);
+      stroke(50);
+      line(-fixedFrameL/2, 0, fixedFrameL/2, 0);       //
+      line(0, fixedFrameL/2, 0, -fixedFrameL/2);       // draw stationary axis lines
+      line(0, 0, -fixedFrameL/2, 0, 0, fixedFrameL/2); //
+      strokeWeight(2);
+      stroke(255);
+      noFill();
+      box(fixedFrameL); // Draw stationary box
       
       
-      pushMatrix();
+      rotateX(rotx); 
+      rotateY(roty); 
+      rotateZ(rotz); 
+      stroke(255,0,255);
+      line(0, 0, 0, 0, 0, 50); 
       
-        // Acc
-        translate(0,0, 0); 
-        translate(sizeX/2*0.5, sizeY/3, 0); 
-         
-         // Draw body frame
-        strokeWeight(1);
-        stroke(50);
-        line(-fixedFrameL/2, 0, fixedFrameL/2, 0);       //
-        line(0, fixedFrameL/2, 0, -fixedFrameL/2);       // draw stationary axis lines
-        line(0, 0, -fixedFrameL/2, 0, 0, fixedFrameL/2); //
-        strokeWeight(2);
-        stroke(0,255,0);
-        noFill();
-        box(fixedFrameL); // Draw stationary box
-        
-        
-        rotateX(accRotx); 
-        rotateY(accRoty); 
-        rotateZ(accRotz); 
-        stroke(255,0,255);
-        line(0, 0, 0, 0, 0, 50); 
-        
-        stroke(255, 0, 0);
-        noFill();
-        
-        strokeWeight(2);
-        stroke(255);
-        fill(200);
-        box(quadL,5,5);
-        rotateY(PI/2);
-        box(quadL,5,5);
+      stroke(255, 0, 0);
+      noFill();
       
-      popMatrix();
-      
-      pushMatrix();
-        translate(sizeX/2, sizeY/3, 0); 
-         
-         // Draw body frame
-        strokeWeight(1);
-        stroke(50);
-        line(-fixedFrameL/2, 0, fixedFrameL/2, 0);       //
-        line(0, fixedFrameL/2, 0, -fixedFrameL/2);       // draw stationary axis lines
-        line(0, 0, -fixedFrameL/2, 0, 0, fixedFrameL/2); //
-        strokeWeight(2);
-        stroke(255);
-        noFill();
-        box(fixedFrameL); // Draw stationary box
-        
-        
-        rotateX(rotx); 
-        rotateY(roty); 
-        rotateZ(rotz); 
-        stroke(255,0,255);
-        line(0, 0, 0, 0, 0, 50); 
-        
-        stroke(255, 0, 0);
-        noFill();
-        
-        strokeWeight(2);
-        stroke(255);
-        fill(200);
-        box(quadL,5,5);
-        rotateY(PI/2);
-        box(quadL,5,5);
-        
-      popMatrix();
-      
-      pushMatrix();
-      
-        // Acc
-        translate(0,0, 0); 
-        translate(sizeX*0.73, sizeY/3, 0); 
-         
-         // Draw body frame
-        strokeWeight(1);
-        stroke(50);
-        line(-fixedFrameL/2, 0, fixedFrameL/2, 0);       //
-        line(0, fixedFrameL/2, 0, -fixedFrameL/2);       // draw stationary axis lines
-        line(0, 0, -fixedFrameL/2, 0, 0, fixedFrameL/2); //
-        strokeWeight(2);
-        stroke(255,0,0);
-        noFill();
-        box(fixedFrameL); // Draw stationary box
-        
-        
-        rotateX(mixRotx); 
-        rotateY(mixRoty); 
-        rotateZ(mixRotz); 
-        stroke(255,0,255);
-        line(0, 0, 0, 0, 0, 50); 
-        
-        stroke(255, 0, 0);
-        noFill();
-        
-        strokeWeight(2);
-        stroke(255);
-        fill(200);
-        box(quadL,5,5);
-        rotateY(PI/2);
-        box(quadL,5,5);      
-      
-      popMatrix();
+      strokeWeight(2);
+      stroke(255);
+      fill(200);
+      box(quadL,5,5);
+      rotateY(PI/2);
+      box(quadL,5,5);
       
     popMatrix();
+    
+    pushMatrix();
+    
+      // Acc
+      translate(0,0, 0); 
+      translate(sizeX*0.73, sizeY/3, 0); 
+       
+       // Draw body frame
+      strokeWeight(1);
+      stroke(50);
+      line(-fixedFrameL/2, 0, fixedFrameL/2, 0);       //
+      line(0, fixedFrameL/2, 0, -fixedFrameL/2);       // draw stationary axis lines
+      line(0, 0, -fixedFrameL/2, 0, 0, fixedFrameL/2); //
+      strokeWeight(2);
+      stroke(255,0,0);
+      noFill();
+      box(fixedFrameL); // Draw stationary box
+      
+      
+      rotateX(mixRotx); 
+      rotateY(mixRoty); 
+      rotateZ(mixRotz); 
+      stroke(255,0,255);
+      line(0, 0, 0, 0, 0, 50); 
+      
+      stroke(255, 0, 0);
+      noFill();
+      
+      strokeWeight(2);
+      stroke(255);
+      fill(200);
+      box(quadL,5,5);
+      rotateY(PI/2);
+      box(quadL,5,5);      
+    
+    popMatrix();
+    
+  popMatrix();
 }
 
 void keyPressed() 

@@ -336,34 +336,38 @@ void keyPressed()
   println("testM4");
     port.write("4");
     break;
-  case 'r':
-  println("pitch+");
-    rotxfactor++;
-    break;
       case 'k':
   println("takeoff+");
     port.write("a");
     break;
+  case 'L':
+  println("Landing");
+    port.write("L");
+    break; 
+  case 'w':
+  println("+5");
+    port.write("w");
+    break; 
+  case 's':
+    println("-5");
+    port.write("s");
+    break; 
   case 'e':
-  println("pitch-");
-    rotxfactor--;
+  println("+1");
+    port.write("e");
+    break; 
+  case 'd':
+    println("-1");
+    port.write("d");
     break; 
   case 'p':
-  println("roll+");
-    rotyfactor++;
-    break;  
-  case 'o':
-  println("roll-");
-    rotyfactor--;
-    break;  
-  case 'y':
-  println("yaw+");
-    rotzfactor++;
-    break;  
-  case 't':
-  println("yaw-");
-    rotzfactor--;
-    break;     
+    println("Enable Pid");
+    port.write("p");
+    break; 
+  case 'l':
+    println("DISABLE Pid");
+    port.write("l");
+    break; 
   default:  
     break;
     }
