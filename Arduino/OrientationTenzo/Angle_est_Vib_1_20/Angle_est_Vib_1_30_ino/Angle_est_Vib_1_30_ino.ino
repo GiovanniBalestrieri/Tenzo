@@ -24,11 +24,11 @@
 #include <Wire.h>
 #include <Servo.h>
 #include <CMPS10.h>
-#include <PID_v1.h>
+#include "PID_v2.h"
 
-boolean processing = true;
-boolean printMotorsVals = false;
-boolean printPIDVals = true;
+boolean processing = false;
+boolean printMotorsVals = true;
+boolean printPIDVals = false;
 
 byte modeS;
 
@@ -36,7 +36,7 @@ byte modeS;
  * VTOL settings
  */
  // Take Off settings
-int rampTill = 60;
+int rampTill = 50;
 int motorRampDelayFast = 150;
 int motorRampDelayMedium = 350;
 int motorRampDelaySlow = 550;
@@ -63,7 +63,7 @@ Servo servo1;
 Servo servo2;
 Servo servo3;
 Servo servo4;
-int throttle = 0;
+volatile int throttle = 0;
 
 // Motor constant
 int thresholdUp=255, thresholdDown=1;
@@ -77,17 +77,27 @@ int thresholdUp=255, thresholdDown=1;
  * Pid Controller 
  */
 boolean autoEnablePid = true;
-boolean enablePid = false; // Lascia false autoEnablePid lo gestisce.
-boolean enableRollPid = false;
+boolean enablePid = false;
+boolean enableRollPid = true;
 boolean enablePitchPid = true;
 boolean enableYawPid = false;
 boolean enableAltitudePid = false;
 
 // Define IO and setpoint for control
-double SetpointRoll = 0, InputRoll, errorRoll, OutputRoll;
-double SetpointPitch = 0, InputPitch, errorPitch, OutputPitch;
-double SetpointYaw = 180, InputYaw, errorYaw, OutputYaw;
-double SetpointAltitude = 1, InputAltitude, errorAltitude, OutputAltitude;
+double SetpointRoll = 0, InputRoll, errorRoll;
+double SetpointPitch = 0, InputPitch, errorPitch;
+double SetpointYaw = 180, InputYaw, errorYaw;
+double SetpointAltitude = 1, InputAltitude, errorAltitude;
+//
+//volatile double OutputRoll;
+//volatile double OutputPitch;
+//volatile double OutputYaw;
+//volatile double OutputAltitude;
+
+double OutputRoll = 0;
+double OutputPitch = 0;
+double OutputYaw = 0;
+double OutputAltitude = 0;
 
 // Define the aggressive and conservative Tuning Parameters
 // Roll
@@ -115,17 +125,17 @@ PID myYawPID(&InputYaw, &OutputYaw, &SetpointYaw, consKpYaw, consKiYaw, consKdYa
 PID myAltitudePID(&InputAltitude, &OutputAltitude, &SetpointAltitude, consKpAltitude, consKiAltitude, consKdAltitude, DIRECT);
 
 // Threshold
-int thresholdRoll = 7;
-int thresholdFarRoll = 20;
-int thresholdPitch = 7; 
-int thresholdFarPitch = 25;
-int thresholdYaw = 15;
-int thresholdAlt = 20;
+volatile int thresholdRoll = 7;
+volatile int thresholdFarRoll = 20;
+volatile int thresholdPitch = 7; 
+volatile int thresholdFarPitch = 25;
+volatile int thresholdYaw = 15;
+volatile int thresholdAlt = 20;
 
 // initialize pid outputs
-int rollPID = 0;
-int pitchPID = 0;
-int yawPID = 0;
+volatile int rollPID = 0;
+volatile int pitchPID = 0;
+volatile int yawPID = 0;
 
 /**
  * Compass
@@ -158,7 +168,7 @@ int filterAng = 0;
 #define XDA_REG 0b00000001
 
 //use address 104 if CS is not connected
-int L3G4200D_Address = 105; //I2C address of the L3G4200D
+int L3G4200D_Address = 105; 
 
 int zOld, xOld, yOld, xCand, yCand, zCand;
 int threshold = 200;
@@ -193,9 +203,10 @@ unsigned long accTimer;
 unsigned long lastAccTimer;
 unsigned long timeToRead = 0;
 unsigned long lastTimeToRead = 0;
+unsigned long servoTime = 0;
 
 // delta T control the routine frequency
-float deltaT = 5;
+float deltaT = 1;
 float timerLoop = 0, timerReading = 0, timerSec = 0;
 float timerRoutine = 0, count = 0;
 float redingTime = 0, samplingTime = 0, calcTime =0, printTime = 0;
@@ -211,6 +222,7 @@ const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 
 // Volatile vars
 volatile int cont = 0;
+int countCtrlAction = 0;
 volatile int contSamples=0;
 volatile int contCalc=0;
 
@@ -346,7 +358,110 @@ ISR(TIMER3_COMPB_vect)
   cont++;
 }
 
-void motorSpeedPID(int thr, int rollpid, int pitchpid, int yawpid, int altpid)
+void protocol1()
+{  
+  if (autoLand)
+  {
+    // If motors are on updates timer
+    if (initialized)
+      timerStart = millis() - checkpoint;
+    // if Tenzo has already been initialized for a timeToLand period then land
+    if (initialized && timerStart>=timeToLand)
+    {
+      land();
+    }
+  }
+}
+void land()
+{
+  if (initialized)
+  {
+    landing = true;
+    if(!processing)
+    {
+      Serial.println();
+      Serial.print("Landing protocol started...");
+      Serial.print(throttle);
+      Serial.print(" ");
+    }
+    for (int j=throttle; j>40 ;j--)
+    {
+      
+      motorSpeedPID(j, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
+      //motorSpeed(j);
+      Serial.println(j);
+      // Kind or brutal land
+      if (landSpeed == 1)
+        delay(motorRampDelayFast);
+      else if (landSpeed == 2)
+        delay(motorRampDelayMedium);
+      else if (landSpeed == 3)
+        delay(motorRampDelaySlow);
+      else
+        delay(motorRampDelayVerySlow);
+    }
+    resetMotorsPidOff();
+    initialized = false;
+    //Serial.print("   finished");
+    landing = false;
+  }
+  else
+  {
+    Serial.println();
+    Serial.print("Land command received but Tenzo is not Flying   !! WARNING !!");
+    Serial.println();
+  }
+}
+
+void resetMotorsPidOff()
+{
+  throttle = 0;
+  motorSpeed(0);
+  // Sets timerStart to 0
+  timerStart = 0;
+  checkpoint = 0;
+  // Disable Pid when motors are off
+  if (enablePid)
+  {
+    // Change only if PID is enabled 
+    // Tenzo has landed, no need of controls
+    changePidState(false);
+  }
+} 
+
+void changePidState(boolean cond)
+{
+  if (cond)
+  {
+    // Enable Pid Actions
+    myRollPID.SetMode(AUTOMATIC);
+    //tell the PID to range between 0 and the full throttle
+    //SetpointRoll = 0;
+    myRollPID.SetOutputLimits(-500, 500);
+
+    // Pitch
+    myPitchPID.SetMode(AUTOMATIC);
+    //SetpointPitch = 0;
+    //tell the PID to range between 0 and the full throttle
+    myPitchPID.SetOutputLimits(-500, 500);
+
+    // Yaw
+    myYawPID.SetMode(AUTOMATIC);
+    //SetpointYaw=0;
+    //tell the PID to range between 0 and the full throttle
+    myYawPID.SetOutputLimits(-500, 500);
+    enablePid = true;
+  }
+  else
+  { 
+    myRollPID.SetMode(MANUAL);
+    myPitchPID.SetMode(MANUAL);
+    myYawPID.SetMode(MANUAL);
+    enablePid = false;
+  }
+}
+
+void motorSpeedPID(int thr, float rollpid, float pitchpid, float yawpid, float altpid)
 {
   int motorA, motorB, motorC, motorD;
 
@@ -379,6 +494,15 @@ void motorSpeedPID(int thr, int rollpid, int pitchpid, int yawpid, int altpid)
     Serial.print("   ]");
     Serial.println();
   }
+  
+  if (motorA>70)
+   motorA = 70;
+  if (motorB>70)
+   motorB = 70;
+  if (motorC>70)
+   motorC = 70;
+  if (motorD>70)
+   motorD = 70;
   // send input to motors
   servo1.write(motorA);
   servo2.write(motorB);
@@ -397,12 +521,23 @@ void initialize()
     delay(500);
     for (int j=0; j<rampTill;j++)
     {
-      motorSpeed(j);
-      if (!processing)
+      
+      motorSpeedPID(j, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
+      //motorSpeed(j);
+      //if (!processing)
         Serial.println(j);
       delay(motorRampDelayFast); 
     }
     throttle=rampTill;
+    
+    if (enablePid)
+    {  
+      changePidState(true);
+    }
+    else
+    {
+      changePidState(false);
+    }
     
     checkpoint = millis();
     initialized = true;    
@@ -446,6 +581,7 @@ void resetMotors()
   // Disable Pid when motors are off
 }
 
+/*
 void land()
 {
   if (initialized)
@@ -484,7 +620,7 @@ void land()
     Serial.println();
   }
 }
-
+*/
 void landFast()
 {
   for (int j=throttle; j>40 ;j--)
@@ -627,6 +763,17 @@ void serialRoutine()
         }
       }
       
+      if (modeS == 'p')
+      {
+        changePidState(true);
+        enablePid = true;
+      }
+      else if (modeS == 'l')
+      {
+        changePidState(false);
+        enablePid = false;
+      }
+      
       if (modeS== '1')
       {
         Serial.println("M1");
@@ -663,12 +810,16 @@ void serialRoutine()
       //Serial.print(cont);
       Serial.print("Samples rate: [sample/sec] ");
       Serial.print(contSamples);
-      //Serial.print("    calc: ");
-      //Serial.println(contCalc);
+      Serial.print("    ControlInput: ");
+      Serial.println(countCtrlAction);
+      Serial.print("    timeservo: ");
+      Serial.println(servoTime);
+      Serial.println();
     }
     cont=0;      
     contSamples=0;      
-    contCalc=0;      
+    contCalc=0; 
+    countCtrlAction=0;
   }
 
   timerRoutine = micros()-kMRoutine;
@@ -678,14 +829,19 @@ void serialRoutine()
   {      
     kMRoutine = micros();    
     count += 1;
-    if (count >= 10)
+    if (count >= 1)
     {
       count = 0;
       printSerialAngle();
+      control();  
       motorSpeedPID(throttle, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
+
+      //servoTime = micros();
+      //servoTime = micros() - servoTime;
       //printAcc();
       //printOmega();
       //printT();
+      countCtrlAction++;
     }
   }
 }
@@ -981,7 +1137,9 @@ void control()
     // Roll PID
     if (enableRollPid)
     {
+      //Serial.println("    ZAK ");
       InputRoll = estXAngle;
+      //Serial.println("    ZAK ");
       errorRoll = abs(SetpointRoll - estXAngle); //distance away from setpoint
       //if(errorRoll<thresholdRoll)
       //{  //we're close to setpoint, use conservative tuning parameters
@@ -1002,6 +1160,9 @@ void control()
 
       if (printPIDVals)
       {
+        Serial.println();
+        Serial.print("INPUT ");
+        Serial.print(InputRoll);
         Serial.print("ErrorRoll:");
         Serial.print(errorRoll);
         Serial.print("Roll PID: ");
@@ -1011,6 +1172,9 @@ void control()
     }
     else
     {
+      Serial.println();
+      Serial.println("SS");
+      Serial.println();
       OutputRoll = 0;
     }
 
@@ -1048,9 +1212,13 @@ void control()
     }  
     else
     {
+      Serial.println();
+      Serial.println("SS");
+      Serial.println();
       OutputPitch = 0;
     }
 
+    /*
     // Yaw PID
     if (enableYawPid)
     {
@@ -1090,6 +1258,7 @@ void control()
     {
       OutputYaw=0;
     }
+    */
     if (printPIDVals)
     {
       Serial.println();      
