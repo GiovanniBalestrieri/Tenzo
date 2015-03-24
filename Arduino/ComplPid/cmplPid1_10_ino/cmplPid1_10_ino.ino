@@ -28,8 +28,8 @@
 #include "PID_v2.h"
 
 boolean processing = false;
-boolean printMotorsVals = true;
-boolean printPIDVals = false;
+boolean printMotorsVals = false;
+boolean printPIDVals = true;
 
 byte modeS;
 
@@ -83,7 +83,7 @@ boolean enableRollPid = true;
 boolean enablePitchPid = false;
 boolean enableYawPid = false;
 boolean enableWRollPid = true;
-boolean enableWPitchPid = false;
+boolean enableWPitchPid = true;
 boolean enableWYawPid = false;
 boolean enableAltitudePid = false;
 
@@ -132,12 +132,12 @@ double consKpYaw=0.3, consKiYaw=0, consKdYaw=0.0;
 
 // W Roll
 float aggKpWRoll=0.10, aggKiWRoll=0.06, aggKdWRoll=0.04;
-float consKpWRoll=0.26, consKiWRoll=0.09, consKdWRoll=0.03;
+float consKpWRoll=0.158, consKiWRoll=0.138, consKdWRoll=0.003;
 float farKpWRoll=0.05, farKiWRoll=0.09, farKdWRoll=0.03;
 
 // W Pitch
 float aggKpWPitch=0.07, aggKiWPitch=0.06, aggKdWPitch=0.04;
-float consKpWPitch=0.23, consKiWPitch=0.2, consKdWPitch=0.01;
+float consKpWPitch=0.1, consKiWPitch=0.0, consKdWPitch=0.0;
 float farKpWPitch=0.02, farKiWPitch=0.09,  farKdWPitch=0.02;
 
 // W Yaw
@@ -482,10 +482,29 @@ void changePidState(boolean cond)
     myPitchPID.SetOutputLimits(-500, 500);
 
     // Yaw
-    myYawPID.SetMode(AUTOMATIC);
+    wYawPID.SetMode(AUTOMATIC);
     //SetpointYaw=0;
     //tell the PID to range between 0 and the full throttle
-    myYawPID.SetOutputLimits(-500, 500);
+    wYawPID.SetOutputLimits(-500, 500);
+    
+    // Enable Pid Actions
+    wRollPID.SetMode(AUTOMATIC);
+    //tell the PID to range between 0 and the full throttle
+    //SetpointRoll = 0;
+    wRollPID.SetOutputLimits(-500, 500);
+
+    // Pitch
+    wPitchPID.SetMode(AUTOMATIC);
+    //SetpointPitch = 0;
+    //tell the PID to range between 0 and the full throttle
+    wPitchPID.SetOutputLimits(-500, 500);
+
+    // Yaw
+    wYawPID.SetMode(AUTOMATIC);
+    //SetpointYaw=0;
+    //tell the PID to range between 0 and the full throttle
+    wYawPID.SetOutputLimits(-500, 500);
+    
     enablePid = true;
   }
   else
@@ -493,6 +512,9 @@ void changePidState(boolean cond)
     myRollPID.SetMode(MANUAL);
     myPitchPID.SetMode(MANUAL);
     myYawPID.SetMode(MANUAL);
+    wRollPID.SetMode(MANUAL);
+    wPitchPID.SetMode(MANUAL);
+    wYawPID.SetMode(MANUAL);
     enablePid = false;
   }
 }
@@ -561,7 +583,7 @@ void initialize()
       motorSpeedPID(j, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
       //motorSpeed(j);
       //if (!processing)
-        Serial.println(j);
+      Serial.println(j);
       delay(motorRampDelayFast); 
     }
     throttle=rampTill;
@@ -876,14 +898,15 @@ void serialRoutine()
     if (count >= 1)
     {
       count = 0;
-      printSerialAngle();
-      control();  
-      motorSpeedPID(throttle, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
+      //printSerialAngle();
+      //control();  
+      controlW();
+      motorSpeedPID(throttle, OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
 
       //servoTime = micros();
       //servoTime = micros() - servoTime;
       //printAcc();
-      //printOmega();
+      printOmega();
       //printT();
       countCtrlAction++;
     }
@@ -1323,8 +1346,8 @@ void controlW()
     // Roll W PID
     if (enableWRollPid)
     {
-      InputWRoll = x;
-      errorWRoll = abs(SetpointWRoll - x); 
+      InputWRoll = y;
+      errorWRoll = abs(SetpointWRoll - y); 
       
       wRollPID.SetTunings(consKpWRoll, consKiWRoll, consKdWRoll);
 
@@ -1333,11 +1356,11 @@ void controlW()
       if (printPIDVals)
       {
         Serial.println();
-        Serial.print("INPUT ANGULAR PID ROLL ");
-        Serial.print(InputWRoll);
-        Serial.print("ErrorWWWRoll:");
+//        Serial.print("INPUT ANGULAR PID ROLL ");
+//        Serial.print(InputWRoll);
+        Serial.print("     ErrorWWWRoll:  ");
         Serial.print(errorWRoll);
-        Serial.print("Roll WWW PID: ");
+        Serial.print("     Roll WWW PID:  ");
         Serial.print(OutputWRoll);
         Serial.println();
       }
@@ -1350,8 +1373,8 @@ void controlW()
     // Pitch PID1
     if (enablePitchPid)
     {
-      InputWPitch = y;
-      errorWPitch = abs(SetpointWPitch - y);
+      InputWPitch = x;
+      errorWPitch = abs(SetpointWPitch - x);
 
       wPitchPID.SetTunings(consKpWPitch, consKiWPitch, consKdWPitch);
         
