@@ -132,7 +132,7 @@ double consKpYaw=0.3, consKiYaw=0, consKdYaw=0.0;
 
 // W Roll
 float aggKpWRoll=0.10, aggKiWRoll=0.06, aggKdWRoll=0.04;
-float consKpWRoll=0.3, consKiWRoll=0.05, consKdWRoll=0.005;
+float consKpWRoll=0.1500, consKiWRoll=0.14, consKdWRoll=0.00025;
 float farKpWRoll=0.05, farKiWRoll=0.09, farKdWRoll=0.03;
 
 // W Pitch
@@ -1382,9 +1382,9 @@ void controlW()
 
       if (printPIDVals)
       { 
-        Serial.print(" Angular Pitch error:  ");
+        Serial.print(" Angular error:  ");
         Serial.print(errorWPitch);
-        Serial.print(" Angular Pitch Pid Action:");
+        Serial.print(" Angular Pid Action:");
         Serial.print(OutputWPitch);
         Serial.println();
       }
