@@ -16,7 +16,7 @@
  *  - Matlab connection
  *  - Kalman filter
  *  - Complementary Filter
- *  - Motors control
+ *  - Motors control\
  *  - FreeIMU Ready
  **/
 //#define DEBUGMODE
