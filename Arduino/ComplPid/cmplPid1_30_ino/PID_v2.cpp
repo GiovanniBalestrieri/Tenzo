@@ -21,20 +21,20 @@ PID::PID(double* Input, double* Output, double* Setpoint,
         double Kp, double Ki, double Kd, int ControllerDirection)
 {
 	
-    volatile myOutput = Output;
-    volatile myInput = Input;
-    volatile mySetpoint = Setpoint;
-	  volatile inAuto = false;
+    myOutput = Output;
+    myInput = Input;
+    mySetpoint = Setpoint;
+	  inAuto = false;
 	
 	PID::SetOutputLimits(0, 255);				//default output limit corresponds to 
 												//the arduino pwm limits
 
-    volatile SampleTime = 100;							//default Controller Sample Time is 0.1 seconds
+    SampleTime = 100;							//default Controller Sample Time is 0.1 seconds
 
     PID::SetControllerDirection(ControllerDirection);
     PID::SetTunings(Kp, Ki, Kd);
 
-    volatile lastTime = millis()-SampleTime;				
+    lastTime = millis()-SampleTime;				
 }
  
  
