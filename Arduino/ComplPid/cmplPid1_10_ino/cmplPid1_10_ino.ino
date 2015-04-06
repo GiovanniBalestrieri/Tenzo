@@ -27,7 +27,7 @@
 #include <CMPS10.h>
 #include "PID_v2.h"
 
-boolean processing = false;
+boolean processing = true;
 boolean printMotorsVals = false;
 boolean printPIDVals = true;
 

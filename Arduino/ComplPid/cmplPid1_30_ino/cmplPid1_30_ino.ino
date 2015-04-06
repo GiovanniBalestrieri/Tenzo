@@ -24,11 +24,14 @@
 #include <Wire.h>
 #include <Servo.h>
 #include <CMPS10.h>
+#include <SoftwareSerial.h>
 #include "PID_v2.h"
 
 boolean processing = false;
-boolean printMotorsVals = false;
-boolean printPIDVals = false;
+boolean printMotorsVals = true;
+boolean printPIDVals = true;
+boolean printSerialInfo = true;
+boolean printSerial = false;
 
 byte modeS;
 
@@ -36,7 +39,7 @@ byte modeS;
  * VTOL settings
  */
 // Take Off settings
-int rampTill = 1200;
+int rampTill = 1300;
 int motorRampDelayFast = 15;
 int motorRampDelayMedium = 50;
 int motorRampDelaySlow = 100;
@@ -255,6 +258,35 @@ const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
 const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);
 const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 
+/**
+ ** Serial 
+ **/
+// Bluetooth
+int BaudRateSerial = 115200;
+int BluRateSerial = 115200; // Slow down in case
+// Gps
+int BaudRateGps = 4800;
+
+uint8_t pinRx = 12 , pinTx = 13; // the pin on Arduino
+SoftwareSerial blu(pinRx, pinTx);
+byte loBytew1, hiBytew1,loBytew2, hiBytew2;
+int loWord,hiWord;
+
+// Serial Protocol
+int versionArduinoProtocol = 6;
+boolean matlab = false;
+int modeserial = 0;
+long cmd1;
+long cmd2;
+long cmd3;
+long cmd4;
+int numCommandToSend = 0;
+int numFilterValuesToSend = 0;
+
+int inputBuffSize = 30;
+int outputBuffSize = 30;
+byte bufferBytes[30];
+
 // Volatile vars
 volatile int cont = 0;
 int countCtrlAction = 0;
@@ -293,7 +325,8 @@ volatile float kG = 0.98, kA = 0.02, kGZ=0.60, kAZ = 0.40;
 void setup()
 {  
   Wire.begin();
-  Serial.begin(115200); // 9600 bps
+  Serial.begin(115200); 
+  //blu.begin(115200); // 9600 bps
   pinMode(xaxis,INPUT);
   pinMode(yaxis,INPUT);
   pinMode(zaxis,INPUT);
@@ -314,7 +347,7 @@ void setup()
 
   if (!processing)
   {
-    Serial.println("starting up L3G4200D");
+    Serial.println("Starting up L3G4200D");
     //Serial.println("Setting up timer3");
   }
 
@@ -552,14 +585,15 @@ void motorSpeedPID(int thr, float rollpid, float pitchpid, float yawpid, float a
     Serial.println();
   }
 
-  if (motorA>70)
-    motorA = 70;
-  if (motorB>70)
-    motorB = 70;
-  if (motorC>70)
-    motorC = 70;
-  if (motorD>70)
-    motorD = 70;
+
+  if (motorA>2000)
+    motorA = 2000;
+  if (motorB>2000)
+    motorB = 2000;
+  if (motorC>2000)
+    motorC = 2000;
+  if (motorD>2000)
+    motorD = 2000;
   // send input to motors
   servo1.writeMicroseconds(motorA);
   servo2.writeMicroseconds(motorB);
@@ -576,7 +610,7 @@ void initialize()
     initializing = true;
     resetMotors();
     delay(500);
-    for (int j=600; j<rampTill; j++)
+    for (int j=700; j<rampTill; j++)
     {
 
       motorSpeedPID(j, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
@@ -741,10 +775,94 @@ void aFilter(volatile float val[])
 }
 
 void serialRoutine()
-{
+{  
+  if (blu.available())
+  {
+   if (printSerialInfo)
+   {
+      Serial.print("- Received Tot: ");
+      Serial.println(blu.available());
+   } 
+   /*
+   if (blu.available() >= inputBuffSize)
+   {  
+      for (int j=0;j<=inputBuffSize && printSerialInfo;j++)
+      {
+        bufferBytes[j]=blu.read();
+        Serial.print("Received: ");
+        Serial.print(bufferBytes[j]);
+        Serial.println();
+      }
+      if (bufferBytes[0] == 3 && bufferBytes[1]==1)
+      {        
+        // Message has been correctly sent by Android and delivered to the Arduino 
+        // Decoding Header
+
+        // Assembling VERSION long skip first two bytes
+
+        hiBytew2 = bufferBytes[4];
+        //Serial.println(hiBytew2,BIN);
+        loBytew2 = bufferBytes[5];
+        //Serial.println(loBytew2,BIN);
+        hiWord = word(hiBytew2, loBytew2);
+        //versionProtocol = makeLong( hiWord, loWord);
+        int versionProtocol = hiWord;
+        //  number cmd
+        int numCmd = bufferBytes[6];
+        int headL = bufferBytes[7];
+        int cmdL = bufferBytes[8];
+        //  total Length
+        hiBytew2 = bufferBytes[9];
+        //Serial.println(hiBytew2,BIN);
+        loBytew2 = bufferBytes[10];
+        //Serial.println(loBytew2,BIN);
+        short totL = word(hiBytew2, loBytew2);
+        // CRC
+        hiBytew2 = bufferBytes[11];
+        //Serial.println(hiBytew2,BIN);
+        loBytew2 = bufferBytes[12];
+        //Serial.println(loBytew2,BIN);
+        short crc = word(hiBytew2, loBytew2);
+        
+        // Decoding Command
+         
+        int type = bufferBytes[13];
+        if (printSerialInfo)
+        {
+          Serial.println();
+          Serial.print("Version");
+          Serial.print(versionProtocol);
+          if (versionProtocol != versionArduinoProtocol)
+            Serial.println("Warning Sync Repos, different serial protocols");
+          Serial.println();
+          Serial.print("Tot Len");
+          Serial.println(totL);
+          Serial.println();
+          Serial.print("Crc");
+          Serial.println(crc);
+          Serial.print("TYPE");
+          Serial.println(type);
+        }        
+      }
+    }
+    else
+    {
+      if (printSerialInfo)
+      {
+        Serial.print(" Serial.b ");
+      } 
+    }
+    */    
+    char toSend = (char) blu.read();
+    Serial.print(toSend);    
+  }
+  
   if (Serial.available())
   {
-    modeS = Serial.read();
+    modeS = Serial.read(); 
+    //Serial.println("ok");
+    //blu.println(toSend);
+    
     if (modeS == 'a')
     {
       //Serial.print('b');      
@@ -756,7 +874,7 @@ void serialRoutine()
       {
         throttle = throttle + 5;
       }
-    }
+    }                    
     else if (modeS == 's')
     {
       if (throttle>thresholdDown)
@@ -857,7 +975,10 @@ void serialRoutine()
     if (count >= 1)
     {
       count = 0;
-      //printSerialAngle();
+      if (processing && printSerial)
+      {
+        printSerialAngle();
+      }
       //control();  
       controlW();
       motorSpeedPID(throttle, OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
@@ -865,7 +986,7 @@ void serialRoutine()
       //servoTime = micros();
       //servoTime = micros() - servoTime;
       //printAcc();
-      printOmega();
+      //printOmega();
       //printT();
       countCtrlAction++;
     }

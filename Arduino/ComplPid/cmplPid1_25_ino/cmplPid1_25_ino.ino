@@ -20,7 +20,6 @@
  *  - FreeIMU Ready
  *
  **/
-//#define DEBUGMODE
 
 #include <Wire.h>
 #include <Servo.h>
@@ -858,7 +857,10 @@ void serialRoutine()
     if (count >= 1)
     {
       count = 0;
-      //printSerialAngle();
+      if (processing)
+      {
+        printSerialAngle();
+      }
       //control();  
       controlW();
       motorSpeedPID(throttle, OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
@@ -866,7 +868,7 @@ void serialRoutine()
       //servoTime = micros();
       //servoTime = micros() - servoTime;
       //printAcc();
-      printOmega();
+      //printOmega();
       //printT();
       countCtrlAction++;
     }
@@ -1089,61 +1091,63 @@ void testMotor(int x)
   {
     Serial.println('M1');
     //Serial.println(" Increasing angular velocity");
-    servo1.writeMicroseconds(1000);
-    delay(500);
-    servo1.writeMicroseconds(1300);
-    delay(500);
-    servo1.writeMicroseconds(1400);
-    //Serial.println(" Decreasing angular velocity");
-    delay(500);
-    servo1.writeMicroseconds(1100);
-    delay(500);
-    servo1.writeMicroseconds(1000);
+    for (int i = 0; i<2000;i++)
+    {
+       servo1.writeMicroseconds(i);
+       delay(15);     
+       Serial.println(i);  
+    }
+    for (int i = 2000; i>700;i--)
+    {
+       servo1.writeMicroseconds(i);
+       delay(15);    
+       Serial.println(i);    
+    }
   }
   else if (x==2)
-  {
-    Serial.println('M2');
-    //Serial.println(" Increasing angular velocity");
-    servo2.writeMicroseconds(1000);
-    delay(500);
-    servo2.writeMicroseconds(1300);
-    delay(500);
-    servo2.writeMicroseconds(1400);
-    //Serial.println(" Decreasing angular velocity");
-    delay(500);
-    servo2.writeMicroseconds(1300);
-    delay(500);
-    servo2.writeMicroseconds(1000);
-  }
-  else if (x==3)
-  {
-    Serial.println('M3');
-    //Serial.println(" Increasing angular velocity");
-    servo3.writeMicroseconds(1000);
-    delay(500);
-    servo3.writeMicroseconds(1200);
-    delay(500);
-    servo3.writeMicroseconds(1400);
-    //Serial.println(" Decreasing angular velocity");
-    delay(500);
-    servo3.writeMicroseconds(1200);
-    delay(500);
-    servo3.writeMicroseconds(1000);
-  }
-  else if (x==4)
-  {
-    Serial.println('M4');
-    //Serial.println(" Increasing angular velocity");
-    servo4.writeMicroseconds(1000);
-    delay(500);
-    servo4.writeMicroseconds(1200);
-    delay(500);
-    servo4.writeMicroseconds(1400);
-    delay(500);
-    servo4.writeMicroseconds(1200);
-    delay(500);
-    servo4.writeMicroseconds(1000);
-  }
+    {
+      Serial.println('M2');
+      //Serial.println(" Increasing angular velocity");
+      servo2.writeMicroseconds(1000);
+      delay(500);
+      servo2.writeMicroseconds(1300);
+      delay(500);
+      servo2.writeMicroseconds(1400);
+      //Serial.println(" Decreasing angular velocity");
+      delay(500);
+      servo2.writeMicroseconds(1300);
+      delay(500);
+      servo2.writeMicroseconds(1000);
+    }
+    else if (x==3)
+    {
+      Serial.println('M3');
+      //Serial.println(" Increasing angular velocity");
+      servo3.writeMicroseconds(1000);
+      delay(500);
+      servo3.writeMicroseconds(1200);
+      delay(500);
+      servo3.writeMicroseconds(1400);
+      //Serial.println(" Decreasing angular velocity");
+      delay(500);
+      servo3.writeMicroseconds(1200);
+      delay(500);
+      servo3.writeMicroseconds(1000);
+    }
+    else if (x==4)
+    {
+      Serial.println('M4');
+      //Serial.println(" Increasing angular velocity");
+      servo4.writeMicroseconds(1000);
+      delay(500);
+      servo4.writeMicroseconds(1200);
+      delay(500);
+      servo4.writeMicroseconds(1400);
+      delay(500);
+      servo4.writeMicroseconds(1200);
+      delay(500);
+      servo4.writeMicroseconds(1000);
+    }
 }
 
 void control()
