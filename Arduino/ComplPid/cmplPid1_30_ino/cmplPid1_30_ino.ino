@@ -28,7 +28,7 @@
 #include "PID_v2.h"
 
 boolean processing = false;
-boolean printMotorsVals = true;
+boolean printMotorsVals = false;
 boolean printPIDVals = true;
 boolean printSerialInfo = true;
 boolean printSerial = false;
@@ -67,6 +67,7 @@ Servo servo2;
 Servo servo3;
 Servo servo4;
 volatile int throttle = 0;
+volatile int motorA, motorB, motorC, motorD;
 
 // Motor constant
 int thresholdUp=255, thresholdDown=1;
@@ -261,8 +262,8 @@ const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 /**
  ** Serial 
  **/
-// Bluetooth
 int BaudRateSerial = 115200;
+// Bluetooth
 int BluRateSerial = 115200; // Slow down in case
 // Gps
 int BaudRateGps = 4800;
@@ -422,6 +423,11 @@ ISR(TIMER3_COMPB_vect)
   //getCompassValues();
   calcAngle();
   estAngle();
+  
+      //control();  
+  controlW();
+  motorSpeedPID(throttle, OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
+
   cont++;
 }
 
@@ -552,38 +558,11 @@ void changePidState(boolean cond)
 
 void motorSpeedPID(int thr, float rollpid, float pitchpid, float yawpid, float altpid)
 {
-  int motorA, motorB, motorC, motorD;
-
   // compute motor inputs
   motorA = thr + altpid + rollpid - yawpid;
   motorB = thr + altpid + pitchpid + yawpid;
   motorC = thr + altpid - rollpid - yawpid;
   motorD = thr + altpid - pitchpid + yawpid; 
-
-  if (printMotorsVals)
-  {
-    Serial.println();
-    Serial.print(" Motors:[  ");
-    Serial.print(motorA);
-    Serial.print("   ;   ");
-    Serial.print(motorB);
-    Serial.print("   ;   ");
-    Serial.print(motorC);
-    Serial.print("   ;   ");
-    Serial.print(motorD);
-    Serial.println("   ]");  
-    Serial.print("        PID:[ROLL  ");
-    Serial.print(rollpid);
-    Serial.print("   ;PITCH   ");
-    Serial.print(pitchpid);
-    Serial.print("   ;YAW   ");
-    Serial.print(yawpid);
-    Serial.print("   ; THROTTLE    ");
-    Serial.print(thr);
-    Serial.print("   ]");
-    Serial.println();
-  }
-
 
   if (motorA>2000)
     motorA = 2000;
@@ -979,14 +958,18 @@ void serialRoutine()
         printSerialAngle();
       }
       //control();  
-      controlW();
-      motorSpeedPID(throttle, OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
+      //controlW();
+      //motorSpeedPID(throttle, OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
 
       //servoTime = micros();
       //servoTime = micros() - servoTime;
       //printAcc();
       //printOmega();
       //printT();
+      if (printPIDVals)
+        printPidValues();
+      if (printMotorsVals)
+        printMotorsValues();
       countCtrlAction++;
     }
   }
@@ -1431,18 +1414,6 @@ void controlW()
       wRollPID.SetTunings(Kw*consKpWRoll, Kw*consKiWRoll, Kw*consKdWRoll);
 
       wRollPID.Compute();
-
-      if (printPIDVals)
-      {
-        Serial.println();
-        //        Serial.print("INPUT ANGULAR PID ROLL ");
-        //        Serial.print(InputWRoll);
-        Serial.print("     ErrorWWWRoll:  ");
-        Serial.print(errorWRoll);
-        Serial.print("     Roll WWW PID:  ");
-        Serial.print(OutputWRoll);
-        Serial.println();
-      }
     }
     else
     {
@@ -1459,14 +1430,7 @@ void controlW()
 
       wPitchPID.Compute(); // Computes outputPitch
 
-      if (printPIDVals)
-      { 
-        Serial.print(" Angular error:  ");
-        Serial.print(errorWPitch);
-        Serial.print(" Angular Pid Action:");
-        Serial.print(OutputWPitch);
-        Serial.println();
-      }
+      
     }  
     else
     {
@@ -1489,15 +1453,7 @@ void controlW()
      wYawPID.SetTunings(Kw*consKpWYaw, Kw*consKiWYaw, Kw*consKdWYaw);
      }   
      wYawPID.Compute(); 
-     
-     if (printPIDVals)
-     {
-     Serial.print(" ErrorWYaw: ");
-     Serial.print(errorWYaw);
-     Serial.print(" Yaw  WW pid: ");
-     Serial.print(OutputWYaw);
-     Serial.println();
-     }     
+        
      }
      else
      {
@@ -1515,5 +1471,62 @@ void controlW()
     OutputWPitch = 0;    
     OutputWYaw = 0;
   }
+}
+
+void printPidValues()
+{
+  if (enableRollPid)
+  {
+    Serial.println();
+    //        Serial.print("INPUT ANGULAR PID ROLL ");
+    //        Serial.print(InputWRoll);
+    Serial.print("     ErrorWWWRoll:  ");
+    Serial.print(errorWRoll);
+    Serial.print("     Roll WWW PID:  ");
+    Serial.print(OutputWRoll);
+    Serial.println();
+  }  
+  
+  if (enablePitchPid)
+  { 
+    Serial.print(" Angular error:  ");
+    Serial.print(errorWPitch);
+    Serial.print(" Angular Pid Action:");
+    Serial.print(OutputWPitch);
+    Serial.println();
+  }
+  
+  if (enableYawPid)
+  {
+     Serial.print(" ErrorWYaw: ");
+     Serial.print(errorWYaw);
+     Serial.print(" Yaw  WW pid: ");
+     Serial.print(OutputWYaw);
+     Serial.println();
+  }  
+}
+
+void printMotorsValues()
+{
+    Serial.println();
+    Serial.print(" Motors:[  ");
+    Serial.print(motorA);
+    Serial.print("   ;   ");
+    Serial.print(motorB);
+    Serial.print("   ;   ");
+    Serial.print(motorC);
+    Serial.print("   ;   ");
+    Serial.print(motorD);
+    Serial.println("   ]");  
+    Serial.print("        PID:[ROLL  ");
+    Serial.print(OutputRoll);
+    Serial.print("   ;PITCH   ");
+    Serial.print(OutputPitch);
+    Serial.print("   ;YAW   ");
+    Serial.print(OutputYaw);
+    Serial.print("   ; THROTTLE    ");
+    Serial.print(throttle);
+    Serial.print("   ]");
+    Serial.println();
 }
 
