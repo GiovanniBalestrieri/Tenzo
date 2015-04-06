@@ -311,7 +311,6 @@ volatile boolean filterGyro = false;
 volatile boolean filterAcc = false;
 volatile boolean initializedSetup = false;
 
-
 volatile float bearing1;
 
 volatile float angleXAcc;
