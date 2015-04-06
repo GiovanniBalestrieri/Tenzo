@@ -29,7 +29,7 @@
 
 boolean processing = false;
 boolean printMotorsVals = false;
-boolean printPIDVals = true;
+boolean printPIDVals = false;
 boolean printSerialInfo = true;
 boolean printSerial = false;
 
@@ -40,10 +40,10 @@ byte modeS;
  */
 // Take Off settings
 int rampTill = 1300;
-int motorRampDelayFast = 15;
-int motorRampDelayMedium = 50;
-int motorRampDelaySlow = 100;
-int motorRampDelayVerySlow = 200;
+int motorRampDelayFast = 2;
+int motorRampDelayMedium = 5;
+int motorRampDelaySlow = 15;
+int motorRampDelayVerySlow = 20;
 
 // Safe Mode: after timeToLand ms tenzo will land automatically
 unsigned long timeToLand = 20000;
@@ -262,9 +262,9 @@ const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 /**
  ** Serial 
  **/
-int BaudRateSerial = 115200;
+int BaudRateSerial = 19200;
 // Bluetooth
-int BluRateSerial = 115200; // Slow down in case
+int BlueRate = 115200; // Slow down in case
 // Gps
 int BaudRateGps = 4800;
 
@@ -290,7 +290,7 @@ byte bufferBytes[30];
 
 // Volatile vars
 volatile int cont = 0;
-int countCtrlAction = 0;
+volatile int countCtrlAction = 0;
 volatile int contSamples=0;
 volatile int contCalc=0;
 
@@ -325,8 +325,8 @@ volatile float kG = 0.98, kA = 0.02, kGZ=0.60, kAZ = 0.40;
 void setup()
 {  
   Wire.begin();
-  Serial.begin(115200); 
-  //blu.begin(115200); // 9600 bps
+  Serial.begin(BaudRateSerial); 
+  //blu.begin(blueRate); // 115200 bps
   pinMode(xaxis,INPUT);
   pinMode(yaxis,INPUT);
   pinMode(zaxis,INPUT);
@@ -577,6 +577,9 @@ void motorSpeedPID(int thr, float rollpid, float pitchpid, float yawpid, float a
   servo2.writeMicroseconds(motorB);
   servo3.writeMicroseconds(motorC);
   servo4.writeMicroseconds(motorD);
+  
+  // Increase control counter 
+  countCtrlAction++;
 }
 
 void initialize()
@@ -970,7 +973,6 @@ void serialRoutine()
         printPidValues();
       if (printMotorsVals)
         printMotorsValues();
-      countCtrlAction++;
     }
   }
 }
@@ -1462,7 +1464,7 @@ void controlW()
      */
     if (printPIDVals)
     {
-      Serial.println();      
+      //Serial.println();      
     }
   }
   else
