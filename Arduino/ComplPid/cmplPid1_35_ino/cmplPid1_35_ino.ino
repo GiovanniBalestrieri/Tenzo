@@ -18,29 +18,33 @@
  *  - Complementary Filter
  *  - Motors control
  *  - FreeIMU Ready
+ *
  **/
-//#define DEBUGMODE
 
 #include <Wire.h>
 #include <Servo.h>
 #include <CMPS10.h>
+#include <SoftwareSerial.h>
 #include "PID_v2.h"
 
 boolean processing = false;
 boolean printMotorsVals = false;
-boolean printPIDVals = true;
+boolean printPIDVals = false;
+boolean printSerialInfo = false;
+boolean printSerial = false;
+boolean printTimers = true;
 
 byte modeS;
 
 /**
  * VTOL settings
  */
- // Take Off settings
-int rampTill = 60;
-int motorRampDelayFast = 150;
-int motorRampDelayMedium = 350;
-int motorRampDelaySlow = 550;
-int motorRampDelayVerySlow = 850;
+// Take Off settings
+int rampTill = 1300;
+int motorRampDelayFast = 2;
+int motorRampDelayMedium = 5;
+int motorRampDelaySlow = 15;
+int motorRampDelayVerySlow = 20;
 
 // Safe Mode: after timeToLand ms tenzo will land automatically
 unsigned long timeToLand = 20000;
@@ -56,22 +60,23 @@ boolean initializing = false;
 boolean initialized = false;
 
 /**
-  *  Brushless 
-  */
+ *  Brushless 
+ */
 
 Servo servo1;
 Servo servo2;
 Servo servo3;
 Servo servo4;
 volatile int throttle = 0;
+volatile int motorA, motorB, motorC, motorD;
 
 // Motor constant
 int thresholdUp=255, thresholdDown=1;
-
+int maxTest = 1300, minTest = 700;
 /** 
  ** Control
  **/
- 
+float Kmy = 1, Kw = 1;
 //float OutputRoll = 0, OutputPitch = 0, OutputYaw = 0, OutputAlt = 0;
 /**
  * Pid Controller 
@@ -79,8 +84,11 @@ int thresholdUp=255, thresholdDown=1;
 boolean autoEnablePid = true;
 boolean enablePid = false;
 boolean enableRollPid = true;
-boolean enablePitchPid = true;
+boolean enablePitchPid = false;
 boolean enableYawPid = false;
+boolean enableWRollPid = true;
+boolean enableWPitchPid = true;
+boolean enableWYawPid = false;
 boolean enableAltitudePid = false;
 
 // Define IO and setpoint for control
@@ -88,33 +96,59 @@ double SetpointRoll = 0, InputRoll, errorRoll;
 double SetpointPitch = 0, InputPitch, errorPitch;
 double SetpointYaw = 180, InputYaw, errorYaw;
 double SetpointAltitude = 1, InputAltitude, errorAltitude;
+
+
+// Define IO and setpoint for control -----------  W
+double SetpointWRoll = 0, InputWRoll, errorWRoll;
+double SetpointWPitch = 0, InputWPitch, errorWPitch;
+double SetpointWYaw = 180, InputWYaw, errorWYaw;
 //
 //volatile double OutputRoll;
 //volatile double OutputPitch;
 //volatile double OutputYaw;
 //volatile double OutputAltitude;
 
-double OutputRoll;
-double OutputPitch;
-double OutputYaw;
-double OutputAltitude;
+double OutputRoll = 0;
+double OutputPitch = 0;
+double OutputYaw = 0;
+double OutputAltitude = 0;
+
+
+double OutputWRoll = 0;
+double OutputWPitch = 0;
+double OutputWYaw = 0;
 
 // Define the aggressive and conservative Tuning Parameters
-// Roll
-float aggKpRoll=0.10, aggKiRoll=0.06, aggKdRoll=0.04;
-float consKpRoll=0.22, consKiRoll=0.09, consKdRoll=0.02;
-float farKpRoll=0.05, farKiRoll=0.9, farKdRoll=0.03;
 
-// Pitch
+// Angle Roll
+float aggKpRoll=0.10, aggKiRoll=0.06, aggKdRoll=0.04;
+float consKpRoll=0.26, consKiRoll=0.09, consKdRoll=0.03;
+float farKpRoll=0.05, farKiRoll=0.09, farKdRoll=0.03;
+
+// Angle Pitch
 float aggKpPitch=0.07, aggKiPitch=0.06, aggKdPitch=0.04;
-float consKpPitch=0.24, consKiPitch=0.09, consKdPitch=0.02;
+float consKpPitch=0.23, consKiPitch=0.2, consKdPitch=0.01;
 float farKpPitch=0.02, farKiPitch=0.09,  farKdPitch=0.02;
 
-// Yaw
+// Angle Yaw
 double aggKpYaw=0.3, aggKiYaw=0.0, aggKdYaw=0.1;
 double consKpYaw=0.3, consKiYaw=0, consKdYaw=0.0;
 
-// Altitude  ->> *** Add it, judst created
+// W Roll
+float aggKpWRoll=0.10, aggKiWRoll=0.06, aggKdWRoll=0.04;
+float consKpWRoll=0.1500, consKiWRoll=0.14, consKdWRoll=0.00025;
+float farKpWRoll=0.05, farKiWRoll=0.09, farKdWRoll=0.03;
+
+// W Pitch
+float aggKpWPitch=0.07, aggKiWPitch=0.06, aggKdWPitch=0.04;
+float consKpWPitch=0.1, consKiWPitch=0.0, consKdWPitch=0.0;
+float farKpWPitch=0.02, farKiWPitch=0.09,  farKdWPitch=0.02;
+
+// W Yaw
+double aggKpWYaw=0.3, aggKiWYaw=0.0, aggKdWYaw=0.1;
+double consKpWYaw=0.3, consKiWYaw=0, consKdWYaw=0.0;
+
+// Altitude  ->> *** Add it, just created
 double aggKpAltitude=0.2, aggKiAltitude=0.0, aggKdAltitude=0.1;
 double consKpAltitude=0.1, consKiAltitude=0, consKdAltitude=0.1;
 
@@ -123,6 +157,12 @@ PID myRollPID(&InputRoll, &OutputRoll, &SetpointRoll, consKpRoll, consKiRoll, co
 PID myPitchPID(&InputPitch, &OutputPitch, &SetpointPitch, consKpPitch, consKiPitch, consKdPitch, DIRECT);
 PID myYawPID(&InputYaw, &OutputYaw, &SetpointYaw, consKpYaw, consKiYaw, consKdYaw, DIRECT);
 PID myAltitudePID(&InputAltitude, &OutputAltitude, &SetpointAltitude, consKpAltitude, consKiAltitude, consKdAltitude, DIRECT);
+
+
+//Specify the links and initial tuning parameters
+PID wRollPID(&InputWRoll, &OutputWRoll, &SetpointWRoll, consKpWRoll, consKiWRoll, consKdWRoll, DIRECT);
+PID wPitchPID(&InputWPitch, &OutputWPitch, &SetpointWPitch, consKpWPitch, consKiWPitch, consKdWPitch, DIRECT);
+PID wYawPID(&InputWYaw, &OutputWYaw, &SetpointWYaw, consKpWYaw, consKiWYaw, consKdWYaw, DIRECT);
 
 // Threshold
 volatile int thresholdRoll = 7;
@@ -199,11 +239,11 @@ const int zaxis = 2;
 float XError,YError,ZError;
 
 // Acc Timers
-unsigned long accTimer;
-unsigned long lastAccTimer;
-unsigned long timeToRead = 0;
-unsigned long lastTimeToRead = 0;
-unsigned long servoTime = 0;
+volatile unsigned long accTimer;
+volatile unsigned long lastAccTimer;
+volatile unsigned long timeToRead = 0;
+volatile unsigned long lastTimeToRead = 0;
+volatile unsigned long servoTime = 0;
 
 // delta T control the routine frequency
 float deltaT = 1;
@@ -220,9 +260,38 @@ const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
 const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);
 const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 
+/**
+ ** Serial 
+ **/
+int BaudRateSerial = 115200;
+// Bluetooth
+int BlueRate = 115200; // Slow down in case
+// Gps
+int BaudRateGps = 4800;
+
+int pinRx = 12 , pinTx = 13; // the pin on Arduino
+SoftwareSerial blu(pinRx, pinTx);
+byte loBytew1, hiBytew1,loBytew2, hiBytew2;
+int loWord,hiWord;
+
+// Serial Protocol
+int versionArduinoProtocol = 6;
+boolean matlab = false;
+int modeserial = 0;
+long cmd1;
+long cmd2;
+long cmd3;
+long cmd4;
+int numCommandToSend = 0;
+int numFilterValuesToSend = 0;
+
+int inputBuffSize = 30;
+int outputBuffSize = 30;
+byte bufferBytes[30];
+
 // Volatile vars
 volatile int cont = 0;
-int countCtrlAction = 0;
+volatile int countCtrlAction = 0;
 volatile int contSamples=0;
 volatile int contCalc=0;
 
@@ -244,7 +313,6 @@ volatile boolean filterGyro = false;
 volatile boolean filterAcc = false;
 volatile boolean initializedSetup = false;
 
-
 volatile float bearing1;
 
 volatile float angleXAcc;
@@ -258,40 +326,49 @@ volatile float kG = 0.98, kA = 0.02, kGZ=0.60, kAZ = 0.40;
 void setup()
 {  
   Wire.begin();
-  Serial.begin(115200); // 9600 bps
+  Serial.begin(BaudRateSerial); 
+//  Serial.print("$$$");
+//  delay(100);
+//  Serial.println("U,9600,N");
+//  Serial.begin(9600);
+  //blu.begin(BlueRate); // 115200 bps
+  //blu.print("$$$");
+  //delay(100);
+  //blu.println("U,4800,N");
+  //blu.begin(4800);
   pinMode(xaxis,INPUT);
   pinMode(yaxis,INPUT);
   pinMode(zaxis,INPUT);
-  
+
   /** 
    ** Servo initialization
    **/
-  
-   servo1.attach(3);  
-   servo2.attach(5);    
-   servo3.attach(6);   
-   servo4.attach(9);
-  
-   servo1.write(0);  
-   servo2.write(0); 
-   servo3.write(0); 
-   servo4.write(0);
-  
+
+  servo1.attach(3);  
+  servo2.attach(5);    
+  servo3.attach(22);   
+  servo4.attach(9);
+
+  servo1.writeMicroseconds(1000);
+  servo2.writeMicroseconds(1000);
+  servo3.writeMicroseconds(1000);
+  servo4.writeMicroseconds(1000);
+
   if (!processing)
   {
-    Serial.println("starting up L3G4200D");
+    Serial.println("Starting up L3G4200D");
     //Serial.println("Setting up timer3");
   }
-  
+
   setupL3G4200D(2000); // Configure L3G4200  - 250, 500 or 2000 deg/sec
   delay(1500); //wait for the sensor to be ready   
-  
+
   biasCalcTime = micros();
   calcBias();
   biasCalcTime = micros() - biasCalcTime;
   if (!processing)
   {
-    Serial.print("Readings: [us] ");
+    Serial.print("Read: [us] ");
     Serial.print(samplingTime);
     Serial.print("      Bias est: [us] ");
     Serial.print(biasCalcTime);
@@ -302,7 +379,7 @@ void setup()
   YError =  AccelAdjust(yaxis);
   ZError =  AccelAdjust(zaxis);
   ZError = ZError - ZOUT_1G;
- 
+
   // Timer settings
   // Initialize Timer
   cli();
@@ -323,21 +400,27 @@ void setup()
 
   // enable global interrupts:
   sei(); 
- 
+
   // ADC Tuning
   ADCSRA &= ~PS_128;  // remove bits set by Arduino library
   // you can choose a prescaler from above.
   // PS_16, PS_32, PS_64 or PS_128
   ADCSRA |= PS_32;    // set our own prescaler to 64 
-  
+
   initializedSetup = true;
   k = micros();
 }
 
 void loop()
 {  
- serialRoutine();
- delay(20);
+  serialRoutine();
+  if (Serial.available())
+  {
+    char modeS = Serial.read(); 
+    Serial.print(" Writing Blu: ");
+    Serial.println(modeS);
+  }
+  delay(20);
 } 
 
 ISR(TIMER3_COMPB_vect)
@@ -355,6 +438,14 @@ ISR(TIMER3_COMPB_vect)
   //getCompassValues();
   calcAngle();
   estAngle();
+  
+  //control();  
+  controlW();
+  
+  //servoTime = micros();
+  motorSpeedPID(throttle, OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
+  //servoTime = micros() - servoTime;
+
   cont++;
 }
 
@@ -384,9 +475,11 @@ void land()
       Serial.print(throttle);
       Serial.print(" ");
     }
-    for (int j=throttle; j>40 ;j--)
+    for (int j=throttle; j>1000 ;j--)
     {
-      motorSpeed(j);
+
+      motorSpeedPID(j, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
+      //motorSpeed(j);
       Serial.println(j);
       // Kind or brutal land
       if (landSpeed == 1)
@@ -413,8 +506,8 @@ void land()
 
 void resetMotorsPidOff()
 {
-  throttle = 0;
-  motorSpeed(0);
+  throttle = 1000;
+  motorSpeed(1000);
   // Sets timerStart to 0
   timerStart = 0;
   checkpoint = 0;
@@ -444,10 +537,29 @@ void changePidState(boolean cond)
     myPitchPID.SetOutputLimits(-500, 500);
 
     // Yaw
-    myYawPID.SetMode(AUTOMATIC);
+    wYawPID.SetMode(AUTOMATIC);
     //SetpointYaw=0;
     //tell the PID to range between 0 and the full throttle
-    myYawPID.SetOutputLimits(-500, 500);
+    wYawPID.SetOutputLimits(-500, 500);
+
+    // Enable Pid Actions
+    wRollPID.SetMode(AUTOMATIC);
+    //tell the PID to range between 0 and the full throttle
+    //SetpointRoll = 0;
+    wRollPID.SetOutputLimits(-500, 500);
+
+    // Pitch
+    wPitchPID.SetMode(AUTOMATIC);
+    //SetpointPitch = 0;
+    //tell the PID to range between 0 and the full throttle
+    wPitchPID.SetOutputLimits(-500, 500);
+
+    // Yaw
+    wYawPID.SetMode(AUTOMATIC);
+    //SetpointYaw=0;
+    //tell the PID to range between 0 and the full throttle
+    wYawPID.SetOutputLimits(-500, 500);
+
     enablePid = true;
   }
   else
@@ -455,48 +567,37 @@ void changePidState(boolean cond)
     myRollPID.SetMode(MANUAL);
     myPitchPID.SetMode(MANUAL);
     myYawPID.SetMode(MANUAL);
+    wRollPID.SetMode(MANUAL);
+    wPitchPID.SetMode(MANUAL);
+    wYawPID.SetMode(MANUAL);
     enablePid = false;
   }
 }
 
-void motorSpeedPID(int thr, int rollpid, int pitchpid, int yawpid, int altpid)
+void motorSpeedPID(int thr, float rollpid, float pitchpid, float yawpid, float altpid)
 {
-  int motorA, motorB, motorC, motorD;
-
   // compute motor inputs
   motorA = thr + altpid + rollpid - yawpid;
   motorB = thr + altpid + pitchpid + yawpid;
   motorC = thr + altpid - rollpid - yawpid;
   motorD = thr + altpid - pitchpid + yawpid; 
-  
-  if (printMotorsVals)
-  {
-    Serial.println();
-    Serial.print(" Motors:[  ");
-    Serial.print(motorA);
-    Serial.print("   ;   ");
-    Serial.print(motorB);
-    Serial.print("   ;   ");
-    Serial.print(motorC);
-    Serial.print("   ;   ");
-    Serial.print(motorD);
-    Serial.println("   ]");  
-    Serial.print("        PID:[ROLL  ");
-    Serial.print(rollpid);
-    Serial.print("   ;PITCH   ");
-    Serial.print(pitchpid);
-    Serial.print("   ;YAW   ");
-    Serial.print(yawpid);
-    Serial.print("   ; THROTTLE    ");
-    Serial.print(thr);
-    Serial.print("   ]");
-    Serial.println();
-  }
+
+  if (motorA>2000)
+    motorA = 2000;
+  if (motorB>2000)
+    motorB = 2000;
+  if (motorC>2000)
+    motorC = 2000;
+  if (motorD>2000)
+    motorD = 2000;
   // send input to motors
-  servo1.write(motorA);
-  servo2.write(motorB);
-  servo3.write(motorC);
-  servo4.write(motorD);
+  servo1.writeMicroseconds(motorA);
+  servo2.writeMicroseconds(motorB);
+  servo3.writeMicroseconds(motorC);
+  servo4.writeMicroseconds(motorD);
+  
+  // Increase control counter 
+  countCtrlAction++;
 }
 
 void initialize()
@@ -504,19 +605,21 @@ void initialize()
   if (!initialized)
   {
     if (!processing)
-        Serial.println("Initializing");
+      Serial.println("Initializing");
     initializing = true;
     resetMotors();
     delay(500);
-    for (int j=0; j<rampTill;j++)
+    for (int j=700; j<rampTill; j++)
     {
-      motorSpeed(j);
-      if (!processing)
-        Serial.println(j);
+
+      motorSpeedPID(j, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
+      //motorSpeed(j);
+      //if (!processing)
+      Serial.println(j);
       delay(motorRampDelayFast); 
     }
     throttle=rampTill;
-    
+
     if (enablePid)
     {  
       changePidState(true);
@@ -525,7 +628,7 @@ void initialize()
     {
       changePidState(false);
     }
-    
+
     checkpoint = millis();
     initialized = true;    
     initializing = false;
@@ -540,21 +643,21 @@ void initialize()
 
 void initializeFast()
 {
-   for (int j=0; j<rampTill;j++)
-   {
-      motorSpeed(j);
-      //Serial.println(j);
-      delay(motorRampDelayFast); 
-   }
-   throttle=rampTill;
+  for (int j=1000; j<rampTill;j++)
+  {
+    motorSpeed(j);
+    //Serial.println(j);
+    delay(motorRampDelayFast); 
+  }
+  throttle=rampTill;
 }
 
 void motorSpeed(int x)
 {    
-  servo1.write(x);      
-  servo2.write(x); 
-  servo3.write(x); 
-  servo4.write(x); 
+  servo1.writeMicroseconds(x);      
+  servo2.writeMicroseconds(x); 
+  servo3.writeMicroseconds(x); 
+  servo4.writeMicroseconds(x); 
 }
 
 
@@ -568,46 +671,6 @@ void resetMotors()
   // Disable Pid when motors are off
 }
 
-/*
-void land()
-{
-  if (initialized)
-  {
-    landing = true;    
-    if (!processing)
-    {
-      Serial.println();
-      Serial.print("Landing protocol started...");
-      Serial.print(throttle);
-      Serial.print(" ");
-    }
-    for (int j=throttle; j>30 ;j--)
-    {
-      motorSpeed(j);
-      Serial.println(j);
-      // Kind or brutal land
-      if (landSpeed == 1)
-        delay(motorRampDelayFast);
-      else if (landSpeed == 2)
-        delay(motorRampDelayMedium);
-      else if (landSpeed == 3)
-        delay(motorRampDelaySlow);
-      else
-        delay(motorRampDelayVerySlow);
-    }
-    resetMotors();
-    initialized = false;
-    //Serial.print("   finished");
-    landing = false;
-  }
-  else
-  {
-    Serial.println();
-    Serial.print("Land command received but Tenzo is not Flying   !! WARNING !!");
-    Serial.println();
-  }
-}
-*/
 void landFast()
 {
   for (int j=throttle; j>40 ;j--)
@@ -627,25 +690,25 @@ void getCompassValues()
 
 void getAcc() //ISR
 {
-   rawAx=analogRead(xaxis);
-   rawAy=analogRead(yaxis);
-   rawAz=analogRead(zaxis);
-  
-   aax = (((rawAx*5000.0)/1023.0)-XError)/RESOLUTION;
-   aay = (((rawAy*5000.0)/1023.0)-YError)/RESOLUTION;
-   aaz = (((rawAz*5000.0)/1023.0)-ZError)/RESOLUTION;
-   
-   if (filterAcc)
-   {      
-      aF[0] = aax;
-      aF[1] = aay;
-      aF[2] = aaz;
-      aFilter(aF);
-   }
-   // gets the value sample time
-   accTimer = micros() - lastAccTimer;
-   // updates last reading timer
-   lastAccTimer = micros();  
+  rawAx=analogRead(xaxis);
+  rawAy=analogRead(yaxis);
+  rawAz=analogRead(zaxis);
+
+  aax = (((rawAx*5000.0)/1023.0)-XError)/RESOLUTION;
+  aay = (((rawAy*5000.0)/1023.0)-YError)/RESOLUTION;
+  aaz = (((rawAz*5000.0)/1023.0)-ZError)/RESOLUTION;
+
+  if (filterAcc)
+  {      
+    aF[0] = aax;
+    aF[1] = aay;
+    aF[2] = aaz;
+    aFilter(aF);
+  }
+  // gets the value sample time
+  accTimer = micros() - lastAccTimer;
+  // updates last reading timer
+  lastAccTimer = micros();  
 }
 
 void calcAngle() //ISR
@@ -657,9 +720,9 @@ void calcAngle() //ISR
     phi=phi+(float) x*/*scale2000/1000**/(float)dt/1000000.0;
     /*
     Serial.println();
-    Serial.print("phi: ");
-    Serial.println(phi);
-    */
+     Serial.print("phi: ");
+     Serial.println(phi);
+     */
     thetaOLD = theta; 
     theta=theta+(float) y*/**scale2000/1000**/ (float) dt/1000000.0;
 
@@ -674,7 +737,7 @@ void calcAngle() //ISR
 
     psi=psi+wF[2]*/*(float)scale2000/1000**/ (float) dt/1000000.0;  
   }
-  
+
   if (filterAcc)
   {
     angleXAcc = (atan2(-aF[0],aF[2])) * RAD_TO_DEG;
@@ -711,95 +774,195 @@ void aFilter(volatile float val[])
 }
 
 void serialRoutine()
-{
-  if (Serial.available())
+{  
+  /*
+  if (blu.available())
+  {
+   if (printSerialInfo)
    {
-     modeS = Serial.read();
-     if (modeS == 'a')
+      //Serial.print("- Received Tot: ");
+      //Serial.println(blu.available());
+   } 
+   
+   if (blu.available() >= inputBuffSize)
+   {  
+      for (int j=0;j<=inputBuffSize && printSerialInfo;j++)
       {
-        //Serial.print('b');      
-        initialize();
+        bufferBytes[j]=blu.read();
+        Serial.print("Received: ");
+        Serial.print(bufferBytes[j]);
+        Serial.println();
       }
-      else if (modeS == 'w')
-      {
-        if (throttle>thresholdDown)
-        {
-          throttle = throttle + 5;
-        }
-      }
-      else if (modeS == 's')
-      {
-        if (throttle>thresholdDown)
-        {
-          throttle = throttle - 5;
-        }
-      }
-  
-      if (modeS == 'e')
-      {
-        if (throttle<thresholdUp)
-        {
-          throttle = throttle + 1;
-        }
-      }
-      else if (modeS == 'd')
-      {
-        if (throttle>thresholdDown)
-        {
-          throttle = throttle - 1;
-        }
-      }
-      
-      if (modeS == 'p')
-      {
-        changePidState(true);
-        enablePid = true;
-      }
-      else if (modeS == 'l')
-      {
-        changePidState(false);
-        enablePid = false;
-      }
-      
-      if (modeS== '1')
-      {
-        Serial.println("M1");
-        testMotor(1);
-      }
-      else if (modeS== '2')
-      {
-        testMotor(2);
-      }
-      else if (modeS== '3')
-      {
-        testMotor(3);
-      }
-      else if (modeS== '4')
-      {
-        testMotor(4);
-      }
-      else if(modeS == 'L')
+      if (bufferBytes[0] == 3 && bufferBytes[1]==1)
       {        
-        if (!processing)
-          Serial.println("Landing");
-        land();
+        // Message has been correctly sent by Android and delivered to the Arduino 
+        // Decoding Header
+
+        // Assembling VERSION long skip first two bytes
+
+        hiBytew2 = bufferBytes[4];
+        //Serial.println(hiBytew2,BIN);
+        loBytew2 = bufferBytes[5];
+        //Serial.println(loBytew2,BIN);
+        hiWord = word(hiBytew2, loBytew2);
+        //versionProtocol = makeLong( hiWord, loWord);
+        int versionProtocol = hiWord;
+        //  number cmd
+        int numCmd = bufferBytes[6];
+        int headL = bufferBytes[7];
+        int cmdL = bufferBytes[8];
+        //  total Length
+        hiBytew2 = bufferBytes[9];
+        //Serial.println(hiBytew2,BIN);
+        loBytew2 = bufferBytes[10];
+        //Serial.println(loBytew2,BIN);
+        short totL = word(hiBytew2, loBytew2);
+        // CRC
+        hiBytew2 = bufferBytes[11];
+        //Serial.println(hiBytew2,BIN);
+        loBytew2 = bufferBytes[12];
+        //Serial.println(loBytew2,BIN);
+        short crc = word(hiBytew2, loBytew2);
+        
+        // Decoding Command
+         
+        int type = bufferBytes[13];
+        if (printSerialInfo)
+        {
+          Serial.println();
+          Serial.print("Version");
+          Serial.print(versionProtocol);
+          if (versionProtocol != versionArduinoProtocol)
+            Serial.println("Warning Sync Repos, different serial protocols");
+          Serial.println();
+          Serial.print("Tot Len");
+          Serial.println(totL);
+          Serial.println();
+          Serial.print("Crc");
+          Serial.println(crc);
+          Serial.print("TYPE");
+          Serial.println(type);
+        }        
       }
     }
-  
+    else
+    {
+      if (printSerialInfo)
+      {
+        Serial.print(" Serial.b ");
+      } 
+    }
+    char toSend = (char) blu.read(); 
+    Serial.print(" Receiving: ");
+    Serial.println(toSend);    
+  }
+  */
+  if (Serial.available())
+  {
+    char modeS = Serial.read(); 
+    Serial.print(" Writing Blu: ");
+    Serial.println(modeS);
+    //blu.print(modeS);
+    
+    /*
+    if (modeS == 'a')
+    {
+      //Serial.print('b');      
+      initialize();
+    }
+    else if (modeS == 'w')
+    {
+      if (throttle>thresholdDown)
+      {
+        throttle = throttle + 5;
+      }
+    }                    
+    else if (modeS == 's')
+    {
+      if (throttle>thresholdDown)
+      {
+        throttle = throttle - 5;
+      }
+    }
+
+    if (modeS == 'e')
+    {
+      if (throttle<thresholdUp)
+      {
+        throttle = throttle + 1;
+      }
+    }
+    else if (modeS == 'd')
+    {
+      if (throttle>thresholdDown)
+      {
+        throttle = throttle - 1;
+      }
+    }
+
+    if (modeS == 'p')
+    {
+      changePidState(true);
+      enablePid = true;
+    }
+    else if (modeS == 'l')
+    {
+      changePidState(false);
+      enablePid = false;
+    }
+
+    if (modeS== '1')
+    {
+      Serial.println("M1");
+      testMotor(1);
+    }
+    else if (modeS== '2')
+    {
+      testMotor(2);
+    }
+    else if (modeS== '3')
+    {
+      testMotor(3);
+    }
+    else if (modeS== '4')
+    {
+      testMotor(4);
+    }
+    else if(modeS == 'L')
+    {        
+      if (!processing)
+        Serial.println("Landing");
+      land();
+    }
+    else if (modeS == 'm')
+    {
+      printMotorsVals = !printMotorsVals; 
+    }
+    else if (modeS == 'v')
+    {
+      printPIDVals = !printPIDVals; 
+    }    
+    else if (modeS == 't')
+    {
+      printTimers = !printTimers; 
+    }
+    */
+  }
+
   timerSec = micros()-secRoutine;
   lastTimeToRead = micros();
-   
+
   if (timerSec >= 1000000)
   {
     secRoutine = micros();
-    if (!processing)
+    if (!processing && printTimers)
     {
       //Serial.print(cont);
-      Serial.print("Samples rate: [sample/sec] ");
+      Serial.print("[sample/sec] ");
       Serial.print(contSamples);
-      Serial.print("    ControlInput: ");
+      Serial.print("    Ctrl: ");
       Serial.println(countCtrlAction);
-      Serial.print("    timeservo: ");
+      Serial.print("    tservo: ");
       Serial.println(servoTime);
       Serial.println();
     }
@@ -810,7 +973,7 @@ void serialRoutine()
   }
 
   timerRoutine = micros()-kMRoutine;
-  
+
   // The following loop runs every 5ms
   if (timerRoutine >= deltaT*1000) 
   {      
@@ -819,16 +982,17 @@ void serialRoutine()
     if (count >= 1)
     {
       count = 0;
-      printSerialAngle();
-      control();  
-      motorSpeedPID(throttle, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
-
-      //servoTime = micros();
-      //servoTime = micros() - servoTime;
+      if (processing && printSerial)
+      {
+        printSerialAngle();
+      }
       //printAcc();
       //printOmega();
       //printT();
-      countCtrlAction++;
+      if (printPIDVals)
+        printPidValues();
+      if (printMotorsVals)
+        printMotorsValues();
     }
   }
 }
@@ -849,7 +1013,7 @@ void getGyroValues()
   byte zMSB = readRegister(L3G4200D_Address, 0x2D);
   byte zLSB = readRegister(L3G4200D_Address, 0x2C);
   z = ((zMSB << 8) | zLSB);
-  
+
   if (initializedSetup)
     removeBias();
 
@@ -864,14 +1028,14 @@ void printOmega()
   {
     Serial.print("       Wx:");
     Serial.print(wF[0]);
-  
+
     Serial.print("       Wy:");
     Serial.print(wF[1]);
-  
+
     Serial.print("       Wz:");
     Serial.print(wF[2]);
   }
-  
+
   Serial.print("      wx:");
   Serial.print(x);
 
@@ -918,16 +1082,16 @@ void removeBias()
   x = (x - bx)*scale2000/1000;
   y = (y - by)*scale2000/1000;
   z = (z - bz)*scale2000/1000;
- 
- /*
+
+  /*
  Serial.println();
- Serial.print(x-bx);
- Serial.print("  ");
- Serial.print(y-by);
- Serial.print("  ");
- Serial.print(z-bz);
- Serial.println();
- */
+   Serial.print(x-bx);
+   Serial.print("  ");
+   Serial.print(y-by);
+   Serial.print("  ");
+   Serial.print(z-bz);
+   Serial.println();
+   */
 } 
 
 void calcBias()
@@ -958,14 +1122,14 @@ void calcBias()
 
 float AccelAdjust(int axis)
 {
- float acc = 0;
- for (int j=0;j<NADJ;j++)
- {
-   float lectura=analogRead(axis);
-   acc = acc + ((lectura*5000)/1023.0);
-   delay(11); //número primo para evitar ciclos de lectura proporcionales
- }
- return acc/NADJ;
+  float acc = 0;
+  for (int j=0;j<NADJ;j++)
+  {
+    float lectura=analogRead(axis);
+    acc = acc + ((lectura*5000)/1023.0);
+    delay(11); //número primo para evitar ciclos de lectura proporcionales
+  }
+  return acc/NADJ;
 }
 
 void writeRegister(int deviceAddress, byte address, byte val) 
@@ -1049,72 +1213,72 @@ void testMotor(int x)
   {
     Serial.println('M1');
     //Serial.println(" Increasing angular velocity");
-    servo1.write(40);
-    delay(500);
-    servo1.write(60);
-    delay(500);
-    servo1.write(100);
-    //Serial.println(" Decreasing angular velocity");
-    delay(500);
-    servo1.write(40);
-    delay(500);
-    servo1.write(0);
+    for (int i = minTest; i<maxTest;i++)
+    {
+       servo1.writeMicroseconds(i);
+       Serial.println(i);  
+       delay(2);     
+    }
+    for (int i = maxTest; i>minTest;i--)
+    {
+       servo1.writeMicroseconds(i);
+       Serial.println(i);  
+       delay(2);      
+    }
   }
   else if (x==2)
-  {
-    Serial.println('M2');
-    //Serial.println(" Increasing angular velocity");
-    servo2.write(40);
-    delay(500);
-    servo2.write(60);
-    delay(500);
-    servo2.write(100);
-    //Serial.println(" Decreasing angular velocity");
-    delay(500);
-    servo2.write(40);
-    delay(500);
-    servo2.write(0);
-  }
-  else if (x==3)
-  {
-    Serial.println('M3');
-    //Serial.println(" Increasing angular velocity");
-    servo3.write(40);
-    delay(500);
-    servo3.write(60);
-    delay(500);
-    servo3.write(100);
-    //Serial.println(" Decreasing angular velocity");
-    delay(500);
-    servo3.write(40);
-    delay(500);
-    servo3.write(0);
-  }
-  else if (x==4)
-  {
-    Serial.println('M4');
-    //Serial.println(" Increasing angular velocity");
-    servo4.write(0);
-    delay(500);
-    servo4.write(20);
-    delay(500);
-    servo4.write(40);
-    delay(500);
-    servo4.write(60);
-    delay(500);
-    servo4.write(80);
-    delay(500);
-    servo4.write(100);
-    delay(500);
-    servo4.write(120);
-    //Serial.println(" Decreasing angular velocity");
-    delay(100);
-    servo4.write(60);
-    delay(500);
-    servo4.write(40);
-    delay(500);
-    servo4.write(0);
-  }
+    {
+      Serial.println('M2');
+      //Serial.println(" Increasing angular velocity");//Serial.println(" Increasing angular velocity");
+      for (int i = minTest; i<maxTest;i++)
+      {
+         servo2.writeMicroseconds(i);
+         Serial.println(i);  
+         delay(2);     
+      }
+      for (int i = maxTest; i>minTest;i--)
+      {
+         servo2.writeMicroseconds(i);
+         Serial.println(i);  
+         delay(2);      
+      }
+    }
+    else if (x==3)
+    {
+      Serial.println('M3');
+      //Serial.println(" Increasing angular velocity");
+      //Serial.println(" Increasing angular velocity");
+      for (int i = minTest; i<maxTest;i++)
+      {
+         servo3.writeMicroseconds(i);
+         Serial.println(i);  
+         delay(2);     
+      }
+      for (int i = maxTest; i>minTest;i--)
+      {
+         servo3.writeMicroseconds(i);
+         Serial.println(i);  
+         delay(2);      
+      }  
+    }
+    else if (x==4)
+    {
+      Serial.println('M4');
+      //Serial.println(" Increasing angular velocity");
+      //Serial.println(" Increasing angular velocity");
+      for (int i = minTest; i<maxTest;i++)
+      {
+         servo4.writeMicroseconds(i);
+         Serial.println(i);  
+         delay(2);     
+      }
+      for (int i = maxTest; i>minTest;i--)
+      {
+         servo4.writeMicroseconds(i);
+         Serial.println(i);  
+         delay(2);      
+      }
+    }
 }
 
 void control()
@@ -1130,19 +1294,19 @@ void control()
       errorRoll = abs(SetpointRoll - estXAngle); //distance away from setpoint
       //if(errorRoll<thresholdRoll)
       //{  //we're close to setpoint, use conservative tuning parameters
-        myRollPID.SetTunings(consKpRoll, consKiRoll, consKdRoll);
+      myRollPID.SetTunings(Kmy*consKpRoll, Kmy*consKiRoll, Kmy*consKdRoll);
       //}
       /*else if(errorRoll>=thresholdRoll && errorRoll<thresholdFarRoll)
-      {
-        //we're far from setpoint, use aggressive tuning parameters
-        myRollPID.SetTunings(aggKpRoll, aggKiRoll, aggKdRoll);
-      }
-      else if(errorRoll>thresholdFarRoll)
-      {
-        //we're far from setpoint, use aggressive tuning parameters
-        myRollPID.SetTunings(farKpRoll, farKiRoll, farKdRoll);
-      }
-      */
+       {
+       //we're far from setpoint, use aggressive tuning parameters
+       myRollPID.SetTunings(aggKpRoll, aggKiRoll, aggKdRoll);
+       }
+       else if(errorRoll>thresholdFarRoll)
+       {
+       //we're far from setpoint, use aggressive tuning parameters
+       myRollPID.SetTunings(farKpRoll, farKiRoll, farKdRoll);
+       }
+       */
       myRollPID.Compute(); // Computes outputRoll
 
       if (printPIDVals)
@@ -1173,19 +1337,19 @@ void control()
 
       //if (errorPitch<thresholdPitch)
       //{  //we're close to setpoint, use conservative tuning parameters
-        myPitchPID.SetTunings(consKpPitch, consKiPitch, consKdPitch);
+      myPitchPID.SetTunings(Kmy*consKpPitch, Kmy*consKiPitch, Kmy*consKdPitch);
       //}
       /*else if (errorPitch>=thresholdPitch && errorPitch<thresholdFarPitch)
-      {
-        //we're far from setpoint, use aggressive tuning parameters
-        myPitchPID.SetTunings(aggKpPitch, aggKiPitch, aggKdPitch);
-      }
-      else if (errorPitch>=thresholdFarPitch)
-      {
-        //we're really far from setpoint, use other tuning parameters
-        myPitchPID.SetTunings(farKpPitch, farKiPitch, farKdPitch);
-      }
-*/
+       {
+       //we're far from setpoint, use aggressive tuning parameters
+       myPitchPID.SetTunings(aggKpPitch, aggKiPitch, aggKdPitch);
+       }
+       else if (errorPitch>=thresholdFarPitch)
+       {
+       //we're really far from setpoint, use other tuning parameters
+       myPitchPID.SetTunings(farKpPitch, farKiPitch, farKdPitch);
+       }
+       */
       myPitchPID.Compute(); // Computes outputPitch
 
       if (printPIDVals)
@@ -1207,45 +1371,45 @@ void control()
 
     /*
     // Yaw PID
-    if (enableYawPid)
-    {
-      if (filterAng == 1)
-      {
-        InputYaw = angPosFilter[2];
-        errorYaw = abs(SetpointYaw - angPosFilter[2]); //distance away from setpoint
-      }
-      else if (filterAng == 0)
-      {
-        InputYaw = bearing1;
-        errorYaw = abs(SetpointYaw - bearing1); 
-      }
-
-      if(errorYaw<thresholdYaw)
-      {
-        //we're close to setpoint, use conservative tuning parameters
-        myYawPID.SetTunings(consKpYaw, consKiYaw, consKdYaw);
-      }
-      else
-      {
-        //we're far from setpoint, use aggressive tuning parameters
-        myYawPID.SetTunings(aggKpYaw, aggKiYaw, aggKdYaw);
-      }    
-      myYawPID.Compute(); // Resturns outputYaw 
-
-      if (printPIDVals)
-      {
-        Serial.print(" ErrorYaw: ");
-        Serial.print(errorYaw);
-        Serial.print(" Yawpid: ");
-        Serial.print(OutputYaw);
-        Serial.println();
-      }     
-    }
-    else
-    {
-      OutputYaw=0;
-    }
-    */
+     if (enableYawPid)
+     {
+     if (filterAng == 1)
+     {
+     InputYaw = angPosFilter[2];
+     errorYaw = abs(SetpointYaw - angPosFilter[2]); //distance away from setpoint
+     }
+     else if (filterAng == 0)
+     {
+     InputYaw = bearing1;
+     errorYaw = abs(SetpointYaw - bearing1); 
+     }
+     
+     if(errorYaw<thresholdYaw)
+     {
+     //we're close to setpoint, use conservative tuning parameters
+     myYawPID.SetTunings(consKpYaw, consKiYaw, consKdYaw);
+     }
+     else
+     {
+     //we're far from setpoint, use aggressive tuning parameters
+     myYawPID.SetTunings(aggKpYaw, aggKiYaw, aggKdYaw);
+     }    
+     myYawPID.Compute(); // Resturns outputYaw 
+     
+     if (printPIDVals)
+     {
+     Serial.print(" ErrorYaw: ");
+     Serial.print(errorYaw);
+     Serial.print(" Yawpid: ");
+     Serial.print(OutputYaw);
+     Serial.println();
+     }     
+     }
+     else
+     {
+     OutputYaw=0;
+     }
+     */
     if (printPIDVals)
     {
       Serial.println();      
@@ -1258,3 +1422,133 @@ void control()
     OutputYaw = 0;
   }
 }
+
+void controlW()
+{
+  if (enablePid)
+  {
+    // Roll W PID
+    if (enableWRollPid)
+    {
+      InputWRoll = y;
+      errorWRoll = abs(SetpointWRoll - y); 
+
+      wRollPID.SetTunings(Kw*consKpWRoll, Kw*consKiWRoll, Kw*consKdWRoll);
+
+      wRollPID.Compute();
+    }
+    else
+    {
+      OutputWRoll = 0;
+    }
+
+    // Pitch PID1
+    if (enablePitchPid)
+    {
+      InputWPitch = x;
+      errorWPitch = abs(SetpointWPitch - x);
+
+      wPitchPID.SetTunings(Kw*consKpWPitch, Kw*consKiWPitch, Kw*consKdWPitch);
+
+      wPitchPID.Compute(); // Computes outputPitch
+
+      
+    }  
+    else
+    {
+      OutputWPitch = 0;
+    }
+
+    /*
+    // Yaw PID
+     if (enableYawPid)
+     {
+     if (filterAng == 1)
+     {
+     InputWYaw = z;
+     errorWYaw = abs(SetpointWYaw - z); //distance away from setpoint
+     }
+     
+     if(errorYaw<thresholdYaw)
+     {
+     //we're close to setpoint, use conservative tuning parameters
+     wYawPID.SetTunings(Kw*consKpWYaw, Kw*consKiWYaw, Kw*consKdWYaw);
+     }   
+     wYawPID.Compute(); 
+        
+     }
+     else
+     {
+     OutputYaw=0;
+     }
+     */
+    if (printPIDVals)
+    {
+      //Serial.println();      
+    }
+  }
+  else
+  {
+    OutputWRoll = 0;
+    OutputWPitch = 0;    
+    OutputWYaw = 0;
+  }
+}
+
+void printPidValues()
+{
+  if (enableRollPid)
+  {
+    Serial.println();
+    //        Serial.print("INPUT ANGULAR PID ROLL ");
+    //        Serial.print(InputWRoll);
+    Serial.print("     ErrWR:  ");
+    Serial.print(errorWRoll);
+    Serial.print(" RW PID:  ");
+    Serial.print(OutputWRoll);
+    Serial.println();
+  }  
+  
+  if (enablePitchPid)
+  { 
+    Serial.print(" Ang err: ");
+    Serial.print(errorWPitch);
+    Serial.print(" Ang Pid:");
+    Serial.print(OutputWPitch);
+    Serial.println();
+  }
+  
+  if (enableYawPid)
+  {
+     Serial.print(" ErrWY: ");
+     Serial.print(errorWYaw);
+     Serial.print(" YWpid: ");
+     Serial.print(OutputWYaw);
+     Serial.println();
+  }  
+}
+
+void printMotorsValues()
+{
+    Serial.println();
+    Serial.print(" Mot:[ ");
+    Serial.print(motorA);
+    Serial.print(" ; ");
+    Serial.print(motorB);
+    Serial.print(" ; ");
+    Serial.print(motorC);
+    Serial.print(" ; ");
+    Serial.print(motorD);
+    Serial.println("   ]");  
+    Serial.print("  PID:[R ");
+    Serial.print(OutputRoll);
+    Serial.print(" ;P  ");
+    Serial.print(OutputPitch);
+    Serial.print("  ;Y  ");
+    Serial.print(OutputYaw);
+    Serial.print(" ; T ");
+    Serial.print(throttle);
+    Serial.print("   ]");
+    Serial.println();
+}
+

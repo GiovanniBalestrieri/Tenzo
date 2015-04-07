@@ -52,27 +52,27 @@ class PID
   private:
 	void Initialize();
 	
-	double dispKp;				// * we'll hold on to the tuning parameters in user-entered 
-	double dispKi;				//   format for display purposes
-	double dispKd;				//
+	volatile double dispKp;				// * we'll hold on to the tuning parameters in user-entered 
+	volatile double dispKi;				//   format for display purposes
+	volatile double dispKd;				//
     
-	double kp;                  // * (P)roportional Tuning Parameter
-        double ki;                  // * (I)ntegral Tuning Parameter
-        double kd;                  // * (D)erivative Tuning Parameter
+	volatile double kp;                  // * (P)roportional Tuning Parameter
+        volatile double ki;                  // * (I)ntegral Tuning Parameter
+        volatile double kd;                  // * (D)erivative Tuning Parameter
 
-	int controllerDirection;
+	volatile int controllerDirection;
 
-        double *myInput;              // * Pointers to the Input, Output, and Setpoint variables
-        double *myOutput;             //   This creates a hard link between the variables and the 
-        double *mySetpoint;           //   PID, freeing the user from having to constantly tell us
+        volatile double *myInput;              // * Pointers to the Input, Output, and Setpoint variables
+        volatile double *myOutput;             //   This creates a hard link between the variables and the 
+        volatile double *mySetpoint;           //   PID, freeing the user from having to constantly tell us
                                   //   what these values are.  with pointers we'll just know.
 			  
-	unsigned long lastTime;
-	double ITerm, lastInput;
+	volatile unsigned long lastTime;
+	volatile double ITerm, lastInput;
 
-	unsigned long SampleTime;
-	double outMin, outMax;
-	bool inAuto;
+	volatile unsigned long SampleTime;
+	volatile double outMin, outMax;
+	volatile bool inAuto;
 };
 #endif
 
