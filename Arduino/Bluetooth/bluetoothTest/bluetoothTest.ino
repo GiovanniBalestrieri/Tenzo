@@ -36,15 +36,23 @@ void loop()
     
     if (modeS == 'a')
     {
-      Serial.print(" TakeOff ");
+      Serial.println(" TakeOff ");
     }
     if (modeS == 'L')
     {
-      Serial.print(" Land ");
+      Serial.println(" Land ");
     }
     if (modeS == 'p')
     {
-      Serial.print(" Pid ");
+      Serial.println(" Pid ");
+    }
+    if (modeS == 't')
+    {
+      Serial.println("o,12,1,-4,");
+    }
+    if (modeS == 's')
+    {
+      Serial.println("c,p,");
     }
     
 //    Serial.print(" Writing Blu: ");

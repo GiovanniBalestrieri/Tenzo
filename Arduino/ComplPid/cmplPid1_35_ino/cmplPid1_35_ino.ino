@@ -27,9 +27,10 @@
 #include <SoftwareSerial.h>
 #include "PID_v2.h"
 
-boolean processing = false;
+boolean printBlue = true;
+boolean processing = true;
 boolean printMotorsVals = false;
-boolean printPIDVals = false;
+boolean printPIDVals = true;
 boolean printSerialInfo = false;
 boolean printSerial = false;
 boolean printTimers = true;
@@ -326,7 +327,7 @@ volatile float kG = 0.98, kA = 0.02, kGZ=0.60, kAZ = 0.40;
 void setup()
 {  
   Wire.begin();
-  Serial.begin(BaudRateSerial); 
+  Serial.begin(115200); 
 //  Serial.print("$$$");
 //  delay(100);
 //  Serial.println("U,9600,N");
@@ -354,7 +355,7 @@ void setup()
   servo3.writeMicroseconds(1000);
   servo4.writeMicroseconds(1000);
 
-  if (!processing)
+  if (!processing && !printBlue)
   {
     Serial.println("Starting up L3G4200D");
     //Serial.println("Setting up timer3");
@@ -366,7 +367,7 @@ void setup()
   biasCalcTime = micros();
   calcBias();
   biasCalcTime = micros() - biasCalcTime;
-  if (!processing)
+  if (!processing && !printBlue)
   {
     Serial.print("Read: [us] ");
     Serial.print(samplingTime);
@@ -387,8 +388,8 @@ void setup()
   TCCR3B = 0;
 
   // Set compare match register to the desired timer count
-  OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
-  //OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
+  //OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
+  OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
   //OCR3A=780; //16*10^6/(20Hz*1024)-1 = 780 -> 20 Hz 
   //OCR3A=50; //16*10^6/(308Hz*1024)-1 = 50 -> 308 Hz 
 
@@ -414,12 +415,6 @@ void setup()
 void loop()
 {  
   serialRoutine();
-  if (Serial.available())
-  {
-    char modeS = Serial.read(); 
-    Serial.print(" Writing Blu: ");
-    Serial.println(modeS);
-  }
   delay(20);
 } 
 
@@ -463,12 +458,13 @@ void protocol1()
     }
   }
 }
+
 void land()
 {
   if (initialized)
   {
     landing = true;
-    if(!processing)
+    if(!processing && !printBlue)
     {
       Serial.println();
       Serial.print("Landing protocol started...");
@@ -604,7 +600,7 @@ void initialize()
 {
   if (!initialized)
   {
-    if (!processing)
+    if (!processing && !printBlue)
       Serial.println("Initializing");
     initializing = true;
     resetMotors();
@@ -615,7 +611,8 @@ void initialize()
       motorSpeedPID(j, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
       //motorSpeed(j);
       //if (!processing)
-      Serial.println(j);
+      if (!printBlue)
+        Serial.println(j);
       delay(motorRampDelayFast); 
     }
     throttle=rampTill;
@@ -860,8 +857,27 @@ void serialRoutine()
   if (Serial.available())
   {
     char modeS = Serial.read(); 
-    Serial.print(" Writing Blu: ");
-    Serial.println(modeS);
+    
+    if (modeS == 'a')
+    {
+      Serial.println(" TakeOff ");
+    }
+    if (modeS == 'L')
+    {
+      Serial.println(" Land ");
+    }
+    if (modeS == 'p')
+    {
+      Serial.println(" Pid ");
+    }
+    if (modeS == 't')
+    {
+      Serial.println("o,12,1,-4,");
+    }
+    if (modeS == 's')
+    {
+      Serial.println("c,p,");
+    }
     //blu.print(modeS);
     
     /*
@@ -955,7 +971,7 @@ void serialRoutine()
   if (timerSec >= 1000000)
   {
     secRoutine = micros();
-    if (!processing && printTimers)
+    if (!processing && printTimers && !printBlue)
     {
       //Serial.print(cont);
       Serial.print("[sample/sec] ");
@@ -1024,7 +1040,7 @@ void getGyroValues()
 
 void printOmega()
 {
-  if (filterGyro)
+  if (filterGyro && !printBlue)
   {
     Serial.print("       Wx:");
     Serial.print(wF[0]);
@@ -1036,30 +1052,38 @@ void printOmega()
     Serial.print(wF[2]);
   }
 
-  Serial.print("      wx:");
-  Serial.print(x);
-
-  Serial.print("       wy:");
-  Serial.print(y);
-
-  Serial.print("       Wz:");
-  Serial.println(z);
+  if (!printBlue)
+  {
+    Serial.print("      wx:");
+    Serial.print(x);
+  
+    Serial.print("       wy:");
+    Serial.print(y);
+  
+    Serial.print("       Wz:");
+    Serial.println(z);
+  }
 }
 
 void printAcc()
 {
-  Serial.println();
-  Serial.print(aax);
-  Serial.print(",");
-  Serial.print(aay);
-  Serial.print(",");
-  Serial.print(aaz);
-  Serial.print(",");
-  Serial.println("E");
+  if (!printBlue)
+  {
+    Serial.println();
+    Serial.print(aax);
+    Serial.print(",");
+    Serial.print(aay);
+    Serial.print(",");
+    Serial.print(aaz);
+    Serial.print(",");
+    Serial.println("E");
+  }
 }
 
 void printSerialAngle()
 {
+  if (!printBlue)
+ { 
   Serial.print(phi);
   Serial.print(",");
   Serial.print(theta);
@@ -1075,6 +1099,7 @@ void printSerialAngle()
   Serial.print(estYAngle);
   Serial.print(",");
   Serial.println(bearing1);
+ }
 }
 
 void removeBias()
@@ -1096,7 +1121,7 @@ void removeBias()
 
 void calcBias()
 {
-  if (!processing)
+  if (!processing &&  !printBlue)
     Serial.println("Bias");
   int c = 2000;
   for (int i = 0; i<c; i++)
@@ -1112,7 +1137,7 @@ void calcBias()
   by = byS / c;
   bz = bzS / c;
 
-  if (!processing)
+  if (!processing && !printBlue)
   {
     Serial.println(bx);
     Serial.println(by);
@@ -1309,7 +1334,7 @@ void control()
        */
       myRollPID.Compute(); // Computes outputRoll
 
-      if (printPIDVals)
+      if (printPIDVals && !printBlue)
       {
         Serial.println();
         Serial.print("INPUT ");
@@ -1352,7 +1377,7 @@ void control()
        */
       myPitchPID.Compute(); // Computes outputPitch
 
-      if (printPIDVals)
+      if (printPIDVals && !printBlue)
       { 
         Serial.print("E:  ");
         Serial.print(errorPitch);
@@ -1396,7 +1421,7 @@ void control()
      }    
      myYawPID.Compute(); // Resturns outputYaw 
      
-     if (printPIDVals)
+     if (printPIDVals && !printBlue)
      {
      Serial.print(" ErrorYaw: ");
      Serial.print(errorYaw);
@@ -1410,7 +1435,7 @@ void control()
      OutputYaw=0;
      }
      */
-    if (printPIDVals)
+    if (printPIDVals && !printBlue)
     {
       Serial.println();      
     }
@@ -1497,7 +1522,7 @@ void controlW()
 
 void printPidValues()
 {
-  if (enableRollPid)
+  if (enableRollPid && !printBlue)
   {
     Serial.println();
     //        Serial.print("INPUT ANGULAR PID ROLL ");
@@ -1509,7 +1534,7 @@ void printPidValues()
     Serial.println();
   }  
   
-  if (enablePitchPid)
+  if (enablePitchPid && !printBlue)
   { 
     Serial.print(" Ang err: ");
     Serial.print(errorWPitch);
@@ -1518,7 +1543,7 @@ void printPidValues()
     Serial.println();
   }
   
-  if (enableYawPid)
+  if (enableYawPid &&  !printBlue)
   {
      Serial.print(" ErrWY: ");
      Serial.print(errorWYaw);
@@ -1530,6 +1555,8 @@ void printPidValues()
 
 void printMotorsValues()
 {
+  if (!printBlue)
+  {
     Serial.println();
     Serial.print(" Mot:[ ");
     Serial.print(motorA);
@@ -1550,5 +1577,5 @@ void printMotorsValues()
     Serial.print(throttle);
     Serial.print("   ]");
     Serial.println();
+  }
 }
-
