@@ -1,0 +1,13 @@
+SyRen/Sabertooth R/C Mode Examples for Arduino
+Copyright (c) 2012 Dimension Engineering LLC
+http://www.dimensionengineering.com/arduino
+
+22 April 2012, Version 1.1
+- Altered the samples to specify the correct range for the Servo
+  object. Previously the samples specified in degrees using the
+  default Arduino range. This new approach is more precise.
+
+20 April 2012, Version 1.0
+- Initial release.
+
+Please let us know if you run into any bugs! Thanks and enjoy the library!

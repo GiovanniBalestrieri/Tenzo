@@ -1,0 +1,12 @@
+syntax: glob
+
+bin
+dev
+docs
+dist
+metrics
+patches
+
+.DS_Store
+
+*.log
