@@ -2,7 +2,7 @@
 #include "Pid.h"
 
 boolean printBlue = false;
-boolean processing = true;
+boolean processing = false;
 boolean printMotorsVals = false;
 boolean printPIDVals = false;
 boolean printSerial = false;
@@ -41,9 +41,6 @@ VectorFloat gravity;    // [x, y, z]            gravity vector
 float euler[3];         // [psi, theta, phi]    Euler angle container
 float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
-// packet structure for InvenSense teapot demo
-uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
-
 #define Kp_1 2.0//5.2f
 #define Ki_1 0.0//0.3f
 #define Kd_1 0.0//0.0f
@@ -54,6 +51,9 @@ Pid pidDx = Pid(Kp_1, Ki_1, Kd_1);
 // Timers Cont
 unsigned long timerISR =0, timerPid=0, timerEuler=0, timerMotors=0;
 long contIsr = 0, contMotors = 0, contEuler = 0, contPid = 0;
+long tOld = 0;
+int count = 0;
+int TCAMP = 50000, donTouch = 10;
 
 // ================================================================
 // ===               INTERRUPT DETECTION ROUTINE                ===
@@ -145,16 +145,12 @@ ISR(TIMER2_COMPA_vect)  // Interrupt service routine @ 200 Hz
   cli();
   timerISR = micros();
   
+  //mpuRoutine();
   contIsr++;
-  
+    
   timerISR = micros() - timerISR; 
   sei();
 }
-
-long TCAMP = 50000;
-int count = 0;
-int donTouch = 1;
-long tOld = 0;
 
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
@@ -162,21 +158,24 @@ long tOld = 0;
 
 void loop() 
 {
-  mpuRoutine();
-  // if programming failed, don't try to do anything
-  if (!dmpReady) return;
-  if(micros()-tOld >= TCAMP)
-  {
-    tOld = micros();
-    count += 1;
-    if(count >= donTouch) // Runs @ 2 Hz
+    // if programming failed, don't try to do anything
+    if (!dmpReady) return;
+    
+    mpuRoutine();
+    
+        serialRoutine();
+    if(micros()-tOld >= TCAMP)
     {
-      count = 0;
-      getEuler();
-      serialRoutine();
-      contIsr=0; // resets ISR counter      
+      tOld = micros();
+      count += 1;
+      if(count >= donTouch) // Runs @ 2 Hz
+      {
+        count = 0;
+        contIsr=0;// resets ISR counter
+        
+      }
     }
-  }      
+      
 }
 
 void serialRoutine()
@@ -244,8 +243,8 @@ void printEulerSerial()
   if (!processing)
   {
     // display Euler angles in degrees
-    //mpu.dmpGetQuaternion(&q, fifoBuffer);
-    //mpu.dmpGetEuler(euler, &q);
+    mpu.dmpGetQuaternion(&q, fifoBuffer);
+    mpu.dmpGetEuler(euler, &q);
     Serial.print("euler\t");
     Serial.print(euler[0] * 180/M_PI);
     Serial.print("\t");
@@ -255,18 +254,12 @@ void printEulerSerial()
   }
 }
 
-void getEuler()
-{
-    mpu.dmpGetQuaternion(&q, fifoBuffer);
-    mpu.dmpGetEuler(euler, &q);
-}
-
 void printSerialAngle()
 {
   if (!printBlue)
   { 
-    //mpu.dmpGetQuaternion(&q, fifoBuffer);
-    //mpu.dmpGetEuler(euler, &q);
+    mpu.dmpGetQuaternion(&q, fifoBuffer);
+    mpu.dmpGetEuler(euler, &q);
     Serial.print(",");
     Serial.print(euler[0] * 180/M_PI);
     Serial.print(",");
@@ -276,4 +269,3 @@ void printSerialAngle()
     Serial.println();
   }
 }
-
