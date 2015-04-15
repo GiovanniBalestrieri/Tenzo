@@ -121,48 +121,55 @@ pause();
 
 %% Il sys non è osservabile. Usiamo una sottomatrice di A
 
-A = [  0 0 0 1 0 0 0 0 0 0;
-       0 0 0 0 0 -g 0 0 0 0;
-       0 0 0 0 g 0 0 0 0 0;
-       0 0 0 If 0 0 0 0 0 0;
-       0 0 0 0 0 0 0 1 0 0; 
-       0 0 0 0 0 0 0 0 1 0; 
-       0 0 0 0 0 0 0 0 0 1; 
-      zeros(3,10)];
+AMin = [ 0 0 0 0 0 0 0  0;
+       0 0 0 -g 0 0 0 0;
+       0 1 g 0 0 0 0 0;
+       0 If 0 0 0 0 0 0;
+       0 0 0 0 0 1 0 0; 
+       0 0 0 0 0 0 1 0; 
+       0 0 0 0 0 0 0 1; 
+      zeros(1,8)];
   
-  B = [zeros(3,4);
+  BMin = [zeros(1,4);
+    1/mq 0 0 0; 
+    zeros(3,4);
+    0 1/Ixx 0 0;
+    0 0 1/Iyy 0;
+    0 0 0 1/Izz];
+
+
+B = [zeros(5,4);
     1/mq 0 0 0; 
     zeros(3,4);
     0 1/Ixx 0 0;
     0 0 1/Iyy 0;
     0 0 0 1/Izz];
   
-  
 outputsLocal = {'phi'; 'theta';'psi';'ze'};
-Clocal = [  0 0 0 0 1 0 0 0 0 0; 
-            0 0 0 0 0 1 0 0 0 0; 
-            0 0 0 0 0 0 1 0 0 0;
-            1 0 0 0 0 0 0 0 0 0];
-statesMin = {'ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb'};
+ClocalMin = [  0 0 1 0 0 0 0 0; 
+            0 0 0 1 0 0 0 0; 
+            0 0 0 0 1 0 0 0;
+            1 0 0 0 0 0 0 0];
+statesMin = {'ze','vze','phi','theta','psi','wxb','wyb','wzb'};
 
-tenzoMin=ss(A,B,Clocal,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoMin=ss(AMin,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 
-tenzoRetro=ss(A,B,Clocal,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoRetro=ss(AMin,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 step(tenzoRetro)
 
 [sysr,U] = minreal(tenzoMin,0.1)
 
-KalmanA = U*A*U'
-KalmanB =U*B
-KalmanC =Clocal*U'
+KalmanA = U*AMin*U'
+KalmanB =U*BMin
+KalmanC =ClocalMin*U'
 % Verifica Raggiungibilità
 
 disp('Verifica raggiungibilà: rank([A-gI,B]) : per tutti g € spec(A)')
-disp(rank(ctrb(A,B)));
+disp(rank(ctrb(AMin,BMin)));
 
 
 disp('Verifica osservabilità. Rango della matrice di osservabilità:')
-disp(rank(obsv(A,Clocal)));
+disp(rank(obsv(AMin,ClocalMin)));
 
 pause();
 
