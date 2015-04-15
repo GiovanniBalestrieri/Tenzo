@@ -357,43 +357,37 @@ if (stab==1)
 end
 disp(eOp);
 
-<<<<<<< HEAD
-if (rank(ctrb(A1-alpha*eye(size(A1)),B1))==size(A1)) 
-    disp('a1) verificata, la coppia (A1,B1) ï¿½ raggiungibile, rank(matrice controllabilitï¿½ ï¿½)');
-    disp(rank(ctrb(A1,B1))); 
-=======
-if (rank(ctrb(A-alpha*eye(size(A)),B))==size(A)) 
-    disp('a1) verificata, la coppia (A,B) è raggiungibile, rank(matrice controllabilità è)');
-    disp(rank(ctrb(A,B))); 
->>>>>>> a2b02a07f690d833c9af769a3b010b8842cf7f15
+% if (rank(ctrb(A1-alpha*eye(size(A1)),B1))==size(A1)) 
+%     disp('a1) verificata, la coppia (A1,B1) ï¿½ raggiungibile, rank(matrice controllabilitï¿½ ï¿½)');
+%     disp(rank(ctrb(A1,B1))); 
+% if (rank(ctrb(A-alpha*eye(size(A)),B))==size(A)) 
+%     disp('a1) verificata, la coppia (A,B) ï¿½ raggiungibile, rank(matrice controllabilitï¿½ ï¿½)');
+%     disp(rank(ctrb(A,B))); 
 
 % if (rank(ctrb(A+alpha*eye(size(A,1)),B))==rank(A)) 
 %     disp('a1) verificata, la coppia A,B ï¿½ raggiungibile, rank(matrice controllabilitï¿½ ï¿½)');
 %     disp(rank(ctrb(A,B))); 
-else
-    disp('Coppia (A1,B1) non raggiungibile');
-end
+% else
+%     disp('Coppia (A1,B1) non raggiungibile');
+% end
 
-<<<<<<< HEAD
 % if (rank(obsv(A+alpha*eye(size(A,1)),C))==rank(A)) 
 %     disp('a1) verificata, la coppia A,C ï¿½ osservabile, rank(matrice osservabilitï¿½ ï¿½)'); 
 %     disp(rank(obsv(A,C))); 
 % end
-
-if (rank(obsv(A1-alpha*eye(size(A1)),C1))==size(A1)) 
-    disp('a1) verificata, la coppia (A1,C1) ï¿½ osservabile, rank(matrice osservabilitï¿½ ï¿½)'); 
-    disp(rank(obsv(A1,C1))); 
-=======
-if (rank(obsv(A+alpha*eye(size(A,1)),C))==rank(A)) 
-    disp('a1) verificata, la coppia A,C ï¿½ osservabile, rank(matrice osservabilitï¿½ ï¿½)'); 
-    disp(rank(obsv(A,C))); 
->>>>>>> a2b02a07f690d833c9af769a3b010b8842cf7f15
-else
-    disp('Coppia (A,C) non osservabile');
-end
+% 
+% if (rank(obsv(A1-alpha*eye(size(A1)),C1))==size(A1)) 
+%     disp('a1) verificata, la coppia (A1,C1) ï¿½ osservabile, rank(matrice osservabilitï¿½ ï¿½)'); 
+%     disp(rank(obsv(A1,C1))); 
+% if (rank(obsv(A+alpha*eye(size(A,1)),C))==rank(A)) 
+%     disp('a1) verificata, la coppia A,C ï¿½ osservabile, rank(matrice osservabilitï¿½ ï¿½)'); 
+%     disp(rank(obsv(A,C))); 
+% else
+%     disp('Coppia (A,C) non osservabile');
+% end
 
 % if (rank(obsv(A1-alpha*eye(size(A1)),C1))==size(A1)) 
-%     disp('a1) verificata, la coppia (A1,C1) è osservabile, rank(matrice osservabilità è)'); 
+%     disp('a1) verificata, la coppia (A1,C1) ï¿½ osservabile, rank(matrice osservabilitï¿½ ï¿½)'); 
 %     disp(rank(obsv(A1,C1))); 
 % else
 %     disp('Coppia (A1,C1) non osservabile');

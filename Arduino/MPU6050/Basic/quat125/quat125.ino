@@ -1,5 +1,15 @@
 #include "I2Cdev.h"
 #include "Pid.h"
+#include "MPU6050_6Axis_MotionApps20.h"
+#if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
+    #include "Wire.h"
+#endif
+
+#include <Servo.h>
+
+MPU6050 mpu;
+#define OUTPUT_READABLE_EULER
+//#define OUTPUT_READABLE_YAWPITCHROLL
 
 boolean printBlue = false;
 boolean processing = true;
@@ -9,21 +19,25 @@ boolean printSerial = false;
 boolean printTimers = true;
 boolean printAnglesEst = false;
 
-#include "MPU6050_6Axis_MotionApps20.h"
-#if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-    #include "Wire.h"
-#endif
+// Motors control
 
-MPU6050 mpu;
-#define OUTPUT_READABLE_EULER
+Servo servo1;
+Servo servo2;
+Servo servo3;
+Servo servo4;
+volatile int motorA, motorB, motorC, motorD;
 
-//#define OUTPUT_READABLE_YAWPITCHROLL
 
-//#define OUTPUT_READABLE_REALACCEL
+boolean autoEnablePid = true;
+boolean enablePid = false;
+boolean enableRollPid = false;
+boolean enablePitchPid = false; //
+boolean enableYawPid = false;
+boolean enableWRollPid = false;
+boolean enableWPitchPid = true; //
+boolean enableWYawPid = false;
+boolean enableAltitudePid = false;
 
-//#define OUTPUT_READABLE_WORLDACCEL
-
-//#define OUTPUT_TEAPOT
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
 uint8_t mpuIntStatus;   // holds actual interrupt status byte from MPU
@@ -123,7 +137,19 @@ void setup()
         Serial.print(F("DMP Initialization failed (code "));
         Serial.print(devStatus);
         Serial.println(F(")"));
-    }
+    }    
+    
+    // Motors
+    
+    servo1.attach(3);  
+    servo2.attach(5);    
+    servo3.attach(6);   
+    servo4.attach(9);
+    
+    servo1.writeMicroseconds(1000);
+    servo2.writeMicroseconds(1000);
+    servo3.writeMicroseconds(1000);
+    servo4.writeMicroseconds(1000);
     
     // ISR
     
@@ -169,15 +195,34 @@ void loop()
   {
     tOld = micros();
     count += 1;
-    if(count >= donTouch) // Runs @ 2 Hz
+    if(count >= donTouch) // Runs @  20Hz
     {
       count = 0;
       getEuler();
       serialRoutine();
       contIsr=0; // resets ISR counter      
     }
-  }      
+  }
+  
+  for (int i = 1000; i<2000;i++)
+  {
+     motorSpeed(i);
+     Serial.println(i);
+  }
+  for (int i = 2000; i>1000;i--)
+  {
+     motorSpeed(i);
+     Serial.println(i);
+  }
 }
+
+void motorSpeed(int x)
+{    
+  servo1.writeMicroseconds(x);      
+  servo2.writeMicroseconds(x); 
+  servo3.writeMicroseconds(x); 
+  servo4.writeMicroseconds(x); 
+}  
 
 void serialRoutine()
 {
