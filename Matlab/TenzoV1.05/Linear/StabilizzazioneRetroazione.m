@@ -189,15 +189,15 @@ pause();
 %% Stabilizzazione mediante retroazione dallo stato
 disp('Stabilizzazione mediante retroazione dallo stato');
 
-poles = [-1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -11];
-K11=place(A,B,poles);
-K11=0*K11;
+poles = [ -1 -2 -3 -4 -5 -6 -7 -8];
+K11=place(AMin,BMin,poles);
+K11=1*K11;
 disp('Eigenvalues of the closed loop sys');
-eig(A-B*K11)
+eig(AMin-BMin*K11)
 
 
-tenzoRetro=ss(A-B*K11,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal);
-step(tenzoRetro);
+tenzoMinRetro=ss(AMin-BMin*K11,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+step(tenzoMinRetro);
 
 
 % disp('Transfer matrix of the model')
@@ -206,29 +206,24 @@ step(tenzoRetro);
 pause;
 %% Proprietà strutturali
 
-if (rank(ctrb(A-B*K11,B))==size(A)) 
+if (rank(ctrb(AMin-BMin*K11,BMin))==size(AMin)) 
     disp('a1) verificata, la coppia A,B � raggiungibile, rank(matrice controllabilit� �)');
-    disp(rank(ctrb(A-B*K11,B))); 
+    disp(rank(ctrb(AMin-BMin*K11,BMin))); 
 end
 
-% if (rank(obsv(A,CFull))==size(A)) 
-%     disp('a1) verificata, la coppia A,C � osservabile, rank(matrice osservabilit� �)'); 
-%     disp(rank(obsv(A,CFull))); 
-% end
-
-if (rank(obsv(A-B*K11,Clocal))==size(A)) 
+if (rank(obsv(AMin-BMin*K11,ClocalMin))==size(AMin)) 
     disp('a1) verificata, la coppia A,C � osservabile, rank(matrice osservabilit� �)'); 
-    disp(rank(obsv(A-B*K11,Clocal))); 
+    disp(rank(obsv(AMin-BMin*K11,ClocalMin))); 
 else
     disp('b1) ATTENZIONE Verifica fallita!!');    
-    disp(rank(obsv(A-B*K11,Clocal))); 
-    disp(size(A,1));
+    disp(rank(obsv(AMin-BMin*K11,ClocalMin))); 
+    disp(size(AMin,1));
 end
 
 
-% figure
-% sigma(tenzoRetro)
-% grid on
+figure
+sigma(tenzoRetro)
+grid on
 
 % verifica minimum phase
 % disp('Transmission zeros')

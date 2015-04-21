@@ -1,12 +1,12 @@
 Model {
-  Name			  "tenzo1_00"
+  Name			  "tenzo1_05"
   Version		  7.9
   MdlSubVersion		  0
   GraphicalInterface {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.373"
+    ComputedModelVersion    "1.375"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -18,7 +18,7 @@ Model {
       Type		      "Cell"
       Dimension		      2
       Cell		      "HDLSubsystem"
-      Cell		      "tenzo1_00"
+      Cell		      "tenzo1_05"
       PropName		      "mdlProps"
     }
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Apr 21 14:56:42 2015"
-  RTWModifiedTimeStamp	  351528998
-  ModelVersionFormat	  "1.%<AutoIncrement:373>"
+  LastModifiedDate	  "Tue Apr 21 15:00:00 2015"
+  RTWModifiedTimeStamp	  351529197
+  ModelVersionFormat	  "1.%<AutoIncrement:375>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -77,13 +77,12 @@ Model {
     $PropName		    "DataLoggingOverride"
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
-    model_		    "tenzo1_00"
-    signals_		    []
+    model_		    "tenzo1_05"
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
       Dimension		      1
-      Cell		      "tenzo1_00"
+      Cell		      "tenzo1_05"
       PropName		      "logAsSpecifiedByModels_"
     }
     Array {
@@ -953,7 +952,7 @@ Model {
     }
   }
   System {
-    Name		    "tenzo1_00"
+    Name		    "tenzo1_05"
     Location		    [53, 79, 1366, 768]
     Open		    on
     ModelBrowserVisibility  off
@@ -3997,7 +3996,7 @@ Model {
 	      BlockType		      S-Function
 	      Name		      " SFunction "
 	      SID		      "541::29"
-	      Tag		      "Stateflow S-Function tenzo1_00 1"
+	      Tag		      "Stateflow S-Function tenzo1_05 1"
 	      Ports		      [4, 5]
 	      Position		      [180, 100, 230, 220]
 	      ZOrder		      15
@@ -4959,7 +4958,7 @@ Model {
 	      BlockType		      S-Function
 	      Name		      " SFunction "
 	      SID		      "224::23"
-	      Tag		      "Stateflow S-Function tenzo1_00 2"
+	      Tag		      "Stateflow S-Function tenzo1_05 2"
 	      Ports		      [1, 2]
 	      Position		      [180, 100, 230, 160]
 	      ZOrder		      9
@@ -5050,7 +5049,7 @@ Model {
 	  Position		  [340, 85, 370, 125]
 	  ZOrder		  -3
 	  Floating		  off
-	  Location		  [912, 131, 1196, 392]
+	  Location		  [902, 121, 1186, 382]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  List {
@@ -7434,7 +7433,7 @@ Model {
       System {
 	Name			"Tenzo L"
 	Location		[97, 165, 1090, 667]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -8656,9 +8655,9 @@ Model {
 	  NamePlacement		  "alternate"
 	  A			  "A"
 	  B			  "B"
-	  C			  "C"
-	  D			  "D"
-	  X0			  "[0 0 -30 0 0 0 0 0 1 0 0 0]"
+	  C			  "Clocal"
+	  D			  "Dlocal"
+	  X0			  "[0 0 0 0 0 0 0 0 0 0 0 0]"
 	}
 	Block {
 	  BlockType		  Concatenate
@@ -8830,7 +8829,7 @@ Model {
 	Line {
 	  SrcBlock		  "Sum1"
 	  SrcPort		  1
-	  Points		  [5, 0; 0, 30]
+	  Points		  [10, 0]
 	  DstBlock		  "Tenzo L"
 	  DstPort		  1
 	}
@@ -9799,8 +9798,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @           !@/PX    X    !@    @    &          4    (     0    $    "
-    "!          D    (        0 \"PA$ .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       \" !H!U0 X    X    !@    @    &          4    (     0    $   "
+    " !          D    (        0  (G4 .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag2
@@ -9927,8 +9926,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @           !@/PX    X    !@    @    &          4    (     0    $    "
-    "!          D    (         $ #\"$ .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       \" !H!U0 X    X    !@    @    &          4    (     0    $   "
+    " !          D    (          :P=4 .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0
@@ -10048,7 +10047,7 @@ MatData {
 Stateflow {
   machine {
     id			    1
-    name		    "tenzo1_00"
+    name		    "tenzo1_05"
     created		    "05-Jun-2014 15:20:14"
     isLibrary		    0
     firstTarget		    22

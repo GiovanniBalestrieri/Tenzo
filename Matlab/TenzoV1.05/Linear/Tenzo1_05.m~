@@ -47,7 +47,7 @@ Izz=2*Iz1+2*Iz2;
 % Inertia matrix
 II=diag([Ixx Iyy Izz]); 
 
-%% Linearized Model
+%% Linearized Model 12 states
 
 states = {'xe','ye','ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb'};
 
@@ -60,14 +60,14 @@ A = [ 0 0 0 1 0 0 0 0 0 0 0 0;
       0 0 0 0 0 0 0 0 0 1 0 0; 
       0 0 0 0 0 0 0 0 0 0 1 0; 
       0 0 0 0 0 0 0 0 0 0 0 1; 
-      zeros(3,12)];
+      zeros(3,12)]
 
 B = [zeros(5,4);
     1/mq 0 0 0; 
     zeros(3,4);
     0 1/Ixx 0 0;
     0 0 1/Iyy 0;
-    0 0 0 1/Izz];
+    0 0 0 1/Izz]
  
 outputsLocal = {'phi'; 'theta';'psi';'ze'};
 Clocal = [ 0 0 0 0 0 0 1 0 0 0 0 0; 
@@ -91,8 +91,9 @@ tenzo=ss(A,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputs
 %tenzo=ss(A,B,CFull,DFull);
 
 %disp('Transfer matrix of the model')
-modello_tf=tf(tenzo)
+%modello_tf=tf(tenzo)
 
+disp('Press any key to continue');
 pause;
 %% Eigenvalues of the system
 
@@ -101,103 +102,62 @@ disp('verifica preliminare, autovalori del processo [eig(A)]:')
 stab=1;
 eOp = eig(A);
 [dn,dm]=size(eOp);
-  for i=1:dn,
-      if (real(eOp(i))>0 ) 
-          stab=0; 
-          disp('elemento a parte reale positiva:'); 
-          disp(eOp(i));
-      end    
+moltZero = 0;
+for i=1:dn,
+  if (real(eOp(i))>0) 
+      stab=0; 
+      disp('elemento a parte reale positiva:');
+      disp(eOp(i)); 
+  elseif (real(eOp(i))==0 && moltZero == 0) 
+      moltZero =+ 1;
+  elseif (real(eOp(i))==0 && moltZero > 0)
+      stab=2;
   end
-if (stab==0) 
-    disp('Sistema instabile: gli autovalori a ciclo aperto sono: [comando eig(A)]'); 
 end
-if (stab==1) 
-    disp('Sistema stabile: gli autovalori a ciclo aperto sono: [comando eig(A)]'); 
-end
+if (stab==0) disp('Sistema instabile! Gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
+if (stab==1) disp('Sistema stabile! OLE!! Gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
+if (stab==2) disp('Sistema instabile! Sono presenti autovalori pari a zero con molteplicità > 1'); end
 disp(eOp);
 
-% Verifica Raggiungibilità
+%% Analisi risposta a gradino
+tenzoRetro=ss(A,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal);
+step(tenzoRetro);
+
+
+%% Proprietà strutturali:
+% Verifica Raggiungibilità e Osservabilità
 
 disp('Verifica raggiungibilà: rank([A-gI,B]) : per tutti g € spec(A)')
-disp(rank(ctrb(A,B)));
+if (rank(ctrb(A,B))==size(A,1))
+    disp('Sistema raggiungibile');
+    disp(rank(ctrb(A,B)));
+else
+    disp('Sistema Irraggiungibile');
+end
 
 
 disp('Verifica osservabilità. Rango della matrice di osservabilità:')
+if (rank(obsv(A,Clocal))==size(A,1))
+    disp('Sistema controllabile');
+    disp(rank(ctrb(A,B)));
+else    
+    disp('Sistema Non controllabile');
+end
 disp(rank(obsv(A,Clocal)));
 
 pause();
-
-%% Il sys non è osservabile. 
-% Definiamo il sottosistema osservabile e raggiungibile
-
-AMin = [ 0 0 0 0 0 0 0  0;
-       0 0 0 -g 0 0 0 0;
-       0 1 g 0 0 0 0 0;
-       0 If 0 0 0 0 0 0;
-       0 0 0 0 0 1 0 0; 
-       0 0 0 0 0 0 1 0; 
-       0 0 0 0 0 0 0 1; 
-      zeros(1,8)];
-  
-  AMin = [ 0 1 0 0 0 0 0 0;
-        0 If 0 0 0 0 0 0;
-        0 0 0 0 0 1 0 0; 
-        0 0 0 0 0 0 1 0; 
-        0 0 0 0 0 0 0 1; 
-        zeros(3,8)];
-
-  
-  BMin = [zeros(1,4);
-    1/mq 0 0 0; 
-    zeros(3,4);
-    0 1/Ixx 0 0;
-    0 0 1/Iyy 0;
-    0 0 0 1/Izz];
-  
-outputsLocal = {'phi'; 'theta';'psi';'ze'};
-ClocalMin = [  
-            0 0 1 0 0 0 0 0; 
-            0 0 0 1 0 0 0 0; 
-            0 0 0 0 1 0 0 0;
-            1 0 0 0 0 0 0 0];
-        
-statesMin = {'ze','vze','phi','theta','psi','wxb','wyb','wzb'};
-
-tenzoMin=ss(AMin,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
-
-tenzoRetro=ss(AMin,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
-step(tenzoRetro)
-
-% Check del sottosistema ragg e oss con decomposizione di Kalman
-[sysr,U] = minreal(tenzoMin,0.1)
-
-KalmanA = U*AMin*U'
-KalmanB =U*BMin
-KalmanC =ClocalMin*U'
-
-% Verifica Raggiungibilità
-disp('Verifica raggiungibilà: rank([A-gI,B]) : per tutti g € spec(A)')
-disp(rank(ctrb(AMin,BMin)));
-
-
-disp('Verifica osservabilità. Rango della matrice di osservabilità:')
-disp(rank(obsv(AMin,ClocalMin)));
-
-disp('End');
-pause();
-
 %% Stabilizzazione mediante retroazione dallo stato
 disp('Stabilizzazione mediante retroazione dallo stato');
 
-poles = [ -1 -2 -3 -4 -5 -6 -7 -8];
-K11=place(AMin,BMin,poles);
+poles = [-1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -11];
+K11=place(A,B,poles);
 K11=1*K11;
 disp('Eigenvalues of the closed loop sys');
-eig(AMin-BMin*K11)
+eig(A-B*K11)
 
 
-tenzoMinRetro=ss(AMin-BMin*K11,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
-step(tenzoMinRetro);
+tenzoRetro=ss(A-B*K11,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal);
+step(tenzoRetro);
 
 
 % disp('Transfer matrix of the model')
@@ -206,24 +166,29 @@ step(tenzoMinRetro);
 pause;
 %% Proprietà strutturali
 
-if (rank(ctrb(AMin-BMin*K11,BMin))==size(AMin)) 
+if (rank(ctrb(A-B*K11,B))==size(A)) 
     disp('a1) verificata, la coppia A,B � raggiungibile, rank(matrice controllabilit� �)');
-    disp(rank(ctrb(AMin-BMin*K11,BMin))); 
+    disp(rank(ctrb(A-B*K11,B))); 
 end
 
-if (rank(obsv(AMin-BMin*K11,ClocalMin))==size(AMin)) 
+% if (rank(obsv(A,CFull))==size(A)) 
+%     disp('a1) verificata, la coppia A,C � osservabile, rank(matrice osservabilit� �)'); 
+%     disp(rank(obsv(A,CFull))); 
+% end
+
+if (rank(obsv(A-B*K11,Clocal))==size(A)) 
     disp('a1) verificata, la coppia A,C � osservabile, rank(matrice osservabilit� �)'); 
-    disp(rank(obsv(AMin-BMin*K11,ClocalMin))); 
+    disp(rank(obsv(A-B*K11,Clocal))); 
 else
     disp('b1) ATTENZIONE Verifica fallita!!');    
-    disp(rank(obsv(AMin-BMin*K11,ClocalMin))); 
-    disp(size(AMin,1));
+    disp(rank(obsv(A-B*K11,Clocal))); 
+    disp(size(A,1));
 end
 
 
-figure
-sigma(tenzoRetro)
-grid on
+% figure
+% sigma(tenzoRetro)
+% grid on
 
 % verifica minimum phase
 % disp('Transmission zeros')

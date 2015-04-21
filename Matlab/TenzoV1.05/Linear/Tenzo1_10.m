@@ -103,30 +103,46 @@ stab=1;
 eOp = eig(A);
 [dn,dm]=size(eOp);
 moltZero = 0;
-  for i=1:dn,
-      if (real(eOp(i))>0) 
-          stab=0; 
-          disp('elemento a parte reale positiva:');
-          disp(eOp(i)); 
-      end
-      if (real(e0p(i))==0 && moltZero == 0) 
-          moltZero =+ 1;
-      elseif (real(e0p(i))==0 && moltZero > 0)
-          stab=2;
-      end
+for i=1:dn,
+  if (real(eOp(i))>0) 
+      stab=0; 
+      disp('elemento a parte reale positiva:');
+      disp(eOp(i)); 
+  elseif (real(eOp(i))==0 && moltZero == 0) 
+      moltZero =+ 1;
+  elseif (real(eOp(i))==0 && moltZero > 0)
+      stab=2;
   end
-if (stab==0) disp('Sistema instabile: gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
-if (stab==1) disp('Sistema stabile: gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
-if (stab==2) disp('Sono presenti autovalori pari a zero con molteplicità > 1'); end
+end
+if (stab==0) disp('Sistema instabile! Gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
+if (stab==1) disp('Sistema stabile! OLE!! Gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
+if (stab==2) disp('Sistema instabile! Sono presenti autovalori pari a zero con molteplicità > 1'); end
 disp(eOp);
 
-% Verifica Raggiungibilità
+%% Analisi risposta a gradino
+tenzoRetro=ss(A,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal);
+step(tenzoRetro);
+
+
+%% Proprietà strutturali:
+% Verifica Raggiungibilità e Osservabilità
 
 disp('Verifica raggiungibilà: rank([A-gI,B]) : per tutti g € spec(A)')
-disp(rank(ctrb(A,B)));
+if (rank(ctrb(A,B))==size(A,1))
+    disp('Sistema raggiungibile');
+    disp(rank(ctrb(A,B)));
+else
+    disp('Sistema Irraggiungibile');
+end
 
 
 disp('Verifica osservabilità. Rango della matrice di osservabilità:')
+if (rank(obsv(A,Clocal))==size(A,1))
+    disp('Sistema controllabile');
+    disp(rank(ctrb(A,B)));
+else    
+    disp('Sistema Non controllabile');
+end
 disp(rank(obsv(A,Clocal)));
 
 pause();
@@ -135,7 +151,7 @@ disp('Stabilizzazione mediante retroazione dallo stato');
 
 poles = [-1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -11];
 K11=place(A,B,poles);
-K11=0*K11;
+K11=1*K11;
 disp('Eigenvalues of the closed loop sys');
 eig(A-B*K11)
 
@@ -148,7 +164,7 @@ step(tenzoRetro);
 % modello_tf=tf(tenzoRetro)
 
 pause;
-%% Proprietà strutturali
+%% Proprietà strutturali sys a ciclo chiuso
 
 if (rank(ctrb(A-B*K11,B))==size(A)) 
     disp('a1) verificata, la coppia A,B � raggiungibile, rank(matrice controllabilit� �)');
