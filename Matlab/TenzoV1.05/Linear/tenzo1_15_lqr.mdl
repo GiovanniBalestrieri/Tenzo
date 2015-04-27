@@ -1,12 +1,12 @@
 Model {
-  Name			  "tenzo1_05"
+  Name			  "tenzo1_15_lqr"
   Version		  7.9
   MdlSubVersion		  0
   GraphicalInterface {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.376"
+    ComputedModelVersion    "1.404"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -18,7 +18,7 @@ Model {
       Type		      "Cell"
       Dimension		      2
       Cell		      "HDLSubsystem"
-      Cell		      "tenzo1_05"
+      Cell		      "tenzo1_15_lqr"
       PropName		      "mdlProps"
     }
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Apr 21 16:31:26 2015"
-  RTWModifiedTimeStamp	  351529197
-  ModelVersionFormat	  "1.%<AutoIncrement:376>"
+  LastModifiedDate	  "Mon Apr 27 17:25:20 2015"
+  RTWModifiedTimeStamp	  352039398
+  ModelVersionFormat	  "1.%<AutoIncrement:404>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -77,12 +77,13 @@ Model {
     $PropName		    "DataLoggingOverride"
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
-    model_		    "tenzo1_05"
+    model_		    "tenzo1_15_lqr"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
       Dimension		      1
-      Cell		      "tenzo1_05"
+      Cell		      "tenzo1_15_lqr"
       PropName		      "logAsSpecifiedByModels_"
     }
     Array {
@@ -952,9 +953,9 @@ Model {
     }
   }
   System {
-    Name		    "tenzo1_05"
+    Name		    "tenzo1_15_lqr"
     Location		    [53, 79, 1366, 768]
-    Open		    off
+    Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -967,7 +968,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "832"
+    SIDHighWatermark	    "840"
     Block {
       BlockType		      SubSystem
       Name		      "Disturbi"
@@ -2396,7 +2397,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Ref0"
-	    Location		    [43, 198, 304, 654]
+	    Location		    [53, 198, 314, 654]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -3996,7 +3997,7 @@ Model {
 	      BlockType		      S-Function
 	      Name		      " SFunction "
 	      SID		      "541::29"
-	      Tag		      "Stateflow S-Function tenzo1_05 1"
+	      Tag		      "Stateflow S-Function tenzo1_15_lqr 1"
 	      Ports		      [4, 5]
 	      Position		      [180, 100, 230, 220]
 	      ZOrder		      15
@@ -4958,7 +4959,7 @@ Model {
 	      BlockType		      S-Function
 	      Name		      " SFunction "
 	      SID		      "224::23"
-	      Tag		      "Stateflow S-Function tenzo1_05 2"
+	      Tag		      "Stateflow S-Function tenzo1_15_lqr 2"
 	      Ports		      [1, 2]
 	      Position		      [180, 100, 230, 160]
 	      ZOrder		      9
@@ -5049,7 +5050,7 @@ Model {
 	  Position		  [340, 85, 370, 125]
 	  ZOrder		  -3
 	  Floating		  off
-	  Location		  [902, 121, 1186, 382]
+	  Location		  [892, 111, 1176, 372]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  List {
@@ -6146,7 +6147,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Plots"
-	Location		[140, 529, 632, 768]
+	Location		[743, 440, 1235, 679]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -6175,545 +6176,6 @@ Model {
 	  ZOrder		  -2
 	  Port			  "2"
 	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  SubSystem
-	  Name			  "Linear"
-	  SID			  "781"
-	  Ports			  [1, 2]
-	  Position		  [110, 26, 195, 104]
-	  BackgroundColor	  "darkGreen"
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  System {
-	    Name		    "Linear"
-	    Location		    [709, 79, 1365, 768]
-	    Open		    off
-	    ModelBrowserVisibility  off
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "100"
-	    Block {
-	      BlockType		      Inport
-	      Name		      "y_l"
-	      SID		      "782"
-	      Position		      [30, 133, 60, 147]
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      "Demux10"
-	      SID		      "321"
-	      Ports		      [1, 3]
-	      Position		      [450, 194, 455, 246]
-	      ZOrder		      -6
-	      ShowName		      off
-	      Outputs		      "3"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      "Demux11"
-	      SID		      "322"
-	      Ports		      [1, 3]
-	      Position		      [45, 321, 50, 379]
-	      ZOrder		      -6
-	      ShowName		      off
-	      Outputs		      "3"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      "Demux5"
-	      SID		      "317"
-	      Ports		      [1, 3]
-	      Position		      [450, 29, 455, 81]
-	      ZOrder		      -6
-	      ShowName		      off
-	      Outputs		      "3"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      "Demux6"
-	      SID		      "318"
-	      Ports		      [1, 3]
-	      Position		      [450, 84, 455, 136]
-	      ZOrder		      -6
-	      ShowName		      off
-	      Outputs		      "3"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      "Demux8"
-	      SID		      "319"
-	      Ports		      [1, 4]
-	      Position		      [85, 31, 90, 244]
-	      ZOrder		      -6
-	      ShowName		      off
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      "Demux9"
-	      SID		      "320"
-	      Ports		      [1, 3]
-	      Position		      [450, 139, 455, 191]
-	      ZOrder		      -6
-	      ShowName		      off
-	      Outputs		      "3"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Gain
-	      Name		      "Inflow2"
-	      SID		      "342"
-	      Position		      [458, 275, 492, 315]
-	      ZOrder		      -8
-	      BlockRotation	      270
-	      BlockMirror	      on
-	      NamePlacement	      "alternate"
-	      Gain		      "-1"
-	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
-	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux1"
-	      SID		      "323"
-	      Ports		      [3, 1]
-	      Position		      [515, 388, 520, 442]
-	      ZOrder		      -12
-	      ShowName		      off
-	      Inputs		      "3"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux4"
-	      SID		      "324"
-	      Ports		      [3, 1]
-	      Position		      [130, 323, 135, 377]
-	      ZOrder		      -12
-	      ShowName		      off
-	      Inputs		      "3"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "R2D2"
-	      SID		      "325"
-	      Ports		      [1, 1]
-	      Position		      [120, 150, 150, 180]
-	      ZOrder		      -33
-	      LibraryVersion	      "1.44"
-	      SourceBlock	      "simulink_extras/Transformations/Radians\nto Degrees"
-	      SourceType	      "RadiansToDegrees"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "R2D3"
-	      SID		      "326"
-	      Ports		      [1, 1]
-	      Position		      [145, 205, 175, 235]
-	      ZOrder		      -34
-	      LibraryVersion	      "1.44"
-	      SourceBlock	      "simulink_extras/Transformations/Radians\nto Degrees"
-	      SourceType	      "RadiansToDegrees"
-	    }
-	    Block {
-	      BlockType		      Scope
-	      Name		      "RollPitchYaw1"
-	      SID		      "327"
-	      Ports		      [3]
-	      Position		      [525, 142, 555, 188]
-	      ZOrder		      -3
-	      Floating		      off
-	      Location		      [54, 53, 1367, 767]
-	      Open		      off
-	      NumInputPorts	      "3"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-		axes2			"%<SignalLabel>"
-		axes3			"%<SignalLabel>"
-	      }
-	      List {
-		ListType		ScopeGraphics
-		FigureColor		"[0.5 0.5 0.5]"
-		AxesColor		"[0 0 0]"
-		AxesTickColor		"[1 1 1]"
-		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		LineStyles		"-|-|-|-|-|-"
-		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-		MarkerStyles		"none|none|none|none|none|none"
-	      }
-	      ShowLegends	      off
-	      YMin		      "1000~1000~1000"
-	      YMax		      "2300~2300~2300"
-	      SaveName		      "ScopeData26"
-	      DataFormat	      "StructureWithTime"
-	      LimitDataPoints	      off
-	      SampleTime	      "0"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "Rotation Angles to\nDirection Cosine Matrix1"
-	      SID		      "328"
-	      Ports		      [1, 1]
-	      Position		      [180, 327, 295, 373]
-	      ZOrder		      -18
-	      AttributesFormatString  "Rotation Order: %<rotationOrder>"
-	      LibraryVersion	      "1.275"
-	      SourceBlock	      "aerolibtransform2/Rotation Angles to\nDirection Cosine Matrix"
-	      SourceType	      "Ang2DCM"
-	      rotationOrder	      "ZYX"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "Rotation Matrix\nto VRML Rotation1"
-	      SID		      "329"
-	      Ports		      [1, 1]
-	      Position		      [350, 331, 445, 369]
-	      ZOrder		      -4
-	      LibraryVersion	      "1.11"
-	      SourceBlock	      "vrlib/Utilities/Rotation Matrix\nto VRML Rotation"
-	      SourceType	      "Rotation Matrix to VRML Rotation"
-	      maxzero		      "1e-12"
-	    }
-	    Block {
-	      BlockType		      Scope
-	      Name		      "ve1"
-	      SID		      "331"
-	      Ports		      [3]
-	      Position		      [575, 89, 600, 131]
-	      ZOrder		      -3
-	      Floating		      off
-	      Location		      [54, 53, 1367, 767]
-	      Open		      off
-	      NumInputPorts	      "3"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-		axes2			"%<SignalLabel>"
-		axes3			"%<SignalLabel>"
-	      }
-	      List {
-		ListType		ScopeGraphics
-		FigureColor		"[0.5 0.5 0.5]"
-		AxesColor		"[0 0 0]"
-		AxesTickColor		"[1 1 1]"
-		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		LineStyles		"-|-|-|-|-|-"
-		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-		MarkerStyles		"none|none|none|none|none|none"
-	      }
-	      ShowLegends	      off
-	      YMin		      "-5~-5~-5"
-	      YMax		      "5~5~5"
-	      SaveName		      "ScopeData29"
-	      DataFormat	      "StructureWithTime"
-	      SampleTime	      "0"
-	    }
-	    Block {
-	      BlockType		      Scope
-	      Name		      "wx1"
-	      SID		      "332"
-	      Ports		      [3]
-	      Position		      [570, 199, 600, 241]
-	      ZOrder		      -3
-	      Floating		      off
-	      Location		      [54, 53, 1367, 767]
-	      Open		      off
-	      NumInputPorts	      "3"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-		axes2			"%<SignalLabel>"
-		axes3			"%<SignalLabel>"
-	      }
-	      List {
-		ListType		ScopeGraphics
-		FigureColor		"[0.5 0.5 0.5]"
-		AxesColor		"[0 0 0]"
-		AxesTickColor		"[1 1 1]"
-		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		LineStyles		"-|-|-|-|-|-"
-		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-		MarkerStyles		"none|none|none|none|none|none"
-	      }
-	      ShowLegends	      off
-	      TimeRange		      "15"
-	      YMin		      "-5~-5~-5"
-	      YMax		      "5~5~5"
-	      SaveName		      "ScopeData30"
-	      DataFormat	      "StructureWithTime"
-	      SampleTime	      "0"
-	    }
-	    Block {
-	      BlockType		      Scope
-	      Name		      "xe1"
-	      SID		      "333"
-	      Ports		      [3]
-	      Position		      [525, 35, 555, 75]
-	      ZOrder		      -3
-	      NamePlacement	      "alternate"
-	      Floating		      off
-	      Location		      [54, 53, 1367, 767]
-	      Open		      off
-	      NumInputPorts	      "3"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-		axes2			"%<SignalLabel>"
-		axes3			"%<SignalLabel>"
-	      }
-	      List {
-		ListType		ScopeGraphics
-		FigureColor		"[0.5 0.5 0.5]"
-		AxesColor		"[0 0 0]"
-		AxesTickColor		"[1 1 1]"
-		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		LineStyles		"-|-|-|-|-|-"
-		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-		MarkerStyles		"none|none|none|none|none|none"
-	      }
-	      ShowLegends	      off
-	      TimeRange		      "15"
-	      YMin		      "4.25e-06~4.25e-06~-3.6e-14"
-	      YMax		      "7e-06~7e-06~-2.3e-14"
-	      SaveName		      "ScopeData31"
-	      DataFormat	      "StructureWithTime"
-	      LimitDataPoints	      off
-	      SampleTime	      "0"
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "L rot"
-	      SID		      "783"
-	      Position		      [545, 343, 575, 357]
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "L trasl"
-	      SID		      "784"
-	      Position		      [545, 408, 575, 422]
-	      Port		      "2"
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "Demux8"
-	      SrcPort		      1
-	      DstBlock		      "Demux5"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux8"
-	      SrcPort		      2
-	      DstBlock		      "Demux6"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux8"
-	      SrcPort		      4
-	      DstBlock		      "R2D3"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux5"
-	      SrcPort		      1
-	      Points		      [5, 0]
-	      Branch {
-		Points			[0, 355]
-		DstBlock		"Mux1"
-		DstPort			1
-	      }
-	      Branch {
-		DstBlock		"xe1"
-		DstPort			1
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Demux5"
-	      SrcPort		      2
-	      Points		      [20, 0]
-	      Branch {
-		Points			[0, 380]
-		DstBlock		"Mux1"
-		DstPort			3
-	      }
-	      Branch {
-		DstBlock		"xe1"
-		DstPort			2
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Demux5"
-	      SrcPort		      3
-	      Points		      [15, 0]
-	      Branch {
-		DstBlock		"xe1"
-		DstPort			3
-	      }
-	      Branch {
-		DstBlock		"Inflow2"
-		DstPort			1
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Demux6"
-	      SrcPort		      1
-	      DstBlock		      "ve1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux6"
-	      SrcPort		      2
-	      DstBlock		      "ve1"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux6"
-	      SrcPort		      3
-	      DstBlock		      "ve1"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "Demux9"
-	      SrcPort		      1
-	      DstBlock		      "RollPitchYaw1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux10"
-	      SrcPort		      1
-	      DstBlock		      "wx1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux9"
-	      SrcPort		      2
-	      DstBlock		      "RollPitchYaw1"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux9"
-	      SrcPort		      3
-	      DstBlock		      "RollPitchYaw1"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "Demux10"
-	      SrcPort		      2
-	      DstBlock		      "wx1"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux10"
-	      SrcPort		      3
-	      DstBlock		      "wx1"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "R2D2"
-	      SrcPort		      1
-	      Points		      [95, 0]
-	      Branch {
-		Labels			[1, 0]
-		Points			[0, 115; -220, 0]
-		DstBlock		"Demux11"
-		DstPort			1
-	      }
-	      Branch {
-		DstBlock		"Demux9"
-		DstPort			1
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "R2D3"
-	      SrcPort		      1
-	      DstBlock		      "Demux10"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux8"
-	      SrcPort		      3
-	      DstBlock		      "R2D2"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Rotation Angles to\nDirection Cosine Matrix1"
-	      SrcPort		      1
-	      DstBlock		      "Rotation Matrix\nto VRML Rotation1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Mux4"
-	      SrcPort		      1
-	      DstBlock		      "Rotation Angles to\nDirection Cosine Matrix1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Inflow2"
-	      SrcPort		      1
-	      Points		      [0, 95]
-	      DstBlock		      "Mux1"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux11"
-	      SrcPort		      3
-	      Points		      [30, 0; 0, -40]
-	      DstBlock		      "Mux4"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux11"
-	      SrcPort		      2
-	      DstBlock		      "Mux4"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux11"
-	      SrcPort		      1
-	      Points		      [55, 0; 0, 40]
-	      DstBlock		      "Mux4"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "y_l"
-	      SrcPort		      1
-	      DstBlock		      "Demux8"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Rotation Matrix\nto VRML Rotation1"
-	      SrcPort		      1
-	      DstBlock		      "L rot"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Mux1"
-	      SrcPort		      1
-	      DstBlock		      "L trasl"
-	      DstPort		      1
-	    }
-	  }
 	}
 	Block {
 	  BlockType		  SubSystem
@@ -7338,67 +6800,11 @@ Model {
 	    }
 	  }
 	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "VR Sink"
-	  SID			  "134"
-	  Ports			  [4]
-	  Position		  [290, 25, 460, 185]
-	  ZOrder		  -7
-	  BackgroundColor	  "orange"
-	  LibraryVersion	  "1.11"
-	  SourceBlock		  "vrlib/VR Sink"
-	  SourceType		  "Virtual Reality Sink"
-	  SampleTime		  "0.05"
-	  ViewEnable		  on
-	  RemoteChange		  off
-	  RemoteView		  off
-	  FieldsWritten		  "Lin.rotation.4.1.1.double#Lin.translation.3.1.1.double#NonLin.rotation.4.1.1.double#NonLin.transl"
-	  "ation.3.1.1.double"
-	  WorldFileName		  "aero.wrl"
-	  AutoView		  off
-	  VideoDimensions	  "[]"
-	  AllowVariableSize	  off
-	}
 	Line {
 	  SrcBlock		  "yNL"
 	  SrcPort		  1
 	  DstBlock		  "Non Linear"
 	  DstPort		  1
-	}
-	Line {
-	  Labels		  [1, 0]
-	  SrcBlock		  "Linear"
-	  SrcPort		  1
-	  DstBlock		  "VR Sink"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "yL"
-	  SrcPort		  1
-	  DstBlock		  "Linear"
-	  DstPort		  1
-	}
-	Line {
-	  Labels		  [1, 0]
-	  SrcBlock		  "Non Linear"
-	  SrcPort		  2
-	  DstBlock		  "VR Sink"
-	  DstPort		  4
-	}
-	Line {
-	  Labels		  [1, 0]
-	  SrcBlock		  "Non Linear"
-	  SrcPort		  1
-	  Points		  [80, 0]
-	  DstBlock		  "VR Sink"
-	  DstPort		  3
-	}
-	Line {
-	  SrcBlock		  "Linear"
-	  SrcPort		  2
-	  DstBlock		  "VR Sink"
-	  DstPort		  2
 	}
       }
     }
@@ -7420,7 +6826,7 @@ Model {
       BlockType		      SubSystem
       Name		      "Tenzo L"
       SID		      "809"
-      Ports		      [0, 1]
+      Ports		      []
       Position		      [380, 287, 460, 343]
       BackgroundColor	      "darkGreen"
       MinAlgLoopOccurrences   off
@@ -7432,7 +6838,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Tenzo L"
-	Location		[26, 118, 1019, 620]
+	Location		[182, 154, 1175, 694]
 	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -7446,21 +6852,21 @@ Model {
 	ShowPageBoundaries	off
 	ZoomFactor		"100"
 	Block {
-	  BlockType		  Constant
-	  Name			  "Constant3"
-	  SID			  "375"
-	  Position		  [755, 310, 785, 340]
-	  ZOrder		  -5
-	  BlockMirror		  on
-	  NamePlacement		  "alternate"
-	  Value			  "refs"
+	  BlockType		  Demux
+	  Name			  "Demux1"
+	  SID			  "838"
+	  Ports			  [1, 4]
+	  Position		  [805, 16, 810, 54]
+	  ZOrder		  -6
+	  ShowName		  off
+	  DisplayOption		  "bar"
 	}
 	Block {
 	  BlockType		  Demux
 	  Name			  "Demux12"
 	  SID			  "615"
 	  Ports			  [1, 4]
-	  Position		  [50, 26, 55, 64]
+	  Position		  [45, 26, 50, 64]
 	  ZOrder		  -6
 	  ShowName		  off
 	  DisplayOption		  "bar"
@@ -7470,7 +6876,7 @@ Model {
 	  Name			  "Disturbi"
 	  SID			  "825"
 	  Ports			  [0, 1]
-	  Position		  [40, 427, 130, 493]
+	  Position		  [195, 427, 285, 493]
 	  BackgroundColor	  "red"
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
@@ -7701,7 +7107,7 @@ Model {
 	  Name			  "Kalman"
 	  SID			  "413"
 	  Ports			  [2, 1]
-	  Position		  [540, 41, 640, 99]
+	  Position		  [470, 41, 570, 99]
 	  ZOrder		  -44
 	  BackgroundColor	  "lightBlue"
 	  MinAlgLoopOccurrences	  off
@@ -7738,66 +7144,12 @@ Model {
 	      BlockType		      Inport
 	      Name		      "u"
 	      SID		      "415"
-	      Position		      [65, 45, 95, 60]
+	      Position		      [65, 35, 95, 50]
 	      ZOrder		      -2
 	      BlockRotation	      270
 	      BlockMirror	      on
 	      Port		      "2"
 	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      "Demux"
-	      SID		      "416"
-	      Ports		      [1, 3]
-	      Position		      [265, 164, 270, 216]
-	      ZOrder		      -6
-	      ShowName		      off
-	      Outputs		      "3"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      "Demux1"
-	      SID		      "417"
-	      Ports		      [1, 3]
-	      Position		      [265, 219, 270, 271]
-	      ZOrder		      -6
-	      ShowName		      off
-	      Outputs		      "3"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      "Demux2"
-	      SID		      "418"
-	      Ports		      [1, 4]
-	      Position		      [155, 166, 160, 379]
-	      ZOrder		      -6
-	      ShowName		      off
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      "Demux3"
-	      SID		      "419"
-	      Ports		      [1, 3]
-	      Position		      [265, 274, 270, 326]
-	      ZOrder		      -6
-	      ShowName		      off
-	      Outputs		      "3"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      "Demux4"
-	      SID		      "420"
-	      Ports		      [1, 3]
-	      Position		      [265, 329, 270, 381]
-	      ZOrder		      -6
-	      ShowName		      off
-	      Outputs		      "3"
-	      DisplayOption	      "bar"
 	    }
 	    Block {
 	      BlockType		      SubSystem
@@ -7858,7 +7210,7 @@ Model {
 		  ZOrder		  -3
 		  BlockMirror		  on
 		  ShowName		  off
-		  Inputs		  "[4 12]"
+		  Inputs		  "[4 4]"
 		  DisplayOption		  "bar"
 		}
 		Block {
@@ -7872,7 +7224,7 @@ Model {
 		  B			  "Boss"
 		  C			  "Coss"
 		  D			  "Doss"
-		  X0			  "[0 0 0 0 0 0 0 0 0 0 0 0]"
+		  X0			  "[0 0 0 0 0 0 0 0]"
 		}
 		Block {
 		  BlockType		  Outport
@@ -7910,182 +7262,6 @@ Model {
 	      }
 	    }
 	    Block {
-	      BlockType		      Reference
-	      Name		      "R2D"
-	      SID		      "427"
-	      Ports		      [1, 1]
-	      Position		      [190, 285, 220, 315]
-	      ZOrder		      -12
-	      LibraryVersion	      "1.44"
-	      SourceBlock	      "simulink_extras/Transformations/Radians\nto Degrees"
-	      SourceType	      "RadiansToDegrees"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "R2D1"
-	      SID		      "428"
-	      Ports		      [1, 1]
-	      Position		      [215, 340, 245, 370]
-	      ZOrder		      -13
-	      LibraryVersion	      "1.44"
-	      SourceBlock	      "simulink_extras/Transformations/Radians\nto Degrees"
-	      SourceType	      "RadiansToDegrees"
-	    }
-	    Block {
-	      BlockType		      Scope
-	      Name		      "RollPitchYaw"
-	      SID		      "429"
-	      Ports		      [3]
-	      Position		      [340, 277, 370, 323]
-	      ZOrder		      -3
-	      Floating		      off
-	      Location		      [54, 53, 1367, 767]
-	      Open		      off
-	      NumInputPorts	      "3"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-		axes2			"%<SignalLabel>"
-		axes3			"%<SignalLabel>"
-	      }
-	      List {
-		ListType		ScopeGraphics
-		FigureColor		"[0.5 0.5 0.5]"
-		AxesColor		"[0 0 0]"
-		AxesTickColor		"[1 1 1]"
-		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		LineStyles		"-|-|-|-|-|-"
-		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-		MarkerStyles		"none|none|none|none|none|none"
-	      }
-	      ShowLegends	      off
-	      YMin		      "-5~-5~-5"
-	      YMax		      "5~5~5"
-	      SaveName		      "ScopeData20"
-	      DataFormat	      "StructureWithTime"
-	      SampleTime	      "0"
-	    }
-	    Block {
-	      BlockType		      Sum
-	      Name		      "Sum"
-	      SID		      "430"
-	      Ports		      [2, 1]
-	      Position		      [65, 265, 85, 285]
-	      ZOrder		      -18
-	      ShowName		      off
-	      IconShape		      "round"
-	      Inputs		      "+-"
-	      InputSameDT	      off
-	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Scope
-	      Name		      "ve"
-	      SID		      "431"
-	      Ports		      [3]
-	      Position		      [390, 224, 415, 266]
-	      ZOrder		      -3
-	      Floating		      off
-	      Location		      [54, 53, 1367, 767]
-	      Open		      off
-	      NumInputPorts	      "3"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-		axes2			"%<SignalLabel>"
-		axes3			"%<SignalLabel>"
-	      }
-	      List {
-		ListType		ScopeGraphics
-		FigureColor		"[0.5 0.5 0.5]"
-		AxesColor		"[0 0 0]"
-		AxesTickColor		"[1 1 1]"
-		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		LineStyles		"-|-|-|-|-|-"
-		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-		MarkerStyles		"none|none|none|none|none|none"
-	      }
-	      ShowLegends	      off
-	      YMin		      "-5~-5~-5"
-	      YMax		      "5~5~5"
-	      SaveName		      "ScopeData21"
-	      DataFormat	      "StructureWithTime"
-	      SampleTime	      "0"
-	    }
-	    Block {
-	      BlockType		      Scope
-	      Name		      "wx"
-	      SID		      "432"
-	      Ports		      [3]
-	      Position		      [385, 334, 415, 376]
-	      ZOrder		      -3
-	      Floating		      off
-	      Location		      [54, 53, 1367, 767]
-	      Open		      off
-	      NumInputPorts	      "3"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-		axes2			"%<SignalLabel>"
-		axes3			"%<SignalLabel>"
-	      }
-	      List {
-		ListType		ScopeGraphics
-		FigureColor		"[0.5 0.5 0.5]"
-		AxesColor		"[0 0 0]"
-		AxesTickColor		"[1 1 1]"
-		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		LineStyles		"-|-|-|-|-|-"
-		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-		MarkerStyles		"none|none|none|none|none|none"
-	      }
-	      ShowLegends	      off
-	      TimeRange		      "15"
-	      YMin		      "-5~-5~-5"
-	      YMax		      "5~5~5"
-	      SaveName		      "ScopeData22"
-	      DataFormat	      "StructureWithTime"
-	      SampleTime	      "0"
-	    }
-	    Block {
-	      BlockType		      Scope
-	      Name		      "xe"
-	      SID		      "433"
-	      Ports		      [3]
-	      Position		      [340, 170, 370, 210]
-	      ZOrder		      -3
-	      NamePlacement	      "alternate"
-	      Floating		      off
-	      Location		      [54, 53, 1367, 767]
-	      Open		      off
-	      NumInputPorts	      "3"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-		axes2			"%<SignalLabel>"
-		axes3			"%<SignalLabel>"
-	      }
-	      List {
-		ListType		ScopeGraphics
-		FigureColor		"[0.5 0.5 0.5]"
-		AxesColor		"[0 0 0]"
-		AxesTickColor		"[1 1 1]"
-		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		LineStyles		"-|-|-|-|-|-"
-		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-		MarkerStyles		"none|none|none|none|none|none"
-	      }
-	      ShowLegends	      off
-	      TimeRange		      "15"
-	      YMin		      "-1e-14~-1.25e-14~-1e-18"
-	      YMax		      "1.25e-14~1.5e-14~8e-19"
-	      SaveName		      "ScopeData24"
-	      DataFormat	      "StructureWithTime"
-	      LimitDataPoints	      off
-	      SampleTime	      "0"
-	    }
-	    Block {
 	      BlockType		      Outport
 	      Name		      "Xest"
 	      SID		      "434"
@@ -8094,166 +7270,41 @@ Model {
 	      IconDisplay	      "Port number"
 	    }
 	    Line {
-	      SrcBlock		      "Demux2"
-	      SrcPort		      1
-	      DstBlock		      "Demux"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux2"
-	      SrcPort		      2
-	      DstBlock		      "Demux1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux2"
-	      SrcPort		      4
-	      DstBlock		      "R2D1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux"
-	      SrcPort		      1
-	      DstBlock		      "xe"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux"
-	      SrcPort		      2
-	      DstBlock		      "xe"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux"
-	      SrcPort		      3
-	      DstBlock		      "xe"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "Demux1"
-	      SrcPort		      1
-	      DstBlock		      "ve"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux1"
-	      SrcPort		      2
-	      DstBlock		      "ve"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux1"
-	      SrcPort		      3
-	      DstBlock		      "ve"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "Demux3"
-	      SrcPort		      1
-	      DstBlock		      "RollPitchYaw"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux4"
-	      SrcPort		      1
-	      DstBlock		      "wx"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux3"
-	      SrcPort		      2
-	      DstBlock		      "RollPitchYaw"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux3"
-	      SrcPort		      3
-	      DstBlock		      "RollPitchYaw"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "Demux4"
-	      SrcPort		      2
-	      DstBlock		      "wx"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux4"
-	      SrcPort		      3
-	      DstBlock		      "wx"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "R2D"
-	      SrcPort		      1
-	      DstBlock		      "Demux3"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "R2D1"
-	      SrcPort		      1
-	      DstBlock		      "Demux4"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux2"
-	      SrcPort		      3
-	      DstBlock		      "R2D"
-	      DstPort		      1
-	    }
-	    Line {
 	      SrcBlock		      "Kalman"
 	      SrcPort		      1
-	      Points		      [40, 0]
-	      Branch {
-		DstBlock		"Xest"
-		DstPort			1
-	      }
-	      Branch {
-		DstBlock		"Sum"
-		DstPort			2
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Sum"
-	      SrcPort		      1
-	      DstBlock		      "Demux2"
+	      DstBlock		      "Xest"
 	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "u"
 	      SrcPort		      1
-	      Points		      [90, 0]
+	      Points		      [0, 5]
 	      DstBlock		      "Kalman"
 	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "y"
 	      SrcPort		      1
-	      Points		      [25, 0]
-	      Branch {
-		DstBlock		"Kalman"
-		DstPort			2
-	      }
-	      Branch {
-		Points			[10, 0; 0, 45; -60, 0]
-		DstBlock		"Sum"
-		DstPort			1
-	      }
-	    }
-	    Annotation {
-	      SID		      "435"
-	      Name		      ""
-	      Position		      [405, 363]
+	      DstBlock		      "Kalman"
+	      DstPort		      2
 	    }
 	  }
+	}
+	Block {
+	  BlockType		  Concatenate
+	  Name			  "Output"
+	  SID			  "839"
+	  Ports			  [4, 1]
+	  Position		  [840, 16, 845, 54]
+	  ZOrder		  -22
+	  NumInputs		  "4"
 	}
 	Block {
 	  BlockType		  SubSystem
 	  Name			  "Plot States"
 	  SID			  "818"
 	  Ports			  [1]
-	  Position		  [470, 356, 515, 394]
+	  Position		  [445, 361, 490, 399]
 	  BackgroundColor	  "green"
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
@@ -8288,33 +7339,33 @@ Model {
 	      BlockType		      Demux
 	      Name		      "Demux10"
 	      SID		      "398"
-	      Ports		      [1, 3]
-	      Position		      [455, 194, 460, 246]
+	      Ports		      [1, 2]
+	      Position		      [455, 196, 460, 249]
 	      ZOrder		      -6
 	      ShowName		      off
-	      Outputs		      "3"
+	      Outputs		      "2"
 	      DisplayOption	      "bar"
 	    }
 	    Block {
 	      BlockType		      Demux
 	      Name		      "Demux2"
 	      SID		      "399"
-	      Ports		      [1, 3]
-	      Position		      [455, 29, 460, 81]
+	      Ports		      [1, 2]
+	      Position		      [455, 31, 460, 84]
 	      ZOrder		      -6
 	      ShowName		      off
-	      Outputs		      "3"
+	      Outputs		      "2"
 	      DisplayOption	      "bar"
 	    }
 	    Block {
 	      BlockType		      Demux
 	      Name		      "Demux3"
 	      SID		      "400"
-	      Ports		      [1, 3]
-	      Position		      [455, 84, 460, 136]
+	      Ports		      [1, 2]
+	      Position		      [455, 86, 460, 139]
 	      ZOrder		      -6
 	      ShowName		      off
-	      Outputs		      "3"
+	      Outputs		      "2"
 	      DisplayOption	      "bar"
 	    }
 	    Block {
@@ -8331,11 +7382,11 @@ Model {
 	      BlockType		      Demux
 	      Name		      "Demux7"
 	      SID		      "402"
-	      Ports		      [1, 3]
-	      Position		      [455, 139, 460, 191]
+	      Ports		      [1, 2]
+	      Position		      [455, 141, 460, 194]
 	      ZOrder		      -6
 	      ShowName		      off
-	      Outputs		      "3"
+	      Outputs		      "2"
 	      DisplayOption	      "bar"
 	    }
 	    Block {
@@ -8365,7 +7416,7 @@ Model {
 	      Name		      "RollPitchYaw1"
 	      SID		      "405"
 	      Ports		      [3]
-	      Position		      [530, 142, 560, 188]
+	      Position		      [575, 132, 605, 178]
 	      ZOrder		      -3
 	      Floating		      off
 	      Location		      [54, 53, 1367, 767]
@@ -8391,40 +7442,6 @@ Model {
 	      YMin		      "-5~-5~-5"
 	      YMax		      "5~5~5"
 	      SaveName		      "ScopeData21"
-	      DataFormat	      "StructureWithTime"
-	      SampleTime	      "0"
-	    }
-	    Block {
-	      BlockType		      Scope
-	      Name		      "ve1"
-	      SID		      "406"
-	      Ports		      [3]
-	      Position		      [580, 89, 605, 131]
-	      ZOrder		      -3
-	      Floating		      off
-	      Location		      [54, 53, 1367, 767]
-	      Open		      off
-	      NumInputPorts	      "3"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-		axes2			"%<SignalLabel>"
-		axes3			"%<SignalLabel>"
-	      }
-	      List {
-		ListType		ScopeGraphics
-		FigureColor		"[0.5 0.5 0.5]"
-		AxesColor		"[0 0 0]"
-		AxesTickColor		"[1 1 1]"
-		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		LineStyles		"-|-|-|-|-|-"
-		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-		MarkerStyles		"none|none|none|none|none|none"
-	      }
-	      ShowLegends	      off
-	      YMin		      "-5~-5~-5"
-	      YMax		      "5~5~5"
-	      SaveName		      "ScopeData22"
 	      DataFormat	      "StructureWithTime"
 	      SampleTime	      "0"
 	    }
@@ -8467,19 +7484,18 @@ Model {
 	      BlockType		      Scope
 	      Name		      "xe1"
 	      SID		      "408"
-	      Ports		      [3]
+	      Ports		      [2]
 	      Position		      [530, 35, 560, 75]
 	      ZOrder		      -3
 	      NamePlacement	      "alternate"
 	      Floating		      off
 	      Location		      [54, 53, 1367, 767]
 	      Open		      off
-	      NumInputPorts	      "3"
+	      NumInputPorts	      "2"
 	      List {
 		ListType		AxesTitles
 		axes1			"%<SignalLabel>"
 		axes2			"%<SignalLabel>"
-		axes3			"%<SignalLabel>"
 	      }
 	      List {
 		ListType		ScopeGraphics
@@ -8492,9 +7508,9 @@ Model {
 		MarkerStyles		"none|none|none|none|none|none"
 	      }
 	      ShowLegends	      off
-	      TimeRange		      "3               "
-	      YMin		      "1.6e-05~1.6e-05~4.25e-17"
-	      YMax		      "3e-05~3e-05~7.75e-17"
+	      TimeRange		      "3"
+	      YMin		      "1.6e-05~1.6e-05"
+	      YMax		      "3e-05~3e-05"
 	      SaveName		      "ScopeData25"
 	      DataFormat	      "StructureWithTime"
 	      LimitDataPoints	      off
@@ -8503,12 +7519,14 @@ Model {
 	    Line {
 	      SrcBlock		      "Demux4"
 	      SrcPort		      1
+	      Points		      [340, 0]
 	      DstBlock		      "Demux2"
 	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Demux4"
 	      SrcPort		      2
+	      Points		      [340, 0]
 	      DstBlock		      "Demux3"
 	      DstPort		      1
 	    }
@@ -8527,78 +7545,21 @@ Model {
 	    Line {
 	      SrcBlock		      "Demux2"
 	      SrcPort		      2
+	      Points		      [0, -5]
 	      DstBlock		      "xe1"
 	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux2"
-	      SrcPort		      3
-	      DstBlock		      "xe1"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "Demux3"
-	      SrcPort		      1
-	      DstBlock		      "ve1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux3"
-	      SrcPort		      2
-	      DstBlock		      "ve1"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux3"
-	      SrcPort		      3
-	      DstBlock		      "ve1"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "Demux7"
-	      SrcPort		      1
-	      DstBlock		      "RollPitchYaw1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux10"
-	      SrcPort		      1
-	      DstBlock		      "wx1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Demux7"
-	      SrcPort		      2
-	      DstBlock		      "RollPitchYaw1"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux7"
-	      SrcPort		      3
-	      DstBlock		      "RollPitchYaw1"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "Demux10"
-	      SrcPort		      2
-	      DstBlock		      "wx1"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux10"
-	      SrcPort		      3
-	      DstBlock		      "wx1"
-	      DstPort		      3
 	    }
 	    Line {
 	      SrcBlock		      "R2D2"
 	      SrcPort		      1
+	      Points		      [280, 0]
 	      DstBlock		      "Demux7"
 	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "R2D3"
 	      SrcPort		      1
+	      Points		      [255, 0]
 	      DstBlock		      "Demux10"
 	      DstPort		      1
 	    }
@@ -8614,57 +7575,68 @@ Model {
 	      DstBlock		      "Demux4"
 	      DstPort		      1
 	    }
+	    Line {
+	      SrcBlock		      "Demux10"
+	      SrcPort		      2
+	      DstBlock		      "wx1"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Demux10"
+	      SrcPort		      1
+	      Points		      [45, 0; 0, 10]
+	      DstBlock		      "wx1"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Demux7"
+	      SrcPort		      2
+	      Points		      [45, 0; 0, 25]
+	      DstBlock		      "wx1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Demux7"
+	      SrcPort		      1
+	      Points		      [45, 0; 0, 15]
+	      DstBlock		      "RollPitchYaw1"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Demux3"
+	      SrcPort		      2
+	      Points		      [95, 0]
+	      DstBlock		      "RollPitchYaw1"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Demux3"
+	      SrcPort		      1
+	      Points		      [75, 0; 0, 40]
+	      DstBlock		      "RollPitchYaw1"
+	      DstPort		      1
+	    }
 	  }
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum"
-	  SID			  "376"
-	  Ports			  [2, 1]
-	  Position		  [675, 315, 695, 335]
-	  ZOrder		  -18
-	  BlockMirror		  on
-	  NamePlacement		  "alternate"
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "+-|"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum1"
-	  SID			  "829"
-	  Ports			  [2, 1]
-	  Position		  [195, 45, 215, 65]
-	  ZOrder		  -18
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|++"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  StateSpace
 	  Name			  "Tenzo L"
 	  SID			  "269"
-	  Position		  [335, 36, 410, 74]
+	  Position		  [245, 36, 320, 74]
 	  ZOrder		  -46
 	  NamePlacement		  "alternate"
-	  A			  "A"
-	  B			  "B"
-	  C			  "Clocal"
-	  D			  "Dlocal"
-	  X0			  "[0 0 0 0 0 0 0 0 0 0 0 0]"
+	  A			  "AMin"
+	  B			  "BMin"
+	  C			  "ClocalMin"
+	  D			  "D"
+	  X0			  "[0 0 0 0 0 0 0 0 ]"
 	}
 	Block {
 	  BlockType		  Concatenate
 	  Name			  "Vector\nConcatenate4"
 	  SID			  "616"
 	  Ports			  [4, 1]
-	  Position		  [85, 26, 90, 64]
+	  Position		  [80, 26, 85, 64]
 	  ZOrder		  -22
 	  NumInputs		  "4"
 	}
@@ -8673,7 +7645,7 @@ Model {
 	  Name			  "w0  3"
 	  SID			  "617"
 	  Ports			  [1]
-	  Position		  [115, 29, 145, 61]
+	  Position		  [110, 29, 140, 61]
 	  ZOrder		  -3
 	  NamePlacement		  "alternate"
 	  Floating		  off
@@ -8703,10 +7675,44 @@ Model {
 	  SampleTime		  "0"
 	}
 	Block {
+	  BlockType		  Scope
+	  Name			  "y(t)"
+	  SID			  "840"
+	  Ports			  [1]
+	  Position		  [870, 19, 900, 51]
+	  ZOrder		  -3
+	  NamePlacement		  "alternate"
+	  Floating		  off
+	  Location		  [54, 53, 1367, 767]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.501960784313725 0.501960784313725 0.501960784313725]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[1 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  YMin			  "2500"
+	  YMax			  "7000"
+	  SaveName		  "ScopeData20"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
 	  BlockType		  Gain
 	  Name			  "zSelector"
 	  SID			  "366"
-	  Position		  [270, 308, 310, 342]
+	  Position		  [245, 313, 285, 347]
 	  ZOrder		  -8
 	  BlockMirror		  on
 	  NamePlacement		  "alternate"
@@ -8716,51 +7722,39 @@ Model {
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
 	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "Out_L"
-	  SID			  "810"
-	  Position		  [455, 20, 485, 35]
-	  BlockRotation		  270
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "Constant3"
-	  SrcPort		  1
-	  DstBlock		  "Sum"
-	  DstPort		  2
-	}
 	Line {
 	  SrcBlock		  "Tenzo L"
 	  SrcPort		  1
-	  Points		  [55, 0]
+	  Points		  [90, 0]
 	  Branch {
 	    DstBlock		    "Kalman"
 	    DstPort		    1
 	  }
 	  Branch {
-	    DstBlock		    "Out_L"
+	    Points		    [0, -20]
+	    DstBlock		    "Demux1"
 	    DstPort		    1
 	  }
 	}
 	Line {
 	  SrcBlock		  "zSelector"
 	  SrcPort		  1
-	  Points		  [-85, 0; 0, -40]
+	  Points		  [-85, 0; 0, -135]
 	  Branch {
 	    Labels		    [2, 0]
-	    Points		    [-150, 0; 0, -240]
+	    Points		    [-140, 0; 0, -150]
 	    DstBlock		    "Demux12"
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, -200]
+	    Points		    [0, -110]
 	    Branch {
 	      DstBlock		      "Kalman"
 	      DstPort		      2
 	    }
 	    Branch {
-	      DstBlock		      "Sum1"
+	      Points		      [0, -30]
+	      DstBlock		      "Tenzo L"
 	      DstPort		      1
 	    }
 	  }
@@ -8796,9 +7790,10 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Sum"
+	  Labels		  [2, 0]
+	  SrcBlock		  "Kalman"
 	  SrcPort		  1
-	  Points		  [-245, 0]
+	  Points		  [105, 0; 0, 250; 5, 15; -270, -5; -15, 0]
 	  Branch {
 	    DstBlock		    "zSelector"
 	    DstPort		    1
@@ -8811,24 +7806,33 @@ Model {
 	  }
 	}
 	Line {
-	  Labels		  [2, 0]
-	  SrcBlock		  "Kalman"
+	  SrcBlock		  "Demux1"
 	  SrcPort		  1
-	  Points		  [40, 0]
-	  DstBlock		  "Sum"
+	  DstBlock		  "Output"
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Disturbi"
-	  SrcPort		  1
-	  Points		  [70, 0]
-	  DstBlock		  "Sum1"
+	  SrcBlock		  "Demux1"
+	  SrcPort		  2
+	  DstBlock		  "Output"
 	  DstPort		  2
 	}
 	Line {
-	  SrcBlock		  "Sum1"
+	  SrcBlock		  "Demux1"
+	  SrcPort		  3
+	  DstBlock		  "Output"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Demux1"
+	  SrcPort		  4
+	  DstBlock		  "Output"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "Output"
 	  SrcPort		  1
-	  DstBlock		  "Tenzo L"
+	  DstBlock		  "y(t)"
 	  DstPort		  1
 	}
       }
@@ -9748,9 +8752,7 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Tenzo L"
-      SrcPort		      1
-      Points		      [205, 0; 0, -65]
+      Points		      [465, 315; 205, 0; 0, -65]
       Branch {
 	DstBlock		"Out_meas"
 	DstPort			2
@@ -9796,8 +8798,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @       \" !H!U0 X    X    !@    @    &          4    (     0    $   "
-    " !          D    (        0  (G4 .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @           8(0 X    X    !@    @    &          4    (     0    $    "
+    "!          D    (        @ \"HA$ .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag2
@@ -9924,8 +8926,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @       \" !H!U0 X    X    !@    @    &          4    (     0    $   "
-    " !          D    (          :P=4 .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @           8(0 X    X    !@    @    &          4    (     0    $    "
+    "!          D    (         $ \"&$ .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0
@@ -10045,7 +9047,7 @@ MatData {
 Stateflow {
   machine {
     id			    1
-    name		    "tenzo1_05"
+    name		    "tenzo1_15_lqr"
     created		    "05-Jun-2014 15:20:14"
     isLibrary		    0
     firstTarget		    22
@@ -10347,8 +9349,8 @@ Stateflow {
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function ymis = fcn(X)\n%#codegen\n\nCmis = [0 0 0 0 0 0 1 0 0 0 0 0;\n        0 0 0 0 0 0 0 1 0 "
-      "0 0 0;\n        0 0 0 0 0 0 0 0 1 0 0 0;\n        0 0 1 0 0 0 0 0 0 0 0 0];\nymis = Cmis*X;\n"
+      script		      "function ymis = fcn(X)\n\n% Cmis = [0 0 0 0 0 0 1 0 0 0 0 0;\n%         0 0 0 0 0 0 0 1 0 0 0 0;\n"
+      "%         0 0 0 0 0 0 0 0 1 0 0 0;\n%         0 0 1 0 0 0 0 0 0 0 0 0];\n% ymis = Cmis*X;\nymis = X;\nend"
       editorLayout	      "100 M4x1[10 5 700 500]"
     }
   }

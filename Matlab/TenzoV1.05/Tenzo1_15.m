@@ -47,7 +47,11 @@ Izz=2*Iz1+2*Iz2;
 % Inertia matrix
 II=diag([Ixx Iyy Izz]); 
 
-%% Linearized Model 12 states
+%% Linearized Model
+
+disp('Linearized Model:');
+disp('Press any key to continue.');
+pause();
 
 states = {'xe','ye','ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb'};
 
@@ -93,8 +97,7 @@ tenzo=ss(A,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputs
 %disp('Transfer matrix of the model')
 %modello_tf=tf(tenzo)
 
-disp('Press any key to continue');
-pause;
+pause();
 %% Eigenvalues of the system
 
 disp('specifica 1) Verifichare che esiste un cotrollore che soddisfa le specifiche A1,B,C1 (teorema 5.4.2):');
@@ -138,22 +141,22 @@ end
 
 disp('Verifica osservabilità. Rango della matrice di osservabilità:')
 if (rank(obsv(A,Clocal))==size(A,1))
-    disp('Sistema controllabile');
-    disp(rank(ctrb(A,B)));
+    disp('Sistema osservabile');
 else    
-    disp('Sistema Non controllabile');
+    disp('Sistema Non osservabile');
 end
 disp(rank(obsv(A,Clocal)));
 
-pause();
 %% Stabilizzazione mediante retroazione dallo stato
 disp('Stabilizzazione mediante retroazione dallo stato');
+disp('Press any key to continue.');
+pause();
 
-poles = [-1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -11];
+poles = [-1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -11]
 K11=place(A,B,poles);
 K11=1*K11;
 disp('Eigenvalues of the closed loop sys');
-eig(A-B*K11)
+disp(eig(A-B*K11)');
 
 
 tenzoRetro=ss(A-B*K11,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal);
@@ -163,8 +166,11 @@ step(tenzoRetro);
 % disp('Transfer matrix of the model')
 % modello_tf=tf(tenzoRetro)
 
-pause;
-%% Proprietà strutturali
+%% Proprietà strutturali sys Ciclo Chiuso
+
+disp('Analisi delle proprietà strutturali del sistema prestabilizzato');
+disp('Press any key to continue.');
+pause();
 
 if (rank(ctrb(A-B*K11,B))==size(A)) 
     disp('a1) verificata, la coppia A,B � raggiungibile, rank(matrice controllabilit� �)');
@@ -194,14 +200,13 @@ end
 % disp('Transmission zeros')
 % tzero(tenzoRetro)
 
-
-disp('Premere un tasto per continuare...');
-pause;
-
-
 clc;
 
 %% Astatismo
+
+disp('Astatismo:');
+disp('Premere un tasto per continuare...');
+pause;
 
 alpha=0;
 omega=4;

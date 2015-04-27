@@ -1,12 +1,12 @@
 Model {
-  Name			  "progetto2_mi_dist_kalm"
+  Name			  "tenzo1_10_lqr0"
   Version		  7.9
   MdlSubVersion		  0
   GraphicalInterface {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.19"
+    ComputedModelVersion    "1.9"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -21,19 +21,19 @@ Model {
   MinMaxOverflowArchiveMode "Overwrite"
   FPTRunName		  "Run 1"
   MaxMDLFileLineLength	  120
-  Created		  "Tue May 21 13:05:46 2013"
-  Creator		  "danilo"
+  Created		  "Wed Apr 22 16:53:40 2015"
+  Creator		  "userk"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Apr 27 17:41:43 2015"
-  RTWModifiedTimeStamp	  352057302
-  ModelVersionFormat	  "1.%<AutoIncrement:19>"
+  LastModifiedDate	  "Wed Apr 22 17:14:40 2015"
+  RTWModifiedTimeStamp	  351623679
+  ModelVersionFormat	  "1.%<AutoIncrement:9>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
-  LibraryLinkDisplay	  "none"
+  LibraryLinkDisplay	  "disabled"
   WideLines		  off
   ShowLineDimensions	  off
   ShowPortDataTypes	  off
@@ -62,6 +62,26 @@ Model {
   AccelTemplateMakefile	  "accel_default_tmf"
   AccelMakeCommand	  "make_rtw"
   TryForcingSFcnDF	  off
+  Object {
+    $PropName		    "DataLoggingOverride"
+    $ObjectID		    1
+    $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
+    model_		    "tenzo1_10_lqr0"
+    signals_		    []
+    overrideMode_	    [0.0]
+    Array {
+      Type		      "Cell"
+      Dimension		      1
+      Cell		      "tenzo1_10_lqr0"
+      PropName		      "logAsSpecifiedByModels_"
+    }
+    Array {
+      Type		      "Cell"
+      Dimension		      1
+      Cell		      []
+      PropName		      "logAsSpecifiedByModelsSSIDs_"
+    }
+  }
   RecordCoverage	  off
   CovPath		  "/"
   CovSaveName		  "covdata"
@@ -104,16 +124,16 @@ Model {
     Type		    "Handle"
     Dimension		    1
     Simulink.ConfigSet {
-      $ObjectID		      1
+      $ObjectID		      2
       Version		      "1.12.0"
       Array {
 	Type			"Handle"
-	Dimension		8
+	Dimension		9
 	Simulink.SolverCC {
-	  $ObjectID		  2
+	  $ObjectID		  3
 	  Version		  "1.12.0"
 	  StartTime		  "0.0"
-	  StopTime		  "100"
+	  StopTime		  "10.0"
 	  AbsTol		  "auto"
 	  FixedStep		  "auto"
 	  InitialStep		  "auto"
@@ -145,7 +165,7 @@ Model {
 	  InsertRTBMode		  "Whenever possible"
 	}
 	Simulink.DataIOCC {
-	  $ObjectID		  3
+	  $ObjectID		  4
 	  Version		  "1.12.0"
 	  Decimation		  "1"
 	  ExternalInput		  "[t, u]"
@@ -177,11 +197,11 @@ Model {
 	  Refine		  "1"
 	}
 	Simulink.OptimizationCC {
-	  $ObjectID		  4
+	  $ObjectID		  5
 	  Version		  "1.12.0"
 	  Array {
 	    Type		    "Cell"
-	    Dimension		    7
+	    Dimension		    8
 	    Cell		    "BooleansAsBitfields"
 	    Cell		    "PassReuseOutputArgsAs"
 	    Cell		    "PassReuseOutputArgsThreshold"
@@ -189,6 +209,7 @@ Model {
 	    Cell		    "ZeroInternalMemoryAtStartup"
 	    Cell		    "OptimizeModelRefInitCode"
 	    Cell		    "NoFixptDivByZeroProtection"
+	    Cell		    "UseSpecifiedMinMax"
 	    PropName		    "DisabledProps"
 	  }
 	  BlockReduction	  on
@@ -232,7 +253,7 @@ Model {
 	  ParallelExecutionInRapidAccelerator on
 	}
 	Simulink.DebuggingCC {
-	  $ObjectID		  5
+	  $ObjectID		  6
 	  Version		  "1.12.0"
 	  RTPrefix		  "error"
 	  ConsistencyChecking	  "none"
@@ -282,7 +303,7 @@ Model {
 	  UnnecessaryDatatypeConvMsg "none"
 	  VectorMatrixConversionMsg "none"
 	  InvalidFcnCallConnMsg	  "error"
-	  FcnCallInpInsideContextMsg "Use local settings"
+	  FcnCallInpInsideContextMsg "Enable All"
 	  SignalLabelMismatchMsg  "none"
 	  UnconnectedInputMsg	  "warning"
 	  UnconnectedOutputMsg	  "warning"
@@ -320,7 +341,7 @@ Model {
 	  SFUnconditionalTransitionShadowingDiag "warning"
 	}
 	Simulink.HardwareCC {
-	  $ObjectID		  6
+	  $ObjectID		  7
 	  Version		  "1.12.0"
 	  ProdBitPerChar	  8
 	  ProdBitPerShort	  16
@@ -357,7 +378,7 @@ Model {
 	  ProdEqTarget		  on
 	}
 	Simulink.ModelReferenceCC {
-	  $ObjectID		  7
+	  $ObjectID		  8
 	  Version		  "1.12.0"
 	  UpdateModelReferenceTargets "IfOutOfDateOrStructuralChange"
 	  CheckModelReferenceTargetMessage "error"
@@ -372,7 +393,7 @@ Model {
 	  SupportModelReferenceSimTargetCustomCode off
 	}
 	Simulink.SFSimCC {
-	  $ObjectID		  8
+	  $ObjectID		  9
 	  Version		  "1.12.0"
 	  SFSimEnableDebug	  on
 	  SFSimOverflowDetection  on
@@ -387,17 +408,20 @@ Model {
 	}
 	Simulink.RTWCC {
 	  $BackupClass		  "Simulink.RTWCC"
-	  $ObjectID		  9
+	  $ObjectID		  10
 	  Version		  "1.12.0"
 	  Array {
 	    Type		    "Cell"
-	    Dimension		    6
+	    Dimension		    9
 	    Cell		    "IncludeHyperlinkInReport"
 	    Cell		    "GenerateTraceInfo"
 	    Cell		    "GenerateTraceReport"
 	    Cell		    "GenerateTraceReportSl"
 	    Cell		    "GenerateTraceReportSf"
 	    Cell		    "GenerateTraceReportEml"
+	    Cell		    "GenerateWebview"
+	    Cell		    "GenerateCodeMetricsReport"
+	    Cell		    "GenerateCodeReplacementReport"
 	    PropName		    "DisabledProps"
 	  }
 	  SystemTargetFile	  "grt.tlc"
@@ -439,15 +463,17 @@ Model {
 	    Type		    "Handle"
 	    Dimension		    2
 	    Simulink.CodeAppCC {
-	      $ObjectID		      10
+	      $ObjectID		      11
 	      Version		      "1.12.0"
 	      Array {
 		Type			"Cell"
-		Dimension		19
+		Dimension		21
 		Cell			"IgnoreCustomStorageClasses"
 		Cell			"IgnoreTestpoints"
 		Cell			"InsertBlockDesc"
+		Cell			"InsertPolySpaceComments"
 		Cell			"SFDataObjDesc"
+		Cell			"MATLABFcnDesc"
 		Cell			"SimulinkDataObjDesc"
 		Cell			"DefineNamingRule"
 		Cell			"SignalNamingRule"
@@ -502,7 +528,7 @@ Model {
 	    }
 	    Simulink.GRTTargetCC {
 	      $BackupClass	      "Simulink.TargetCC"
-	      $ObjectID		      11
+	      $ObjectID		      12
 	      Version		      "1.12.0"
 	      Array {
 		Type			"Cell"
@@ -518,11 +544,11 @@ Model {
 		Cell			"CPPClassGenCompliant"
 		Cell			"MultiInstanceERTCode"
 		Cell			"PurelyIntegerCode"
-		Cell			"PortableWordSizes"
 		Cell			"SupportComplex"
 		Cell			"SupportAbsoluteTime"
 		Cell			"SupportContinuousTime"
 		Cell			"SupportNonInlinedSFcns"
+		Cell			"PortableWordSizes"
 		PropName		"DisabledProps"
 	      }
 	      TargetFcnLib	      "ansi_tfl_table_tmw.mat"
@@ -544,7 +570,7 @@ Model {
 	      ConcurrentExecutionCompliant on
 	      IncludeMdlTerminateFcn  on
 	      GeneratePreprocessorConditionals "Disable all"
-	      CombineOutputUpdateFcns off
+	      CombineOutputUpdateFcns on
 	      CombineSignalStateStructs	off
 	      SuppressErrorStatus     off
 	      ERTFirstTimeCompliant   off
@@ -566,7 +592,7 @@ Model {
 	      ModelStepFunctionPrototypeControlCompliant off
 	      CPPClassGenCompliant    off
 	      AutosarCompliant	      off
-	      GRTInterface	      on
+	      GRTInterface	      off
 	      UseMalloc		      off
 	      ExtMode		      off
 	      ExtModeStaticAlloc      off
@@ -584,17 +610,30 @@ Model {
 	    PropName		    "Components"
 	  }
 	}
+	hdlcoderui.hdlcc {
+	  $ObjectID		  13
+	  Version		  "1.12.0"
+	  Description		  "HDL Coder custom configuration component"
+	  Name			  "HDL Coder"
+	  Array {
+	    Type		    "Cell"
+	    Dimension		    1
+	    Cell		    ""
+	    PropName		    "HDLConfigFile"
+	  }
+	  HDLCActiveTab		  "0"
+	}
 	PropName		"Components"
       }
       Name		      "Configuration"
       CurrentDlgPage	      "Solver"
-      ConfigPrmDlgPosition     [ 0, 0, 880, 630 ] 
+      ConfigPrmDlgPosition     [ 243, 69, 1123, 699 ] 
     }
     PropName		    "ConfigurationSets"
   }
   Simulink.ConfigSet {
     $PropName		    "ActiveConfigurationSet"
-    $ObjectID		    1
+    $ObjectID		    2
   }
   ExplicitPartitioning	  off
   BlockDefaults {
@@ -630,17 +669,16 @@ Model {
   }
   BlockParameterDefaults {
     Block {
-      BlockType		      Constant
-      Value		      "1"
-      VectorParams1D	      on
-      SamplingMode	      "Sample based"
-      OutMin		      "[]"
-      OutMax		      "[]"
-      OutDataTypeStr	      "Inherit: Inherit from 'Constant value'"
-      LockScale		      off
-      SampleTime	      "inf"
-      FramePeriod	      "inf"
-      PreserveConstantTs      off
+      BlockType		      Concatenate
+      NumInputs		      "2"
+      Mode		      "Vector"
+      ConcatenateDimension    "1"
+    }
+    Block {
+      BlockType		      Demux
+      Outputs		      "4"
+      DisplayOption	      "none"
+      BusSelectionMode	      off
     }
     Block {
       BlockType		      Gain
@@ -719,19 +757,6 @@ Model {
       SampleTime	      "-1"
     }
     Block {
-      BlockType		      Sin
-      SineType		      "Time based"
-      TimeSource	      "Use simulation time"
-      Amplitude		      "1"
-      Bias		      "0"
-      Frequency		      "1"
-      Phase		      "0"
-      Samples		      "10"
-      Offset		      "0"
-      SampleTime	      "-1"
-      VectorParams1D	      on
-    }
-    Block {
       BlockType		      StateSpace
       A			      "1"
       B			      "1"
@@ -741,15 +766,6 @@ Model {
       AbsoluteTolerance	      "auto"
       ContinuousStateAttributes	"''"
       Realization	      "auto"
-    }
-    Block {
-      BlockType		      Step
-      Time		      "1"
-      Before		      "0"
-      After		      "1"
-      SampleTime	      "-1"
-      VectorParams1D	      on
-      ZeroCross		      on
     }
     Block {
       BlockType		      SubSystem
@@ -774,80 +790,42 @@ Model {
       Variant		      off
       GeneratePreprocessorConditionals off
     }
-    Block {
-      BlockType		      Sum
-      IconShape		      "rectangular"
-      Inputs		      "++"
-      CollapseMode	      "All dimensions"
-      CollapseDim	      "1"
-      InputSameDT	      on
-      AccumDataTypeStr	      "Inherit: Inherit via internal rule"
-      OutMin		      "[]"
-      OutMax		      "[]"
-      OutDataTypeStr	      "Inherit: Same as first input"
-      LockScale		      off
-      RndMeth		      "Floor"
-      SaturateOnIntegerOverflow	on
-      SampleTime	      "-1"
-    }
-    Block {
-      BlockType		      ToWorkspace
-      VariableName	      "simulink_output"
-      MaxDataPoints	      "1000"
-      Decimation	      "1"
-      SampleTime	      "0"
-      SaveFormat	      "Array"
-      FixptAsFi		      off
-      NumInputs		      "1"
-    }
   }
   System {
-    Name		    "progetto2_mi_dist_kalm"
-    Location		    [53, 82, 1057, 547]
+    Name		    "tenzo1_10_lqr0"
+    Location		    [366, 289, 946, 549]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
     PaperOrientation	    "landscape"
     PaperPositionMode	    "auto"
-    PaperType		    "A4"
-    PaperUnits		    "centimeters"
-    TiledPaperMargins	    [1.270000, 1.270000, 1.270000, 1.270000]
+    PaperType		    "usletter"
+    PaperUnits		    "inches"
+    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
     TiledPageScale	    1
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "59"
+    SIDHighWatermark	    "31"
     Block {
-      BlockType		      Gain
-      Name		      "F1"
-      SID		      "16"
-      Position		      [330, 80, 360, 110]
-      Gain		      "F1"
-      Multiplication	      "Matrix(K*u) (u vector)"
-      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
-      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-      SaturateOnIntegerOverflow	off
-    }
-    Block {
-      BlockType		      Gain
-      Name		      "F2"
-      SID		      "17"
-      Position		      [405, 135, 445, 180]
-      BlockRotation	      270
-      Gain		      "F2"
-      Multiplication	      "Matrix(K*u) (u vector)"
-      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
-      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-      SaturateOnIntegerOverflow	off
+      BlockType		      Demux
+      Name		      "Demux12"
+      SID		      "4"
+      Ports		      [1, 4]
+      Position		      [430, 186, 435, 224]
+      ZOrder		      -6
+      ShowName		      off
+      DisplayOption	      "bar"
     }
     Block {
       BlockType		      SubSystem
       Name		      "Kalman"
-      SID		      "4"
-      Ports		      [3, 1]
-      Position		      [495, 165, 535, 225]
-      BlockMirror	      on
+      SID		      "7"
+      Ports		      [2, 1]
+      Position		      [315, 41, 415, 99]
+      ZOrder		      -44
+      BackgroundColor	      "lightBlue"
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -857,523 +835,209 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Kalman"
-	Location		[2, 82, 1006, 547]
-	Open			off
-	ModelBrowserVisibility	off
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"A4"
-	PaperUnits		"centimeters"
-	TiledPaperMargins	[1.270000, 1.270000, 1.270000, 1.270000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	Block {
-	  BlockType		  Inport
-	  Name			  "u"
-	  SID			  "5"
-	  Position		  [225, 13, 255, 27]
-	  BlockMirror		  on
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "y"
-	  SID			  "7"
-	  Position		  [230, 58, 260, 72]
-	  BlockMirror		  on
-	  Port			  "2"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "dd"
-	  SID			  "55"
-	  Position		  [225, 138, 255, 152]
-	  BlockMirror		  on
-	  Port			  "3"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Mux
-	  Name			  "Mux"
-	  SID			  "1"
-	  Ports			  [3, 1]
-	  Position		  [195, 46, 200, 84]
-	  BlockMirror		  on
-	  ShowName		  off
-	  Inputs		  "[2 2 1]"
-	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  StateSpace
-	  Name			  "filtro di kalman"
-	  SID			  "3"
-	  Position		  [95, 48, 155, 82]
-	  BlockMirror		  on
-	  A			  "Aoss"
-	  B			  "Boss"
-	  C			  "Coss"
-	  D			  "Doss"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "xi0"
-	  SID			  "6"
-	  Position		  [40, 58, 70, 72]
-	  BlockMirror		  on
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "Mux"
-	  SrcPort		  1
-	  DstBlock		  "filtro di kalman"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "u"
-	  SrcPort		  1
-	  Points		  [0, 35]
-	  DstBlock		  "Mux"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "filtro di kalman"
-	  SrcPort		  1
-	  DstBlock		  "xi0"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "y"
-	  SrcPort		  1
-	  DstBlock		  "Mux"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "dd"
-	  SrcPort		  1
-	  Points		  [0, -70]
-	  DstBlock		  "Mux"
-	  DstPort		  3
-	}
-      }
-    }
-    Block {
-      BlockType		      StateSpace
-      Name		      "Modello \nInterno"
-      SID		      "21"
-      Position		      [240, 78, 300, 112]
-      A			      "AMI"
-      B			      "BMI"
-      C			      "CMI"
-      D			      "DMI"
-    }
-    Block {
-      BlockType		      Sum
-      Name		      "Sum"
-      SID		      "23"
-      Ports		      [2, 1]
-      Position		      [415, 85, 435, 105]
-      ShowName		      off
-      IconShape		      "round"
-      Inputs		      "|++"
-      InputSameDT	      off
-      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-      SaturateOnIntegerOverflow	off
-    }
-    Block {
-      BlockType		      Sum
-      Name		      "Sum1"
-      SID		      "24"
-      Ports		      [2, 1]
-      Position		      [185, 85, 205, 105]
-      ShowName		      off
-      IconShape		      "round"
-      Inputs		      "|+-"
-      InputSameDT	      off
-      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-      SaturateOnIntegerOverflow	off
-    }
-    Block {
-      BlockType		      ToWorkspace
-      Name		      "To Workspace"
-      SID		      "59"
-      Ports		      [1]
-      Position		      [330, 20, 390, 50]
-      VariableName	      "simout"
-      MaxDataPoints	      "inf"
-      SampleTime	      "-1"
-      SaveFormat	      "Structure"
-    }
-    Block {
-      BlockType		      Scope
-      Name		      "dist"
-      SID		      "54"
-      Ports		      [1]
-      Position		      [830, 79, 860, 111]
-      Floating		      off
-      Location		      [5, 48, 1025, 559]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      ShowLegends	      off
-      SaveName		      "ScopeData5"
-      DataFormat	      "StructureWithTime"
-      LimitDataPoints	      off
-      SampleTime	      "0"
-    }
-    Block {
-      BlockType		      SubSystem
-      Name		      "disturbo"
-      SID		      "50"
-      Ports		      [0, 1]
-      Position		      [830, 18, 860, 52]
-      BlockMirror	      on
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
-      RequestExecContextInheritance off
-      MaskHideContents	      off
-      System {
-	Name			"disturbo"
-	Location		[709, 283, 931, 433]
-	Open			off
-	ModelBrowserVisibility	off
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"A4"
-	PaperUnits		"centimeters"
-	TiledPaperMargins	[1.270000, 1.270000, 1.270000, 1.270000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	Block {
-	  BlockType		  Constant
-	  Name			  "Constant"
-	  SID			  "47"
-	  Position		  [140, 25, 170, 55]
-	  BlockMirror		  on
-	}
-	Block {
-	  BlockType		  Sin
-	  Name			  "Sine Wave"
-	  SID			  "48"
-	  Ports			  [0, 1]
-	  Position		  [140, 75, 170, 105]
-	  BlockMirror		  on
-	  Frequency		  "omega"
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum2"
-	  SID			  "49"
-	  Ports			  [2, 1]
-	  Position		  [80, 30, 100, 50]
-	  BlockMirror		  on
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|++"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "d"
-	  SID			  "51"
-	  Position		  [25, 33, 55, 47]
-	  BlockMirror		  on
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "Sine Wave"
-	  SrcPort		  1
-	  Points		  [-45, 0]
-	  DstBlock		  "Sum2"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "Constant"
-	  SrcPort		  1
-	  DstBlock		  "Sum2"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Sum2"
-	  SrcPort		  1
-	  DstBlock		  "d"
-	  DstPort		  1
-	}
-      }
-    }
-    Block {
-      BlockType		      Scope
-      Name		      "errore"
-      SID		      "27"
-      Ports		      [1]
-      Position		      [255, 29, 285, 61]
-      Floating		      off
-      Location		      [64, 91, 1084, 627]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      List {
-	ListType		ScopeGraphics
-	FigureColor		"[0.5 0.5 0.5]"
-	AxesColor		"[0 0 0]"
-	AxesTickColor		"[1 1 1]"
-	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	LineStyles		"-|-|-|-|-|-"
-	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-	MarkerStyles		"none|none|none|none|none|none"
-      }
-      ShowLegends	      off
-      SaveName		      "ScopeData2"
-      DataFormat	      "StructureWithTime"
-      LimitDataPoints	      off
-      SampleTime	      "0"
-    }
-    Block {
-      BlockType		      SubSystem
-      Name		      "processo"
-      SID		      "43"
-      Ports		      [2, 1]
-      Position		      [520, 50, 560, 110]
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
-      RequestExecContextInheritance off
-      MaskHideContents	      off
-      System {
-	Name			"processo"
-	Location		[432, 233, 739, 336]
-	Open			off
-	ModelBrowserVisibility	off
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"A4"
-	PaperUnits		"centimeters"
-	TiledPaperMargins	[1.270000, 1.270000, 1.270000, 1.270000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	Block {
-	  BlockType		  Inport
-	  Name			  "d"
-	  SID			  "44"
-	  Position		  [25, 28, 55, 42]
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "u"
-	  SID			  "46"
-	  Position		  [25, 63, 55, 77]
-	  Port			  "2"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Mux
-	  Name			  "Mux"
-	  SID			  "41"
-	  Ports			  [2, 1]
-	  Position		  [80, 26, 85, 64]
-	  ShowName		  off
-	  Inputs		  "[1 2]"
-	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  StateSpace
-	  Name			  "Processo1"
-	  SID			  "42"
-	  Position		  [130, 28, 190, 62]
-	  A			  "A"
-	  B			  "Bmod"
-	  C			  "C"
-	  D			  "Dmod"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "y"
-	  SID			  "45"
-	  Position		  [215, 38, 245, 52]
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "Mux"
-	  SrcPort		  1
-	  DstBlock		  "Processo1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "d"
-	  SrcPort		  1
-	  DstBlock		  "Mux"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Processo1"
-	  SrcPort		  1
-	  DstBlock		  "y"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "u"
-	  SrcPort		  1
-	  Points		  [0, -15]
-	  DstBlock		  "Mux"
-	  DstPort		  2
-	}
-      }
-    }
-    Block {
-      BlockType		      Scope
-      Name		      "riferimenti"
-      SID		      "26"
-      Ports		      [1]
-      Position		      [130, 29, 160, 61]
-      Floating		      off
-      Location		      [1, 48, 1025, 727]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      ShowLegends	      off
-      SaveName		      "ScopeData1"
-      DataFormat	      "StructureWithTime"
-      LimitDataPoints	      off
-      SampleTime	      "0"
-    }
-    Block {
-      BlockType		      SubSystem
-      Name		      "riferimento \ncostante"
-      SID		      "11"
-      Ports		      [0, 1]
-      Position		      [55, 65, 95, 125]
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
-      RequestExecContextInheritance off
-      MaskHideContents	      off
-      System {
-	Name			"riferimento \ncostante"
-	Location		[53, 82, 1057, 547]
+	Location		[870, 156, 1366, 748]
 	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
 	PaperOrientation	"landscape"
 	PaperPositionMode	"auto"
-	PaperType		"A4"
-	PaperUnits		"centimeters"
-	TiledPaperMargins	[1.270000, 1.270000, 1.270000, 1.270000]
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
 	TiledPageScale		1
 	ShowPageBoundaries	off
 	ZoomFactor		"100"
 	Block {
-	  BlockType		  Constant
-	  Name			  "Constant1"
+	  BlockType		  Inport
+	  Name			  "y"
+	  SID			  "8"
+	  Position		  [65, 83, 95, 97]
+	  ZOrder		  -1
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "u"
 	  SID			  "9"
-	  Position		  [25, 75, 55, 105]
-	  Value			  "4"
+	  Position		  [65, 35, 95, 50]
+	  ZOrder		  -2
+	  BlockRotation		  270
+	  BlockMirror		  on
+	  Port			  "2"
+	  IconDisplay		  "Port number"
 	}
 	Block {
-	  BlockType		  Mux
-	  Name			  "Mux"
-	  SID			  "10"
+	  BlockType		  SubSystem
+	  Name			  "Kalman"
+	  SID			  "15"
 	  Ports			  [2, 1]
-	  Position		  [90, 46, 95, 84]
-	  ShowName		  off
-	  Inputs		  "[1 1]"
-	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  Step
-	  Name			  "Step"
-	  SID			  "39"
-	  Position		  [25, 15, 55, 45]
-	  Time			  "10"
-	  After			  "12"
-	  SampleTime		  "0"
+	  Position		  [185, 45, 225, 105]
+	  ZOrder		  -11
+	  NamePlacement		  "alternate"
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "Kalman"
+	    Location		    [53, 79, 1113, 728]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "u"
+	      SID		      "16"
+	      Position		      [235, 48, 265, 62]
+	      ZOrder		      -1
+	      BlockMirror	      on
+	      NamePlacement	      "alternate"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "y"
+	      SID		      "17"
+	      Position		      [235, 68, 265, 82]
+	      ZOrder		      -2
+	      BlockMirror	      on
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Mux
+	      Name		      "Mux"
+	      SID		      "18"
+	      Ports		      [2, 1]
+	      Position		      [195, 46, 200, 84]
+	      ZOrder		      -3
+	      BlockMirror	      on
+	      ShowName		      off
+	      Inputs		      "[4 4]"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      StateSpace
+	      Name		      "filtro di kalman"
+	      SID		      "19"
+	      Position		      [105, 48, 165, 82]
+	      ZOrder		      -4
+	      BlockMirror	      on
+	      A			      "Aoss"
+	      B			      "Boss"
+	      C			      "Coss"
+	      D			      "Doss"
+	      X0		      "[0 0 0 0 0 0 0 0]"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "xi0"
+	      SID		      "20"
+	      Position		      [40, 58, 70, 72]
+	      ZOrder		      -5
+	      BlockMirror	      on
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      SrcBlock		      "y"
+	      SrcPort		      1
+	      DstBlock		      "Mux"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "filtro di kalman"
+	      SrcPort		      1
+	      DstBlock		      "xi0"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "u"
+	      SrcPort		      1
+	      DstBlock		      "Mux"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Mux"
+	      SrcPort		      1
+	      DstBlock		      "filtro di kalman"
+	      DstPort		      1
+	    }
+	  }
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "r"
-	  SID			  "12"
-	  Position		  [120, 58, 150, 72]
+	  Name			  "Xest"
+	  SID			  "28"
+	  Position		  [355, 68, 385, 82]
+	  ZOrder		  -26
 	  IconDisplay		  "Port number"
 	}
 	Line {
-	  SrcBlock		  "Mux"
+	  SrcBlock		  "y"
 	  SrcPort		  1
-	  DstBlock		  "r"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Step"
-	  SrcPort		  1
-	  Points		  [15, 0]
-	  DstBlock		  "Mux"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Constant1"
-	  SrcPort		  1
-	  Points		  [5, 0; 0, -15]
-	  DstBlock		  "Mux"
+	  DstBlock		  "Kalman"
 	  DstPort		  2
 	}
+	Line {
+	  SrcBlock		  "u"
+	  SrcPort		  1
+	  Points		  [0, 5]
+	  DstBlock		  "Kalman"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Kalman"
+	  SrcPort		  1
+	  DstBlock		  "Xest"
+	  DstPort		  1
+	}
       }
     }
     Block {
-      BlockType		      Scope
-      Name		      "u"
-      SID		      "28"
-      Ports		      [1]
-      Position		      [465, 19, 495, 51]
-      Floating		      off
-      Location		      [5, 48, 1025, 559]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      ShowLegends	      off
-      SaveName		      "ScopeData3"
-      DataFormat	      "StructureWithTime"
-      LimitDataPoints	      off
-      SampleTime	      "0"
+      BlockType		      StateSpace
+      Name		      "Tenzo L"
+      SID		      "1"
+      Position		      [155, 36, 230, 74]
+      ZOrder		      -46
+      NamePlacement	      "alternate"
+      A			      "AMin"
+      B			      "BMin"
+      C			      "ClocalMin"
+      D			      "D"
+      X0		      "[0 0 0 0 0 0 0 0 ]"
+    }
+    Block {
+      BlockType		      Concatenate
+      Name		      "Vector\nConcatenate4"
+      SID		      "5"
+      Ports		      [4, 1]
+      Position		      [465, 186, 470, 224]
+      ZOrder		      -22
+      NumInputs		      "4"
     }
     Block {
       BlockType		      Scope
-      Name		      "uscite"
-      SID		      "25"
+      Name		      "w0  1"
+      SID		      "6"
       Ports		      [1]
-      Position		      [715, 79, 745, 111]
+      Position		      [495, 189, 525, 221]
+      ZOrder		      -3
+      NamePlacement	      "alternate"
       Floating		      off
-      Location		      [64, 91, 1084, 602]
+      Location		      [54, 53, 1367, 767]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1382,141 +1046,100 @@ Model {
       }
       List {
 	ListType		ScopeGraphics
-	FigureColor		"[0.5 0.5 0.5]"
+	FigureColor		"[0.501960784313725 0.501960784313725 0.501960784313725]"
 	AxesColor		"[0 0 0]"
 	AxesTickColor		"[1 1 1]"
-	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	LineColors		"[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
 	LineStyles		"-|-|-|-|-|-"
-	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+	LineWidths		"[1 0.5 0.5 0.5 0.5 0.5]"
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
+      YMin		      "2500"
+      YMax		      "7000"
+      SaveName		      "ScopeData1"
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
       SampleTime	      "0"
     }
-    Line {
-      SrcBlock		      "riferimento \ncostante"
-      SrcPort		      1
-      Points		      [15, 0]
-      Branch {
-	DstBlock		"Sum1"
-	DstPort			1
-      }
-      Branch {
-	DstBlock		"riferimenti"
-	DstPort			1
-      }
+    Block {
+      BlockType		      Gain
+      Name		      "zSelector1"
+      SID		      "30"
+      Position		      [175, 118, 215, 152]
+      ZOrder		      -8
+      BlockMirror	      on
+      NamePlacement	      "alternate"
+      Gain		      "-K"
+      Multiplication	      "Matrix(K*u)"
+      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
     }
     Line {
-      SrcBlock		      "processo"
+      SrcBlock		      "Demux12"
       SrcPort		      1
-      Points		      [0, 15; 20, 0]
+      DstBlock		      "Vector\nConcatenate4"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Demux12"
+      SrcPort		      2
+      DstBlock		      "Vector\nConcatenate4"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Demux12"
+      SrcPort		      3
+      DstBlock		      "Vector\nConcatenate4"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Demux12"
+      SrcPort		      4
+      DstBlock		      "Vector\nConcatenate4"
+      DstPort		      4
+    }
+    Line {
+      SrcBlock		      "Vector\nConcatenate4"
+      SrcPort		      1
+      DstBlock		      "w0  1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Tenzo L"
+      SrcPort		      1
+      Points		      [40, 0]
       Branch {
-	Points			[80, 0]
-	Branch {
-	  DstBlock		  "uscite"
-	  DstPort		  1
-	}
-	Branch {
-	  Points		  [0, 220; -470, 0]
-	  DstBlock		  "Sum1"
-	  DstPort		  2
-	}
+	DstBlock		"Kalman"
+	DstPort			1
       }
       Branch {
-	Points			[0, 100]
-	DstBlock		"Kalman"
-	DstPort			2
+	Points			[0, 150]
+	DstBlock		"Demux12"
+	DstPort			1
       }
     }
     Line {
       SrcBlock		      "Kalman"
       SrcPort		      1
-      DstBlock		      "F2"
+      Points		      [45, 0; 0, 65]
+      DstBlock		      "zSelector1"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Modello \nInterno"
+      SrcBlock		      "zSelector1"
       SrcPort		      1
-      DstBlock		      "F1"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "F2"
-      SrcPort		      1
-      DstBlock		      "Sum"
-      DstPort		      2
-    }
-    Line {
-      SrcBlock		      "F1"
-      SrcPort		      1
-      DstBlock		      "Sum"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Sum"
-      SrcPort		      1
-      Points		      [10, 0]
+      Points		      [-125, 0; 0, -40]
       Branch {
-	Points			[10, 0]
-	Branch {
-	  Points		  [0, 45; 90, 0]
-	  DstBlock		  "Kalman"
-	  DstPort		  1
-	}
-	Branch {
-	  DstBlock		  "processo"
-	  DstPort		  2
-	}
-      }
-      Branch {
-	DstBlock		"u"
-	DstPort			1
-      }
-    }
-    Line {
-      SrcBlock		      "Sum1"
-      SrcPort		      1
-      Points		      [5, 0]
-      Branch {
-	DstBlock		"Modello \nInterno"
+	Points			[0, -40]
+	DstBlock		"Tenzo L"
 	DstPort			1
       }
       Branch {
-	Points			[0, -55; 25, 0]
-	Branch {
-	  DstBlock		  "errore"
-	  DstPort		  1
-	}
-	Branch {
-	  Points		  [0, -30; 60, 0; 0, 25]
-	  DstBlock		  "To Workspace"
-	  DstPort		  1
-	}
-      }
-    }
-    Line {
-      SrcBlock		      "disturbo"
-      SrcPort		      1
-      Points		      [-20, 0]
-      Branch {
-	Points			[0, 60]
-	DstBlock		"dist"
-	DstPort			1
-      }
-      Branch {
-	Points			[-25, 0]
-	Branch {
-	  Points		  [-275, 0]
-	  DstBlock		  "processo"
-	  DstPort		  1
-	}
-	Branch {
-	  Points		  [0, 180]
-	  DstBlock		  "Kalman"
-	  DstPort		  3
-	}
+	Points			[255, 0]
+	DstBlock		"Kalman"
+	DstPort			2
       }
     }
   }

@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.355"
+    ComputedModelVersion    "1.356"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Feb 20 18:29:46 2015"
-  RTWModifiedTimeStamp	  346357633
-  ModelVersionFormat	  "1.%<AutoIncrement:355>"
+  LastModifiedDate	  "Wed Apr 22 16:56:02 2015"
+  RTWModifiedTimeStamp	  351536718
+  ModelVersionFormat	  "1.%<AutoIncrement:356>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,6 +78,7 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "tenzo6dof"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -967,7 +968,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "690"
+    SIDHighWatermark	    "692"
     Block {
       BlockType		      Concatenate
       Name		      " "
@@ -7125,7 +7126,7 @@ Model {
       System {
 	Name			"Virtual Reality"
 	Location		[53, 79, 1366, 768]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -9301,8 +9302,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @         0 ((0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (          6@?D .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       \" \"ZB*0 X    X    !@    @    &          4    (     0    $  "
+    "  !          D    (        B  TM4 .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag2
@@ -9430,8 +9431,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @         0 ((0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (          3@?4 .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       \" \"ZB*0 X    X    !@    @    &          4    (     0    $  "
+    "  !          D    (        B  HM4 .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0
