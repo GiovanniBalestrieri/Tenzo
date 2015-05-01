@@ -61,25 +61,6 @@ THE SOFTWARE.
 MPU6050 mpu;
 //MPU6050 mpu(0x69); // <-- use for AD0 high
 
-/* =========================================================================
-   NOTE: In addition to connection 3.3v, GND, SDA, and SCL, this sketch
-   depends on the MPU-6050's INT pin being connected to the Arduino's
-   external interrupt #0 pin. On the Arduino Uno and Mega 2560, this is
-   digital I/O pin 2.
- * ========================================================================= */
-
-/* =========================================================================
-   NOTE: Arduino v1.0.1 with the Leonardo board generates a compile error
-   when using Serial.write(buf, len). The Teapot output uses this method.
-   The solution requires a modification to the Arduino USBAPI.h file, which
-   is fortunately simple, but annoying. This will be fixed in the next IDE
-   release. For more info, see these links:
-
-   http://arduino.cc/forum/index.php/topic,109987.0.html
-   http://code.google.com/p/arduino/issues/detail?id=958
- * ========================================================================= */
-
-
 
 // uncomment "OUTPUT_READABLE_QUATERNION" if you want to see the actual
 // quaternion components in a [w, x, y, z] format (not best for parsing
@@ -90,7 +71,7 @@ MPU6050 mpu;
 // (in degrees) calculated from the quaternions coming from the FIFO.
 // Note that Euler angles suffer from gimbal lock (for more info, see
 // http://en.wikipedia.org/wiki/Gimbal_lock)
-#define OUTPUT_READABLE_EULER
+//#define OUTPUT_READABLE_EULER
 
 // uncomment "OUTPUT_READABLE_YAWPITCHROLL" if you want to see the yaw/
 // pitch/roll angles (in degrees) calculated from the quaternions coming
@@ -112,15 +93,6 @@ MPU6050 mpu;
 // is present in this case). Could be quite handy in some cases.
 //#define OUTPUT_READABLE_WORLDACCEL
 
-// uncomment "OUTPUT_TEAPOT" if you want output that matches the
-// format used for the InvenSense teapot demo
-//#define OUTPUT_TEAPOT
-
-
-
-//#define LED_PIN 13 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
-//bool blinkState = false;
-
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
 uint8_t mpuIntStatus;   // holds actual interrupt status byte from MPU
@@ -137,9 +109,6 @@ VectorInt16 aaWorld;    // [x, y, z]            world-frame accel sensor measure
 VectorFloat gravity;    // [x, y, z]            gravity vector
 float euler[3];         // [psi, theta, phi]    Euler angle container
 float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
-
-// packet structure for InvenSense teapot demo
-uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
 
 long tim, timM1;
 int delta;
@@ -185,6 +154,7 @@ void setup() {
     Serial.println(F("Testing device connections..."));
     Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
 
+/*
     // wait for ready
     Serial.println(F("\nSend any character to begin DMP programming and demo: "));
     while (Serial.available() && Serial.read()); // empty buffer
@@ -193,6 +163,7 @@ void setup() {
 
     // load and configure the DMP
     Serial.println(F("Initializing DMP..."));
+    */
     devStatus = mpu.dmpInitialize();
 
     // supply your own gyro offsets here, scaled for min sensitivity
@@ -290,33 +261,19 @@ void loop()
         // (this lets us immediately read more without waiting for an interrupt)
         fifoCount -= packetSize;
 
-        #ifdef OUTPUT_READABLE_QUATERNION
-            // display quaternion values in easy matrix form: w x y z
-            mpu.dmpGetQuaternion(&q, fifoBuffer);
-            Serial.print("quat\t");
-            Serial.print(q.w);
-            Serial.print("\t");
-            Serial.print(q.x);
-            Serial.print("\t");
-            Serial.print(q.y);
-            Serial.print("\t");
-            Serial.println(q.z);
-        #endif
-
         #ifdef OUTPUT_READABLE_EULER
             // display Euler angles in degrees
             mpu.dmpGetQuaternion(&q, fifoBuffer);
             mpu.dmpGetEuler(euler, &q);
             delta = micros() - tim;
             tim= micros();
-            //Serial.print("euler\t");
             Serial.print(euler[0] * 180/M_PI);
-            Serial.print("   delta: ");  
-            Serial.println(delta);
-            //Serial.print("\t");
-            //Serial.print(euler[1] * 180/M_PI);
-            //Serial.print("\t");
-            //Serial.println(euler[2] * 180/M_PI);
+            Serial.print(",");  
+            Serial.print(euler[1] * 180/M_PI);
+            Serial.print(",");
+            Serial.print(euler[2] * 180/M_PI);
+            Serial.print(",");  
+            //Serial.println(delta);
         #endif
 
         #ifdef OUTPUT_READABLE_YAWPITCHROLL
@@ -329,7 +286,7 @@ void loop()
             Serial.print("\t");
             Serial.print(ypr[1] * 180/M_PI);
             Serial.print("\t");
-            Serial.println(ypr[2] * 180/M_PI);
+            Serial.println(ypr[2] * 180/M_PI);            
         #endif
 
         #ifdef OUTPUT_READABLE_REALACCEL
@@ -361,24 +318,6 @@ void loop()
             Serial.print("\t");
             Serial.println(aaWorld.z);
         #endif
-    
-        #ifdef OUTPUT_TEAPOT
-            // display quaternion values in InvenSense Teapot demo format:
-            teapotPacket[2] = fifoBuffer[0];
-            teapotPacket[3] = fifoBuffer[1];
-            teapotPacket[4] = fifoBuffer[4];
-            teapotPacket[5] = fifoBuffer[5];
-            teapotPacket[6] = fifoBuffer[8];
-            teapotPacket[7] = fifoBuffer[9];
-            teapotPacket[8] = fifoBuffer[12];
-            teapotPacket[9] = fifoBuffer[13];
-            Serial.write(teapotPacket, 14);
-            teapotPacket[11]++; // packetCount, loops at 0xFF on purpose
-        #endif
-
-        // blink LED to indicate activity
-        //blinkState = !blinkState;
-        //digitalWrite(LED_PIN, blinkState);
     }
   }
 }

@@ -311,26 +311,147 @@ pause;
 tenzoLQR=ss(AMin-BMin*K,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 step(tenzoLQR);
 
+%% Verifica condizioni Astatismo
+
+n=size(AMin,2);
+p=size(BMin,2);
+q=size(ClocalMin,1);
+
+% Definizione segnali esogeni
+alpha=3; omega=4; gamma1=0;
+k1=1; h1=1; h2=1; gamma2=complex(0,omega);
+
+disp('Definizione segnali esogeni');
+disp('g1:='); disp(gamma1);
+disp('g2:='); disp(gamma2);
+
+
+if (rank(ctrb(AMin+alpha*eye(n),BMin))==n)
+    disp('(a1) -> verificata, la coppia (AMin,BMin) raggiungibile, rank(P)'); 
+    disp(rank(ctrb(AMin,BMin))); 
+end
+if (rank(obsv(AMin+alpha*eye(n),ClocalMin))==n) 
+    disp('(a1) -> verificata, la coppia (A,C) osservabile, rank(Q)');
+    disp(rank(obsv(AMin,ClocalMin))); 
+end
+
+R1=[ AMin-gamma1*eye(size(AMin)) BMin ; ClocalMin D];
+if (rank(R1)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma1 �:'); disp(rank(R1)); end
+R2=[ AMin-gamma2*eye(size(AMin)) BMin ; ClocalMin D];
+if (rank(R2)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma2 �:'); disp(rank(R2)); end
+
+%% Calcolo del modello interno
+
+disp('specifica 2) Calcolo modello interno KM1');
+k1_segnato=max(k1,h1);
+k2_segnato=h2;
+disp('max(k1,h1):'); 
+disp(k1_segnato); 
+disp('max(k2,h2):'); 
+disp(k2_segnato);
+syms s;
+phi1=((s-gamma1)^k1_segnato)*((s-gamma2)^k2_segnato)*((s-conj(gamma2))^k2_segnato);
+disp('phi(lambda)='); 
+disp((phi1));
+mu=3;
+disp('mu=');
+disp(mu);
+
+Aphi=compan(sym2poly(phi1));
+APhi=zeros(3);
+APhi(3,:)=Aphi(1,:);
+APhi(1,2)=Aphi(2,1);
+APhi(2,3)=Aphi(3,2);
+disp('matrice in forma compagna Aphi:');
+disp(APhi);
+disp('Bphi:');
+BPhi=[0;0;1];
+disp(BPhi);
+
+disp('la matrice dinamica AK1 del modello interno KM1 :');
+AK1=blkdiag(APhi,APhi,APhi,APhi);
+disp(AK1);
+disp('la matrice dinamica BK1 del modello interno KM1 :');
+BK1=blkdiag(BPhi,BPhi,BPhi,BPhi);
+disp(BK1);
+
+
+%% Calcolo delle matrici F1,F2 + V di Kalman 
+disp('Calcolo delle matrici F1,F2 per S1-S2 +  V per Kalman ');
+Asig =[ AMin-BMin*K zeros(n,size(AK1,2)); -BK1*ClocalMin AK1];
+Bsig = [ BMin; -BK1*D];
+Q = eye(size(Asig));
+R = eye(size(Bsig,2));
+F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
+
+disp('matrici stablizzanti:')
+F2=F(:,1:size(AMin,1))
+disp('dimensioni [pxn]:'); disp(size(F2));
+F1=F(:,size(AMin,1)+1:size(F,2))
+disp('dimensioni [pxq*mu]:'); disp(size(F1));
+
+Q = eye(size(AMin,2));
+R = eye(size(BMin,2));
+disp('matrice per Kalman:')
+V=lqr((AMin-BMin*K)',ClocalMin',Q,R)'
+disp('dimensione attesa [nxq]');
+disp(size(V));
+
+disp('verifica spostamento autovalori:');
+disp('autovalori A+B*F2');
+disp(eig(AMin-BMin*K+BMin*F2));
+disp('autovalori A-V*C');
+disp(eig(AMin-BMin*K-V*ClocalMin));
+
+%% specifica 3 ) definizione matrici per simulink:
+
+disp('specifica 3 ) definizione matrici per simulink:');
+
+M=[ 1 1 1 1 1 1 1 1]';
+N=[ 1;  1; 1; 1];
+%per disturbo sul processo definisco Bmod:
+Bmod=[M BMin]; %nota prima d e poi u scambio la somma per comodit�
+Dmod=[N D];
+
+%si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
+Aoss=AMin-V*ClocalMin;
+Boss=[BMin-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
+Coss=eye(n);
+Doss=zeros(size(Boss));
+
+%ricordando che delta xi1=AK1*xi+ Bk1*e
+AMI=AK1;
+BMI=BK1;
+CMI=eye(q*mu);
+DMI=zeros(q*mu,q);
+
+disp('avvio simulazione 1');
+open('progetto3Tenzo.mdl')
+sim('progetto3Tenzo.mdl')
+
+disp('Premere un tasto per continuare...');
+pause;
+clc;
 
 %% Simulazione
-
-refs=[0 0 -20 0 0 0 0 0 0 0 0 0]; 
-tc=0.436;
-X0c = 3000;
-dz1=1247.4;
-PulseOff = 1;
-pulseAmp = 500;
-pulsePh = 0;
-pulseP = 20;
-pulseP2 = 10;
-pulseP4= 10;
-w1=3100;
-w2=3100;
-w3=3100;
-w4=3100;
-
-sys = 'tenzo1_15_lqr';
-open_system(sys)
-SimOut = sim(sys);
+% 
+% refs=[0 0 -20 0 0 0 0 0 0 0 0 0]; 
+% tc=0.436;
+% X0c = 3000;
+% dz1=1247.4;
+% PulseOff = 1;
+% pulseAmp = 500;
+% pulsePh = 0;
+% pulseP = 20;
+% pulseP2 = 10;
+% pulseP4= 10;
+% w1=3100;
+% w2=3100;
+% w3=3100;
+% w4=3100;
+% 
+% sys = 'tenzo1_15_lqr';
+% open_system(sys)
+% SimOut = sim(sys);
 
 disp('End');

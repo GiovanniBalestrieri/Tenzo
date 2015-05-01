@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.27"
+    ComputedModelVersion    "1.31"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Apr 27 17:31:02 2015"
+  LastModifiedDate	  "Mon Apr 27 18:05:40 2015"
   RTWModifiedTimeStamp	  352056655
-  ModelVersionFormat	  "1.%<AutoIncrement:27>"
+  ModelVersionFormat	  "1.%<AutoIncrement:31>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -817,12 +817,12 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "62"
+    SIDHighWatermark	    "63"
     Block {
       BlockType		      Gain
       Name		      "F1"
       SID		      "16"
-      Position		      [330, 80, 360, 110]
+      Position		      [330, 69, 370, 121]
       Gain		      "F1"
       Multiplication	      "Matrix(K*u) (u vector)"
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
@@ -833,7 +833,7 @@ Model {
       BlockType		      Gain
       Name		      "F2"
       SID		      "17"
-      Position		      [405, 135, 445, 180]
+      Position		      [402, 130, 448, 180]
       BlockRotation	      270
       Gain		      "F2"
       Multiplication	      "Matrix(K*u) (u vector)"
@@ -1015,7 +1015,7 @@ Model {
       Position		      [830, 79, 860, 111]
       Floating		      off
       Location		      [64, 91, 1084, 602]
-      Open		      on
+      Open		      off
       NumInputPorts	      "1"
       List {
 	ListType		AxesTitles
@@ -1171,7 +1171,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"processo"
-	Location		[432, 233, 739, 336]
+	Location		[432, 205, 739, 308]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
