@@ -235,7 +235,7 @@ R2=[ A-B*K11-gamma2*eye(size(A)) B ; Clocal D];
 disp('Rank R2:');
 disp(rank(R2)); 
 if (rank(R2)==size(A,1)+size(Clocal,1)) 
-    disp('b) verificata ,rango della matrice 5.4.23 per gamma2 ï¿½:');
+    disp('b) verificata ,rango della matrice 5.4.23 per gamma2 è');
     disp(rank(R2)); 
 else
     disp('Test Fallito per gamma2');
