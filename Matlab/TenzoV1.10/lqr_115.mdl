@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.8"
+    ComputedModelVersion    "1.9"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -52,10 +52,10 @@ Model {
 	$ClassName		"Simulink.EditorInfo"
 	IsActive		[1]
 	ViewObjType		"SimulinkSubsys"
-	LoadSaveID		"46"
+	LoadSaveID		"3"
 	Extents			[825.0, 578.0]
 	ZoomFactor		[1.0]
-	Offset			[0.0, -12.0]
+	Offset			[0.0, 0.0]
       }
     }
   }
@@ -65,9 +65,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "UserK"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun May 03 14:50:41 2015"
-  RTWModifiedTimeStamp	  352565161
-  ModelVersionFormat	  "1.%<AutoIncrement:8>"
+  LastModifiedDate	  "Mon May 04 03:08:21 2015"
+  RTWModifiedTimeStamp	  352609699
+  ModelVersionFormat	  "1.%<AutoIncrement:9>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -111,7 +111,7 @@ Model {
     $ObjectID		    6
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "lqr_115"
-    overrideMode_	    [0U]
+    overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
       Dimension		      1
@@ -963,7 +963,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "50"
+    SIDHighWatermark	    "51"
     Block {
       BlockType		      Constant
       Name		      "Constant"
@@ -1285,7 +1285,6 @@ Model {
 	  ZOrder		  14
 	  SrcBlock		  "Demux4"
 	  SrcPort		  2
-	  Points		  [340, 0]
 	  DstBlock		  "Demux3"
 	  DstPort		  1
 	}
@@ -1293,7 +1292,6 @@ Model {
 	  ZOrder		  15
 	  SrcBlock		  "Demux4"
 	  SrcPort		  1
-	  Points		  [340, 0]
 	  DstBlock		  "Demux2"
 	  DstPort		  1
 	}
@@ -1311,7 +1309,7 @@ Model {
     }
     Block {
       BlockType		      SubSystem
-      Name		      "Kalman"
+      Name		      "Luenberger Obs"
       SID		      "3"
       Ports		      [2, 1]
       Position		      [435, 268, 560, 332]
@@ -1321,9 +1319,9 @@ Model {
       NamePlacement	      "alternate"
       RequestExecContextInheritance off
       System {
-	Name			"Kalman"
-	Location		[10, 53, 885, 806]
-	Open			off
+	Name			"Luenberger Obs"
+	Location		[281, 209, 1156, 962]
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1356,16 +1354,16 @@ Model {
 	}
 	Block {
 	  BlockType		  SubSystem
-	  Name			  "Kalman"
+	  Name			  "Luenberger"
 	  SID			  "6"
 	  Ports			  [2, 1]
-	  Position		  [185, 45, 225, 105]
+	  Position		  [185, 45, 305, 105]
 	  ZOrder		  -11
 	  NamePlacement		  "alternate"
 	  RequestExecContextInheritance	off
 	  System {
-	    Name		    "Kalman"
-	    Location		    [10, 53, 885, 806]
+	    Name		    "Luenberger"
+	    Location		    [281, 209, 1156, 962]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -1473,7 +1471,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  1
-	  SrcBlock		  "Kalman"
+	  SrcBlock		  "Luenberger"
 	  SrcPort		  1
 	  DstBlock		  "Xest"
 	  DstPort		  1
@@ -1483,14 +1481,14 @@ Model {
 	  SrcBlock		  "u"
 	  SrcPort		  1
 	  Points		  [0, 5]
-	  DstBlock		  "Kalman"
+	  DstBlock		  "Luenberger"
 	  DstPort		  1
 	}
 	Line {
 	  ZOrder		  3
 	  SrcBlock		  "y"
 	  SrcPort		  1
-	  DstBlock		  "Kalman"
+	  DstBlock		  "Luenberger"
 	  DstPort		  2
 	}
       }
@@ -1500,13 +1498,14 @@ Model {
       Name		      "Output"
       SID		      "46"
       Ports		      [1]
-      Position		      [500, 37, 545, 73]
+      Position		      [740, 37, 785, 73]
       ZOrder		      16
+      BackgroundColor	      "green"
       RequestExecContextInheritance off
       System {
 	Name			"Output"
 	Location		[281, 209, 1156, 962]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -2055,8 +2054,9 @@ Model {
       Name		      "Tenzo L"
       SID		      "26"
       Ports		      [1, 1]
-      Position		      [350, 116, 425, 154]
+      Position		      [515, 116, 590, 154]
       ZOrder		      1
+      BackgroundColor	      "red"
       NamePlacement	      "alternate"
       A			      "AMin"
       B			      "BMin"
@@ -2080,24 +2080,24 @@ Model {
       ZOrder		      3
       SrcBlock		      "Tenzo L"
       SrcPort		      1
-      Points		      [193, 0]
+      Points		      [100, 0]
       Branch {
 	ZOrder			68
-	Points			[0, -35; -153, 0; 0, -45]
+	Points			[0, -80]
 	DstBlock		"Output"
 	DstPort			1
       }
       Branch {
 	ZOrder			2
-	Points			[72, 0; 0, 150]
-	DstBlock		"Kalman"
+	Points			[0, 150]
+	DstBlock		"Luenberger Obs"
 	DstPort			1
       }
     }
     Line {
       ZOrder		      16
       Labels		      [1, 0]
-      SrcBlock		      "Kalman"
+      SrcBlock		      "Luenberger Obs"
       SrcPort		      1
       Points		      [-98, 0]
       Branch {
@@ -2153,7 +2153,7 @@ Model {
       Branch {
 	ZOrder			64
 	Points			[0, 55; 253, 0]
-	DstBlock		"Kalman"
+	DstBlock		"Luenberger Obs"
 	DstPort			2
       }
       Branch {

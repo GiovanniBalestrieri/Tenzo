@@ -227,7 +227,7 @@ step(tenzoLQR);
 
 %% Simulazione
 
-refs=[-3 0 25 25 45 0 0 0 ]; 
+refs=[-3 0 0 0 45 0 0 0 ]; 
 tc=0.436;
 X0c = 3000;
 dz1=1247.4;
