@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.405"
+    ComputedModelVersion    "1.406"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun May 03 00:09:18 2015"
-  RTWModifiedTimeStamp	  352512537
-  ModelVersionFormat	  "1.%<AutoIncrement:405>"
+  LastModifiedDate	  "Mon May 04 17:16:25 2015"
+  RTWModifiedTimeStamp	  352660585
+  ModelVersionFormat	  "1.%<AutoIncrement:406>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -954,7 +954,7 @@ Model {
   System {
     Name		    "tenzo1_15_lqr"
     Location		    [53, 79, 1366, 768]
-    Open		    on
+    Open		    off
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -6838,7 +6838,7 @@ Model {
       System {
 	Name			"Tenzo L"
 	Location		[182, 154, 1175, 694]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -7315,7 +7315,7 @@ Model {
 	  System {
 	    Name		    "Plot States"
 	    Location		    [462, 399, 1092, 668]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -7438,10 +7438,12 @@ Model {
 		MarkerStyles		"none|none|none|none|none|none"
 	      }
 	      ShowLegends	      off
-	      YMin		      "-5~-5~-5"
-	      YMax		      "5~5~5"
+	      TimeRange		      "20"
+	      YMin		      "-2.5e-09~-2e-08~-500"
+	      YMax		      "1e-09~1.5e-08~3000"
 	      SaveName		      "ScopeData21"
 	      DataFormat	      "StructureWithTime"
+	      LimitDataPoints	      off
 	      SampleTime	      "0"
 	    }
 	    Block {
@@ -8797,8 +8799,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @         !(!U0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (        0 !HC4 .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       \" !(!U0 X    X    !@    @    &          4    (     0    $   "
+    " !          D    (        P \"@G$ .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag2
@@ -8925,8 +8927,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @         !(!U0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (          2P=4 .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       \" !(!U0 X    X    !@    @    &          4    (     0    $   "
+    " !          D    (        @ 2P=4 .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0

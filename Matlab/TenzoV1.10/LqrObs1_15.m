@@ -105,13 +105,13 @@ pause;
 tenzoRetro=ss(A,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal);
 step(tenzoRetro);
 
-%% Proprietà  strutturali:
-% Verifica Raggiungibilità  e Osservabilità
+%% Proprietï¿½ strutturali:
+% Verifica Raggiungibilitï¿½ e Osservabilitï¿½
 
-disp('Press any key to check proprietà strutturali:');
+disp('Press any key to check proprietï¿½ strutturali:');
 pause();
 
-disp('Verifica Raggiungibilità . Rango della matrice P:')
+disp('Verifica Raggiungibilitï¿½. Rango della matrice P:')
 if (rank(ctrb(A,B))==size(A,1))
     disp('Sistema raggiungibile');
 else
@@ -120,7 +120,7 @@ end
 disp(rank(ctrb(A,B)));
 
 
-disp('Verifica osservabilità . Rango della matrice Q:')
+disp('Verifica osservabilitï¿½. Rango della matrice Q:')
 if (rank(obsv(A,Clocal))==size(A,1))
     disp('Sistema osservabile');
 else    
@@ -131,7 +131,7 @@ disp(rank(obsv(A,Clocal)));
 pause();
 clc;
 
-%% Il sys non è osservabile. 
+%% Il sys non ï¿½ osservabile. 
 % Definiamo il sottosistema osservabile e raggiungibile
 disp('Semplificazione del modello');
 disp('Press any key to continue.');
@@ -164,10 +164,10 @@ ClocalMin = [
 statesMin = {'ze','vze','phi','theta','psi','wxb','wyb','wzb'};
 
 tenzoMin=ss(AMin,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal)
-%% Proprietà  strutturali:
-% Verifica Raggiungibilità  e Osservabilità
+%% Proprietï¿½ strutturali:
+% Verifica Raggiungibilitï¿½ e Osservabilitï¿½
 
-disp('Verifica raggiungibilà : rank([A-gI,B]) : per tutti g € spec(A)')
+disp('Verifica raggiungibilï¿½: rank([A-gI,B]) : per tutti g ï¿½ spec(A)')
 if (rank(ctrb(AMin,BMin))==size(AMin,1))
     disp('Sistema raggiungibile');
     disp(rank(ctrb(AMin,BMin)));
@@ -175,7 +175,7 @@ else
     disp('Sistema Irraggiungibile');
 end
 
-disp('Verifica osservabilità . Rango della matrice Q:')
+disp('Verifica osservabilitï¿½. Rango della matrice Q:')
 if (rank(obsv(AMin,ClocalMin))==size(AMin,1))
     disp('Sistema osservabile');
 else    
@@ -227,7 +227,7 @@ step(tenzoLQR);
 
 %% Simulazione
 
-refs=[-3 0 25 25 45 0 0 0 ]; 
+refs=[-3 0 0 0 45 0 0 0 ]; 
 tc=0.436;
 X0c = 3000;
 dz1=1247.4;
