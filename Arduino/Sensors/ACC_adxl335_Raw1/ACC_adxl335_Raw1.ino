@@ -64,7 +64,6 @@ void loop()
   float xAccel = xScaled / 1000.0;
   float yAccel = yScaled / 1000.0;
   float zAccel = zScaled / 1000.0;
-  
 
   //Output the caculations
   Serial.print("xG: ");
