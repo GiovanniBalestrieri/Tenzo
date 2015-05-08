@@ -128,3 +128,11 @@ shading flat
 xlabel('x')
 ylabel('y')
 zlabel('z')
+
+%% TEst
+fig = figure;
+[X,Y] = meshgrid(-8:.5:8);
+R = sqrt(X.^2 + Y.^2) + eps;
+Z = sin(R)./R;
+surf(Z)
+p = fig2plotly(fig);
