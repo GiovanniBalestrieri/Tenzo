@@ -774,6 +774,10 @@ void serialRoutine()
       initialize();
       Serial.println("initialize");
     }
+    if (modeS == 'b')
+    {    
+      printBlue = !printBlue;
+    }
     if (modeS == 'L')
     {
       Serial.println(" Land ");

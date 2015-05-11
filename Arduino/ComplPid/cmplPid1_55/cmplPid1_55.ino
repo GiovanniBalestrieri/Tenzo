@@ -30,12 +30,12 @@
 boolean printBlue = false;
 boolean processing = false;
 boolean printMotorsVals = false;
-boolean printPIDVals = true;
+boolean printPIDVals = false;
 boolean printSerialInfo = false;
 boolean printSerial = false;
 boolean printTimers = true;
 boolean printAccs = false;
-boolean printOmegas = true;
+boolean printOmegas = false;
 
 byte modeS;
 
@@ -79,7 +79,7 @@ int maxTest = 1300, minTest = 700;
 /** 
  ** Control
  **/
-float Kmy = 1, Kw = 1;
+float Kmy = 1, Kw = 3.7;
 //float OutputRoll = 0, OutputPitch = 0, OutputYaw = 0, OutputAlt = 0;
 /**
  * Pid Controller 
@@ -116,7 +116,6 @@ double OutputPitch = 0;
 double OutputYaw = 0;
 double OutputAltitude = 0;
 
-
 double OutputWRoll = 0;
 double OutputWPitch = 0;
 double OutputWYaw = 0;
@@ -139,7 +138,7 @@ double consKpYaw=0.3, consKiYaw=0, consKdYaw=0.0;
 
 // W Roll
 float aggKpWRoll=0.10, aggKiWRoll=0.06, aggKdWRoll=0.04;
-float consKpWRoll=0.1500, consKiWRoll=0.14, consKdWRoll=0.00025;
+float consKpWRoll=0.1815, consKiWRoll=0.17, consKdWRoll=0.00;
 float farKpWRoll=0.05, farKiWRoll=0.09, farKdWRoll=0.03;
 
 // W Pitch
@@ -771,28 +770,23 @@ void serialRoutine()
     char modeS = Serial.read(); 
     
     if (modeS == 'a')
-    {    
+    {
       initialize();
       Serial.println("initialize");
     }
     if (modeS == 'b')
-    { 
-      // Enable Bluetooth communication
+    {
       printBlue = !printBlue;
     }
     if (modeS == 'L')
     {
       Serial.println(" Land ");
     }
-    if (modeS == 'p')
-    {
-      Serial.println(" Pid ");
-    }
     if (modeS == 't')
     {
       Serial.println("o,12,1,-4,");
     }
-    if (modeS == 's')
+    if (modeS == 'p')
     {
       enablePid = !enablePid;
       changePidState(enablePid);
@@ -825,12 +819,6 @@ void serialRoutine()
       land();
     }
     
-    /*
-    if (modeS == 'a')
-    {
-      //Serial.print('b');      
-      initialize();
-    }
     else if (modeS == 'w')
     {
       if (throttle>thresholdDown)
@@ -860,7 +848,7 @@ void serialRoutine()
         throttle = throttle - 1;
       }
     }
-
+/*
     if (modeS == 'p')
     {
       changePidState(true);
@@ -870,24 +858,6 @@ void serialRoutine()
     {
       changePidState(false);
       enablePid = false;
-    }
-
-    if (modeS== '1')
-    {
-      Serial.println("M1");
-      testMotor(1);
-    }
-    else if (modeS== '2')
-    {
-      testMotor(2);
-    }
-    else if (modeS== '3')
-    {
-      testMotor(3);
-    }
-    else if (modeS== '4')
-    {
-      testMotor(4);
     }
     else if(modeS == 'L')
     {        
@@ -907,6 +877,14 @@ void serialRoutine()
     else if (modeS == 't')
     {
       printTimers = !printTimers; 
+    }
+    else if (modeS == 'x')
+    {
+      printAccs = !printAccs; 
+    }
+    else if (modeS == 'y')
+    {
+      printOmegas = !printOmegas; 
     }
     
   }
@@ -941,7 +919,7 @@ void serialRoutine()
   {      
     kMRoutine = micros();    
     count += 1;
-    if (count >= 20)
+    if (count >= 1)
     {
       count = 0;
       
@@ -982,6 +960,7 @@ void getGyroValues()
 
   byte yMSB = readRegister(L3G4200D_Address, 0x2B);
   byte yLSB = readRegister(L3G4200D_Address, 0x2A);
+  
   y = ((yMSB << 8) | yLSB);
 
   byte zMSB = readRegister(L3G4200D_Address, 0x2D);
@@ -1424,8 +1403,10 @@ void control()
 
 void controlW()
 {
+      //Serial.println("K1");
   if (enablePid)
   {
+      //Serial.println("K2");
     // Roll W PID
     if (enableWRollPid)
     {
