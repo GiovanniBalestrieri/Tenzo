@@ -36,16 +36,21 @@ boolean printSerial = false;
 boolean printTimers = true;
 boolean printAccs = false;
 boolean printOmegas = false;
+boolean sendBlueAngle = false;
 
 /**
  * Modes
  */
-boolean connAck = false;
-boolean hovering = false;
-boolean landed = false;
-boolean tracking = false;
-boolean warning = false;
+int connAck = 0;
+int takeOff = 0;
+int hovering = 0;
+int landed = 1;
+int tracking = 0;
+int warning = 0;
+
 byte modeS;
+
+boolean statusChange = false; // remove
 
 /**
  * VTOL settings
@@ -492,6 +497,10 @@ void land()
     initialized = false;
     //Serial.print("   finished");
     landing = false;
+    // updateStates
+    landed=1;
+    takeOff=0;
+    hovering=0;
   }
   else
   {
@@ -610,7 +619,6 @@ void initialize()
     for (int j=700; j<rampTill; j++)
     {
       motorSpeedPID(j, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
-      //motorSpeed(j);
       //if (!processing)
       if (!printBlue)
         Serial.println(j);
@@ -630,6 +638,10 @@ void initialize()
     checkpoint = millis();
     initialized = true;    
     initializing = false;
+    // updateStates
+    takeOff = 1;
+    landed = 0;
+    hovering = 1;
   }
   else
   {
@@ -771,6 +783,24 @@ void aFilter(volatile float val[])
   val[2] = (1-alphaA)*aaz + alphaW*val[2];
 }
 
+void sendStatus()
+{
+  if (connAck && printBlue)
+  {
+    Serial.print("s,");
+    Serial.print(takeOff);
+    Serial.print(",");
+    Serial.print(landed);
+    Serial.print(",");
+    if (enablePid)
+       Serial.print(1);
+    else if (!enablePid)  
+       Serial.print(0);      
+    Serial.print(",");
+    Serial.println(warning);    
+  }
+}
+
 void serialRoutine()
 {  
   if (Serial.available())
@@ -784,7 +814,14 @@ void serialRoutine()
     }
     if (modeS == 'b')
     {
-      printBlue = !printBlue;
+      Serial.println('K');   
+    }    
+    if (modeS == 'K')
+    {
+      connAck = 1;
+      printBlue = true;
+      Serial.println('Connection established');      
+      sendStatus();
     }
     if (modeS == 'L')
     {
@@ -792,7 +829,7 @@ void serialRoutine()
     }
     if (modeS == 't')
     {
-      Serial.println("o,12,1,-4,");
+      sendBlueAngle = !sendBlueAngle;
     }
     if (modeS == 'p')
     {
@@ -941,7 +978,7 @@ void serialRoutine()
       {
         printSerialAngle();
       }
-      if (printBlue)
+      if (printBlue && sendBlueAngle)
         printSerialAngleBlue();
       if (printAccs)
         printAcc();
