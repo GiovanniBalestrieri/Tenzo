@@ -1,5 +1,3 @@
-Time Diff, Data, meas
-
 2574,494,ACC1X
 2577,519,ACC1Y
 2577,603,ACC1Z
