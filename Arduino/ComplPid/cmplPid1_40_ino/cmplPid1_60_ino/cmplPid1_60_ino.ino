@@ -36,15 +36,8 @@ boolean printSerial = false;
 boolean printTimers = true;
 boolean printAccs = false;
 boolean printOmegas = false;
+boolean printAnglesEst = false;
 
-/**
- * Modes
- */
-boolean connAck = false;
-boolean hovering = false;
-boolean landed = false;
-boolean tracking = false;
-boolean warning = false;
 byte modeS;
 
 /**
@@ -95,10 +88,10 @@ float Kmy = 1, Kw = 3.7;
 boolean autoEnablePid = true;
 boolean enablePid = false;
 boolean enableRollPid = false;
-boolean enablePitchPid = false;
+boolean enablePitchPid = false; //
 boolean enableYawPid = false;
-boolean enableWRollPid = true;
-boolean enableWPitchPid = false;
+boolean enableWRollPid = false;
+boolean enableWPitchPid = true; //
 boolean enableWYawPid = false;
 boolean enableAltitudePid = false;
 
@@ -132,7 +125,8 @@ double OutputWYaw = 0;
 
 // Angle Roll
 float aggKpRoll=0.10, aggKiRoll=0.06, aggKdRoll=0.04;
-float consKpRoll=0.26, consKiRoll=0.09, consKdRoll=0.03;
+//float consKpRoll=0.26, consKiRoll=0.09, consKdRoll=0.03;
+float consKpRoll=0.16, consKiRoll=0.0, consKdRoll=0.03;
 float farKpRoll=0.05, farKiRoll=0.09, farKdRoll=0.03;
 
 // Angle Pitch
@@ -747,6 +741,10 @@ void calcAngle() //ISR
     angleXAcc = (atan2(-aax,aaz)) * RAD_TO_DEG;
     angleYAcc = (atan2(aay,aaz)) * RAD_TO_DEG;
   }
+  
+  ///  ADDED
+  //angleXAcc = -angleXAcc;
+  
   k=micros();  
 }
 
@@ -778,13 +776,9 @@ void serialRoutine()
     char modeS = Serial.read(); 
     
     if (modeS == 'a')
-    {
+    {    
       initialize();
       Serial.println("initialize");
-    }
-    if (modeS == 'b')
-    {
-      printBlue = !printBlue;
     }
     if (modeS == 'L')
     {
@@ -856,6 +850,10 @@ void serialRoutine()
         throttle = throttle - 1;
       }
     }
+    else if (modeS == 'j')
+    {
+      printAnglesEst= !printAnglesEst;
+    }
 /*
     if (modeS == 'p')
     {
@@ -894,7 +892,6 @@ void serialRoutine()
     {
       printOmegas = !printOmegas; 
     }
-    
   }
 
   timerSec = micros()-secRoutine;
@@ -914,9 +911,9 @@ void serialRoutine()
       Serial.println(servoTime);
       Serial.println();
     }
-    cont=0;      
-    contSamples=0;      
-    contCalc=0; 
+    cont=0;
+    contSamples=0;
+    contCalc=0;
     countCtrlAction=0;
   }
 
@@ -931,28 +928,39 @@ void serialRoutine()
     {
       count = 0;
       
-  //control();  
-  controlW();
-  
-  //servoTime = micros();
-  motorSpeedPID(throttle, OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
-  //servoTime = micros() - servoTime;
-      if (processing && printSerial)
-      {
-        printSerialAngle();
-      }
-      if (printBlue)
-        printSerialAngleBlue();
-      if (printAccs)
-        printAcc();
-      if (printOmegas)
-         printOmega();
-      //if (printTimers)
-        // printT();
-      if (printPIDVals)
-        printPidValues();
-      if (printMotorsVals)
-        printMotorsValues();
+    control();  
+    //controlW();
+    
+    //servoTime = micros();
+    motorSpeedPID(throttle, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
+    //motorSpeedPID(throttle, OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
+    //servoTime = micros() - servoTime;
+    
+    if (processing && printSerial)
+    {
+      printSerialAngle();
+    }
+    if (printAnglesEst)
+    {
+      printSerialAngleOnly();
+    }
+    if (printBlue)
+      printSerialAngleBlue();
+      
+    if (printAccs)
+      printAcc();
+      
+    if (printOmegas)
+       printOmega();
+       
+    //if (printTimers)
+      // printT();
+      
+    if (printPIDVals)
+      printPidValues();
+      
+    if (printMotorsVals)
+      printMotorsValues();      
     }
   }
 }
@@ -970,6 +978,8 @@ void getGyroValues()
   byte yLSB = readRegister(L3G4200D_Address, 0x2A);
   
   y = ((yMSB << 8) | yLSB);
+  //if ((yCand - y) < thresold1) //diff btw succ values
+  //y = yCand
 
   byte zMSB = readRegister(L3G4200D_Address, 0x2D);
   byte zLSB = readRegister(L3G4200D_Address, 0x2C);
@@ -1058,6 +1068,32 @@ void printSerialAngleBlue()
   Serial.print(",");
   Serial.print(bearing1);
   Serial.println(",");
+ }
+}
+
+void printSerialAngleOnly()
+{
+  if (!printBlue)
+ { 
+   /*
+  Serial.print(phi);
+  Serial.print(",");
+  Serial.print(theta);
+  Serial.print(",");
+  Serial.print(psi);
+  Serial.print(",");
+  Serial.print(angleXAcc);
+  Serial.print(",");
+  Serial.print(angleYAcc);
+  Serial.print(",");
+  */
+  Serial.print(estXAngle);
+  Serial.print("     ,        ");
+  Serial.println(estYAngle);
+  /*
+  Serial.print(",");
+  Serial.println(bearing1);
+  */
  }
 }
 
@@ -1272,10 +1308,9 @@ void control()
     // Roll PID
     if (enableRollPid)
     {
-      //Serial.println("    ZAK ");
-      InputRoll = estXAngle;
-      //Serial.println("    ZAK ");
-      errorRoll = abs(SetpointRoll - estXAngle); //distance away from setpoint
+      InputRoll = estYAngle;
+      //errorRoll = abs(SetpointRoll - estXAngle); 
+      errorRoll = abs(SetpointRoll - estYAngle); 
       //if(errorRoll<thresholdRoll)
       //{  //we're close to setpoint, use conservative tuning parameters
       myRollPID.SetTunings(Kmy*consKpRoll, Kmy*consKiRoll, Kmy*consKdRoll);
@@ -1309,7 +1344,7 @@ void control()
     else
     {
       Serial.println();
-      Serial.println("SS");
+      Serial.println("Roll Disabled");
       Serial.println();
       OutputRoll = 0;
     }
@@ -1317,8 +1352,8 @@ void control()
     // Pitch PID1
     if (enablePitchPid)
     {
-      InputPitch = estYAngle;
-      errorPitch = abs(SetpointPitch - estYAngle); //distance away from setpoint
+      InputPitch = estXAngle;
+      errorPitch = abs(SetpointPitch - InputPitch); //distance away from setpoint
 
       //if (errorPitch<thresholdPitch)
       //{  //we're close to setpoint, use conservative tuning parameters
@@ -1350,7 +1385,7 @@ void control()
     else
     {
       Serial.println();
-      Serial.println("SS");
+      Serial.println("Pitch Disabled");
       Serial.println();
       OutputPitch = 0;
     }
@@ -1418,8 +1453,8 @@ void controlW()
     // Roll W PID
     if (enableWRollPid)
     {
-      InputWRoll = y;
-      errorWRoll = abs(SetpointWRoll - y); 
+      InputWRoll = x;
+      errorWRoll = abs(SetpointWRoll - x); 
 
       wRollPID.SetTunings(Kw*consKpWRoll, Kw*consKiWRoll, Kw*consKdWRoll);
 
@@ -1433,8 +1468,8 @@ void controlW()
     // Pitch PID1
     if (enablePitchPid)
     {
-      InputWPitch = x;
-      errorWPitch = abs(SetpointWPitch - x);
+      InputWPitch = y;
+      errorWPitch = abs(SetpointWPitch - y);
 
       wPitchPID.SetTunings(Kw*consKpWPitch, Kw*consKiWPitch, Kw*consKdWPitch);
 
@@ -1492,16 +1527,16 @@ void printPidValues()
     //        Serial.print(InputWRoll);
     Serial.print("     ErrWR:  ");
     Serial.print(errorWRoll);
-    Serial.print(" RW PID:  ");
+    Serial.print(" R W PID:  ");
     Serial.print(OutputWRoll);
     Serial.println();
   }  
   
   if (enableWPitchPid && !printBlue)
   { 
-    Serial.print(" Omega err: ");
+    Serial.print(" ErrWP: ");
     Serial.print(errorWPitch);
-    Serial.print(" Omega Pid:");
+    Serial.print(" P W Pid:");
     Serial.print(OutputWPitch);
     Serial.println();
   }
@@ -1512,6 +1547,33 @@ void printPidValues()
      Serial.print(errorWYaw);
      Serial.print(" YWpid: ");
      Serial.print(OutputWYaw);
+     Serial.println();
+  }  
+  if (enableRollPid && !printBlue)
+  {
+    Serial.println();
+    Serial.print("     ErrR:  ");
+    Serial.print(errorRoll);
+    Serial.print(" R PID:  ");
+    Serial.print(OutputRoll);
+    Serial.println();
+  }  
+  
+  if (enablePitchPid && !printBlue)
+  { 
+    Serial.print(" ErrP: ");
+    Serial.print(errorPitch);
+    Serial.print(" P PID:");
+    Serial.print(OutputPitch);
+    Serial.println();
+  }
+  
+  if (enableYawPid &&  !printBlue)
+  {
+     Serial.print(" ErrY: ");
+     Serial.print(errorYaw);
+     Serial.print(" Y  PID: ");
+     Serial.print(OutputYaw);
      Serial.println();
   }  
 }
