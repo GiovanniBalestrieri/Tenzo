@@ -373,8 +373,12 @@ disp('Filtered values are stored in Accfiltered3(i,:) for i=1=xAxis, i=2=yAxis, 
 clc;
 disp('Angle estimation: Roll and Pitch');
 
+% TODO - Fix signs
 for i=1:numberOfAccSamples-1
     angleAcc(1:i) = (atan2(Accfiltered3(1,i),Accfiltered3(3,i))) * RAD_TO_DEG;
     angleAcc(2,i) = (atan2(Accfiltered3(2,i),Accfiltered3(3,i))) * RAD_TO_DEG; 
 end
-plot(time,angleAcc(1
+plot(time,angleAcc(1,:));
+figure
+plot(time,angleAcc(2,:));
+
