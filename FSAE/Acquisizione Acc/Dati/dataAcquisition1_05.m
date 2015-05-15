@@ -315,8 +315,50 @@ plot(time,Accfiltered2(1,:),'g-','LineWidth',2);
 hold on
 % Plots cf = 0.3 Matlab filtered order 30
 plot(time,Accfiltered3(1,:),'c-','LineWidth',2);
-title('Filter Comparison');
-xlabel('Samples [us]');
+title('X Axis - Filter Comparison');
+xlabel('Samples');
+ylabel('Amplitude [m*s^-2]');
+grid on
+grid minor
+
+figure(8)
+% Plots Raw acc data
+plot(time,accReal(2,:),'k');
+hold on
+% Arduino digital filter
+%plot(dat.time,dat.y,'b','LineWidth',2);
+%hold on
+% Matlab filter
+plot(time,Accfiltered(2,:),'r','LineWidth',2);
+hold on
+% Plots cF = 0.10 Matlab filtered, order 3
+plot(time,Accfiltered2(2,:),'g-','LineWidth',2);
+hold on
+% Plots cf = 0.3 Matlab filtered order 30
+plot(time,Accfiltered3(2,:),'c-','LineWidth',2);
+title('Y Axis - Filter Comparison');
+xlabel('Samples');
+ylabel('Amplitude [m*s^-2]');
+grid on
+grid minor
+
+figure(9)
+% Plots Raw acc data
+plot(time,accReal(3,:),'k');
+hold on
+% Arduino digital filter
+%plot(dat.time,dat.y,'b','LineWidth',2);
+%hold on
+% Matlab filter
+plot(time,Accfiltered(3,:),'r','LineWidth',2);
+hold on
+% Plots cF = 0.10 Matlab filtered, order 3
+plot(time,Accfiltered2(3,:),'g-','LineWidth',2);
+hold on
+% Plots cf = 0.3 Matlab filtered order 30
+plot(time,Accfiltered3(3,:),'c-','LineWidth',2);
+title('Z Axis - Filter Comparison');
+xlabel('Samples');
 ylabel('Amplitude [m*s^-2]');
 grid on
 grid minor
