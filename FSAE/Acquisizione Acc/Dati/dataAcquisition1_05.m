@@ -14,6 +14,10 @@ yRawMax = 268;
 zRawMin = 401;
 zRawMax = 269;
 
+RAD_TO_DEG = 180/pi;
+
+%% Data acquisition
+
 fid = fopen('DATA0001.csv');
 M = textscan(fid,'%f%f%s','delimiter',',');
 disp('Data acquisition completed.');
@@ -142,10 +146,10 @@ pause();
 
 % X Axis
 mags(1,:)=abs(fft(accReal(1,:)));
-% figure(3)
-% plot(X_mags);
-% xlabel('DFT Bins');
-% ylabel('Magnitude');
+figure(3)
+plot(X_mags);
+xlabel('DFT Bins');
+ylabel('Magnitude');
 
 % Plots first half of DFT (normalized frequency)
 figure(3)
@@ -270,7 +274,7 @@ H2 = freqz(b2,a2,floor(num_bins/2));
 figure;
 hold on
 plot([0:1/(num_bins/2 -1):1], abs(H2), 'r');
-%filter the noisy signal
+%filter the noisy signald
 Accfiltered3(1,:) = filter(b3,a3,accReal(1,:));
 Accfiltered3(2,:) = filter(b3,a3,accReal(2,:));
 Accfiltered3(3,:) = filter(b3,a3,accReal(3,:));
@@ -365,4 +369,16 @@ grid minor
 
 disp('Filtered values are stored in Accfiltered3(i,:) for i=1=xAxis, i=2=yAxis, i=3=zAxis');
 
+%% Angle estimation 
+clc;
+disp('Angle estimation: Roll and Pitch');
+
+% TODO - Fix signs
+for i=1:numberOfAccSamples-1
+    angleAcc(1:i) = (atan2(Accfiltered3(1,i),Accfiltered3(3,i))) * RAD_TO_DEG;
+    angleAcc(2,i) = (atan2(Accfiltered3(2,i),Accfiltered3(3,i))) * RAD_TO_DEG; 
+end
+plot(time,angleAcc(1,:));
+figure
+plot(time,angleAcc(2,:));
 

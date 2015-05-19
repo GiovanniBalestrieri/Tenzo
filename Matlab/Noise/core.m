@@ -48,7 +48,7 @@ esp=1./(2*(variances).^2);
 for i=1:1:N
     disp('step:')
     disp(i)
-    Xci=Xcenters(i,1)*ones(e(XMax-XMin)/stepMesh+1,((XMax-XMin)/stepMesh+1)*2);
+    Xci=Xcenters(i,1)*ones((XMax-XMin)/stepMesh+1,((XMax-XMin)/stepMesh+1)*2);
     Yci=Ycenters(i,1)*ones((YMax-YMin)/stepMesh+1,((YMax-YMin)/stepMesh+1)*2);
     disp('Radial Basis Function: [amplitude,variance,center]');
     disp(amplitudes(i,1))
