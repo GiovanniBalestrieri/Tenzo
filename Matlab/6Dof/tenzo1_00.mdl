@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.372"
+    ComputedModelVersion    "1.374"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Apr 15 17:23:40 2015"
-  RTWModifiedTimeStamp	  351015464
-  ModelVersionFormat	  "1.%<AutoIncrement:372>"
+  LastModifiedDate	  "Tue May 19 15:40:09 2015"
+  RTWModifiedTimeStamp	  353950801
+  ModelVersionFormat	  "1.%<AutoIncrement:374>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,6 +78,7 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "tenzo1_00"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -3918,7 +3919,7 @@ Model {
 	  Name			  "T*toW"
 	  SID			  "541"
 	  Ports			  [4, 4]
-	  Position		  [215, 36, 285, 84]
+	  Position		  [170, 36, 240, 84]
 	  ZOrder		  -4
 	  LibraryVersion	  "1.32"
 	  ErrorFcn		  "Stateflow.Translate.translate"
@@ -4804,7 +4805,7 @@ Model {
 	Line {
 	  SrcBlock		  "T*toW"
 	  SrcPort		  1
-	  Points		  [5, 0]
+	  Points		  [50, 0]
 	  DstBlock		  "Mux3"
 	  DstPort		  1
 	}
@@ -4817,14 +4818,14 @@ Model {
 	Line {
 	  SrcBlock		  "T*toW"
 	  SrcPort		  3
-	  Points		  [5, 0]
+	  Points		  [50, 0]
 	  DstBlock		  "Mux3"
 	  DstPort		  3
 	}
 	Line {
 	  SrcBlock		  "T*toW"
 	  SrcPort		  4
-	  Points		  [5, 0]
+	  Points		  [50, 0]
 	  DstBlock		  "Mux3"
 	  DstPort		  4
 	}
@@ -6193,7 +6194,7 @@ Model {
 	  System {
 	    Name		    "Linear"
 	    Location		    [709, 79, 1365, 768]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -9309,7 +9310,7 @@ Model {
 	  Name			  "Thrust"
 	  SID			  "243"
 	  Ports			  [3]
-	  Position		  [425, 214, 455, 246]
+	  Position		  [420, 214, 450, 246]
 	  ZOrder		  -16
 	  Floating		  off
 	  Location		  [54, 53, 1367, 767]
@@ -9798,8 +9799,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @         P ,(0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (        & !RN4 .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @          (8(0 X    X    !@    @    &          4    (     0    $    "
+    "!          D    (         #2PA$ .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag2
@@ -9926,8 +9927,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @         P ,(0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (        (  ?LD .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @          (8(0 X    X    !@    @    &          4    (     0    $    "
+    "!          D    (         .!\"&$ .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0
