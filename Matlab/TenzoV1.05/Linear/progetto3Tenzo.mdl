@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.40"
+    ComputedModelVersion    "1.42"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue May 19 15:47:35 2015"
-  RTWModifiedTimeStamp	  353950757
-  ModelVersionFormat	  "1.%<AutoIncrement:40>"
+  LastModifiedDate	  "Tue May 19 19:03:09 2015"
+  RTWModifiedTimeStamp	  353960453
+  ModelVersionFormat	  "1.%<AutoIncrement:42>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -833,7 +833,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "87"
+    SIDHighWatermark	    "102"
     Block {
       BlockType		      Gain
       Name		      "F1"
@@ -1140,7 +1140,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 23, 525, 77]
 	  Floating		  off
-	  Location		  [251, 91, 1271, 602]
+	  Location		  [241, 91, 1261, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1363,7 +1363,7 @@ Model {
       Ports		      [1]
       Position		      [870, 359, 900, 391]
       Floating		      off
-      Location		      [64, 81, 1084, 617]
+      Location		      [54, 91, 1074, 627]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1417,7 +1417,7 @@ Model {
       Name		      "To Workspace"
       SID		      "59"
       Ports		      [1]
-      Position		      [330, 20, 390, 50]
+      Position		      [345, 15, 405, 45]
       VariableName	      "simout"
       MaxDataPoints	      "inf"
       SampleTime	      "-1"
@@ -1810,6 +1810,36 @@ Model {
       LimitDataPoints	      off
       SampleTime	      "0"
     }
+    Block {
+      BlockType		      Scope
+      Name		      "uscite"
+      SID		      "88"
+      Ports		      [1]
+      Position		      [840, 44, 870, 76]
+      Floating		      off
+      Location		      [54, 91, 1074, 627]
+      Open		      off
+      NumInputPorts	      "1"
+      List {
+	ListType		AxesTitles
+	axes1			"%<SignalLabel>"
+      }
+      List {
+	ListType		ScopeGraphics
+	FigureColor		"[0.5 0.5 0.5]"
+	AxesColor		"[0 0 0]"
+	AxesTickColor		"[1 1 1]"
+	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	LineStyles		"-|-|-|-|-|-"
+	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+	MarkerStyles		"none|none|none|none|none|none"
+      }
+      ShowLegends	      off
+      SaveName		      "ScopeData2"
+      DataFormat	      "StructureWithTime"
+      LimitDataPoints	      off
+      SampleTime	      "0"
+    }
     Line {
       SrcBlock		      "riferimento \ncostante"
       SrcPort		      1
@@ -1841,8 +1871,16 @@ Model {
 	}
 	Branch {
 	  Labels		  [0, 0]
-	  DstBlock		  "Output"
-	  DstPort		  1
+	  Points		  [45, 0]
+	  Branch {
+	    DstBlock		    "Output"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 5; 10, 0; 0, -25]
+	    DstBlock		    "uscite"
+	    DstPort		    1
+	  }
 	}
       }
     }
@@ -1902,7 +1940,7 @@ Model {
       Branch {
 	Points			[0, -55; 25, 0]
 	Branch {
-	  Points		  [0, -30; 60, 0; 0, 25]
+	  Points		  [0, -30; 60, 0; 0, 20]
 	  DstBlock		  "To Workspace"
 	  DstPort		  1
 	}

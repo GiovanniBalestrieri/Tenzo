@@ -63,16 +63,14 @@ Kt=ct*rho*rp^4*pi();
 % Compute angular speed required to beat the gravitational force
 
 %Dead zone of the motor (PWM pulse-width in microseconds)
-PWMdz1 = 1256; 
-PWMdz2 = 1264; 
+PWMdz1 = 1256;
+PWMdz2 = 1264;
 PWMdz3 = 1256;
-PWMdz4 = 1256; 
-
-
+PWMdz4 = 1256;
 
 %Calculate the PWM pulse necessary to beat the force of gravity
 syms PWMg1 PWMg2 PWMg3 PWMg4
-PWMg1=solve((PWMg1-PWMdz1)^2-(1/4)*mq*g/(Kt*(k1^2)),PWMg1);
+PWMg1=solve((PWMg1-PWMdz1)^2-(1/4)*mq*g/(Kt),PWMg1);
 PWMg1=double(PWMg1);
 PWMg1=PWMg1(PWMg1>PWMdz1);
 PWMg2=solve((PWMg2-PWMdz2)^2-(1/4)*mq*g/(Kt*(k2^2)),PWMg2);

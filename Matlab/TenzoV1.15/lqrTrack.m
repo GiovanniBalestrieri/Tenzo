@@ -69,25 +69,26 @@ PWMdz3 = 1256;
 PWMdz4 = 1256;
 
 %Calculate the PWM pulse necessary to beat the force of gravity
-syms PWMg1 PWMg2 PWMg3 PWMg4
-PWMg1=solve((PWMg1-PWMdz1)^2-(1/4)*mq*g/(Kt*(k1^2)),PWMg1);
-PWMg1=double(PWMg1);
-PWMg1=PWMg1(PWMg1>PWMdz1);
-PWMg2=solve((PWMg2-PWMdz2)^2-(1/4)*mq*g/(Kt*(k2^2)),PWMg2);
-PWMg2=double(PWMg2);
-PWMg2=PWMg2(PWMg2>PWMdz2);
-PWMg3=solve((PWMg3-PWMdz3)^2-(1/4)*mq*g/(Kt*(k3^2)),PWMg3);
-PWMg3=double(PWMg3);
-PWMg3=PWMg3(PWMg3>PWMdz3);
-PWMg4=solve((PWMg4-PWMdz4)^2-(1/4)*mq*g/((Kt*k4^2)),PWMg4);
-PWMg4=double(PWMg4);
-PWMg4=PWMg4(PWMg4>PWMdz4);
+syms wg1 wg2 wg3 wg4
+wg1=solve((wg1-PWMdz1)^2-(1/4)*mq*g/Kt,wg1);
+wg1=double(wg1);
+wg1=wg1(wg1>PWMdz1);
+wg2=solve((wg2-PWMdz2)^2-(1/4)*mq*g/Kt,wg2);
+wg2=double(wg2);
+wg2=wg2(wg2>PWMdz2);
+wg3=solve((wg3-PWMdz3)^2-(1/4)*mq*g/Kt,wg3);
+wg3=double(wg3);
+wg3=wg3(wg3>PWMdz3);
+wg4=solve((wg4-PWMdz4)^2-(1/4)*mq*g/Kt,wg4);
+wg4=double(wg4);
+wg4=wg4(wg4>PWMdz4);
 
 
 %% State space system
 
 states = {'xe','ye','ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb'};
-A = [ 0 0 0 1 0 0 0 0 0 0 0 0;      0 0 0 0 1 0 0 0 0 0 0 0;
+A = [ 0 0 0 1 0 0 0 0 0 0 0 0;      
+      0 0 0 0 1 0 0 0 0 0 0 0;
       0 0 0 0 0 1 0 0 0 0 0 0;
       0 0 0 0 0 0 0 -g 0 0 0 0;
       0 0 0 0 0 0 g 0 0 0 0 0;
