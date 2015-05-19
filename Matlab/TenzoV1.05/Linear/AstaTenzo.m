@@ -173,7 +173,6 @@ pause;
 tenzoRetro=ss(A,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal);
 step(tenzoRetro);
 
-
 %% Proprietà strutturali:
 % Verifica Raggiungibilità e Osservabilità
 
@@ -285,7 +284,6 @@ Boss=[BMin-V*D V]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di 
 Coss=eye(size(AMin));
 Doss=zeros(size(Boss));
 
-
 disp('Autovalori A-V*C');
 disp(eig(AMin-V*ClocalMin));
 clc;
@@ -318,7 +316,7 @@ p=size(BMin,2);
 q=size(ClocalMin,1);
 
 % Definizione segnali esogeni
-alpha=3; omega=4; gamma1=0;
+alpha=3; omega=0.5; gamma1=0;
 k1=1; h1=1; h2=1; gamma2=complex(0,omega);
 
 disp('Definizione segnali esogeni');
