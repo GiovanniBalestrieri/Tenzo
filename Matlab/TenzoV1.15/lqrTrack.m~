@@ -45,11 +45,13 @@ II=diag([Ixx Iyy Izz]);
 
 
 % Thrust coefficient of the propeller and Power coefficient
-cp=0.0743; 
+% Refs: http://m-selig.ae.illinois.edu/props/plots/apcsf_9x4.7_cp.png
+cp=0.045;
+% Refs: http://m-selig.ae.illinois.edu/props/plots/apcsf_9x4.7_ct.png
 ct=0.1154;
 
-% Propeller radius (m)
-rp=25.4e-3; 
+% Propeller radius (m) 10" = 25.4e-3 9" = 22.6800
+rp=22.68e-2; 
 % Constant value to calculate the moment provided
 % by a propeller given its angular speed (kg.m^2.rad^-1)
 Km=cp*4*rho*rp^5/pi()^3; 
@@ -64,30 +66,48 @@ Kt=ct*rho*rp^4*pi();
 
 %Dead zone of the motor (PWM pulse-width in microseconds)
 PWMdz1 = 1256;
-PWMdz2 = 1264;
+PWMdz2 = 1256;
 PWMdz3 = 1256;
 PWMdz4 = 1256;
 
 %Calculate the PWM pulse necessary to beat the force of gravity
-syms PWMg1 PWMg2 PWMg3 PWMg4
-PWMg1=solve((PWMg1-PWMdz1)^2-(1/4)*mq*g/(Kt),PWMg1);
-PWMg1=double(PWMg1);
-PWMg1=PWMg1(PWMg1>PWMdz1);
-PWMg2=solve((PWMg2-PWMdz2)^2-(1/4)*mq*g/(Kt*(k2^2)),PWMg2);
-PWMg2=double(PWMg2);
-PWMg2=PWMg2(PWMg2>PWMdz2);
-PWMg3=solve((PWMg3-PWMdz3)^2-(1/4)*mq*g/(Kt*(k3^2)),PWMg3);
-PWMg3=double(PWMg3);
-PWMg3=PWMg3(PWMg3>PWMdz3);
-PWMg4=solve((PWMg4-PWMdz4)^2-(1/4)*mq*g/((Kt*k4^2)),PWMg4);
-PWMg4=double(PWMg4);
-PWMg4=PWMg4(PWMg4>PWMdz4);
+syms wg1 wg2 wg3 wg4
+% wg1=solve((wg1-PWMdz1)^2-(1/4)*mq*g/Kt,wg1);
+% wg1=double(wg1);
+% wg1=wg1(wg1>PWMdz1);
+% wg2=solve((wg2-PWMdz2)^2-(1/4)*mq*g/Kt,wg2);
+% wg2=double(wg2);
+% wg2=wg2(wg2>PWMdz2);
+% wg3=solve((wg3-PWMdz3)^2-(1/4)*mq*g/Kt,wg3);
+% wg3=double(wg3);
+% wg3=wg3(wg3>PWMdz3);
+% wg4=solve((wg4-PWMdz4)^2-(1/4)*mq*g/Kt,wg4);
+% wg4=double(wg4);
+% wg4=wg4(wg4>PWMdz4);
+
+
+wg1=double(solve((wg1)^2-(1/4)*mq*g/Kt,wg1));
+wg1=wg1(1,1);
+wg2=double(solve((wg2)^2-(1/4)*mq*g/Kt,wg2));
+wg2=wg2(1,1);
+wg3=double(solve((wg3)^2-(1/4)*mq*g/Kt,wg3));
+wg3=wg3(1,1);
+wg4=double(solve((wg4)^2-(1/4)*mq*g/Kt,wg4));
+wg4=wg4(1,1);
+
+disp('Angular Velocity required for hovering:');
+
+U0=[wg1;wg2;wg3;wg4]
 
 
 %% State space system
 
+% Dopo linearizzazione con punto di lavoro
+% (z=X,U=[1.3066e+03,1.3066e+03,1.3066e+03,1.3066e+03])
+
 states = {'xe','ye','ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb'};
-A = [ 0 0 0 1 0 0 0 0 0 0 0 0;      0 0 0 0 1 0 0 0 0 0 0 0;
+A = [ 0 0 0 1 0 0 0 0 0 0 0 0;      
+      0 0 0 0 1 0 0 0 0 0 0 0;
       0 0 0 0 0 1 0 0 0 0 0 0;
       0 0 0 0 0 0 0 -g 0 0 0 0;
       0 0 0 0 0 0 g 0 0 0 0 0;
@@ -283,7 +303,7 @@ w2=3100;
 w3=3100;
 w4=3100;
 
-sys = 'lqr_115';
+sys = 'lqr_120';
 open_system(sys)
 SimOut = sim(sys);
 
