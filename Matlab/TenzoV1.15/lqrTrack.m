@@ -1,5 +1,11 @@
 %% Variable declaration
 
+% Initial Conditions
+ze0=1;
+phi0 = 0;
+theta0 = 0;
+psi0 = 0;
+
 % Inflow coefficient
 If = -0.3559;
 
@@ -60,6 +66,9 @@ Km=cp*4*rho*rp^5/pi()^3;
 %Kt=ct*4*rho*rp^4/pi()^2; 
 Kt=ct*rho*rp^4*pi();
 
+% Constant that relates thrust and moment of a propeller.
+Ktm=Km/Kt;
+
 %% Preprocessing
 
 % Compute angular speed required to beat the gravitational force
@@ -98,6 +107,7 @@ wg4=wg4(1,1);
 disp('Angular Velocity required for hovering:');
 
 U0=[wg1;wg2;wg3;wg4]
+%U0=[0;0;0;0]
 
 
 %% State space system
@@ -163,6 +173,7 @@ disp(eOp);
 % Analisi risposta a gradino
 disp('Press any for Step Response:');
 pause;
+
 tenzoRetro=ss(A,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal);
 step(tenzoRetro);
 
@@ -271,24 +282,23 @@ clc;
 disp('Stabilizzazione mediante LQR dallo stato stimato');
 
 alphaK = 2;
-Qie = blkdiag([10 0 ;0 1],50*eye(3),eye(3));
+Qie = blkdiag([100 0 ;0 1],1*eye(3),eye(3));
 Q = eye(size(AMin));
-Rie = [0.01 0 0 0; 0 10 0 0; 0 0 10 0; 0 0 0 10];
+% [T,tx,ty,tz]
+Rie = [100000 0 0 0; 0 10000 0 0; 0 0 10000 0; 0 0 0 10000];
 R = eye(size(BMin,2));
 K = lqr(AMin,BMin,Qie,Rie);
 disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
 eig(AMin-BMin*K)
 
 disp('X');
-pause;
 
 tenzoLQR=ss(AMin-BMin*K,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 step(tenzoLQR);
 
-
 %% Simulazione
 
-refs=[-3 0 0 0 45 0 0 0 ]; 
+refs=[0 0 0 0 180 0 0 0 ]; 
 tc=0.436;
 X0c = 3000;
 dz1=1247.4;
@@ -303,7 +313,9 @@ w2=3100;
 w3=3100;
 w4=3100;
 
-sys = 'lqr_115';
+Knl = [-1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1];
+
+sys = 'lqr_120';
 open_system(sys)
 SimOut = sim(sys);
 
