@@ -15,14 +15,14 @@ float xRaw,yRaw,zRaw;
 float xAccel,yAccel,zAccel;
 
 // 3.3 V
-int xRawMin = 406;
-int xRawMax = 271;
- 
-int yRawMin = 401;
-int yRawMax = 266;
- 
-int zRawMin = 418;
-int zRawMax = 284;
+//int xRawMin = 406;
+//int xRawMax = 271;
+// 
+//int yRawMin = 401;
+//int yRawMax = 266;
+// 
+//int zRawMin = 418;
+//int zRawMax = 284;
 
 
 // 5 V
@@ -81,8 +81,8 @@ void scaleAccs()
 
 void calcAngle()
 {
-  angleXAcc = ((atan2(zAccel,yAccel)))* RAD_TO_DEG;
-  angleYAcc = ((atan2(zAccel,xAccel)))* RAD_TO_DEG;  
+  angleXAcc = ((atan2(-yAccel,-zAccel)))* RAD_TO_DEG;
+  angleYAcc = ((atan2(xAccel,-zAccel)))* RAD_TO_DEG;  
   
 //  angleXAcc = (atan2(xAccel,zAccel)) * RAD_TO_DEG;
 //  angleYAcc = (atan2(yAccel,zAccel)) * RAD_TO_DEG;  

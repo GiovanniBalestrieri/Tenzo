@@ -1,7 +1,7 @@
 %% Variable declaration
 
 % Initial Conditions
-ze0=1;
+ze0=0;
 phi0 = 0;
 theta0 = 0;
 psi0 = 0;
@@ -298,7 +298,7 @@ step(tenzoLQR);
 
 %% Simulazione
 
-refs=[0 0 0 0 180 0 0 0 ]; 
+refs=[0 0 0 0 0 0 0 0 ]; 
 tc=0.436;
 X0c = 3000;
 dz1=1247.4;

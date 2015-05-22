@@ -4,15 +4,25 @@
 % - Angle Estimation from acc values TODO
 
 %% Variable declaration
+% %3.3 V
+% xRawMin = 416;
+% xRawMax = 250;
+%  
+% yRawMin = 400;
+% yRawMax = 268;
+%  
+% zRawMin = 401;
+% zRawMax = 269;
 
-xRawMin = 416;
-xRawMax = 250;
+% 5 V
+xRawMin = 628;
+xRawMax = 404;
  
-yRawMin = 400;
-yRawMax = 268;
+yRawMin = 619;
+yRawMax = 398;
  
-zRawMin = 401;
-zRawMax = 269;
+zRawMin = 626;
+zRawMax = 426;
 
 RAD_TO_DEG = 180/pi;
 
@@ -147,7 +157,7 @@ pause();
 % X Axis
 mags(1,:)=abs(fft(accReal(1,:)));
 figure(3)
-plot(X_mags);
+plot(mags(1,:));
 xlabel('DFT Bins');
 ylabel('Magnitude');
 
