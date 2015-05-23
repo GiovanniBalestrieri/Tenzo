@@ -931,7 +931,6 @@ void serialRoutine()
     {
       printOmegas = !printOmegas; 
     }
-    
   }
 
   timerSec = micros()-secRoutine;
@@ -1103,16 +1102,6 @@ void removeBias()
   x = (x - bx)*scale2000/1000;
   y = (y - by)*scale2000/1000;
   z = (z - bz)*scale2000/1000;
-
-  /*
- Serial.println();
-   Serial.print(x-bx);
-   Serial.print("  ");
-   Serial.print(y-by);
-   Serial.print("  ");
-   Serial.print(z-bz);
-   Serial.println();
-   */
 } 
 
 void calcBias()
