@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.72"
+    ComputedModelVersion    "1.73"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri May 22 17:08:45 2015"
-  RTWModifiedTimeStamp	  354212976
-  ModelVersionFormat	  "1.%<AutoIncrement:72>"
+  LastModifiedDate	  "Wed May 27 16:46:26 2015"
+  RTWModifiedTimeStamp	  354645980
+  ModelVersionFormat	  "1.%<AutoIncrement:73>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,7 +78,6 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "lqr_115"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -924,7 +923,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "214"
+    SIDHighWatermark	    "216"
     Block {
       BlockType		      SubSystem
       Name		      "C"
@@ -1271,7 +1270,7 @@ Model {
       System {
 	Name			"Output1"
 	Location		[491, 79, 1366, 768]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3252,7 +3251,7 @@ Model {
       System {
 	Name			"Tenzo NL"
 	Location		[53, 51, 1366, 768]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3486,6 +3485,22 @@ Model {
 	  Position		  [840, 193, 905, 217]
 	  ZOrder		  -10
 	  GotoTag		  "Vbi"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto2"
+	  SID			  "215"
+	  Position		  [1230, 18, 1295, 42]
+	  ZOrder		  -10
+	  GotoTag		  "xe"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto3"
+	  SID			  "216"
+	  Position		  [1230, 73, 1295, 97]
+	  ZOrder		  -10
+	  GotoTag		  "ye"
 	}
 	Block {
 	  BlockType		  Gain
@@ -3916,14 +3931,30 @@ Model {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Demux3"
 	  SrcPort		  1
-	  DstBlock		  "Mux1"
-	  DstPort		  1
+	  Points		  [5, 0]
+	  Branch {
+	    DstBlock		    "Mux1"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -65]
+	    DstBlock		    "Goto2"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "Demux3"
 	  SrcPort		  2
-	  DstBlock		  "Mux1"
-	  DstPort		  2
+	  Points		  [15, 0]
+	  Branch {
+	    DstBlock		    "Mux1"
+	    DstPort		    2
+	  }
+	  Branch {
+	    Points		    [0, -30]
+	    DstBlock		    "Goto3"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "Demux3"
@@ -4895,8 +4926,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @         !H!U0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (        @ :0>$ .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       !  /\"/0 X    X    !@    @    &          4    (     0    $   "
+    " !          D    (        8 \"\\D$ .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0
