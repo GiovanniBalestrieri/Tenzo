@@ -36,3 +36,29 @@ for j=0:n
        hold on
     end
 end
+
+%% Pondichéry 2014
+
+z0 = sqrt(3)-i;
+n = 10;
+raison=1+i
+p=input('Insert p',s)
+while (zn<=p)
+    if j==0
+       zn1=z0; 
+    else
+       disp(j);
+       zn1=raison*zn1;
+       realZn = real(zn1)
+       imgZn = imag(zn1)
+       figure(1)
+       plot(realZn,imgZn,'rx','LineWidth',10);       
+       str1 = ['Z',num2str(j)];
+       text(realZn+realZn/10,imgZn+imgZn/10,str1)
+       rn=abs(zn1)
+       if (rn>p)
+       figure(2)
+       plot(j,rn,'rx','LineWidth',10);
+       hold on
+    end
+end
