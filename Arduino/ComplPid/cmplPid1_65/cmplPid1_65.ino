@@ -289,6 +289,9 @@ SoftwareSerial blu(pinRx, pinTx);
 byte loBytew1, hiBytew1,loBytew2, hiBytew2;
 int loWord,hiWord;
 
+int printBlueAngleCounter = 0
+int printBlueAngleSkip = 20;
+
 // Serial Protocol
 int versionArduinoProtocol = 6;
 boolean matlab = false;
@@ -801,6 +804,11 @@ void sendStatus()
   }
 }
 
+void resetStatus()
+{
+  sendBlueAngle = false;
+}
+
 void serialRoutine()
 {  
   if (Serial.available())
@@ -819,9 +827,11 @@ void serialRoutine()
     if (modeS == 'K')
     {
       connAck = 1;
-      printBlue = true;
-      //Serial.println('A');     
+      printBlue = true; 
+      // Send Tenzo Status to mobile app
       sendStatus();
+      // Set sendBlueAngle to false
+      resetStatus();
     }
     if (modeS == 'L')
     {
@@ -830,8 +840,7 @@ void serialRoutine()
     if (modeS == 't')
     {
       sendBlueAngle = !sendBlueAngle;
-      Serial.println('A');  
-      
+      Serial.println('A');      
     }
     if (modeS == 'p')
     {
@@ -969,12 +978,12 @@ void serialRoutine()
     {
       count = 0;
       
-  //control();  
-  controlW();
-  
-  //servoTime = micros();
-  motorSpeedPID(throttle, OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
-  //servoTime = micros() - servoTime;
+      //control();  
+      controlW();
+      
+      //servoTime = micros();
+      motorSpeedPID(throttle, OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
+      //servoTime = micros() - servoTime;
       if (processing && printSerial)
       {
         printSerialAngle();
@@ -1084,19 +1093,30 @@ void printSerialAngle()
   Serial.println(bearing1);
  }
 }
+
+/* 
+ * The following function prints via bluetooth the euler angles 
+ * based on the printBlueAngleSkip parameter
+ */
 void printSerialAngleBlue()
-{
-  if (printBlue)
- { 
-  Serial.print("o");
-  Serial.print(",");
-  Serial.print(estXAngle);
-  Serial.print(",");
-  Serial.print(estYAngle);
-  Serial.print(",");
-  Serial.print(bearing1);
-  Serial.println(",");
- }
+{ 
+  printBlueAngleCounter += 1;
+  if (printBlueAngleCounter >= printBlueAngleSkip)
+  {
+    printBlueAngleCounter = 0;
+    if (printBlue)
+    { 
+      Serial.print("o");
+      Serial.print(",");
+      Serial.print(estXAngle);
+      Serial.print(",");
+      Serial.print(estYAngle);
+      Serial.print(",");
+      Serial.print(bearing1);
+      Serial.println(",");
+    }
+  }
+  
 }
 
 void removeBias()
