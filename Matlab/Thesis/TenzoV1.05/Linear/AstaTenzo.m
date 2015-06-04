@@ -95,8 +95,8 @@ w0c=sqrt(g*mq/Kt);
 %X0c=w0c;
 Ft0=mq*g;
 %% Linearized Model
-disp('Linearized Model:');
-disp('Press any key to continue.');
+disp('Welcome to Tenzo!');
+disp('Press X to show the Linearized Model:');
 pause();
 
 states = {'xe','ye','ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb'};
@@ -143,9 +143,14 @@ tenzoFull=ss(A,B,CFull,DFull);
 %modello_tf=tf(tenzo)
 
 
-%% Eigenvalues of the system
+disp('Assunzione: Esiste almeno una classe di segnali esogeni rispetto alla quale regolare/far inseguire asintoticamente y(t)Verifica preliminare, autovalori del processo [eig(A)]:')
+pause();
 
 disp('Verifica preliminare, autovalori del processo [eig(A)]:')
+pause();
+
+%% Eigenvalues of the system
+
 stab=1;
 eOp = eig(A);
 [dn,dm]=size(eOp);
@@ -161,8 +166,8 @@ for i=1:dn,
       stab=2;
   end
 end
-if (stab==0) disp('Sistema instabile! Gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
-if (stab==1) disp('Sistema stabile! OLE!! Gli autovalori a ciclo aperto sono: [comando eig(A)]'); end
+if (stab==0) disp('Sistema instabile! Gli autovalori a ciclo aperto sono:'); end
+if (stab==1) disp('Sistema stabile! OLE!! Gli autovalori a ciclo aperto sono:'); end
 if (stab==2) disp('Sistema instabile! Sono presenti autovalori pari a zero con molteplicità > 1'); end
 disp(eOp);
 
@@ -200,9 +205,7 @@ pause();
 clc
 %% Il sys non è osservabile. 
 % Definiamo il sottosistema osservabile e raggiungibile
-disp('Semplificazione del modello');
-disp('Press any key to continue.');
-pause();
+disp('Semplificazione del modello. Press X per mostrare il modello semplificato');
   
   AMin = [
         0 1 0 0 0 0 0 0;
@@ -233,7 +236,7 @@ statesMin = {'ze','vze','phi','theta','psi','wxb','wyb','wzb'};
 tenzoMin=ss(AMin,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 
 tenzoRetro=ss(AMin,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
-step(tenzoRetro)
+%step(tenzoRetro)
 
 % Sottosistema ragg e oss con decomposizione di Kalman
 % Check wether the solution is still valid with this subsys
@@ -243,10 +246,14 @@ KalmanA = U*A*U';
 KalmanB = U*B;
 KalmanC = Clocal*U';
 
+pause();
+sysr
+
 %% Proprietà strutturali:
 % Verifica Raggiungibilità e Osservabilità
 
 disp('Verifica raggiungibilà: rank([A-gI,B]) : per tutti g € spec(A)')
+pause();
 if (rank(ctrb(AMin,BMin))==size(AMin,1))
     disp('Sistema raggiungibile');
     disp(rank(ctrb(AMin,BMin)));
@@ -303,7 +310,7 @@ K = lqr(AMin,BMin,Q,R);
 disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
 eig(AMin-BMin*K)
 
-disp('Premere un tasto per continuare...');
+disp('Premere un tasto per visualizzare la Step Response...');
 pause;
 
 tenzoLQR=ss(AMin-BMin*K,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
@@ -311,6 +318,8 @@ step(tenzoLQR);
 
 %% Verifica condizioni Astatismo
 
+disp('Verifica condizioni Astatismo');
+pause;
 n=size(AMin,2);
 p=size(BMin,2);
 q=size(ClocalMin,1);
@@ -320,8 +329,8 @@ alpha=3; omega=0.5; gamma1=0;
 k1=1; h1=1; h2=1; gamma2=complex(0,omega);
 
 disp('Definizione segnali esogeni');
-disp('g1:='); disp(gamma1);
-disp('g2:='); disp(gamma2);
+disp('gamma 1:='); disp(gamma1);
+disp('gamma 2:='); disp(gamma2);
 
 
 if (rank(ctrb(AMin+alpha*eye(n),BMin))==n)

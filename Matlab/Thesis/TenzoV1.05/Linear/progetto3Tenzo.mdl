@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.42"
+    ComputedModelVersion    "1.45"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue May 19 19:03:09 2015"
-  RTWModifiedTimeStamp	  353960453
-  ModelVersionFormat	  "1.%<AutoIncrement:42>"
+  LastModifiedDate	  "Thu Jun 04 03:20:12 2015"
+  RTWModifiedTimeStamp	  355288546
+  ModelVersionFormat	  "1.%<AutoIncrement:45>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1140,7 +1140,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 23, 525, 77]
 	  Floating		  off
-	  Location		  [241, 91, 1261, 602]
+	  Location		  [231, 81, 1251, 592]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1172,7 +1172,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 113, 525, 167]
 	  Floating		  off
-	  Location		  [291, 91, 1311, 602]
+	  Location		  [281, 81, 1301, 592]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1191,6 +1191,7 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
+	  TimeRange		  "30"
 	  YMin			  "0.75"
 	  YMax			  "4.25"
 	  SaveName		  "ScopeData4"
@@ -1205,7 +1206,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [475, 208, 520, 262]
 	  Floating		  off
-	  Location		  [291, 91, 1311, 602]
+	  Location		  [281, 81, 1301, 592]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1238,7 +1239,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 333, 525, 387]
 	  Floating		  off
-	  Location		  [291, 91, 1311, 602]
+	  Location		  [281, 81, 1301, 592]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1363,7 +1364,7 @@ Model {
       Ports		      [1]
       Position		      [870, 359, 900, 391]
       Floating		      off
-      Location		      [54, 91, 1074, 627]
+      Location		      [64, 81, 1084, 617]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1430,7 +1431,7 @@ Model {
       Ports		      [1]
       Position		      [930, 79, 960, 111]
       Floating		      off
-      Location		      [54, 91, 1074, 602]
+      Location		      [64, 81, 1084, 592]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1496,6 +1497,7 @@ Model {
 	  Ports			  [0, 1]
 	  Position		  [140, 75, 170, 105]
 	  BlockMirror		  on
+	  Amplitude		  "23"
 	  Frequency		  "omega"
 	  SampleTime		  "0"
 	}
@@ -1549,7 +1551,7 @@ Model {
       Ports		      [1]
       Position		      [870, 294, 900, 326]
       Floating		      off
-      Location		      [54, 91, 1074, 627]
+      Location		      [64, 81, 1084, 617]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1817,7 +1819,7 @@ Model {
       Ports		      [1]
       Position		      [840, 44, 870, 76]
       Floating		      off
-      Location		      [54, 91, 1074, 627]
+      Location		      [64, 81, 1084, 617]
       Open		      off
       NumInputPorts	      "1"
       List {

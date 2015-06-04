@@ -1,11 +1,11 @@
  conn = database('whazzo','userk','whazzart','com.mysql.jdbc.Driver','jdbc:mysql://localhost:3306/whazzo')
  
- 
    sqlquery = ['SELECT name FROM generi;'];
    curs = exec(conn, sqlquery);
    curs = fetch(curs);
    generi = curs.data;
    generi(4,1)
+   
 %%
 conn = database('matlab','root','',['/Library/Java/Extensions/'...
     'mysql-connector-java-5.1.22-bin.jar'],'jdbc:mysql://localhost/');

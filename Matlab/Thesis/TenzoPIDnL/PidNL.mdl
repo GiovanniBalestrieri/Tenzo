@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.83"
+    ComputedModelVersion    "1.84"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed May 27 17:47:04 2015"
-  RTWModifiedTimeStamp	  354647634
-  ModelVersionFormat	  "1.%<AutoIncrement:83>"
+  LastModifiedDate	  "Fri May 29 18:00:47 2015"
+  RTWModifiedTimeStamp	  354814959
+  ModelVersionFormat	  "1.%<AutoIncrement:84>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,7 +78,6 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "lqr_115"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -1161,11 +1160,6 @@ Model {
 	  Opaque		  off
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
-	  MaskIconFrame		  on
-	  MaskIconOpaque	  on
-	  MaskIconRotate	  "none"
-	  MaskPortRotate	  "default"
-	  MaskIconUnits		  "autoscale"
 	  Port {
 	    PortNumber		    1
 	    Name		    "mc1"
@@ -1546,11 +1540,6 @@ Model {
 	  Opaque		  off
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
-	  MaskIconFrame		  on
-	  MaskIconOpaque	  on
-	  MaskIconRotate	  "none"
-	  MaskPortRotate	  "default"
-	  MaskIconUnits		  "autoscale"
 	  Port {
 	    PortNumber		    1
 	    Name		    "mc1"
@@ -2339,7 +2328,7 @@ Model {
       Name		      "Position Controller"
       SID		      "329"
       Ports		      [2, 1]
-      Position		      [55, 202, 160, 398]
+      Position		      [95, 74, 205, 236]
       ZOrder		      159
       BackgroundColor	      "[0.596078, 0.878431, 0.921569]"
       MinAlgLoopOccurrences   off
@@ -2349,15 +2338,10 @@ Model {
       Opaque		      off
       RequestExecContextInheritance off
       MaskHideContents	      off
-      MaskIconFrame	      on
-      MaskIconOpaque	      on
-      MaskIconRotate	      "none"
-      MaskPortRotate	      "default"
-      MaskIconUnits	      "autoscale"
       System {
 	Name			"Position Controller"
-	Location		[53, 51, 1366, 768]
-	Open			off
+	Location		[53, 819, 1366, 1536]
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -2491,11 +2475,6 @@ Model {
 	  Opaque		  off
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
-	  MaskIconFrame		  on
-	  MaskIconOpaque	  off
-	  MaskIconRotate	  "none"
-	  MaskPortRotate	  "default"
-	  MaskIconUnits		  "autoscale"
 	  Port {
 	    PortNumber		    1
 	    Name		    "Desired velocity in Xb"
@@ -7012,8 +6991,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @       #  VB$0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (        @ '0AD .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       \" #6B$0 X    X    !@    @    &          4    (     0    $   "
+    " !          D    (        H  $I4 .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0
