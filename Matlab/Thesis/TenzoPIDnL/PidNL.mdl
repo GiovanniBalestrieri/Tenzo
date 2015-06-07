@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.84"
+    ComputedModelVersion    "1.86"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri May 29 18:00:47 2015"
-  RTWModifiedTimeStamp	  354814959
-  ModelVersionFormat	  "1.%<AutoIncrement:84>"
+  LastModifiedDate	  "Thu Jun 04 16:03:46 2015"
+  RTWModifiedTimeStamp	  355334586
+  ModelVersionFormat	  "1.%<AutoIncrement:86>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,6 +78,7 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "lqr_115"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -965,7 +966,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "377"
+    SIDHighWatermark	    "378"
     Block {
       BlockType		      SubSystem
       Name		      "C"
@@ -2328,7 +2329,7 @@ Model {
       Name		      "Position Controller"
       SID		      "329"
       Ports		      [2, 1]
-      Position		      [95, 74, 205, 236]
+      Position		      [105, 14, 215, 176]
       ZOrder		      159
       BackgroundColor	      "[0.596078, 0.878431, 0.921569]"
       MinAlgLoopOccurrences   off
@@ -2340,8 +2341,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Position Controller"
-	Location		[53, 819, 1366, 1536]
-	Open			on
+	Location		[53, 51, 1366, 768]
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3588,7 +3589,7 @@ Model {
       System {
 	Name			"Quadcopter Dynamics"
 	Location		[410, 434, 930, 550]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3624,7 +3625,7 @@ Model {
 	  System {
 	    Name		    "Motors"
 	    Location		    [545, 178, 1016, 520]
-	    Open		    off
+	    Open		    on
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -6973,7 +6974,7 @@ Model {
     Annotation {
       SID		      "377"
       Name		      "Manca il controllo sulla posizione"
-      Position		      [372, 284]
+      Position		      [152, 239]
     }
   }
 }
@@ -6991,8 +6992,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @       \" #6B$0 X    X    !@    @    &          4    (     0    $   "
-    " !          D    (        H  $I4 .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       \" #@!P0 X    X    !@    @    &          4    (     0    $   "
+    " !          D    (        H !HJD .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0

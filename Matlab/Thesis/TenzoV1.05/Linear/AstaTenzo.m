@@ -142,7 +142,6 @@ tenzoFull=ss(A,B,CFull,DFull);
 %disp('Transfer matrix of the model')
 %modello_tf=tf(tenzo)
 
-
 disp('Assunzione: Esiste almeno una classe di segnali esogeni rispetto alla quale regolare/far inseguire asintoticamente y(t)Verifica preliminare, autovalori del processo [eig(A)]:')
 pause();
 
@@ -170,7 +169,6 @@ if (stab==0) disp('Sistema instabile! Gli autovalori a ciclo aperto sono:'); end
 if (stab==1) disp('Sistema stabile! OLE!! Gli autovalori a ciclo aperto sono:'); end
 if (stab==2) disp('Sistema instabile! Sono presenti autovalori pari a zero con molteplicità > 1'); end
 disp(eOp);
-
 
 % Analisi risposta a gradino
 disp('Press any for Step Response:');
@@ -250,8 +248,12 @@ pause();
 sysr
 
 %% Proprietà strutturali:
-% Verifica Raggiungibilità e Osservabilità
 
+% Sistema Ben Connessi: Somma dei singoli stati che compongono i sistemi 
+% sia pari alla dimensione dello stato del sistema complessivo
+ n=size(AMin,1);
+
+% Verifica Raggiungibilità e Osservabilità
 disp('Verifica raggiungibilà: rank([A-gI,B]) : per tutti g € spec(A)')
 pause();
 if (rank(ctrb(AMin,BMin))==size(AMin,1))
@@ -268,6 +270,11 @@ else
     disp('Sistema Non osservabile');
 end
 disp(rank(obsv(AMin,ClocalMin)));
+
+if (rank(ctrb(AMin,BMin))==size(AMin,1))
+    disp('(a1) -> verificata, la coppia (AMin,BMin) Cb stabilizzabile'); 
+    disp(rank(ctrb(AMin,BMin))); 
+end
 
 pause();
 
@@ -287,7 +294,7 @@ V=lqr((AMin+alphaK*eye(size(AMin)))',ClocalMin',Q,R)';
 %disp('Dimensione attesa [nxq]');
 disp(size(V));
 Aoss=AMin-V*ClocalMin;
-Boss=[BMin-V*D V]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
+Boss=[BMin-V*D V]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
 Coss=eye(size(AMin));
 Doss=zeros(size(Boss));
 
@@ -302,9 +309,10 @@ disp('Press any key to continue.');
 pause();
 
 alphaK = 2;
-Qie = blkdiag([0.00001 0 0; 0 0.00001 0; 0 0 0.00001],zeros(3),100*eye(3),eye(3));
+QieCmp = blkdiag([0.00001 0 0; 0 0.00001 0; 0 0 0.00001],zeros(3),100*eye(3),eye(3));
+Qie = blkdiag([0.01 0; 0 0.01],100000*eye(3),zeros(3,3));
 Q = eye(size(AMin));
-Rie = [1 0 0 0; 0 0.00001 0 0; 0 0 0.00001 0; 0 0 0 0.00001];
+RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
 R = eye(size(BMin,2));
 K = lqr(AMin,BMin,Q,R);
 disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
@@ -318,13 +326,15 @@ step(tenzoLQR);
 
 %% Verifica condizioni Astatismo
 
-disp('Verifica condizioni Astatismo');
+disp('Condizioni Astatismo');
 pause;
 n=size(AMin,2);
 p=size(BMin,2);
 q=size(ClocalMin,1);
 
 % Definizione segnali esogeni
+disp('Definizione dei Disturbi da reiettare:');
+disp('d(t)=');
 alpha=3; omega=0.5; gamma1=0;
 k1=1; h1=1; h2=1; gamma2=complex(0,omega);
 
@@ -332,17 +342,18 @@ disp('Definizione segnali esogeni');
 disp('gamma 1:='); disp(gamma1);
 disp('gamma 2:='); disp(gamma2);
 
-
 if (rank(ctrb(AMin+alpha*eye(n),BMin))==n)
-    disp('(a1) -> verificata, la coppia (AMin,BMin) raggiungibile, rank(P)'); 
+    disp('(a3) -> verificata, la coppia (AMin,BMin) raggiungibile, rank(P)'); 
     disp(rank(ctrb(AMin,BMin))); 
 end
 if (rank(obsv(AMin+alpha*eye(n),ClocalMin))==n) 
-    disp('(a1) -> verificata, la coppia (A,C) osservabile, rank(Q)');
+    disp('(a3) -> verificata, la coppia (A,C) osservabile, rank(Q)');
     disp(rank(obsv(AMin,ClocalMin))); 
 end
 
-R1=[ AMin-gamma1*eye(size(AMin)) BMin ; ClocalMin D];
+R1=[ AMin-gamma1*eye(size(AMin)) BMin ;
+    ClocalMin D];
+
 if (rank(R1)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma1 �:'); disp(rank(R1)); end
 R2=[ AMin-gamma2*eye(size(AMin)) BMin ; ClocalMin D];
 if (rank(R2)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma2 �:'); disp(rank(R2)); end
@@ -357,8 +368,9 @@ disp(k1_segnato);
 disp('max(k2,h2):'); 
 disp(k2_segnato);
 syms s;
-phi1=((s-gamma1)^k1_segnato)*((s-gamma2)^k2_segnato)*((s-conj(gamma2))^k2_segnato);
-disp('phi(lambda)='); 
+disp('Definiamo il polinomio phi(lambda)');
+phi1=((s-gamma1)^k1_segnato)*((s-gamma2)^k2_segnato)*((s-conj(gamma2))^k2_segnato)
+disp('phi(lambda)=');
 disp((phi1));
 mu=3;
 disp('mu=');
@@ -375,15 +387,16 @@ disp('Bphi:');
 BPhi=[0;0;1];
 disp(BPhi);
 
-disp('la matrice dinamica AK1 del modello interno KM1 :');
+disp('La matrice dinamica AK1 del modello interno KM1:');
 AK1=blkdiag(APhi,APhi,APhi,APhi);
 disp(AK1);
-disp('la matrice dinamica BK1 del modello interno KM1 :');
+disp('La matrice dinamica BK1 del modello interno KM1:');
 BK1=blkdiag(BPhi,BPhi,BPhi,BPhi);
 disp(BK1);
 
 
 %% Calcolo delle matrici F1,F2 + V di Kalman 
+
 disp('Calcolo delle matrici F1,F2 per S1-S2 +  V per Kalman ');
 Asig =[ AMin-BMin*K zeros(n,size(AK1,2)); -BK1*ClocalMin AK1];
 Bsig = [ BMin; -BK1*D];
@@ -393,9 +406,11 @@ F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
 
 disp('matrici stablizzanti:')
 F2=F(:,1:size(AMin,1))
-disp('dimensioni [pxn]:'); disp(size(F2));
+disp('dimensioni [pxn]:'); 
+disp(size(F2));
 F1=F(:,size(AMin,1)+1:size(F,2))
-disp('dimensioni [pxq*mu]:'); disp(size(F1));
+disp('dimensioni [pxq*mu]:'); 
+disp(size(F1));
 
 Q = eye(size(AMin,2));
 R = eye(size(BMin,2));
@@ -414,8 +429,8 @@ disp(eig(AMin-BMin*K-V*ClocalMin));
 
 disp('specifica 3 ) definizione matrici per simulink:');
 
-M=[ 1 1 1 1 1 1 1 1]';
-N=[ 1;  1; 1; 1];
+M=[ 1 0 0 0 1 1 1 1]';
+N=[ 0;  0; 0; 0];
 %per disturbo sul processo definisco Bmod:
 Bmod=[M BMin]; %nota prima d e poi u scambio la somma per comodit�
 Dmod=[N D];
@@ -426,39 +441,20 @@ Boss=[BMin-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha d
 Coss=eye(n);
 Doss=zeros(size(Boss));
 
-%ricordando che delta xi1=AK1*xi+ Bk1*e
+% Ricordando che delta xi1=AK1*xi+ Bk1*e
 AMI=AK1;
 BMI=BK1;
 CMI=eye(q*mu);
 DMI=zeros(q*mu,q);
 
 disp('avvio simulazione 1');
+pause;
 open('progetto3Tenzo.mdl')
 sim('progetto3Tenzo.mdl')
 
 disp('Premere un tasto per continuare...');
 pause;
-clc;
 
 %% Simulazione
-% 
-% refs=[0 0 -20 0 0 0 0 0 0 0 0 0]; 
-% tc=0.436;
-% X0c = 3000;
-% dz1=1247.4;
-% PulseOff = 1;
-% pulseAmp = 500;
-% pulsePh = 0;
-% pulseP = 20;
-% pulseP2 = 10;
-% pulseP4= 10;
-% w1=3100;
-% w2=3100;
-% w3=3100;
-% w4=3100;
-% 
-% sys = 'tenzo1_15_lqr';
-% open_system(sys)
-% SimOut = sim(sys);
 
 disp('End');

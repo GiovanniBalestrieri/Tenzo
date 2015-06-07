@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.45"
+    ComputedModelVersion    "1.64"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Jun 04 03:20:12 2015"
-  RTWModifiedTimeStamp	  355288546
-  ModelVersionFormat	  "1.%<AutoIncrement:45>"
+  LastModifiedDate	  "Thu Jun 04 17:23:45 2015"
+  RTWModifiedTimeStamp	  355334673
+  ModelVersionFormat	  "1.%<AutoIncrement:64>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -131,8 +131,8 @@ Model {
 	  SolverMode		  "Auto"
 	  EnableConcurrentExecution off
 	  ConcurrentTasks	  off
-	  Solver		  "ode45"
-	  SolverName		  "ode45"
+	  Solver		  "ode23s"
+	  SolverName		  "ode23s"
 	  SolverJacobianMethodControl "auto"
 	  ShapePreserveControl	  "DisableAll"
 	  ZeroCrossControl	  "UseLocalSettings"
@@ -588,7 +588,7 @@ Model {
       }
       Name		      "Configuration"
       CurrentDlgPage	      "Solver"
-      ConfigPrmDlgPosition     [ 0, 0, 880, 630 ] 
+      ConfigPrmDlgPosition     [ 188, 60, 1178, 764 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -629,6 +629,11 @@ Model {
     FontAngle		    "normal"
   }
   BlockParameterDefaults {
+    Block {
+      BlockType		      Clock
+      DisplayTime	      off
+      Decimation	      "10"
+    }
     Block {
       BlockType		      Constant
       Value		      "1"
@@ -715,6 +720,21 @@ Model {
       SourceOfInitialOutputValue "Dialog"
       OutputWhenDisabled      "held"
       InitialOutput	      "[]"
+    }
+    Block {
+      BlockType		      Saturate
+      UpperLimitSource	      "Dialog"
+      UpperLimit	      "0.5"
+      LowerLimitSource	      "Dialog"
+      LowerLimit	      "-0.5"
+      LinearizeAsGain	      on
+      ZeroCross		      on
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as input"
+      LockScale		      off
+      RndMeth		      "Floor"
     }
     Block {
       BlockType		      Scope
@@ -807,6 +827,21 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Switch
+      Criteria		      "u2 >= Threshold"
+      Threshold		      "0"
+      InputSameDT	      on
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      ZeroCross		      on
+      SampleTime	      "-1"
+      AllowDiffInputSizes     off
+    }
+    Block {
       BlockType		      ToWorkspace
       VariableName	      "simulink_output"
       MaxDataPoints	      "1000"
@@ -819,7 +854,7 @@ Model {
   }
   System {
     Name		    "progetto3Tenzo"
-    Location		    [53, 82, 1057, 547]
+    Location		    [53, 242, 1366, 698]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -833,12 +868,29 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "102"
+    SIDHighWatermark	    "110"
+    Block {
+      BlockType		      Clock
+      Name		      "Clock"
+      SID		      "104"
+      Position		      [1120, 65, 1140, 85]
+      ZOrder		      -4
+      BlockMirror	      on
+    }
+    Block {
+      BlockType		      Constant
+      Name		      "Constant"
+      SID		      "106"
+      Position		      [1175, 130, 1205, 160]
+      ZOrder		      -4
+      BlockMirror	      on
+      Value		      "0"
+    }
     Block {
       BlockType		      Gain
       Name		      "F1"
       SID		      "16"
-      Position		      [330, 69, 370, 121]
+      Position		      [330, 89, 370, 141]
       Gain		      "F1"
       Multiplication	      "Matrix(K*u) (u vector)"
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
@@ -849,7 +901,7 @@ Model {
       BlockType		      Gain
       Name		      "F2"
       SID		      "17"
-      Position		      [402, 130, 448, 180]
+      Position		      [382, 150, 428, 200]
       BlockRotation	      270
       Gain		      "F2"
       Multiplication	      "Matrix(K*u) (u vector)"
@@ -861,7 +913,7 @@ Model {
       BlockType		      From
       Name		      "From1"
       SID		      "69"
-      Position		      [685, 100, 735, 120]
+      Position		      [730, 120, 780, 140]
       ZOrder		      -9
       GotoTag		      "Refs"
     }
@@ -885,7 +937,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto"
       SID		      "68"
-      Position		      [140, 29, 190, 51]
+      Position		      [140, 69, 190, 91]
       ZOrder		      -10
       GotoTag		      "Refs"
     }
@@ -893,7 +945,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto1"
       SID		      "87"
-      Position		      [275, 42, 310, 58]
+      Position		      [275, 52, 310, 68]
       ZOrder		      -10
       GotoTag		      "Err"
     }
@@ -902,7 +954,7 @@ Model {
       Name		      "Kalman"
       SID		      "4"
       Ports		      [3, 1]
-      Position		      [495, 165, 535, 225]
+      Position		      [540, 185, 580, 245]
       BlockMirror	      on
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -1020,7 +1072,7 @@ Model {
       BlockType		      StateSpace
       Name		      "Modello \nInterno"
       SID		      "21"
-      Position		      [240, 78, 300, 112]
+      Position		      [240, 98, 300, 132]
       A			      "AMI"
       B			      "BMI"
       C			      "CMI"
@@ -1031,7 +1083,7 @@ Model {
       Name		      "Output"
       SID		      "71"
       Ports		      [2]
-      Position		      [770, 65, 810, 125]
+      Position		      [815, 85, 855, 145]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1140,7 +1192,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 23, 525, 77]
 	  Floating		  off
-	  Location		  [231, 81, 1251, 592]
+	  Location		  [91, 81, 1111, 592]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1159,8 +1211,8 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "0.75"
-	  YMax			  "4.25"
+	  YMin			  "-3.5"
+	  YMax			  "7"
 	  DataFormat		  "StructureWithTime"
 	  LimitDataPoints	  off
 	  SampleTime		  "0"
@@ -1172,7 +1224,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 113, 525, 167]
 	  Floating		  off
-	  Location		  [281, 81, 1301, 592]
+	  Location		  [201, 81, 1221, 592]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1204,9 +1256,9 @@ Model {
 	  Name			  "uscite2"
 	  SID			  "80"
 	  Ports			  [1]
-	  Position		  [475, 208, 520, 262]
+	  Position		  [480, 208, 525, 262]
 	  Floating		  off
-	  Location		  [281, 81, 1301, 592]
+	  Location		  [241, 81, 1261, 592]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1239,7 +1291,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 333, 525, 387]
 	  Floating		  off
-	  Location		  [281, 81, 1301, 592]
+	  Location		  [221, 81, 1241, 592]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1388,11 +1440,22 @@ Model {
       SampleTime	      "0"
     }
     Block {
+      BlockType		      Saturate
+      Name		      "Sat"
+      SID		      "109"
+      Ports		      [1, 1]
+      Position		      [435, 100, 465, 130]
+      ZOrder		      -15
+      InputPortMap	      "u0"
+      UpperLimit	      "60"
+      LowerLimit	      "-60"
+    }
+    Block {
       BlockType		      Sum
       Name		      "Sum"
       SID		      "23"
       Ports		      [2, 1]
-      Position		      [415, 85, 435, 105]
+      Position		      [395, 105, 415, 125]
       ShowName		      off
       IconShape		      "round"
       Inputs		      "|++"
@@ -1405,12 +1468,23 @@ Model {
       Name		      "Sum1"
       SID		      "24"
       Ports		      [2, 1]
-      Position		      [185, 85, 205, 105]
+      Position		      [185, 105, 205, 125]
       ShowName		      off
       IconShape		      "round"
       Inputs		      "|+-"
       InputSameDT	      off
       OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Switch
+      Name		      "Switch"
+      SID		      "103"
+      Position		      [1015, 55, 1065, 95]
+      ZOrder		      -19
+      BlockMirror	      on
+      Threshold		      "5"
+      InputSameDT	      off
       SaturateOnIntegerOverflow	off
     }
     Block {
@@ -1429,9 +1503,9 @@ Model {
       Name		      "dist"
       SID		      "54"
       Ports		      [1]
-      Position		      [930, 79, 960, 111]
+      Position		      [930, 74, 960, 106]
       Floating		      off
-      Location		      [64, 81, 1084, 592]
+      Location		      [69, 176, 1089, 687]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1459,7 +1533,7 @@ Model {
       Name		      "disturbo"
       SID		      "50"
       Ports		      [0, 1]
-      Position		      [930, 18, 960, 52]
+      Position		      [1195, 13, 1225, 47]
       BlockMirror	      on
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -1471,7 +1545,7 @@ Model {
       System {
 	Name			"disturbo"
 	Location		[709, 283, 931, 433]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1497,7 +1571,7 @@ Model {
 	  Ports			  [0, 1]
 	  Position		  [140, 75, 170, 105]
 	  BlockMirror		  on
-	  Amplitude		  "23"
+	  Amplitude		  "3"
 	  Frequency		  "omega"
 	  SampleTime		  "0"
 	}
@@ -1579,7 +1653,7 @@ Model {
       Name		      "processo"
       SID		      "43"
       Ports		      [2, 1]
-      Position		      [520, 50, 560, 110]
+      Position		      [565, 70, 605, 130]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1676,7 +1750,7 @@ Model {
       Name		      "riferimento \ncostante"
       SID		      "11"
       Ports		      [0, 1]
-      Position		      [55, 65, 95, 125]
+      Position		      [55, 85, 95, 145]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1787,7 +1861,7 @@ Model {
       Name		      "u"
       SID		      "28"
       Ports		      [1]
-      Position		      [465, 19, 495, 51]
+      Position		      [500, 14, 530, 46]
       Floating		      off
       Location		      [64, 81, 1084, 592]
       Open		      off
@@ -1817,7 +1891,7 @@ Model {
       Name		      "uscite"
       SID		      "88"
       Ports		      [1]
-      Position		      [840, 44, 870, 76]
+      Position		      [820, 39, 850, 71]
       Floating		      off
       Location		      [64, 81, 1084, 617]
       Open		      off
@@ -1867,19 +1941,19 @@ Model {
       Branch {
 	Points			[80, 0]
 	Branch {
-	  Points		  [0, 190; -470, 0]
+	  Points		  [0, 190; -470, 0; 0, -150]
 	  DstBlock		  "Sum1"
 	  DstPort		  2
 	}
 	Branch {
 	  Labels		  [0, 0]
-	  Points		  [45, 0]
+	  Points		  [0, 0]
 	  Branch {
 	    DstBlock		    "Output"
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, 5; 10, 0; 0, -25]
+	    Points		    [0, -45]
 	    DstBlock		    "uscite"
 	    DstPort		    1
 	  }
@@ -1913,23 +1987,8 @@ Model {
     Line {
       SrcBlock		      "Sum"
       SrcPort		      1
-      Points		      [10, 0]
-      Branch {
-	Points			[10, 0]
-	Branch {
-	  Points		  [0, 45; 90, 0]
-	  DstBlock		  "Kalman"
-	  DstPort		  1
-	}
-	Branch {
-	  DstBlock		  "processo"
-	  DstPort		  2
-	}
-      }
-      Branch {
-	DstBlock		"u"
-	DstPort			1
-      }
+      DstBlock		      "Sat"
+      DstPort		      1
     }
     Line {
       SrcBlock		      "Sum1"
@@ -1942,37 +2001,13 @@ Model {
       Branch {
 	Points			[0, -55; 25, 0]
 	Branch {
-	  Points		  [0, -30; 60, 0; 0, 20]
+	  Points		  [0, -30]
 	  DstBlock		  "To Workspace"
 	  DstPort		  1
 	}
 	Branch {
-	  Points		  [20, 0]
 	  DstBlock		  "Goto1"
 	  DstPort		  1
-	}
-      }
-    }
-    Line {
-      SrcBlock		      "disturbo"
-      SrcPort		      1
-      Points		      [-20, 0]
-      Branch {
-	Points			[0, 60]
-	DstBlock		"dist"
-	DstPort			1
-      }
-      Branch {
-	Points			[-25, 0]
-	Branch {
-	  Points		  [-375, 0]
-	  DstBlock		  "processo"
-	  DstPort		  1
-	}
-	Branch {
-	  Points		  [0, 180]
-	  DstBlock		  "Kalman"
-	  DstPort		  3
 	}
       }
     }
@@ -1993,6 +2028,71 @@ Model {
       SrcPort		      1
       DstBlock		      "errore1"
       DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Clock"
+      SrcPort		      1
+      DstBlock		      "Switch"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Switch"
+      SrcPort		      1
+      Points		      [0, -40; -130, 0]
+      Branch {
+	Points			[0, 55]
+	DstBlock		"dist"
+	DstPort			1
+      }
+      Branch {
+	Points			[-220, 0]
+	Branch {
+	  Points		  [-110, 0]
+	  DstBlock		  "processo"
+	  DstPort		  1
+	}
+	Branch {
+	  Points		  [0, 200]
+	  DstBlock		  "Kalman"
+	  DstPort		  3
+	}
+      }
+    }
+    Line {
+      SrcBlock		      "disturbo"
+      SrcPort		      1
+      Points		      [-55, 0; 0, 30]
+      DstBlock		      "Switch"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Constant"
+      SrcPort		      1
+      Points		      [-90, 0]
+      DstBlock		      "Switch"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Sat"
+      SrcPort		      1
+      Points		      [20, 0]
+      Branch {
+	Points			[35, 0]
+	Branch {
+	  Points		  [0, 45; 80, 0; 0, 35]
+	  DstBlock		  "Kalman"
+	  DstPort		  1
+	}
+	Branch {
+	  DstBlock		  "processo"
+	  DstPort		  2
+	}
+      }
+      Branch {
+	Points			[-5, 0]
+	DstBlock		"u"
+	DstPort			1
+      }
     }
   }
 }

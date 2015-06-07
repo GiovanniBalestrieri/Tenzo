@@ -9,7 +9,7 @@ t=-0:0.1:10;
 % variance
 sigma=0.8; 
 esp=1/(2*(sigma)^2);
-center=5;
+center=3;
 F=exp(-(t-center).^2*esp.^2);
 plot(t,F);
 pause();
@@ -91,7 +91,91 @@ end
 surf(X,Y,Z)
 
 pause();
-%% Random Radial Basis functions in space 
+%% Post elaboration
+
+figure;
+grid on
+axis equal
+axis tight
+contour(X,Y,Z)
+h=[1,1]
+contour(X,Y,Z,h)
+
+v = -2:0.2:2;
+[x,y] = meshgrid(v);
+z = x .* exp(-x.^2 - y.^2);
+[px,py] = gradient(z,.2,.2);
+contour(v,v,z)
+hold on
+quiver(v,v,px,py)
+hold off
+
+%% 3D function
+disp('3D case:');
+[X,Y] = meshgrid(-10:.1:10);
+Z = -X.^2+-(Y).^2+100;
+surf(X,Y,Z)
+h=[1,1]
+contour(X,Y,Z,h)
+
+% Level Curve
+syms x y;
+soly = solve(10==-x.^2-y^2+100, y)
+ x=-10:0.1:10;
+ t=soly(1)
+ figure;
+ plot(x,(90 - x.^2).^(1/2));
+ hold on
+ plot(x,-(90-x.^2).^(1/2));
+% y=-20:0.1:20;
+% plot((-x.^2 - 1).^(1/2),(- y.^2 - 1).^(1/2))
+%Level curve of a sphere z=f(x,y)
+x0=3;
+y0=5;
+r=1;
+r1=r/2;
+ang=0:0.01:2*pi; 
+xp=r*cos(ang);
+yp=r*sin(ang);
+plot(x0+xp,y0+yp);
+hold on
+xp1=r1*cos(ang);
+yp1=r1*sin(ang);
+plot(x0+xp1,y0+yp1);
+
+
+sola = solve(a*x^2 + b*x + c == 0, a)
+
+syms y x;
+soly = solve(6==x.^2+y^2, y)
+solx = solve(6==x.^2+y^2, x)
+x=0:0.1:10;
+y=0;0.1:10;
+yp=soly(1)
+yp=0:0.1:10;
+plot(xp,yp)
+
+
+figure;
+contour3(X,Y,Z);
+grid on
+box on
+view([130,30])
+xlabel('x-axis')
+ylabel('y-axis')
+zlabel('z-axis')
+title('Contours at height for random gaussians.')
+
+
+xdata = [2 2 0 2 5;
+         2 8 2 4 5;
+         8 8 2 4 8];
+ydata = [4 4 4 2 0;
+         8 4 6 2 2;
+         4 0 4 0 0];
+zdata = ones(3,5);
+
+%% Random Radial Basis functions in space
 disp('3D case with random path - 500 RBF:');
 N = 500 % number of random functions
 stepMesh = 0.1;
@@ -137,8 +221,20 @@ zlabel('z')
 pause();
 
 %% TEst
+figure;
+x = linspace(-2*pi,2*pi);
+y = linspace(0,4*pi);
+[X,Y] = meshgrid(x,y);
+Z = sin(X)+cos(Y);
+surf(X,Y,Z);
+
+figure;
+[X,Y,Z] = peaks;
+surf(X,Y,Z);
+contour(X,Y,Z,20);
+
 fig = figure;
-[X,Y] = meshgrid(-8:.5:8);
+[X,Y] = mehgrid(-8:.5:8);
 R = sqrt(X.^2 + Y.^2) + eps;
 Z = sin(R)./R;
 surf(Z)

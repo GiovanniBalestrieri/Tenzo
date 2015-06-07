@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.365"
+    ComputedModelVersion    "1.366"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu May 21 13:52:13 2015"
-  RTWModifiedTimeStamp	  354117131
-  ModelVersionFormat	  "1.%<AutoIncrement:365>"
+  LastModifiedDate	  "Thu Jun 04 14:29:43 2015"
+  RTWModifiedTimeStamp	  355328949
+  ModelVersionFormat	  "1.%<AutoIncrement:366>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,6 +78,7 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "tenzo1_05"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -954,7 +955,7 @@ Model {
   System {
     Name		    "tenzo1_05"
     Location		    [53, 79, 1366, 768]
-    Open		    off
+    Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -3315,7 +3316,7 @@ Model {
       System {
 	Name			"Motors dynamics"
 	Location		[93, 511, 728, 639]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3349,7 +3350,7 @@ Model {
 	  Name			  "Motors"
 	  SID			  "543"
 	  Ports			  [1, 1]
-	  Position		  [355, 33, 440, 97]
+	  Position		  [350, 33, 435, 97]
 	  ZOrder		  -45
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
@@ -3929,7 +3930,7 @@ Model {
 	  System {
 	    Name		    "WtoTreal"
 	    Location		    [226, 181, 1176, 768]
-	    Open		    off
+	    Open		    on
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -9452,8 +9453,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @        P '2D0 X    X    !@    @    &          4    (     0    $    "
-    "!          D    (        ( !,J$ .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       \" \"?!V0 X    X    !@    @    &          4    (     0    $  "
+    "  !          D    (        P #8BD .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0
