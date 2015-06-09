@@ -925,7 +925,7 @@ void serialRoutine()
           {
             // TODO V1.2
             // Set consKpRoll to received value 
-            int integerValue = 0;
+            float integerValue = 0;
             if (Serial.read()==',')
             {
               for(int i = 0;i<2;i++)
@@ -934,29 +934,146 @@ void serialRoutine()
                 integerValue *= 10;
                 integerValue = ((incomingByte - 48) + integerValue);
               }
-              Serial.println(integerValue);
-            }
+              consKpRoll = integerValue/100;
+              //Serial.println(consKpRoll);
+              integerValue = 0;
+              if (Serial.read()==',')
+              {
+                for(int i = 0;i<2;i++)
+                {
+                  char incomingByte = Serial.read();
+                  integerValue *= 10;
+                  integerValue = ((incomingByte - 48) + integerValue);
+                }
+                consKiRoll = integerValue/100;
+                //Serial.println(consKiRoll);
+                integerValue = 0;
+                if (Serial.read()==',')
+                {
+                  for(int i = 0;i<2;i++)
+                  {
+                    char incomingByte = Serial.read();
+                    integerValue *= 10;
+                    integerValue = ((incomingByte - 48) + integerValue);
+                  }
+                  consKdRoll = integerValue/100;
+                  //Serial.println(consKdRoll);
+                  integerValue = 0;
+                }
+              }
+            }            
+            sendPidStatus(1,0,1,consKpRoll,consKiRoll,consKdRoll);
           }         
         }
         if (x=='p')
         {
           char y = Serial.read();
-          if (y=='e')
+          
+          if (y=='e' || y=='r')
+          {
             enablePitchPid = true;
+            sendPidStatus(1,1,1,consKpPitch,consKiPitch,consKdPitch);
+          }
           else if (y=='d')
-            enablePitchPid = false;  
-          if (enablePitchPid) sendPidStatus(1,1,1);
-          else if (!enablePitchPid) sendPidStatus(1,1,0);            
+          {
+            enablePitchPid = false;
+            sendPidStatus(1,1,0,0,0,0);
+          }
+          else if (y=='s')
+          {
+            // TODO V1.2
+            // Set consKpRoll to received value 
+            float integerValue = 0;
+            if (Serial.read()==',')
+            {
+              for(int i = 0;i<2;i++)
+              {
+                char incomingByte = Serial.read();
+                integerValue *= 10;
+                integerValue = ((incomingByte - 48) + integerValue);
+              }
+              consKpPitch = integerValue/100;
+              integerValue = 0;
+              if (Serial.read()==',')
+              {
+                for(int i = 0;i<2;i++)
+                {
+                  char incomingByte = Serial.read();
+                  integerValue *= 10;
+                  integerValue = ((incomingByte - 48) + integerValue);
+                }
+                consKiPitch = integerValue/100;
+                integerValue = 0;
+                if (Serial.read()==',')
+                {
+                  for(int i = 0;i<2;i++)
+                  {
+                    char incomingByte = Serial.read();
+                    integerValue *= 10;
+                    integerValue = ((incomingByte - 48) + integerValue);
+                  }
+                  consKdPitch = integerValue/100;
+                  integerValue = 0;
+                }
+              }
+            }            
+            sendPidStatus(1,1,1,consKpPitch,consKiPitch,consKdPitch);
+          }       
         }
         if (x=='y')
         {
           char y = Serial.read();
-          if (y=='e')
+          
+          if (y=='e' || y=='r')
+          {
             enableYawPid = true;
+            sendPidStatus(1,2,1,consKpYaw,consKiYaw,consKdYaw);
+          }
           else if (y=='d')
-            enableYawPid = false; 
-          if (enableYawPid) sendPidStatus(1,2,1);
-          else if (!enableYawPid) sendPidStatus(1,2,0);             
+          {
+            enableYawPid = false;
+            sendPidStatus(1,2,0,0,0,0);
+          }
+          else if (y=='s')
+          {
+            // TODO V1.2
+            // Set consKpRoll to received value 
+            float integerValue = 0;
+            if (Serial.read()==',')
+            {
+              for(int i = 0;i<2;i++)
+              {
+                char incomingByte = Serial.read();
+                integerValue *= 10;
+                integerValue = ((incomingByte - 48) + integerValue);
+              }
+              consKpYaw = integerValue/100;
+              integerValue = 0;
+              if (Serial.read()==',')
+              {
+                for(int i = 0;i<2;i++)
+                {
+                  char incomingByte = Serial.read();
+                  integerValue *= 10;
+                  integerValue = ((incomingByte - 48) + integerValue);
+                }
+                consKiYaw = integerValue/100;
+                integerValue = 0;
+                if (Serial.read()==',')
+                {
+                  for(int i = 0;i<2;i++)
+                  {
+                    char incomingByte = Serial.read();
+                    integerValue *= 10;
+                    integerValue = ((incomingByte - 48) + integerValue);
+                  }
+                  consKdYaw = integerValue/100;
+                  integerValue = 0;
+                }
+              }
+            }            
+            sendPidStatus(1,2,1,consKpYaw,consKiYaw,consKdYaw);
+          } 
         }
       } 
       else if (t=='w')
@@ -966,32 +1083,164 @@ void serialRoutine()
         if (x=='r')
         {
           char y = Serial.read();
-          if (y=='e')
+          
+          if (y=='e' || y=='r')
+          {
             enableWRollPid = true;
+            sendPidStatus(2,0,1,consKpWRoll,consKiWRoll,consKdWRoll);
+          }
           else if (y=='d')
+          {
             enableWRollPid = false;
-          if (enableWRollPid) sendPidStatus(2,0,1);
-          else if (!enableWRollPid) sendPidStatus(2,0,0);              
+            sendPidStatus(2,0,0,0,0,0);
+          }
+          else if (y=='s')
+          {
+            // TODO V1.2
+            float integerValue = 0;
+            if (Serial.read()==',')
+            {
+              for(int i = 0;i<2;i++)
+              {
+                char incomingByte = Serial.read();
+                integerValue *= 10;
+                integerValue = ((incomingByte - 48) + integerValue);
+              }
+              consKpWRoll = integerValue/100;
+              integerValue = 0;
+              if (Serial.read()==',')
+              {
+                for(int i = 0;i<2;i++)
+                {
+                  char incomingByte = Serial.read();
+                  integerValue *= 10;
+                  integerValue = ((incomingByte - 48) + integerValue);
+                }
+                consKiWRoll = integerValue/100;
+                integerValue = 0;
+                if (Serial.read()==',')
+                {
+                  for(int i = 0;i<2;i++)
+                  {
+                    char incomingByte = Serial.read();
+                    integerValue *= 10;
+                    integerValue = ((incomingByte - 48) + integerValue);
+                  }
+                  consKdWRoll = integerValue/100;
+                  integerValue = 0;
+                }
+              }
+            }            
+            sendPidStatus(2,0,1,consKpWRoll,consKiWRoll,consKdWRoll);       
+          }    
         }
         if (x=='p')
         {
           char y = Serial.read();
-          if (y=='e')
+          
+          if (y=='e' || y=='r')
+          {
             enableWPitchPid = true;
+            sendPidStatus(2,1,1,consKpWPitch,consKiWPitch,consKdWPitch);
+          }
           else if (y=='d')
-            enableWPitchPid = false; 
-          if (enableWPitchPid) sendPidStatus(2,1,1);
-          else if (!enableWPitchPid) sendPidStatus(2,1,0);            
+          {
+            enableWPitchPid = false;
+            sendPidStatus(2,1,0,0,0,0);
+          }
+          else if (y=='s')
+          {
+            // TODO V1.2
+            float integerValue = 0;
+            if (Serial.read()==',')
+            {
+              for(int i = 0;i<2;i++)
+              {
+                char incomingByte = Serial.read();
+                integerValue *= 10;
+                integerValue = ((incomingByte - 48) + integerValue);
+              }
+              consKpWPitch = integerValue/100;
+              integerValue = 0;
+              if (Serial.read()==',')
+              {
+                for(int i = 0;i<2;i++)
+                {
+                  char incomingByte = Serial.read();
+                  integerValue *= 10;
+                  integerValue = ((incomingByte - 48) + integerValue);
+                }
+                consKiWPitch = integerValue/100;
+                integerValue = 0;
+                if (Serial.read()==',')
+                {
+                  for(int i = 0;i<2;i++)
+                  {
+                    char incomingByte = Serial.read();
+                    integerValue *= 10;
+                    integerValue = ((incomingByte - 48) + integerValue);
+                  }
+                  consKdWPitch = integerValue/100;
+                  integerValue = 0;
+                }
+              }
+            }            
+            sendPidStatus(2,1,1,consKpWPitch,consKiWPitch,consKdWPitch);  
+          }         
         }
         if (x=='y')
         {
           char y = Serial.read();
-          if (y=='e')
+          
+          if (y=='e' || y=='r')
+          {
             enableWYawPid = true;
+            sendPidStatus(2,2,1,consKpWYaw,consKiWYaw,consKdWYaw);
+          }
           else if (y=='d')
+          {
             enableWYawPid = false;
-          if (enableWYawPid) sendPidStatus(2,2,1);
-          else if (!enableWYawPid) sendPidStatus(2,2,0);             
+            sendPidStatus(2,2,0,0,0,0);
+          }
+          else if (y=='s')
+          {
+            // TODO V1.2
+            float integerValue = 0;
+            if (Serial.read()==',')
+            {
+              for(int i = 0;i<2;i++)
+              {
+                char incomingByte = Serial.read();
+                integerValue *= 10;
+                integerValue = ((incomingByte - 48) + integerValue);
+              }
+              consKpWYaw = integerValue/100;
+              integerValue = 0;
+              if (Serial.read()==',')
+              {
+                for(int i = 0;i<2;i++)
+                {
+                  char incomingByte = Serial.read();
+                  integerValue *= 10;
+                  integerValue = ((incomingByte - 48) + integerValue);
+                }
+                consKiWYaw = integerValue/100;
+                integerValue = 0;
+                if (Serial.read()==',')
+                {
+                  for(int i = 0;i<2;i++)
+                  {
+                    char incomingByte = Serial.read();
+                    integerValue *= 10;
+                    integerValue = ((incomingByte - 48) + integerValue);
+                  }
+                  consKdWYaw = integerValue/100;
+                  integerValue = 0;
+                }
+              }
+            }            
+            sendPidStatus(2,2,1,consKpWYaw,consKiWYaw,consKdWYaw);  
+          }     
         }
       }
       else if (t=='q')
