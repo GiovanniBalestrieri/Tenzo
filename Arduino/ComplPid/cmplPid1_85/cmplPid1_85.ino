@@ -925,6 +925,17 @@ void serialRoutine()
           {
             // TODO V1.2
             // Set consKpRoll to received value 
+            int integerValue = 0;
+            if (Serial.read()==',')
+            {
+              for(int i = 0;i<2;i++)
+              {
+                char incomingByte = Serial.read();
+                integerValue *= 10;
+                integerValue = ((incomingByte - 48) + integerValue);
+              }
+              Serial.println(integerValue);
+            }
           }         
         }
         if (x=='p')
