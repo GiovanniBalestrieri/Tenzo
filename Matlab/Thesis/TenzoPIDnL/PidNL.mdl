@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.86"
+    ComputedModelVersion    "1.105"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Jun 04 16:03:46 2015"
-  RTWModifiedTimeStamp	  355334586
-  ModelVersionFormat	  "1.%<AutoIncrement:86>"
+  LastModifiedDate	  "Wed Jun 10 18:53:32 2015"
+  RTWModifiedTimeStamp	  355861783
+  ModelVersionFormat	  "1.%<AutoIncrement:105>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,7 +78,6 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "lqr_115"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -952,7 +951,7 @@ Model {
   }
   System {
     Name		    "PidNL"
-    Location		    [300, 79, 1175, 768]
+    Location		    [129, 79, 1175, 768]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -966,13 +965,26 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "378"
+    SIDHighWatermark	    "403"
+    Block {
+      BlockType		      BusCreator
+      Name		      "Bus\nCreator"
+      SID		      "401"
+      Ports		      [5, 1]
+      Position		      [235, 304, 240, 546]
+      ZOrder		      -2
+      BlockMirror	      on
+      NamePlacement	      "alternate"
+      ShowName		      off
+      Inputs		      "5"
+      DisplayOption	      "bar"
+    }
     Block {
       BlockType		      SubSystem
       Name		      "C"
       SID		      "169"
       Ports		      [1, 1]
-      Position		      [655, 47, 725, 93]
+      Position		      [695, 47, 765, 93]
       ZOrder		      -4
       LibraryVersion	      "1.32"
       ErrorFcn		      "Stateflow.Translate.translate"
@@ -1084,16 +1096,15 @@ Model {
       BlockType		      Constant
       Name		      "Constant"
       SID		      "32"
-      Position		      [15, 675, 45, 705]
+      Position		      [40, 430, 70, 460]
       ZOrder		      12
-      Value		      "refs"
     }
     Block {
       BlockType		      SubSystem
       Name		      "Ctrl Mix"
       SID		      "288"
       Ports		      [4, 1]
-      Position		      [420, 25, 510, 115]
+      Position		      [460, 25, 550, 115]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1104,7 +1115,7 @@ Model {
       System {
 	Name			"Ctrl Mix"
 	Location		[435, 199, 1010, 651]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1515,7 +1526,7 @@ Model {
 	  SID			  "262"
 	  Position		  [225, 210, 255, 240]
 	  ZOrder		  98
-	  Value			  "quadModel.plusConfig"
+	  Value			  "plusConfig"
 	}
 	Block {
 	  BlockType		  Switch
@@ -2125,29 +2136,44 @@ Model {
       }
     }
     Block {
+      BlockType		      Demux
+      Name		      "Demux"
+      SID		      "402"
+      Ports		      [1, 12]
+      Position		      [420, 310, 425, 540]
+      ZOrder		      -6
+      BlockMirror	      on
+      NamePlacement	      "alternate"
+      ShowName		      off
+      Outputs		      "12"
+      DisplayOption	      "bar"
+    }
+    Block {
+      BlockType		      Demux
+      Name		      "Demux5"
+      SID		      "381"
+      Ports		      [1, 4]
+      Position		      [250, 17, 255, 173]
+      ZOrder		      -6
+      ShowName		      off
+      DisplayOption	      "bar"
+    }
+    Block {
       BlockType		      Gain
       Name		      "Gain"
       SID		      "33"
-      Position		      [105, 675, 135, 705]
+      Position		      [130, 430, 160, 460]
       ZOrder		      13
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
       OutDataTypeStr	      "Inherit: Inherit via internal rule"
       SaturateOnIntegerOverflow	off
     }
     Block {
-      BlockType		      Constant
-      Name		      "LinImput"
-      SID		      "119"
-      Position		      [40, 35, 70, 65]
-      ZOrder		      12
-      Value		      "U0"
-    }
-    Block {
       BlockType		      SubSystem
       Name		      "Output1"
       SID		      "122"
       Ports		      [1]
-      Position		      [745, 52, 790, 88]
+      Position		      [785, 52, 830, 88]
       ZOrder		      16
       BackgroundColor	      "green"
       MinAlgLoopOccurrences   off
@@ -2326,6 +2352,148 @@ Model {
     }
     Block {
       BlockType		      SubSystem
+      Name		      "Path"
+      SID		      "392"
+      Ports		      [0, 1]
+      Position		      [30, 25, 70, 85]
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"Path"
+	Location		[451, 189, 681, 464]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  BusCreator
+	  Name			  "Bus\nCreator"
+	  SID			  "400"
+	  Ports			  [4, 1]
+	  Position		  [150, 44, 155, 256]
+	  ZOrder		  -2
+	  ShowName		  off
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  FromWorkspace
+	  Name			  "From\nWorkspace"
+	  SID			  "396"
+	  Position		  [35, 38, 80, 62]
+	  ZOrder		  -10
+	  VariableName		  "path.x"
+	  SampleTime		  "0"
+	  ZeroCross		  on
+	}
+	Block {
+	  BlockType		  FromWorkspace
+	  Name			  "From\nWorkspace1"
+	  SID			  "397"
+	  Position		  [15, 93, 60, 117]
+	  ZOrder		  -10
+	  VariableName		  "path.y"
+	  SampleTime		  "0"
+	  ZeroCross		  on
+	}
+	Block {
+	  BlockType		  FromWorkspace
+	  Name			  "From\nWorkspace2"
+	  SID			  "398"
+	  Position		  [25, 148, 70, 172]
+	  ZOrder		  -10
+	  VariableName		  "path.z"
+	  SampleTime		  "0"
+	  ZeroCross		  on
+	}
+	Block {
+	  BlockType		  FromWorkspace
+	  Name			  "From\nWorkspace3"
+	  SID			  "399"
+	  Position		  [15, 203, 60, 227]
+	  ZOrder		  -10
+	  VariableName		  "path.psi"
+	  SampleTime		  "0"
+	  ZeroCross		  on
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "Out1"
+	  SID			  "393"
+	  Position		  [190, 118, 220, 132]
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  "From\nWorkspace"
+	  SrcPort		  1
+	  Points		  [35, 0; 0, 25]
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "From\nWorkspace1"
+	  SrcPort		  1
+	  Points		  [30, 0; 0, 20]
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "From\nWorkspace2"
+	  SrcPort		  1
+	  Points		  [25, 0; 0, 15]
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "From\nWorkspace3"
+	  SrcPort		  1
+	  Points		  [20, 0; 0, 10]
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "Bus\nCreator"
+	  SrcPort		  1
+	  Points		  [5, 0; 0, -25]
+	  DstBlock		  "Out1"
+	  DstPort		  1
+	}
+	Annotation {
+	  SID			  "384"
+	  Name			  "X path"
+	  Position		  [35, 71]
+	}
+	Annotation {
+	  SID			  "386"
+	  Name			  "Y path"
+	  Position		  [40, 131]
+	}
+	Annotation {
+	  SID			  "388"
+	  Name			  "Psi path"
+	  Position		  [45, 251]
+	}
+	Annotation {
+	  SID			  "390"
+	  Name			  "Z path"
+	  Position		  [55, 186]
+	}
+      }
+    }
+    Block {
+      BlockType		      SubSystem
       Name		      "Position Controller"
       SID		      "329"
       Ports		      [2, 1]
@@ -2353,7 +2521,7 @@ Model {
 	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
 	TiledPageScale		1
 	ShowPageBoundaries	off
-	ZoomFactor		"96"
+	ZoomFactor		"100"
 	Block {
 	  BlockType		  Inport
 	  Name			  "Path Cmd"
@@ -2395,28 +2563,28 @@ Model {
 	  Position		  [65, 148, 70, 247]
 	  ZOrder		  214
 	  ShowName		  off
-	  OutputSignals		  "X_cmd,Y_cmd,Alt_Cmd,Psi_cmd"
+	  OutputSignals		  "signal1,signal2,signal3,signal4"
 	  Port {
 	    PortNumber		    1
-	    Name		    "<X_cmd>"
+	    Name		    "<signal1>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
 	  Port {
 	    PortNumber		    2
-	    Name		    "<Y_cmd>"
+	    Name		    "<signal2>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
 	  Port {
 	    PortNumber		    3
-	    Name		    "<Alt_Cmd>"
+	    Name		    "<signal3>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
 	  Port {
 	    PortNumber		    4
-	    Name		    "<Psi_cmd>"
+	    Name		    "<signal4>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
@@ -2429,34 +2597,34 @@ Model {
 	  Position		  [210, 251, 215, 369]
 	  ZOrder		  210
 	  ShowName		  off
-	  OutputSignals		  "X,Y,Psi,U,V"
+	  OutputSignals		  "signal1,signal2,signal3,signal4,signal5"
 	  Port {
 	    PortNumber		    1
-	    Name		    "<X>"
+	    Name		    "<signal1>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
 	  Port {
 	    PortNumber		    2
-	    Name		    "<Y>"
+	    Name		    "<signal2>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
 	  Port {
 	    PortNumber		    3
-	    Name		    "<Psi>"
+	    Name		    "<signal3>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
 	  Port {
 	    PortNumber		    4
-	    Name		    "<U>"
+	    Name		    "<signal4>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
 	  Port {
 	    PortNumber		    5
-	    Name		    "<V>"
+	    Name		    "<signal5>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
@@ -2514,7 +2682,7 @@ Model {
 	      IconDisplay	      "Port number"
 	      Port {
 		PortNumber		1
-		PropagatedSignals	"X_cmd"
+		PropagatedSignals	"signal1"
 		ShowPropagatedSignals	"on"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
@@ -2530,7 +2698,7 @@ Model {
 	      IconDisplay	      "Port number"
 	      Port {
 		PortNumber		1
-		PropagatedSignals	"Y_cmd"
+		PropagatedSignals	"signal2"
 		ShowPropagatedSignals	"on"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
@@ -2546,7 +2714,7 @@ Model {
 	      IconDisplay	      "Port number"
 	      Port {
 		PortNumber		1
-		PropagatedSignals	"X"
+		PropagatedSignals	"signal1"
 		ShowPropagatedSignals	"on"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
@@ -2562,7 +2730,7 @@ Model {
 	      IconDisplay	      "Port number"
 	      Port {
 		PortNumber		1
-		PropagatedSignals	"Y"
+		PropagatedSignals	"signal2"
 		ShowPropagatedSignals	"on"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
@@ -2578,7 +2746,7 @@ Model {
 	      IconDisplay	      "Port number"
 	      Port {
 		PortNumber		1
-		PropagatedSignals	"Psi"
+		PropagatedSignals	"signal3"
 		ShowPropagatedSignals	"on"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
@@ -2837,18 +3005,21 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
+	      Labels		      [0, 0]
 	      SrcBlock		      "Y_cmd"
 	      SrcPort		      1
 	      DstBlock		      "Sum1"
 	      DstPort		      1
 	    }
 	    Line {
+	      Labels		      [0, 0]
 	      SrcBlock		      "X_cmd"
 	      SrcPort		      1
 	      DstBlock		      "Sum"
 	      DstPort		      1
 	    }
 	    Line {
+	      Labels		      [0, 0]
 	      SrcBlock		      "X"
 	      SrcPort		      1
 	      Points		      [170, 0]
@@ -2856,6 +3027,7 @@ Model {
 	      DstPort		      2
 	    }
 	    Line {
+	      Labels		      [0, 0]
 	      SrcBlock		      "Y"
 	      SrcPort		      1
 	      Points		      [200, 0]
@@ -2924,6 +3096,7 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
+	      Labels		      [0, 0]
 	      SrcBlock		      "Psi"
 	      SrcPort		      1
 	      DstBlock		      "Trigonometric\nFunctions"
@@ -3010,7 +3183,7 @@ Model {
 	      IconDisplay	      "Port number"
 	      Port {
 		PortNumber		1
-		PropagatedSignals	"V"
+		PropagatedSignals	"signal5"
 		ShowPropagatedSignals	"on"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
@@ -3150,6 +3323,7 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
+	      Labels		      [0, 0]
 	      SrcBlock		      "Yb Velocity"
 	      SrcPort		      1
 	      Points		      [165, 0]
@@ -3259,7 +3433,7 @@ Model {
 	      IconDisplay	      "Port number"
 	      Port {
 		PortNumber		1
-		PropagatedSignals	"U"
+		PropagatedSignals	"signal4"
 		ShowPropagatedSignals	"on"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
@@ -3395,6 +3569,7 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
+	      Labels		      [0, 0]
 	      SrcBlock		      "Xb Velocity"
 	      SrcPort		      1
 	      Points		      [165, 0]
@@ -3424,7 +3599,7 @@ Model {
 	  IconDisplay		  "Port number"
 	}
 	Line {
-	  Name			  "<V>"
+	  Name			  "<signal5>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector1"
 	  SrcPort		  5
@@ -3438,7 +3613,7 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  Name			  "<Psi_cmd>"
+	  Name			  "<signal4>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector"
 	  SrcPort		  4
@@ -3453,7 +3628,7 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  Name			  "<Alt_Cmd>"
+	  Name			  "<signal3>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector"
 	  SrcPort		  3
@@ -3478,7 +3653,7 @@ Model {
 	  }
 	}
 	Line {
-	  Name			  "<X_cmd>"
+	  Name			  "<signal1>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector"
 	  SrcPort		  1
@@ -3486,7 +3661,7 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  Name			  "<Y_cmd>"
+	  Name			  "<signal2>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector"
 	  SrcPort		  2
@@ -3494,7 +3669,7 @@ Model {
 	  DstPort		  2
 	}
 	Line {
-	  Name			  "<X>"
+	  Name			  "<signal1>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector1"
 	  SrcPort		  1
@@ -3503,7 +3678,7 @@ Model {
 	  DstPort		  3
 	}
 	Line {
-	  Name			  "<Y>"
+	  Name			  "<signal2>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector1"
 	  SrcPort		  2
@@ -3512,7 +3687,7 @@ Model {
 	  DstPort		  4
 	}
 	Line {
-	  Name			  "<Psi>"
+	  Name			  "<signal3>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector1"
 	  SrcPort		  3
@@ -3529,7 +3704,7 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  Name			  "<U>"
+	  Name			  "<signal4>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector1"
 	  SrcPort		  4
@@ -3578,7 +3753,7 @@ Model {
       Name		      "Quadcopter Dynamics"
       SID		      "236"
       Ports		      [1, 1]
-      Position		      [535, 38, 635, 102]
+      Position		      [575, 38, 675, 102]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -3589,7 +3764,7 @@ Model {
       System {
 	Name			"Quadcopter Dynamics"
 	Location		[410, 434, 930, 550]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3625,7 +3800,7 @@ Model {
 	  System {
 	    Name		    "Motors"
 	    Location		    [545, 178, 1016, 520]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -4454,19 +4629,6 @@ Model {
 	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
-	      BlockType		      Sum
-	      Name		      "Sum2"
-	      SID		      "79"
-	      Ports		      [2, 1]
-	      Position		      [940, 320, 960, 340]
-	      ZOrder		      -18
-	      ShowName		      off
-	      IconShape		      "round"
-	      InputSameDT	      off
-	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
 	      BlockType		      Terminator
 	      Name		      "Terminator"
 	      SID		      "80"
@@ -4934,14 +5096,7 @@ Model {
 	    Line {
 	      SrcBlock		      "6DoF (Euler Angles)"
 	      SrcPort		      6
-	      Points		      [105, 0; 0, 70]
-	      DstBlock		      "Sum2"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Sum2"
-	      SrcPort		      1
-	      Points		      [20, 0; 0, -35]
+	      Points		      [105, 0; 0, 75; 55, 10; 15, 15; 20, 0; 0, -40]
 	      DstBlock		      "Demux5"
 	      DstPort		      1
 	    }
@@ -5620,7 +5775,7 @@ Model {
       SID		      "180"
       Tag		      "STV Subsys"
       Ports		      [0, 1]
-      Position		      [15, 556, 100, 644]
+      Position		      [40, 311, 125, 399]
       ZOrder		      -20
       CopyFcn		      "sigbuilder_block('copy');"
       DeleteFcn		      "sigbuilder_block('delete');"
@@ -6016,7 +6171,7 @@ Model {
       Name		      "Subsystem"
       SID		      "319"
       Ports		      [4, 4]
-      Position		      [255, 26, 385, 114]
+      Position		      [295, 26, 425, 114]
       ShowName		      off
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -6933,8 +7088,17 @@ Model {
     Line {
       SrcBlock		      "Quadcopter Dynamics"
       SrcPort		      1
-      DstBlock		      "C"
-      DstPort		      1
+      Points		      [0, 0]
+      Branch {
+	DstBlock		"C"
+	DstPort			1
+      }
+      Branch {
+	Labels			[1, 0]
+	Points			[0, 130; -180, 0; 0, 225]
+	DstBlock		"Demux"
+	DstPort			1
+      }
     }
     Line {
       SrcBlock		      "Ctrl Mix"
@@ -6966,10 +7130,92 @@ Model {
       DstBlock		      "Ctrl Mix"
       DstPort		      4
     }
+    Line {
+      SrcBlock		      "Position Controller"
+      SrcPort		      1
+      DstBlock		      "Demux5"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Demux5"
+      SrcPort		      1
+      Points		      [10, 0; 0, 5]
+      DstBlock		      "Subsystem"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Demux5"
+      SrcPort		      2
+      Points		      [10, 0; 0, -15]
+      DstBlock		      "Subsystem"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Demux5"
+      SrcPort		      3
+      Points		      [10, 0; 0, -35]
+      DstBlock		      "Subsystem"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Demux5"
+      SrcPort		      4
+      Points		      [20, 0]
+      DstBlock		      "Subsystem"
+      DstPort		      4
+    }
+    Line {
+      SrcBlock		      "Path"
+      SrcPort		      1
+      DstBlock		      "Position Controller"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Bus\nCreator"
+      SrcPort		      1
+      Points		      [-50, 0; 0, -210; -105, 0; 0, -80]
+      DstBlock		      "Position Controller"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Demux"
+      SrcPort		      1
+      Points		      [-80, 0; 0, 10]
+      DstBlock		      "Bus\nCreator"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Demux"
+      SrcPort		      2
+      Points		      [-80, 0; 0, 40]
+      DstBlock		      "Bus\nCreator"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Demux"
+      SrcPort		      9
+      Points		      [-80, 0; 0, -50]
+      DstBlock		      "Bus\nCreator"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Demux"
+      SrcPort		      10
+      Points		      [-160, 0]
+      DstBlock		      "Bus\nCreator"
+      DstPort		      4
+    }
+    Line {
+      SrcBlock		      "Demux"
+      SrcPort		      11
+      Points		      [-80, 0; 0, 10]
+      DstBlock		      "Bus\nCreator"
+      DstPort		      5
+    }
     Annotation {
       SID		      "328"
       Name		      "Control"
-      Position		      [320, 128]
+      Position		      [360, 128]
     }
     Annotation {
       SID		      "377"
@@ -6992,8 +7238,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @       \" #@!P0 X    X    !@    @    &          4    (     0    $   "
-    " !          D    (        H !HJD .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @         @ ((0 X    X    !@    @    &          4    (     0    $    "
+    "!          D    (          * @$ .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0

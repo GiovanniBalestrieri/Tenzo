@@ -12,7 +12,7 @@ esp=1/(2*(sigma)^2);
 center=3;
 F=exp(-(t-center).^2*esp.^2);
 plot(t,F);
-pause();
+
 %% 3D function RBF
 disp('3D case:');
 [X,Y] = meshgrid(0:.1:10);
@@ -28,7 +28,6 @@ Z = exp(-((X-Xc1(:,1:101)).^2+(Y-Yc1(:,102:202)).^2)*esp.^2);
 % Yc2=center*ones(101,202);
 % Z = Z + exp(-((X-Xc2(:,1:101)).^2+(Y-Yc2(:,102:202)).^2)*esp1.^2);
 surf(X,Y,Z)
-pause();
 %% Random Radial Basis functions in space 
 disp('3D case with Random path - 3 functions:');
 N = 8 % number of random functions
@@ -58,6 +57,8 @@ for i=1:1:N
     Z = Z + 1*exp(-((X-Xci(:,1:((XMax-XMin)/stepMesh+1))).^2+(Y-Yci(:,((XMax-XMin)/stepMesh+2):((YMax-YMin)/stepMesh+1)*2)).^2)*esp(i,1).^2);
 end
 surf(X,Y,Z)
+
+[cline]=contour(Z,[0.5 0.5]);
 
 %pause();
 %% Random Radial Basis functions in space 
@@ -90,7 +91,6 @@ for i=1:1:N
 end
 surf(X,Y,Z)
 
-pause();
 %% Post elaboration
 
 figure;
@@ -99,16 +99,18 @@ axis equal
 axis tight
 contour(X,Y,Z)
 h=[1,1]
-contour(X,Y,Z,h)
+cl = contour(X,Y,Z,h)
+[x1,y1,z1] = C2xyz(C);
+plot(cl(1,8:end),cl(2,8:end))
 
-v = -2:0.2:2;
-[x,y] = meshgrid(v);
-z = x .* exp(-x.^2 - y.^2);
-[px,py] = gradient(z,.2,.2);
-contour(v,v,z)
-hold on
-quiver(v,v,px,py)
-hold off
+% v = -2:0.2:2;
+% [x,y] = meshgrid(v);
+% z = x .* exp(-x.^2 - y.^2);
+% [px,py] = gradient(z,.2,.2);
+% contour(v,v,z)
+% hold on
+% quiver(v,v,px,py)
+% hold off
 
 %% 3D function
 disp('3D case:');

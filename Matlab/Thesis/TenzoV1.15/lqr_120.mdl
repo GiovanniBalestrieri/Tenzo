@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.73"
+    ComputedModelVersion    "1.74"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed May 27 16:46:26 2015"
-  RTWModifiedTimeStamp	  354645980
-  ModelVersionFormat	  "1.%<AutoIncrement:73>"
+  LastModifiedDate	  "Wed Jun 10 16:56:11 2015"
+  RTWModifiedTimeStamp	  355856163
+  ModelVersionFormat	  "1.%<AutoIncrement:74>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,6 +78,7 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "lqr_115"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -3251,7 +3252,7 @@ Model {
       System {
 	Name			"Tenzo NL"
 	Location		[53, 51, 1366, 768]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -4926,8 +4927,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @       !  /\"/0 X    X    !@    @    &          4    (     0    $   "
-    " !          D    (        8 \"\\D$ .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       \"@ &\"F0 X    X    !@    @    &          4    (     0    $  "
+    "  !          D    (        \\ #$ID .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0
