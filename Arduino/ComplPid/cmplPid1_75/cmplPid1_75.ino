@@ -289,8 +289,8 @@ SoftwareSerial blu(pinRx, pinTx);
 byte loBytew1, hiBytew1,loBytew2, hiBytew2;
 int loWord,hiWord;
 
-int printBlueAngleCounter = 0
-int printBlueAngleSkip = 20;
+int printBlueAngleCounter = 0;
+int printBlueAngleSkip = 5;
 
 // Serial Protocol
 int versionArduinoProtocol = 6;
@@ -804,6 +804,24 @@ void sendStatus()
   }
 }
 
+void sendPidStatus()
+{// Change!!!
+  if (connAck && printBlue)
+  {
+    Serial.print("s,");
+    Serial.print("p");
+    Serial.print(",");
+    Serial.print(landed);
+    Serial.print(",");
+    if (enablePid)
+       Serial.print(1);
+    else if (!enablePid)  
+       Serial.print(0);      
+    Serial.print(",");
+    Serial.println(warning);    
+  }
+}
+
 void resetStatus()
 {
   sendBlueAngle = false;
@@ -839,17 +857,101 @@ void serialRoutine()
     }
     if (modeS == 't')
     {
-      sendBlueAngle = !sendBlueAngle;
-      Serial.println('A');      
+      char t = Serial.read();
+      if (t=='e')
+        sendBlueAngle = true;
+      else if (t=='d')
+      {
+        Serial.println('A');    
+        sendBlueAngle = false;
+      }   
     }
     if (modeS == 'p')
     {
-      enablePid = !enablePid;
-      changePidState(enablePid);
-      if (enablePid)
-         Serial.println("c,p,");
-      else if (!enablePid)  
-         Serial.println("c,n,");      
+      char t = Serial.read();
+      if (t=='e')
+      {
+        enablePid = true;
+        Serial.println("c,p,");
+        changePidState(enablePid);
+      }
+      else if (t == 'd')
+      {
+        enablePid = false;
+        Serial.println("c,n,");
+        changePidState(enablePid);
+      }     
+      else if (t=='a')
+      { 
+        // en/disable each single angular pid
+        char x = Serial.read();
+        if (x=='r')
+        {
+          char y = Serial.read();
+          if (y=='e')
+            enableRollPid = true;
+          else if (y=='d')
+            enableRollPid = false;            
+        }
+        if (x=='p')
+        {
+          char y = Serial.read();
+          if (y=='e')
+            enablePitchPid = true;
+          else if (y=='d')
+            enablePitchPid = false;            
+        }
+        if (x=='y')
+        {
+          char y = Serial.read();
+          if (y=='e')
+            enableYawPid = true;
+          else if (y=='d')
+            enableYawPid = false;            
+        }
+      } 
+      else if (t=='w')
+      { 
+        // en/disable each single w ang pid
+        char x = Serial.read();
+        if (x=='r')
+        {
+          char y = Serial.read();
+          if (y=='e')
+            enableWRollPid = true;
+          else if (y=='d')
+            enableWRollPid = false;            
+        }
+        if (x=='p')
+        {
+          char y = Serial.read();
+          if (y=='e')
+            enableWPitchPid = true;
+          else if (y=='d')
+            enableWPitchPid = false;            
+        }
+        if (x=='y')
+        {
+          char y = Serial.read();
+          if (y=='e')
+            enableWYawPid = true;
+          else if (y=='d')
+            enableWYawPid = false;            
+        }
+      }
+      else if (t=='q')
+      { // en/disable altitude pid
+        char z = Serial.Read()
+        if (z=='e')
+        {  
+           enableAltitudePid = true; 
+        } 
+        else (z=='d')
+        {
+          enableAltitudePid = false; 
+        }
+      }
+      sendPidStatus(); 
     }
     else if (modeS== '1')
     {

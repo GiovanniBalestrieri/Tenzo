@@ -289,8 +289,8 @@ SoftwareSerial blu(pinRx, pinTx);
 byte loBytew1, hiBytew1,loBytew2, hiBytew2;
 int loWord,hiWord;
 
-int printBlueAngleCounter = 0
-int printBlueAngleSkip = 20;
+int printBlueAngleCounter = 0;
+int printBlueAngleSkip = 5;
 
 // Serial Protocol
 int versionArduinoProtocol = 6;
@@ -839,12 +839,22 @@ void serialRoutine()
     }
     if (modeS == 't')
     {
-      sendBlueAngle = !sendBlueAngle;
-      Serial.println('A');      
+      char t = Serial.read();
+      if (t=='e')
+        sendBlueAngle = true;
+      else if (t=='d')
+      {
+        Serial.println('A');    
+        sendBlueAngle = false;
+      }  
     }
     if (modeS == 'p')
     {
-      enablePid = !enablePid;
+      char t = Serial.read();
+      if (t=='e')
+        enablePid = true;
+      else if (t == 'd')
+        enablePid = false;
       changePidState(enablePid);
       if (enablePid)
          Serial.println("c,p,");
