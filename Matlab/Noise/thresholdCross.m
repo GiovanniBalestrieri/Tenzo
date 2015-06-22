@@ -2,6 +2,9 @@ XMin = -10;
 XMax = 10;
 YMin = -10;
 YMax = 10;
+addpath('Reference/c2xyz/');
+addpath('Reference/export/');
+
 %% Random Radial Basis functions in space 
 disp('3D case with random path - 10 rbf:');
 N = 10 % number of random functions
@@ -63,4 +66,19 @@ for n = find(z1==threshold);
 end
 disp('Number of zones founded:');
 disp(sector.numberOfZones);
-%plot(xTh(1,:),yTh(1,:),'k-','linewidth',3)
+
+
+%%// Remove frames
+set(gca, 'visible', 'off')
+set(gcf, 'color', 'w');
+
+%%// Get the figure as a uint8 variable
+im = export_fig;
+
+%//  Output binary image
+BW = ~im2bw(uint8(255.*im2double(im)),0.99);
+
+%%// Remove
+BW = bwmorph(BW,'skel',Inf);
+
+figure,imshow(BW)
