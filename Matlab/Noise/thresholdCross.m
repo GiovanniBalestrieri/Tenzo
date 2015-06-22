@@ -43,15 +43,17 @@ grid on
 axis equal
 axis tight
 contour(X,Y,Z);
-h=[1,1]
-contour(X,Y,Z,h);
 cl = contour(X,Y,Z);
 [x1,y1,z1] = C2xyz(cl);
+
+% countours at 0.8
+h=[0.8,0.8]
+contour(X,Y,Z,h)
 
 
 figure(3);
 hold on; % Allows plotting atop the preexisting peaks plot. 
-threshold = 1;
+threshold = 0.8;
 sector.numberOfZones = 1;
 % analyze all the level curves
 for n = find(z1==threshold); 
@@ -68,7 +70,9 @@ disp('Number of zones founded:');
 disp(sector.numberOfZones);
 
 
-%%// Remove frames
+%% Convert to BW
+
+%Remove frames
 set(gca, 'visible', 'off')
 set(gcf, 'color', 'w');
 
@@ -80,5 +84,45 @@ BW = ~im2bw(uint8(255.*im2double(im)),0.99);
 
 %%// Remove
 BW = bwmorph(BW,'skel',Inf);
+figure(4);
+imshow(BW)
+% Save it
+saveas(4, 'sectors1', 'png');
 
-figure,imshow(BW)
+%% Centroids
+
+s = regionprops(BW,'centroid');
+centroids = cat(1, s.Centroid);
+imshow(BW)
+hold on
+plot(centroids(:,1),centroids(:,2), 'b*')
+hold off
+
+stats = regionprops(BW,'Centroid',...
+    'MajorAxisLength','MinorAxisLength','Extrema','BoundingBox','ConvexArea','ConvexHull','ConvexImage')
+
+% just a test to see the results of regionprops
+% centers = stats.Centroid;
+% diameters = mean([stats.MajorAxisLength stats.MinorAxisLength],2);
+% radii = diameters/2;
+
+figure(4)
+subplot(1,3,1);
+%BW = imread('sectors1.png');
+imshow(BW);
+title('Binary');
+    
+% subplot(2,2,2);
+% BW1 = BW > 10;
+% imshow(BW1);
+% title('Binary');
+    
+subplot(1,3,2);
+CH = bwconvhull(BW);
+imshow(CH);
+title('Union Convex Hull');
+    
+subplot(1,3,3);
+CH_objects = bwconvhull(BW,'objects',8);
+imshow(CH_objects);
+title('Objects Convex Hull');
