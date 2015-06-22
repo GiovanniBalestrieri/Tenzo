@@ -1,4 +1,3 @@
-
 /**********************************************************************
  *             Arduino & L3G4200D gyro & KALMAN & 3 threshold PID     *
  *                running I2C mode, MMA7260Q Accelerometer            *
@@ -33,10 +32,11 @@ boolean printMotorsVals = false;
 boolean printPIDVals = false;
 boolean printSerialInfo = false;
 boolean printSerial = false;
-boolean printTimers = true;
+boolean printTimers = false; // true
 boolean printAccs = false;
 boolean printOmegas = false;
 boolean sendBlueAngle = false;
+boolean printVerboseSerial = false;
 
 /**
  * Modes
@@ -292,6 +292,40 @@ int loWord,hiWord;
 int printBlueAngleCounter = 0;
 int printBlueAngleSkip = 5;
 
+// Control Sensors data transmission
+boolean sendAccToMatlab = false;
+boolean sendGyroToMatlab = false;
+boolean sendEstToMatlab = false;
+boolean sendMagnToMatlab = false;
+boolean sendMotorsToMatlab = false;
+boolean sendRollToMatlab = false;
+boolean sendPitchToMatlab = false;
+boolean sendYawToMatlab = false;
+boolean sendAltToMatlab = false;
+boolean sendPidState = false;
+boolean sendLandAck = false;
+boolean sendTakeOffAck = false;
+boolean sendHoverState = false;
+boolean sendTenzoState = false;
+boolean sendConnAck = false;
+boolean sendDisconnAck = false;
+boolean storeAccData = false;
+boolean accDataReady = false;
+
+/**
+ * Print sensor's value
+ */ 
+boolean printSetupInfo = true;
+boolean printAckCommands = true;
+boolean printRawKalman= false;
+boolean printRawAcc = false;
+boolean printRawGyro= false;
+boolean printGyro = false;
+boolean printRawCompass= false;
+boolean printCompass = false;
+boolean printKalman = false; 
+boolean printThrottle = false;
+
 // Serial Protocol
 int versionArduinoProtocol = 6;
 boolean matlab = false;
@@ -303,9 +337,75 @@ long cmd4;
 int numCommandToSend = 0;
 int numFilterValuesToSend = 0;
 
-int inputBuffSize = 30;
+int inputBuffSize = 22;
 int outputBuffSize = 30;
-byte bufferBytes[30];
+byte bufferBytes[22];
+
+// Serial IDs
+int arduinoAdd = 1;
+int MatlabAdd = 2;
+
+int motorsID = 1;
+int accID = 2;
+int gyroID = 3;
+int magnID = 4;
+int estID = 5;
+int sonicID = 6;
+int gpsID = 7;
+int baroID = 8;
+int rollConsID = 9;
+int pitchConsID = 10;
+int yawConsID = 11;
+int altitudeConsID = 12;
+int rollAggID = 13;
+int pitchAggID = 14;
+int yawAggID = 15;
+int altitudeAggID = 16;
+int takeOffID = 17;
+int iHoverID = 18;
+int landID = 19;
+int enableMotorsID = 20;
+int sendConsPidRollID = 21;
+int sendConsPidPitchID = 22;
+int sendConsPidYawID = 23;
+int sendConsPidAltID = 24;
+int sendAggPidRollID = 25;
+int sendAggPidPitchID = 26;
+int sendAggPidYawID = 27;
+int sendAggPidAltID = 28;
+int tenzoStateID = 30;
+int connID = 31;
+int accValuesID = 32;
+
+int cmdLength = 17;
+int shortCmdLength = 9;
+int headerLength = 8;//13;
+
+typedef struct mcTag {  // 8 bytes for versions < 6 it was 13 bytes
+  unsigned char srcAddr;
+  unsigned char dstAddr;
+  unsigned char versionX;  //long
+  unsigned char numCmds;
+  unsigned char hdrLength;
+  unsigned char cmdLength;
+  unsigned char totalLen; // short
+  unsigned char crc;  // short
+} 
+MyControlHdr;
+
+typedef struct ctrTag { // 17 bytes
+  unsigned char cmd;
+  long param1;
+  long param2;
+  long param3;
+  long param4;   
+} 
+MyCommand;
+
+unsigned char buffer[47];  // or worst case message size 70, 47: 2 mess
+
+MyControlHdr * pCtrlHdr = (MyControlHdr *)(&buffer[0]);
+
 
 // Volatile vars
 volatile int cont = 0;
@@ -317,9 +417,9 @@ volatile float thetaOLD = 0;
 volatile float phi=0;
 volatile float theta=0;
 volatile float psi=0;
-volatile int x=0;
+volatile int x = 0;
 volatile int y = 0;
-volatile int z= 0;
+volatile int z = 0;
 volatile int rawAx = 0;
 volatile int rawAy = 0;
 volatile int rawAz = 0;
@@ -345,15 +445,7 @@ void setup()
 {  
   Wire.begin();
   Serial.begin(115200); 
-//  Serial.print("$$$");
-//  delay(100);
-//  Serial.println("U,9600,N");
-//  Serial.begin(9600);
-  //blu.begin(BlueRate); // 115200 bps
-  //blu.print("$$$");
-  //delay(100);
-  //blu.println("U,4800,N");
-  //blu.begin(4800);
+  
   pinMode(xaxis,INPUT);
   pinMode(yaxis,INPUT);
   pinMode(zaxis,INPUT);
@@ -375,7 +467,6 @@ void setup()
   if (!processing && !printBlue)
   {
     Serial.println("Starting up L3G4200D");
-    //Serial.println("Setting up timer3");
   }
 
   setupL3G4200D(2000); // Configure L3G4200  - 250, 500 or 2000 deg/sec
@@ -384,6 +475,7 @@ void setup()
   biasCalcTime = micros();
   calcBias();
   biasCalcTime = micros() - biasCalcTime;
+  /*
   if (!processing && !printBlue)
   {
     Serial.print("Read: [us] ");
@@ -393,6 +485,7 @@ void setup()
     Serial.print("      Samples: ");
     Serial.println(contSamples);
   }
+  */
   XError =  AccelAdjust(xaxis);
   YError =  AccelAdjust(yaxis);
   ZError =  AccelAdjust(zaxis);
@@ -431,8 +524,12 @@ void setup()
 
 void loop()
 {  
-  serialRoutine();
-  delay(20);
+  while(true)
+  {
+    serialRoutine();   
+    sendDataSensors(matlab);
+    //delay(20);
+  }
 } 
 
 ISR(TIMER3_COMPB_vect)
@@ -452,6 +549,596 @@ ISR(TIMER3_COMPB_vect)
   estAngle();
   
   cont++;
+}
+
+void sendDataSensors(boolean device)
+{
+  if (!device)
+  {
+    // Not yet connected. 
+    if (sendConnAck)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+      numCommandToSend++;
+
+      // Channel 31: Connection
+      pMyCmd->cmd = connID;
+      pMyCmd->param1 = 2; 
+      sendConnAck = false;
+      sendCommandToMatlab(); 
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.println("Sending Connection Ack to Matlab: First Time");
+        Serial.print(pMyCmd->param1);
+        Serial.println(); 
+      } 
+     matlab = true;     
+    }
+   else if (sendDisconnAck)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+      numCommandToSend++;
+
+      // Channel 31: Disconnection
+      pMyCmd->cmd = connID;
+      pMyCmd->param1 = 10; 
+      sendDisconnAck = false;
+      matlab = false;
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.println("Sending Disonnection Ack to Matlab: ");
+        Serial.print(pMyCmd->param1);
+        Serial.println(); 
+      }      
+      sendCommandToMatlab();      
+    } 
+  }
+  else if (device)
+  {    
+    long cmdTmp1;
+    long cmdTmp2;
+    long cmdTmp3;
+    long cmdTmp4;
+
+    if (sendConnAck)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+      numCommandToSend++;
+
+      // Channel 31: Connection
+      pMyCmd->cmd = connID;
+      pMyCmd->param1 = 2; 
+      sendConnAck = false;
+      sendCommandToMatlab(); 
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.println("Sending Connection Ack to Matlab: DOPO ");
+        Serial.print(pMyCmd->param1);
+        Serial.println(); 
+      }      
+    } 
+    else if (sendDisconnAck)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+      numCommandToSend++;
+
+      // Channel 31: Disconnection
+      pMyCmd->cmd = connID;
+      pMyCmd->param1 = 10; 
+      sendDisconnAck = false;
+      matlab = false;
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.println("Sending Disonnection Ack to Matlab: ");
+        Serial.print(pMyCmd->param1);
+        Serial.println(); 
+      }      
+      sendCommandToMatlab();      
+    }
+    else if (sendTenzoState)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+
+      numCommandToSend++;
+      pMyCmd->cmd = tenzoStateID;
+
+      if (initialized)   
+      {   
+        pMyCmd->param1 = 1;
+        pMyCmd->param3 = 0;     
+      } 
+      else
+      {
+        pMyCmd->param1 = 0;       
+        pMyCmd->param3 = 1; 
+      }
+
+      if (enablePid)      
+        pMyCmd->param2 = 1; 
+      else
+        pMyCmd->param2 = 0;   
+
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.println("Sending Tenzo state to Matlab");
+        Serial.print(" Take Off: ");
+        Serial.println(pMyCmd->param1);
+        Serial.print(" Hover:  ");
+        Serial.println(pMyCmd->param2);
+        Serial.print(" Land: ");
+        Serial.print(pMyCmd->param3);
+        Serial.println(); 
+      } 
+
+      sendCommandToMatlab();  
+      sendTenzoState = false;
+    }
+    else if (storeAccData && accDataReady)
+    {
+      //////////////////////////// Send values to Matlab /// Done in other way
+    }
+    else if (sendHoverState && sendTakeOffAck)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+
+      pMyCmd->cmd = takeOffID;
+
+      if (initialized)      
+        pMyCmd->param1 = 1; 
+      else
+        pMyCmd->param1 = 0;   
+
+      sendTakeOffAck = false;
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.print("Sending Ack to Matlab. TakeOffState:  ");
+        Serial.print(pMyCmd->param1);
+        Serial.println(); 
+      } 
+
+      pMyCmd++;           // Second Message
+
+      // Channel 18: Hovering
+      pMyCmd->cmd = iHoverID;
+      if (enablePid)      
+        pMyCmd->param1 = 1; 
+      else
+        pMyCmd->param1 = 0; 
+      sendHoverState = false;
+
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.print("Sending Ack to Matlab: Hover: ");
+        Serial.print(pMyCmd->param1);
+        Serial.println(); 
+      } 
+
+      sendCommandToMatlab();  
+    }
+    else if (sendTakeOffAck)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+
+      pMyCmd->cmd = takeOffID;
+
+      if (initialized)      
+        pMyCmd->param1 = 1; 
+      else
+        pMyCmd->param1 = 0;   
+
+      sendTakeOffAck = false;
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.print("Sending Ack to Matlab. TakeOffState:  ");
+        Serial.print(pMyCmd->param1);
+        Serial.println(); 
+      } 
+      sendCommandToMatlab();  
+    }
+    else if (sendHoverState && sendLandAck)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+      // Channel 18: Hovering
+      pMyCmd->cmd = iHoverID;
+      if (enablePid)      
+        pMyCmd->param1 = 1; 
+      else
+        pMyCmd->param1 = 0; 
+      sendHoverState = false;
+
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.print("Sending Ack to Matlab: Hover: ");
+        Serial.print(pMyCmd->param1);
+        Serial.println(); 
+      } 
+
+      pMyCmd++;           // Second Message
+      // Channel 19: Landing
+      pMyCmd->cmd = landID;
+
+      if (initialized)      
+        pMyCmd->param1 = 0; 
+      else
+        pMyCmd->param1 = 1;   
+      sendLandAck = false;
+
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.print("Sending Ack to Matlab. Land state: 2  ");
+        Serial.print(pMyCmd->param1);
+        Serial.println(); 
+      }      
+      // Send two commands to Matlab. numCommandsToSend = 2;
+      sendCommandToMatlab();  
+    }   
+    else if (sendHoverState)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+      // Channel 18: Hovering
+      pMyCmd->cmd = 18;
+      if (enablePid)      
+        pMyCmd->param1 = 1; 
+      else
+        pMyCmd->param1 = 0; 
+      sendHoverState = false;
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.print("Sending Ack to Matlab: Hover: ");
+        Serial.print(pMyCmd->param1);
+        Serial.println(); 
+      }      
+      sendCommandToMatlab();  
+    }
+    else if (sendLandAck)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+      // Channel 19: Landing
+      pMyCmd->cmd = landID;
+
+      if (initialized)      
+        pMyCmd->param1 = 0; 
+      else
+        pMyCmd->param1 = 1;   
+      sendLandAck = false;
+      sendCommandToMatlab();
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.print("Sending Ack to Matlab. Land state:  ");
+        Serial.print(pMyCmd->param1);
+        Serial.println(); 
+      } 
+
+    }
+    else if (sendAccToMatlab && matlab)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+      pMyCmd->cmd = accID;
+
+      pMyCmd->param1 = aax*100;   
+      pMyCmd->param2 = aay*100;
+      pMyCmd->param3 = aaz*100; 
+
+      numCommandToSend++;
+
+      sendCommandToMatlab();  
+
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.print("Sending Ack to Matlab. [ax ay az]");
+        Serial.println(pMyCmd->param1);
+        Serial.println(pMyCmd->param2);
+        Serial.println(pMyCmd->param3);
+        Serial.println(); 
+      } 
+      sendAccToMatlab = false;
+    }
+    else if (sendGyroToMatlab  && matlab)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+      pMyCmd->cmd = gyroID;
+
+      pMyCmd->param1 = x*100;   
+      pMyCmd->param2 = y*100;
+      pMyCmd->param3 = z*100; 
+      numCommandToSend++;
+
+      sendCommandToMatlab();  
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.print("Sending Ack to Matlab. [wx wy wz]");
+        Serial.println(pMyCmd->param1);
+        Serial.println(pMyCmd->param2);
+        Serial.println(pMyCmd->param3);
+        Serial.println(); 
+      } 
+      sendGyroToMatlab = false;
+    }
+    else if (sendEstToMatlab && sendMagnToMatlab && matlab)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+
+      numCommandToSend++;
+      pMyCmd->cmd = magnID;
+
+      pMyCmd->param1 = phi;   
+      pMyCmd->param2 = theta;
+      pMyCmd->param3 = bearing1*100;
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.print("Sending Ack to Matlab. [xM yM zM]");
+        Serial.println(pMyCmd->param1);
+        Serial.println(pMyCmd->param2);
+        Serial.println(pMyCmd->param3);
+        Serial.println(); 
+      }
+
+      pMyCmd++;           // moves pointer to next command position in message
+      numCommandToSend++;
+      pMyCmd->cmd = estID;
+
+      pMyCmd->param1 = (int)estYAngle;   
+      pMyCmd->param2 = (int)estXAngle;
+      pMyCmd->param3 = (int)estZAngle*100;
+
+      sendCommandToMatlab(); 
+
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.print("Sending Ack to Matlab. [xEst yEst zEst]");
+        Serial.println(pMyCmd->param1);
+        Serial.println(pMyCmd->param2);
+        Serial.println(pMyCmd->param3);
+        Serial.println(); 
+      } 
+      sendEstToMatlab = false;
+      sendMagnToMatlab = false;
+    }
+    else if (sendMotorsToMatlab && matlab)
+    {
+      MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+      pMyCmd->cmd = enableMotorsID;
+      numCommandToSend++;
+
+      pMyCmd->param1 = throttle; 
+      if (printAckCommands && !printBlue)
+      {
+        Serial.println();
+        Serial.print("Sending throttle to Matlab: ");
+        Serial.println(pMyCmd->param1);
+        Serial.println(); 
+      } 
+      sendCommandToMatlab();  
+      sendMotorsToMatlab = false;
+    }
+    else if (sendPidState)
+    {
+      if (sendAltToMatlab)
+      {
+        MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+        pMyCmd->cmd = 12;
+        numCommandToSend++;
+
+        pMyCmd->param1 = consKpAltitude*1000;   
+        pMyCmd->param2 = consKdAltitude*1000;
+        pMyCmd->param3 = consKiAltitude*1000;
+        pMyCmd->param4 = SetpointAltitude;
+        if (printAckCommands && !printBlue)
+        {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. Alt cons");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+        } 
+
+        pMyCmd++;           // moves pointer to next command position in message
+
+        pMyCmd->cmd = 16;
+        numCommandToSend++;      
+
+        pMyCmd->param1 = aggKpAltitude*1000;   
+        pMyCmd->param2 = aggKdAltitude*1000;
+        pMyCmd->param3 = aggKiAltitude*1000;
+
+        pMyCmd->param4 = SetpointAltitude;
+        if (printAckCommands && !printBlue)
+        {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. Alt agg");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+        } 
+
+        sendAltToMatlab = false;
+      }
+      else if (sendRollToMatlab)
+      {
+        MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+        pMyCmd->cmd = 9;
+        numCommandToSend++;
+
+        pMyCmd->param1 = consKpRoll*1000;   
+        pMyCmd->param2 = consKdRoll*1000;
+        pMyCmd->param3 = consKiRoll*1000;
+        pMyCmd->param4 = SetpointRoll;
+        if (printAckCommands && !printBlue)
+        {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. roll cons: ");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+        } 
+        
+        pMyCmd++;           // moves pointer to next command position in message
+
+        pMyCmd->cmd = 13;
+        numCommandToSend++;
+
+        pMyCmd->param1 = aggKpRoll*1000;   
+        pMyCmd->param2 = aggKdRoll*1000;
+        pMyCmd->param3 = aggKiRoll*1000;
+        pMyCmd->param4 = SetpointRoll;
+        if (printAckCommands && !printBlue)
+        {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. roll agg");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+        }
+       
+        sendRollToMatlab = false;
+      }
+      else if (sendPitchToMatlab)
+      {
+        MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+        pMyCmd->cmd = 10;
+        numCommandToSend++;
+
+        pMyCmd->param1 = consKpPitch*1000;   
+        pMyCmd->param2 = consKdPitch*1000;
+        pMyCmd->param3 = consKiPitch*1000;
+        pMyCmd->param4 = SetpointPitch;
+        if (printAckCommands && !printBlue)
+        {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. pitch cons");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+        } 
+
+        pMyCmd++;           // moves pointer to next command position in message
+
+        pMyCmd->cmd = 14;
+        numCommandToSend++;
+
+        pMyCmd->param1 = aggKpPitch*1000;   
+        pMyCmd->param2 = aggKdPitch*1000;
+        pMyCmd->param3 = aggKiPitch*1000;
+        pMyCmd->param4 = SetpointPitch;
+        if (printAckCommands  && !printBlue)
+        {
+          Serial.println();
+          Serial.print("Sending pid vals to Matlab. pitch agg");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+        } 
+        sendPitchToMatlab = false;
+      }
+      else if (sendYawToMatlab)
+      {
+        MyCommand * pMyCmd = (MyCommand *)(&buffer[sizeof(MyControlHdr)]);
+        pMyCmd->cmd = 11;
+        numCommandToSend++;
+
+        pMyCmd->param1 = consKpYaw*1000;   
+        pMyCmd->param2 = consKiYaw*1000;
+        pMyCmd->param3 = consKiYaw*1000;
+        pMyCmd->param4 = SetpointYaw;
+        if (printAckCommands && !printBlue)
+        {
+          Serial.println();
+          Serial.print("Sending pid vals to client. Yaw cons");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+        } 
+
+        pMyCmd++;           // moves pointer to next command position in message
+
+        pMyCmd->cmd = 15;
+        numCommandToSend++;
+
+        pMyCmd->param1 = aggKpYaw*1000;   
+        pMyCmd->param2 = aggKdYaw*1000;
+        pMyCmd->param3 = aggKiYaw*1000;
+        pMyCmd->param4 = SetpointYaw;
+        if (printAckCommands && !printBlue)
+        {
+          Serial.println();
+          Serial.print("Sending pid vals to client. yaw agg");
+          Serial.println(pMyCmd->param1);
+          Serial.println(pMyCmd->param2);
+          Serial.println(pMyCmd->param3);
+          Serial.println(pMyCmd->param4);
+          Serial.println(); 
+        } 
+
+        sendYawToMatlab = false;
+      }
+      sendPidState = false;
+      sendCommandToMatlab(); 
+    }  
+  } 
+}
+
+void sendCommandToMatlab()
+{
+  // Build Header
+  pCtrlHdr->srcAddr = 1;
+  pCtrlHdr->dstAddr = 2;    // maybe you'll make 2555 a broadcast address? 
+  pCtrlHdr->versionX = versionArduinoProtocol;    // possible way to let a receiver know a code version
+  pCtrlHdr->numCmds = numCommandToSend;    // how many commands will be in the message
+  if (!printBlue)
+  {
+    Serial.println();
+    Serial.print("Sending # commands:");
+    Serial.print(numCommandToSend);
+    Serial.println();
+  }
+  pCtrlHdr->hdrLength = sizeof(MyControlHdr );  // tells receiver where commands start
+  pCtrlHdr->cmdLength = sizeof(MyCommand );     // tells receiver size of each command 
+  // include total length of entire message
+  pCtrlHdr->totalLen = sizeof(MyControlHdr ) + (sizeof(MyCommand) * pCtrlHdr->numCmds);
+  if (!printBlue)
+  {
+    Serial.println();
+    Serial.print("Total length: ");
+    Serial.print(pCtrlHdr->totalLen);
+    Serial.println();
+  }
+  pCtrlHdr->crc = 21;   // dummy temp value
+
+  for (int v=0;v<=sizeof(buffer);v++)
+  {
+    Serial.write(buffer[v]);  
+  }
+  numCommandToSend = 0;
 }
 
 void protocol1()
@@ -851,8 +1538,622 @@ void resetStatus()
 }
 
 void serialRoutine()
-{  
-  if (Serial.available())
+{
+  if (Serial.available()>= 10) //inputBuffSize
+  {        
+          
+      Serial.println(Serial.available());
+      for (int j=0;j<=inputBuffSize;j++)
+      {
+        bufferBytes[j] = Serial.read();
+        if (printVerboseSerial && !printBlue)
+        {
+          //Serial.print("Received: ");
+          Serial.print(bufferBytes[j]); // Ok that works
+          Serial.println();
+          delay(3);
+        }
+      }
+      
+      Serial.println("BBB");
+      
+      for (int j=0;j<=inputBuffSize;j++)
+      {
+          Serial.println(bufferBytes[j]);
+          delay(3);
+      }      
+      
+      if (bufferBytes[0] == 2 && bufferBytes[1]==1)
+      {        
+        /**
+         * Message has been correctly sent by Android and delivered to the Arduino 
+         * Decoding Header
+         **/
+
+        // Assembling VERSION long skip first two bytes
+        // previous version was 2 bytes value
+        // now, just one 
+        //hiBytew2 = bufferBytes[4];
+        ////Serial.println(hiBytew2,BIN);
+        //loBytew2 = bufferBytes[5];
+        ////Serial.println(loBytew2,BIN);
+        //hiWord = word(hiBytew2, loBytew2);
+        ////versionProtocol = makeLong( hiWord, loWord);
+        //int versionProtocol = hiWord;
+        int versionProtocol = bufferBytes[2];
+        //Serial.println(bufferBytes[2]);
+        //  number cmd
+        int numCmd = bufferBytes[3];
+        //Serial.println(bufferBytes[3]);
+        //Serial.println(versionProtocol);
+        int headL = bufferBytes[4];
+        //Serial.println(bufferBytes[4]);
+        int cmdL = bufferBytes[5];
+        //Serial.println(bufferBytes[5]);
+        //  total Length
+        //hiBytew2 = bufferBytes[9];
+        ////Serial.println(hiBytew2,BIN);
+        //loBytew2 = bufferBytes[10];
+        //Serial.println(loBytew2,BIN);
+        //short totL = word(hiBytew2, loBytew2);
+        int totL = bufferBytes[6];
+        //Serial.println(totL);
+        // CRC
+        //hiBytew2 = bufferBytes[11];
+        //// Serial.println(hiBytew2,BIN);
+        //loBytew2 = bufferBytes[12];
+        //// Serial.println(loBytew2,BIN);
+        //short crc = word(hiBytew2, loBytew2);
+        int crc = bufferBytes[7];
+        // Serial.println(crc);
+        /**
+         * Decoding Command
+         **/
+        int type = bufferBytes[8];
+        //Serial.println(type);
+        if (printVerboseSerial && !printBlue)
+        {
+          Serial.println();
+          Serial.print("Version");
+          Serial.print(versionProtocol);
+          if (versionProtocol != versionArduinoProtocol && !printBlue)
+            Serial.println("Warning Sync Repos, different serial protocols");
+          Serial.println();
+          Serial.print("Tot Len");
+          Serial.println(totL);
+          Serial.println();
+          Serial.print("Crc");
+          Serial.println(crc);
+          Serial.print("TYPE");
+          Serial.println(type);
+        }
+        if (type == connID)
+        {
+          Serial.println("Connection");
+          // Connection channel
+          hiBytew2 = bufferBytes[11];
+          loBytew2 = bufferBytes[12];
+          int conAck = word(hiBytew2, loBytew2); 
+
+          if (conAck == 1)
+          {
+            if (!matlab)
+            {
+              sendConnAck = true;
+              sendTenzoState = true;
+            }
+            else 
+            {
+              sendConnAck = true;
+              sendTenzoState = true;
+              // Connection requested but already connected
+              if (printVerboseSerial && !printBlue)
+              {
+                Serial.println();
+                Serial.println(" Warning!! Something wrong during CONnection sync.");
+                Serial.print("Connection requested but already connected");
+                Serial.println();
+              }
+            }
+          }
+          else if (conAck == 3)
+          {
+            // Communication problems
+            if (!matlab)
+            {
+              sendConnAck = true;
+              sendTenzoState = true;
+              if (printVerboseSerial && !printBlue)
+              {
+                Serial.println();
+                Serial.println(" Warning!! Communication problems. Sending again.");
+                Serial.println();
+              }
+            }
+            else 
+            {
+              sendConnAck = true;
+              sendTenzoState = true;
+              // Impossible: Connection requested but already connected
+              if (printVerboseSerial && !printBlue)
+              {
+                Serial.println();
+                Serial.println(" Warning!! Something wrong during CONnection sync.");
+                Serial.print("Connection requested but already connected");
+                Serial.println();
+              }
+            }
+          }
+          else if (conAck == 0)
+          {
+            if (matlab)
+            {
+              sendDisconnAck = true;
+            }
+            else 
+            {
+              sendDisconnAck = true;
+              // Impossible: Disconnection requested but already disconnected
+              if (printVerboseSerial)
+              {
+                Serial.println();
+                Serial.println(" Warning!! Something wrong during DISconnection sync.");
+                Serial.print("Disconnection requested but already disconnected");
+                Serial.println();
+              }
+            }
+          }
+          else
+          {
+            //  Shouldn't get here - Wrong mess received
+            if (printVerboseSerial)
+            {
+              Serial.println();
+              Serial.println(" Warning!! Third Condition.");
+              Serial.println();
+            }
+          }
+        }
+        else if (type == tenzoStateID)
+        {
+          hiBytew2 = bufferBytes[16];
+          loBytew2 = bufferBytes[17];
+          int remoteTakeOffTemp = word(hiBytew2, loBytew2);
+
+          hiBytew2 = bufferBytes[20];
+          loBytew2 = bufferBytes[21];
+          int remoteHoverTemp = word(hiBytew2, loBytew2);
+
+          hiBytew2 = bufferBytes[24];
+          loBytew2 = bufferBytes[25];
+          int remoteLandTemp = word(hiBytew2, loBytew2);
+
+          if (printAckCommands) 
+          {
+            // Impossible: Disconnection requested but already disconnected
+            Serial.println();
+            Serial.println(" | Check state requested |");
+            Serial.println();
+          }
+
+          checkLocalRemoteStates(remoteTakeOffTemp,remoteHoverTemp,remoteLandTemp);
+
+        }
+        else if (type == motorsID)
+        {
+          // Motors : same cmd   
+
+          stopSendingToMatlab();
+
+          hiBytew2 = bufferBytes[16];
+          loBytew2 = bufferBytes[17];
+          int motorSpeedChange = word(hiBytew2, loBytew2);
+          motorSpeedChange = motorSpeedChange - 100;
+
+          hiBytew2 = bufferBytes[20];
+          loBytew2 = bufferBytes[21];
+          int m2 = word(hiBytew2, loBytew2);
+          m2 = m2 - 100;
+
+          hiBytew2 = bufferBytes[24];
+          loBytew2 = bufferBytes[25];
+          int m3 = word(hiBytew2, loBytew2);
+          m3 = m3 -100;
+
+          hiBytew2 = bufferBytes[28];
+          loBytew2 = bufferBytes[29];
+          int m4 = word(hiBytew2, loBytew2);
+          m4 = m4 -100;
+
+          if (motorSpeedChange == 10)
+          {
+            //Serial.println("M1");
+            testMotor(1);
+          }
+          else if (m2 == 10)
+          {
+            //Serial.println("M2");
+            testMotor(2);
+          }
+          else if (m3 == 10)
+          {
+            //Serial.println("M3");
+            testMotor(3);  
+          }
+          else if (m4 == 10)
+          { 
+            //Serial.println("M4");
+            testMotor(4);
+          }
+          else if (motorSpeedChange > 1)
+          {
+            if (throttle<thresholdUp)
+            {
+              throttle = throttle + motorSpeedChange;
+              if (printVerboseSerial)
+              {
+                Serial.println();
+                Serial.print("new Speed: ");
+                Serial.print(motorSpeedChange);
+                Serial.println(); 
+              }
+              sendMotorsToMatlab = true;
+            }
+          }
+          else if (motorSpeedChange < -1)
+          {
+            if (throttle>thresholdDown)
+            {
+              throttle = throttle + motorSpeedChange;
+              if (printVerboseSerial)
+              {
+                Serial.println();
+                Serial.print("new Speed: ");
+                Serial.print(motorSpeedChange);
+                Serial.println(); 
+              }
+              sendMotorsToMatlab = true;
+            } 
+          }
+        }
+        else if (type == accID)
+        {
+          // Send Acc Values
+          stopSendingToMatlab();
+          sendAccToMatlab = true;
+        }
+        else if (type == gyroID)
+        {
+          // Send Gyro Values
+          stopSendingToMatlab();
+          sendGyroToMatlab = true;
+        }
+        else if (type == magnID || type == estID)
+        {
+          // Send Est + Magn Values
+          stopSendingToMatlab();
+          sendMagnToMatlab = true;
+          sendEstToMatlab = true;
+        }
+        else if (type == takeOffID)
+        {
+          // Channel 17: Take Off
+          stopSendingToMatlab();
+
+          hiBytew2 = bufferBytes[16];
+          loBytew2 = bufferBytes[17];
+          int altitudeRef = word(hiBytew2, loBytew2);
+          if (printVerboseSerial)
+          {
+            Serial.println();
+            Serial.print("Channel: 17   altitudeRef: ");
+            Serial.print(altitudeRef);
+            Serial.println();
+          }
+          // TODO set altitude reference when initiate
+          if (!initialized)
+          {
+            initialize();
+          }
+          else
+          {
+            Serial.println(" Already out in space");
+          }
+        }
+        else if (type == landID)
+        {
+          // Channel 19: Land
+          stopSendingToMatlab();
+
+          hiBytew2 = bufferBytes[16];
+          loBytew2 = bufferBytes[17];
+          landSpeed = word(hiBytew2, loBytew2);
+          if (printVerboseSerial)
+          {
+            Serial.println();
+            Serial.print("Channel: 19   landSpeed: ");
+            Serial.print(landSpeed);
+            Serial.println();
+          }
+          // TODO: Aggressive or kind stop
+          if (initialized)
+          {
+            land();
+          }
+          else
+          {
+            Serial.println();
+            Serial.print("Received Land command but Tenzo is not hovering!! WARNING!!");
+            Serial.println();
+          }
+        }
+        else if (type == iHoverID)
+        {
+          // Channel 18: Hovering
+          if (initialized)
+          {
+            // Hover with PID
+            stopSendingToMatlab();
+
+            hiBytew2 = bufferBytes[16];
+            loBytew2 = bufferBytes[17];
+            int enab = word(hiBytew2, loBytew2);             
+            if (printVerboseSerial)
+            {
+              Serial.println();
+              Serial.print("Channel: 18   enab Pid: ");
+              Serial.print(enab);
+              Serial.println();
+            }
+            if (enab==0 && enablePid)
+            {
+              enablePid = false;
+              sendHoverState = true;
+              numCommandToSend++;
+            }
+            else if (enab==0 && !enablePid)
+            {
+              Serial.println();
+              Serial.print("Received Pid 'switch off' request but has already been disabled! WARNING!!");
+              Serial.println();
+            }
+            else if (enab == 1 && enablePid)
+            {
+              Serial.println();
+              Serial.print("Received Pid activation request but already enable! WARNING!!");
+              Serial.println();
+            }
+            else if (enab == 1 && !enablePid)
+            {
+              enablePid = true;
+              sendHoverState = true;
+              numCommandToSend++;               
+            }
+          }
+          else
+          {
+            Serial.println();
+            Serial.print("Received Hovering command but Tenzo is not flying!! WARNING!!");
+            Serial.println();             
+          }
+        }
+        else if (type == enableMotorsID) // Deprecated
+        {
+          // Request Motors Data  type: 20  
+          stopSendingToMatlab();
+
+          hiBytew2 = bufferBytes[16];
+          loBytew2 = bufferBytes[17];
+          int enab = word(hiBytew2, loBytew2);
+          if (enab==0)
+            sendMotorsToMatlab = false;
+          else if (enab == 1)
+            sendMotorsToMatlab = true;
+        }
+        else if (type == sendConsPidRollID || type == sendAggPidRollID)
+        {
+          // Request Motors Data   type: 21      || 25  
+          stopSendingToMatlab();
+          sendPidState = true;
+          sendRollToMatlab = true;          
+          if (printVerboseSerial)
+          {
+            Serial.println();
+            Serial.print("Channel: 21||25   roll Pid? ");
+            Serial.println();
+          }
+        }
+        else if (type == sendConsPidPitchID || type == sendAggPidPitchID)
+        {
+          // Request Motors Data   type: 22      || 26 
+          stopSendingToMatlab();
+          sendPidState = true;
+          sendPitchToMatlab = true;         
+          if (printVerboseSerial)
+          {
+            Serial.println();
+            Serial.print("Channel: 22||26   pitch Pid? ");
+            Serial.println();
+          }
+        }
+        else if (type == sendConsPidYawID || type == sendAggPidYawID)
+        {
+          // Request Motors Data   type: 23      || 27
+          stopSendingToMatlab();
+          sendPidState = true;
+          sendYawToMatlab = true;         
+          if (printVerboseSerial)
+          {
+            Serial.println();
+            Serial.print("Channel: 23||27   yaw Pid? ");
+            Serial.println();
+          }
+        }
+        else if (type == sendConsPidAltID || type == sendAggPidAltID)
+        {
+          // Request Motors Data   type: 24      || 28
+          stopSendingToMatlab();
+          sendPidState = true;
+          sendAltToMatlab = true;         
+          if (printVerboseSerial)
+          {
+            Serial.println();
+            Serial.print("Channel: 24||28   alt Pid? ");
+            Serial.println();
+          }
+        }
+        else 
+        {
+          stopSendingToMatlab();
+
+          hiBytew2 = bufferBytes[16];
+          loBytew2 = bufferBytes[17];
+          cmd1 = word(hiBytew2, loBytew2);
+
+          hiBytew2 = bufferBytes[20];
+          loBytew2 = bufferBytes[21];
+          cmd2 = word(hiBytew2, loBytew2);
+
+          hiBytew2 = bufferBytes[24];
+          loBytew2 = bufferBytes[25];
+          cmd3 = word(hiBytew2, loBytew2);
+
+          hiBytew2 = bufferBytes[28];
+          loBytew2 = bufferBytes[29];
+          cmd4 = word(hiBytew2, loBytew2);
+
+          if (type == 9)
+          {
+            // Pid Cons ROLL 
+            consKpRoll = (double) cmd1/1000;
+            consKdRoll = (double) cmd2/1000;
+            consKiRoll = (double) cmd3/1000;
+            SetpointRoll = cmd4;
+            sendPidState = true;
+            changePidValues();
+            sendRollToMatlab = true;        
+            if (printVerboseSerial)
+            {
+              Serial.println();
+              Serial.println("AA Cons Roll Pid ");
+              Serial.println(consKpRoll);
+              Serial.println(consKdRoll);
+              Serial.println(consKiRoll);
+              Serial.println(SetpointRoll);
+              Serial.println();
+            }
+          }
+          else if (type == 13)
+          {
+            // Pid AGG ROLL 
+            aggKpRoll = (double) cmd1/1000;
+            aggKdRoll = (double) cmd2/1000;
+            aggKiRoll = (double) cmd3/1000;
+            SetpointRoll = cmd4;
+            sendPidState = true;
+            changePidValues();
+            sendRollToMatlab = true;      
+            if (printVerboseSerial)
+            {
+              Serial.println();
+              Serial.println("Agg Roll Pid ");
+              Serial.println(aggKpRoll);
+              Serial.println(aggKdRoll);
+              Serial.println(aggKiRoll);
+              Serial.println(SetpointRoll);
+              Serial.println();
+            }
+          }
+          else if (type == 10)
+          {
+            // Pid Cons PITCH 
+            consKpPitch = (double) cmd1/1000;
+            consKdPitch = (double) cmd2/1000;
+            consKiPitch = (double) cmd3/1000;
+            SetpointPitch = cmd4;
+            sendPidState = true;
+            changePidValues();
+            sendPitchToMatlab = true;
+            if (printVerboseSerial)
+            {
+              Serial.println();
+              Serial.println("cons pitch Pid ");
+              Serial.println(consKpPitch);
+              Serial.println(consKdPitch);
+              Serial.println(consKiPitch);
+              Serial.println(SetpointRoll);
+              Serial.println();
+            }
+          }
+          else if (type == 14)
+          {
+            // Pid AGG PITCH 
+            aggKpPitch = (double) cmd1/1000;
+            aggKdPitch = (double) cmd2/1000;
+            aggKiPitch = (double) cmd3/1000;
+            SetpointPitch = cmd4;
+            sendPidState = true;
+            changePidValues();
+            sendPitchToMatlab = true;
+            if (printVerboseSerial)
+            {
+              Serial.println();
+              Serial.println("Agg Roll Pid ");
+              Serial.println(aggKpPitch);
+              Serial.println(aggKdPitch);
+              Serial.println(aggKiPitch);
+              Serial.println(SetpointRoll);
+              Serial.println();
+            }
+          }
+          else if (type == 11)
+          {
+            // Pid Cons YAW 
+            consKpYaw = (double) cmd1/1000;
+            consKdYaw = (double) cmd2/1000;
+            consKiYaw = (double) cmd3/1000;
+            SetpointYaw = cmd4;
+            sendPidState = true;
+            changePidValues();
+            sendYawToMatlab = true;
+          }
+          else if (type == 15)
+          {
+            // Pid AGG YAW 
+            aggKpYaw = (double) cmd1/1000;
+            aggKdYaw = (double) cmd2/1000;
+            aggKiYaw = (double) cmd3/1000;
+            SetpointYaw = cmd4;
+            sendPidState = true;
+            changePidValues();
+            sendYawToMatlab = true;
+          }
+          else if (type == 12)
+          {
+            // Pid Cons ALTITUDE 
+            consKpAltitude = (double) cmd1/1000;
+            consKdAltitude = (double) cmd2/1000;
+            consKiAltitude = (double) cmd3/1000;
+            SetpointAltitude = cmd4;
+            sendPidState = true;
+            changePidValues();
+            sendAltToMatlab = true;
+          }
+          else if (type == 16)
+          {
+            // Pid AGG ALTITUDE 
+            aggKpAltitude = (double) cmd1/1000;
+            aggKdAltitude = (double) cmd2/1000;
+            aggKiAltitude = (double) cmd3/1000;
+            SetpointAltitude = cmd4;
+            sendPidState = true;
+            changePidValues();
+            sendAltToMatlab = true;
+         }          
+      }
+    } // Message to Arduino from Matlab
+  }
+  else if (Serial.available())
   {
     char modeS = Serial.read(); 
     
@@ -1379,7 +2680,7 @@ void serialRoutine()
   // The following loop runs every 5ms
   if (timerRoutine >= deltaT*1000) 
   {      
-    kMRoutine = micros();    
+    kMRoutine = micros();
     count += 1;
     if (count >= 1)
     {
@@ -1410,6 +2711,125 @@ void serialRoutine()
     }
   }
 }
+
+void checkLocalRemoteStates(int to, int h, int l)
+{
+  boolean toCond = false, hCond = false, lCond = false;
+  // Checks whether states have been correctly synced
+  if (initialized && to == 1)
+  {
+    toCond = true;
+  } 
+  else if (!initialized && to == 0)
+  {
+    toCond = true;
+  } 
+
+  if (enablePid && h==1)
+  {
+    hCond = true;
+  }
+  else if (!enablePid && h==0)
+  {   
+    hCond = true;
+  }
+
+  if (initialized && l==0)
+  {
+    lCond = true;
+  }
+  else if (!initialized && l==1)
+  {   
+    lCond = true;
+  } 
+
+  if (lCond && hCond && toCond)
+  {
+    matlab = true;
+    if (printAckCommands && !printBlue)
+    {
+      Serial.println();
+      Serial.print("[Sync] Tutto a porno");
+      Serial.println();
+    }
+  }
+  else
+  {
+    sendTenzoState = true;
+    if (printAckCommands && !printBlue)
+    {
+      Serial.println();
+      Serial.print("[Sync] state problem between Arduino (local) and Matlab (remote). Sending states... ");
+      Serial.println();
+    }
+  }
+}
+
+void changePidValues()
+{
+  if (enablePid)
+  {
+    // Roll PID
+    if (enableRollPid)
+    {
+      //if(errorRoll<thresholdRoll)
+      //{  //we're close to setpoint, use conservative tuning parameters
+        myRollPID.SetTunings(consKpRoll, consKiRoll, consKdRoll);
+      //}
+      //else
+      //{
+        //we're far from setpoint, use aggressive tuning parameters
+        //myRollPID.SetTunings(aggKpRoll, aggKiRoll, aggKdRoll);
+      //}
+    }
+
+    // Pitch PID
+    if (enablePitchPid)
+    {
+      //if(errorPitch<thresholdPitch)
+      //{  //we're close to setpoint, use conservative tuning parameters
+        myPitchPID.SetTunings(consKpPitch, consKiPitch, consKdPitch);
+      //}
+      //else
+      //{
+        //we're far from setpoint, use aggressive tuning parameters
+       // myPitchPID.SetTunings(aggKpPitch, aggKiPitch, aggKdPitch);
+      //}
+    }
+
+    // Yaw PID
+    if (enableYawPid)
+    {
+      //if(errorYaw<thresholdYaw)
+      //{
+        //we're close to setpoint, use conservative tuning parameters
+        myYawPID.SetTunings(consKpYaw, consKiYaw, consKdYaw);
+      //}
+      //else
+      //{
+        //we're far from setpoint, use aggressive tuning parameters
+        //myYawPID.SetTunings(aggKpYaw, aggKiYaw, aggKdYaw);
+      //} 
+    }
+    if (printPIDVals)
+    {
+      //dispActualAllPidVals();     
+    }
+  }
+}
+
+void stopSendingToMatlab()
+{  
+  sendAccToMatlab = false;
+  sendGyroToMatlab = false;
+  sendMagnToMatlab = false;
+  sendEstToMatlab = false;
+  sendRollToMatlab = false;
+  sendMotorsToMatlab = false;
+  sendPitchToMatlab = false;
+  sendYawToMatlab = false;
+  sendAltToMatlab = false;
+} 
 
 void getGyroValues()
 {  
@@ -1999,3 +3419,4 @@ void printMotorsValues()
     Serial.println();
   }
 }
+
