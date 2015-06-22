@@ -93,15 +93,37 @@ surf(X,Y,Z)
 
 %% Post elaboration
 
-figure;
+figure(2);
 grid on
 axis equal
 axis tight
-contour(X,Y,Z)
+contour(X,Y,Z);
 h=[1,1]
-cl = contour(X,Y,Z,h)
-[x1,y1,z1] = C2xyz(C);
-plot(cl(1,8:end),cl(2,8:end))
+contour(X,Y,Z,h);
+cl = contour(X,Y,Z);
+[x1,y1,z1] = C2xyz(cl);
+
+
+figure(1);
+hold on; % Allows plotting atop the preexisting peaks plot. 
+threshold = 1;
+sector.numberOfZones = 1;
+% analyze all the level curves
+for n = find(z1==threshold); 
+   n
+   %xTh(1,n) = x1{n};
+   %yTh(1,n) = y1{n};
+   plot(x1{n},y1{n},'k-','linewidth',3);
+   sector.zones.x(sector.numberOfZones,:) = x1{n}(1,:);
+   sector.zones.y(sector.numberOfZones,:) = y1{n}(1,:);
+   sector.numberOfZones = sector.numberOfZones + 1;
+end
+disp('Number of zones founded:');
+disp(numberOfZones);
+plot(xTh(1,:),yTh(1,:),'k-','linewidth',3)
+x1{83}(1,2)
+
+%plot(cl(1,8:end),cl(2,8:end))
 
 % v = -2:0.2:2;
 % [x,y] = meshgrid(v);
