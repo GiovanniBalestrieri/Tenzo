@@ -106,23 +106,23 @@ stats = regionprops(BW,'Centroid',...
 % diameters = mean([stats.MajorAxisLength stats.MinorAxisLength],2);
 % radii = diameters/2;
 
-figure(4)
-subplot(1,3,1);
+figure(6)
+%subplot(1,3,1);
 %BW = imread('sectors1.png');
-imshow(BW);
-title('Binary');
+%imshow(BW);
+%title('Binary');
     
 % subplot(2,2,2);
 % BW1 = BW > 10;
 % imshow(BW1);
 % title('Binary');
     
-subplot(1,3,2);
+subplot(1,2,1);
 CH = bwconvhull(BW);
 imshow(CH);
 title('Union Convex Hull');
     
-subplot(1,3,3);
+subplot(1,2,2);
 CH_objects = bwconvhull(BW,'objects',8);
 imshow(CH_objects);
 title('Objects Convex Hull');

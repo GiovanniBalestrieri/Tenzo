@@ -3,8 +3,8 @@
    sqlquery = ['SELECT name FROM generi;'];
    curs = exec(conn, sqlquery);
    curs = fetch(curs);
-   generi = curs.data;
-   generi(4,1)
+   generi = curs.data
+   generi(4,1);
    
 %%
 conn = database('matlab','root','',['/Library/Java/Extensions/'...
