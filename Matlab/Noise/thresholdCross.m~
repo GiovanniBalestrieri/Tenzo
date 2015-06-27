@@ -142,7 +142,7 @@ for i=1:sector.numberOfZones-1
         v=[sector.zones(i).x(1,j) - stats(i).Centroid(1); sector.zones(i).y(1,j) - stats(i).Centroid(2)];
         sector.zone(i).x(1,j) = sector.zones(i).x(1,j) + k*v(1) ;
         sector.zone(i).y(1,j) = sector.zones(i).y(1,j) + k*v(2) ;
-        hold on
+        %hold on
         %plot(sector.zone(i).x(1,j),sector.zone(i).y(1,j),'-r','LineWidth',3)
     end
     

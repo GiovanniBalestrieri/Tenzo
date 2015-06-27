@@ -27,12 +27,12 @@
 #include <SoftwareSerial.h>
 #include "PID_v2.h"
 
-boolean printBlue = true;
+boolean printBlue = false; // change it
 boolean processing = true;
 boolean printMotorsVals = false;
 boolean printPIDVals = true;
 boolean printSerialInfo = false;
-boolean printSerial = false;
+boolean printSerial = true;
 boolean printTimers = true;
 
 byte modeS;
@@ -84,7 +84,7 @@ float Kmy = 1, Kw = 1;
  */
 boolean autoEnablePid = true;
 boolean enablePid = false;
-boolean enableRollPid = true;
+boolean enableRollPid = false;
 boolean enablePitchPid = false;
 boolean enableYawPid = false;
 boolean enableWRollPid = true;
