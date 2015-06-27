@@ -39,28 +39,30 @@ end
 figure(1);
 surf(X,Y,Z)
 
-%% Post elaboration
-
-figure(2);
-grid on
-axis equal
-axis tight
-contour(X,Y,Z);
-cl = contour(X,Y,Z);
+%% Analyze data -  Post elaboration 
+% Contour[Required]
+% 
+% figure(2)
+% grid on
+% axis equal
+% % axis tight
+% % contour(X,Y,Z);
+figure(2)
+ cl = contour(X,Y,Z);
 [x1,y1,z1] = C2xyz(cl);
-
-% countours at 0.8
-h=[0.8,0.8]
-contour(X,Y,Z,h)
-
-
-figure(3);
+% 
+% % countours at 0.8
+% h=[0.8,0.8]
+% contour(X,Y,Z,h)
+%% isaolate regions of interest
+% Same ad the commented code above + more options
+figure(3)
 hold on; % Allows plotting atop the preexisting peaks plot. 
 threshold = 0.8;
 sector.numberOfZones = 1;
 % analyze all the level curves
 for n = find(z1==threshold); 
-   n
+   %n
    %xTh(1,n) = x1{n};
    %yTh(1,n) = y1{n};
    hold on;
@@ -69,6 +71,8 @@ for n = find(z1==threshold);
    sector.zones(sector.numberOfZones).y(1,1:size(x1{n},2)) = y1{n}(1,:);
    sector.numberOfZones = sector.numberOfZones + 1;
 end
+title('Contours of interest');
+hold off
 disp('Number of zones founded:');
 disp(sector.numberOfZones);
 
@@ -89,67 +93,92 @@ BW = ~im2bw(uint8(255.*im2double(im)),0.99);
 BW = bwmorph(BW,'skel',Inf);
 figure(4);
 imshow(BW)
+title('BW sectors');
 % Save it
 saveas(4, 'sectors1', 'png');
 
 %% Centroids
 
-stats = regionprops(BW,'Centroid',...
-    'MajorAxisLength','MinorAxisLength','Extrema','BoundingBox','ConvexArea','ConvexHull','ConvexImage')
+stats = regionprops(BW,'Centroid','MajorAxisLength','MinorAxisLength',...
+    'Orientation','Eccentricity','Extrema','BoundingBox','ConvexArea',...
+    'ConvexHull','ConvexImage')
 
-% Plot centroids
+% Plot centroids in negative image
 centroids = cat(1, stats.Centroid);
 imshow(BW)
 hold on
 plot(centroids(:,1),centroids(:,2), 'b*')
 hold off
 
-% just a test to see the results of regionprops
-% centers = stats.Centroid;
-% diameters = mean([stats.MajorAxisLength stats.MinorAxisLength],2);
-% radii = diameters/2;
-
-figure(6)
-%subplot(1,3,1);
-%BW = imread('sectors1.png');
-%imshow(BW);
-%title('Binary');
-    
-% subplot(2,2,2);
-% BW1 = BW > 10;
-% imshow(BW1);
-% title('Binary');
-    
-subplot(1,2,1);
-CH = bwconvhull(BW);
-imshow(CH);
-title('Union Convex Hull');
-    
-subplot(1,2,2);
+% Plot centroids in convex sectors
+figure(5)
 CH_objects = bwconvhull(BW,'objects',8);
 imshow(CH_objects);
-title('Objects Convex Hull');
+hold on
+plot(centroids(:,1),centroids(:,2), 'b*')
+hold off
+title('Objects Convex Hull + centroids');
+    
+%% Plot elliptic
+
+%imshow(BW)
+hold on
+
+phi = linspace(0,2*pi,50);
+cosphi = cos(phi);
+sinphi = sin(phi);
+
+for k = 1:length(s)
+    xbar = s(k).Centroid(1);
+    ybar = s(k).Centroid(2);
+
+    a = s(k).MajorAxisLength/2;
+    b = s(k).MinorAxisLength/2;
+
+    theta = pi*s(k).Orientation/180;
+    R = [ cos(theta)   sin(theta)
+         -sin(theta)   cos(theta)];
+
+    xy = [a*cosphi; b*sinphi];
+    xy = R*xy;
+
+    x = xy(1,:) + xbar;
+    y = xy(2,:) + ybar;
+
+    plot(x,y,'r','LineWidth',2);
+
+end
+hold off
+
+%% Plots Global convexHull figure
+
+figure(6)
+title('Union Convex Hull');
+CH = bwconvhull(BW);
+imshow(CH);
 
 %% Scaling sectors up by a factor of K
 
 k=1
-figure(9)
+%figure(9)
 % For each sector
+figure(4)
 for i=1:sector.numberOfZones-1
     % for each point of the sector
     for j=1:size(sector.zones(i).x,2)-1        
-        %plot(sector.zone(i).x(1,j),sector.zone(i).y(1,j),'-b','LineWidth',3)
+        plot(sector.zone(i).x(1,j),sector.zone(i).y(1,j),'-b','LineWidth',3)
         v=[sector.zones(i).x(1,j) - stats(i).Centroid(1); sector.zones(i).y(1,j) - stats(i).Centroid(2)];
         sector.zone(i).x(1,j) = sector.zones(i).x(1,j) + k*v(1) ;
         sector.zone(i).y(1,j) = sector.zones(i).y(1,j) + k*v(2) ;
-        %hold on
+        hold on
         %plot(sector.zone(i).x(1,j),sector.zone(i).y(1,j),'-r','LineWidth',3)
     end
     
-    plot(centroids(i,1),centroids(i,2), 'r*')
-    hold on
+    %plot(centroids(i,1),centroids(i,2), 'r*')
+    %hold on
 end
 hold off
+%%
 
 figure(7)
 for i=1:sector.numberOfZones-1
