@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.77"
+    ComputedModelVersion    "1.78"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Jun 30 15:59:33 2015"
-  RTWModifiedTimeStamp	  357577084
-  ModelVersionFormat	  "1.%<AutoIncrement:77>"
+  LastModifiedDate	  "Wed Jul 01 00:34:15 2015"
+  RTWModifiedTimeStamp	  357611621
+  ModelVersionFormat	  "1.%<AutoIncrement:78>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -113,7 +113,7 @@ Model {
 	  $ObjectID		  2
 	  Version		  "1.12.0"
 	  StartTime		  "0.0"
-	  StopTime		  "100"
+	  StopTime		  "10"
 	  AbsTol		  "auto"
 	  FixedStep		  "auto"
 	  InitialStep		  "auto"
@@ -588,7 +588,7 @@ Model {
       }
       Name		      "Configuration"
       CurrentDlgPage	      "Solver"
-      ConfigPrmDlgPosition     [ 218, 118, 1148, 678 ] 
+      ConfigPrmDlgPosition     [ 208, 108, 1158, 716 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -868,7 +868,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "132"
+    SIDHighWatermark	    "137"
     Block {
       BlockType		      Reference
       Name		      " "
@@ -901,7 +901,6 @@ Model {
       ZOrder		      -4
       BlockMirror	      on
       NamePlacement	      "alternate"
-      Value		      "0"
     }
     Block {
       BlockType		      Constant
@@ -955,10 +954,10 @@ Model {
     }
     Block {
       BlockType		      SubSystem
-      Name		      "Modello Interno2"
-      SID		      "127"
+      Name		      "Modello Interno1"
+      SID		      "133"
       Ports		      [1, 1]
-      Position		      [250, 86, 340, 144]
+      Position		      [250, 146, 340, 204]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -967,7 +966,7 @@ Model {
       RequestExecContextInheritance off
       MaskHideContents	      off
       System {
-	Name			"Modello Interno2"
+	Name			"Modello Interno1"
 	Location		[149, 541, 449, 645]
 	Open			off
 	ModelBrowserVisibility	off
@@ -984,14 +983,14 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "e()"
-	  SID			  "128"
+	  SID			  "134"
 	  Position		  [25, 48, 55, 62]
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Gain
 	  Name			  "F1"
-	  SID			  "129"
+	  SID			  "135"
 	  Position		  [180, 29, 220, 81]
 	  Gain			  "F1"
 	  Multiplication	  "Matrix(K*u) (u vector)"
@@ -1002,7 +1001,7 @@ Model {
 	Block {
 	  BlockType		  StateSpace
 	  Name			  "Modello \nInterno"
-	  SID			  "130"
+	  SID			  "136"
 	  Position		  [90, 38, 150, 72]
 	  A			  "AMI"
 	  B			  "BMI"
@@ -1012,14 +1011,14 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "K*F1"
-	  SID			  "131"
+	  SID			  "137"
 	  Position		  [245, 48, 275, 62]
 	  IconDisplay		  "Port number"
 	}
 	Line {
-	  SrcBlock		  "Modello \nInterno"
+	  SrcBlock		  "F1"
 	  SrcPort		  1
-	  DstBlock		  "F1"
+	  DstBlock		  "K*F1"
 	  DstPort		  1
 	}
 	Line {
@@ -1029,9 +1028,9 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "F1"
+	  SrcBlock		  "Modello \nInterno"
 	  SrcPort		  1
-	  DstBlock		  "K*F1"
+	  DstBlock		  "F1"
 	  DstPort		  1
 	}
       }
@@ -1150,7 +1149,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 23, 525, 77]
 	  Floating		  off
-	  Location		  [91, 81, 1111, 592]
+	  Location		  [71, 91, 1091, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1216,7 +1215,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 208, 525, 262]
 	  Floating		  off
-	  Location		  [231, 91, 1251, 602]
+	  Location		  [221, 91, 1241, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1374,7 +1373,7 @@ Model {
       Ports		      [1]
       Position		      [1155, 339, 1185, 371]
       Floating		      off
-      Location		      [64, 91, 1084, 627]
+      Location		      [54, 91, 1074, 627]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1690,7 +1689,7 @@ Model {
       Ports		      [1]
       Position		      [930, 74, 960, 106]
       Floating		      off
-      Location		      [64, 136, 1084, 647]
+      Location		      [54, 116, 1074, 627]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1810,7 +1809,7 @@ Model {
       Ports		      [1]
       Position		      [1155, 274, 1185, 306]
       Floating		      off
-      Location		      [64, 91, 1084, 627]
+      Location		      [54, 91, 1074, 627]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -2077,7 +2076,7 @@ Model {
       Ports		      [1]
       Position		      [820, 39, 850, 71]
       Floating		      off
-      Location		      [64, 91, 1084, 627]
+      Location		      [54, 91, 1074, 627]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -2175,7 +2174,7 @@ Model {
 	}
       }
       Branch {
-	DstBlock		"Modello Interno2"
+	DstBlock		"Sum"
 	DstPort			1
       }
     }
@@ -2276,12 +2275,6 @@ Model {
 	  DstPort		  3
 	}
       }
-    }
-    Line {
-      SrcBlock		      "Modello Interno2"
-      SrcPort		      1
-      DstBlock		      "Sum"
-      DstPort		      1
     }
   }
 }

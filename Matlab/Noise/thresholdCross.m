@@ -128,14 +128,14 @@ phi = linspace(0,2*pi,50);
 cosphi = cos(phi);
 sinphi = sin(phi);
 
-for k = 1:length(s)
-    xbar = s(k).Centroid(1);
-    ybar = s(k).Centroid(2);
+for k = 1:length(stats)
+    xbar = stats(k).Centroid(1);
+    ybar = stats(k).Centroid(2);
 
-    a = s(k).MajorAxisLength/2;
-    b = s(k).MinorAxisLength/2;
+    a = stats(k).MajorAxisLength/2;
+    b = stats(k).MinorAxisLength/2;
 
-    theta = pi*s(k).Orientation/180;
+    theta = pi*stats(k).Orientation/180;
     R = [ cos(theta)   sin(theta)
          -sin(theta)   cos(theta)];
 
