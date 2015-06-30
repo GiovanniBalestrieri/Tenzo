@@ -113,11 +113,11 @@ A = [ 0 0 0 1 0 0 0 0 0 0 0 0;
       zeros(3,12)];
 
 B = [zeros(5,4);
-    1/mq 0 0 0; 
+    0 0 0 1/mq; 
     zeros(3,4);
-    0 1/Ixx 0 0;
-    0 0 1/Iyy 0;
-    0 0 0 1/Izz];
+    1/Ixx 0 0 0;
+    0 1/Iyy 0 0;
+    0 0 1/Izz 0];
  
 outputsLocal = {'phi'; 'theta';'psi';'ze'};
 Clocal = [ 0 0 0 0 0 0 1 0 0 0 0 0; 
@@ -213,15 +213,14 @@ disp('Semplificazione del modello. Press X per mostrare il modello semplificato'
         0 0 0 0 0 0 0 1; 
         zeros(3,8)];
 
-  
   BMin = [
     zeros(1,4);
-    1/mq 0 0 0; 
+    0 0 0 1/mq; 
     zeros(3,4);
-    0 1/Ixx 0 0;
-    0 0 1/Iyy 0;
-    0 0 0 1/Izz];
-  
+    1/Ixx 0 0 0;
+    0 1/Iyy 0 0;
+    0 0 1/Izz 0];
+ 
 outputsLocal = {'phi'; 'theta';'psi';'ze'};
 ClocalMin = [  
             0 0 1 0 0 0 0 0; 
@@ -311,6 +310,7 @@ Doss=zeros(size(Boss));
 
 disp('Autovalori A-V*C');
 disp(eig(AMin-V*ClocalMin));
+pause();
 clc;
 
 %% Stabilizzazione LQR

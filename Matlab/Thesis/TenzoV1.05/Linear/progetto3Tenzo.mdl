@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.64"
+    ComputedModelVersion    "1.77"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Jun 04 17:23:45 2015"
-  RTWModifiedTimeStamp	  355334673
-  ModelVersionFormat	  "1.%<AutoIncrement:64>"
+  LastModifiedDate	  "Tue Jun 30 15:59:33 2015"
+  RTWModifiedTimeStamp	  357577084
+  ModelVersionFormat	  "1.%<AutoIncrement:77>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -113,7 +113,7 @@ Model {
 	  $ObjectID		  2
 	  Version		  "1.12.0"
 	  StartTime		  "0.0"
-	  StopTime		  "30"
+	  StopTime		  "100"
 	  AbsTol		  "auto"
 	  FixedStep		  "auto"
 	  InitialStep		  "auto"
@@ -588,7 +588,7 @@ Model {
       }
       Name		      "Configuration"
       CurrentDlgPage	      "Solver"
-      ConfigPrmDlgPosition     [ 188, 60, 1178, 764 ] 
+      ConfigPrmDlgPosition     [ 218, 118, 1148, 678 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -868,12 +868,28 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "110"
+    SIDHighWatermark	    "132"
+    Block {
+      BlockType		      Reference
+      Name		      " "
+      SID		      "124"
+      Ports		      [2, 1]
+      Position		      [990, 37, 1020, 73]
+      ZOrder		      -13
+      BlockMirror	      on
+      NamePlacement	      "alternate"
+      LibraryVersion	      "1.260"
+      SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
+      SourceType	      "Manual Switch"
+      sw		      "0"
+      action		      "0"
+      varsize		      off
+    }
     Block {
       BlockType		      Clock
       Name		      "Clock"
       SID		      "104"
-      Position		      [1120, 65, 1140, 85]
+      Position		      [1160, 65, 1180, 85]
       ZOrder		      -4
       BlockMirror	      on
     }
@@ -881,33 +897,21 @@ Model {
       BlockType		      Constant
       Name		      "Constant"
       SID		      "106"
-      Position		      [1175, 130, 1205, 160]
+      Position		      [1195, 90, 1225, 120]
       ZOrder		      -4
       BlockMirror	      on
+      NamePlacement	      "alternate"
       Value		      "0"
     }
     Block {
-      BlockType		      Gain
-      Name		      "F1"
-      SID		      "16"
-      Position		      [330, 89, 370, 141]
-      Gain		      "F1"
-      Multiplication	      "Matrix(K*u) (u vector)"
-      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
-      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-      SaturateOnIntegerOverflow	off
-    }
-    Block {
-      BlockType		      Gain
-      Name		      "F2"
-      SID		      "17"
-      Position		      [382, 150, 428, 200]
-      BlockRotation	      270
-      Gain		      "F2"
-      Multiplication	      "Matrix(K*u) (u vector)"
-      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
-      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-      SaturateOnIntegerOverflow	off
+      BlockType		      Constant
+      Name		      "Constant1"
+      SID		      "126"
+      Position		      [1070, 15, 1100, 45]
+      ZOrder		      -4
+      BlockMirror	      on
+      NamePlacement	      "alternate"
+      Value		      "0"
     }
     Block {
       BlockType		      From
@@ -921,7 +925,7 @@ Model {
       BlockType		      From
       Name		      "From2"
       SID		      "84"
-      Position		      [775, 365, 825, 385]
+      Position		      [1060, 345, 1110, 365]
       ZOrder		      -9
       GotoTag		      "Refs"
     }
@@ -929,7 +933,7 @@ Model {
       BlockType		      From
       Name		      "From3"
       SID		      "85"
-      Position		      [775, 300, 825, 320]
+      Position		      [1060, 280, 1110, 300]
       ZOrder		      -9
       GotoTag		      "Err"
     }
@@ -951,11 +955,10 @@ Model {
     }
     Block {
       BlockType		      SubSystem
-      Name		      "Kalman"
-      SID		      "4"
-      Ports		      [3, 1]
-      Position		      [540, 185, 580, 245]
-      BlockMirror	      on
+      Name		      "Modello Interno2"
+      SID		      "127"
+      Ports		      [1, 1]
+      Position		      [250, 86, 340, 144]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -964,119 +967,74 @@ Model {
       RequestExecContextInheritance off
       MaskHideContents	      off
       System {
-	Name			"Kalman"
-	Location		[53, 82, 1057, 547]
+	Name			"Modello Interno2"
+	Location		[149, 541, 449, 645]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
 	PaperOrientation	"landscape"
 	PaperPositionMode	"auto"
-	PaperType		"A4"
-	PaperUnits		"centimeters"
-	TiledPaperMargins	[1.270000, 1.270000, 1.270000, 1.270000]
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
 	TiledPageScale		1
 	ShowPageBoundaries	off
 	ZoomFactor		"100"
 	Block {
 	  BlockType		  Inport
-	  Name			  "u"
-	  SID			  "5"
-	  Position		  [225, 13, 255, 27]
-	  BlockMirror		  on
+	  Name			  "e()"
+	  SID			  "128"
+	  Position		  [25, 48, 55, 62]
 	  IconDisplay		  "Port number"
 	}
 	Block {
-	  BlockType		  Inport
-	  Name			  "y"
-	  SID			  "7"
-	  Position		  [230, 58, 260, 72]
-	  BlockMirror		  on
-	  Port			  "2"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "dd"
-	  SID			  "55"
-	  Position		  [225, 138, 255, 152]
-	  BlockMirror		  on
-	  Port			  "3"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Mux
-	  Name			  "Mux"
-	  SID			  "1"
-	  Ports			  [3, 1]
-	  Position		  [195, 46, 200, 84]
-	  BlockMirror		  on
-	  ShowName		  off
-	  Inputs		  "[4 4 1]"
-	  DisplayOption		  "bar"
+	  BlockType		  Gain
+	  Name			  "F1"
+	  SID			  "129"
+	  Position		  [180, 29, 220, 81]
+	  Gain			  "F1"
+	  Multiplication	  "Matrix(K*u) (u vector)"
+	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  StateSpace
-	  Name			  "filtro di kalman"
-	  SID			  "3"
-	  Position		  [95, 48, 155, 82]
-	  BlockMirror		  on
-	  A			  "Aoss"
-	  B			  "Boss"
-	  C			  "Coss"
-	  D			  "Doss"
+	  Name			  "Modello \nInterno"
+	  SID			  "130"
+	  Position		  [90, 38, 150, 72]
+	  A			  "AMI"
+	  B			  "BMI"
+	  C			  "CMI"
+	  D			  "DMI"
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "xi0"
-	  SID			  "6"
-	  Position		  [40, 58, 70, 72]
-	  BlockMirror		  on
+	  Name			  "K*F1"
+	  SID			  "131"
+	  Position		  [245, 48, 275, 62]
 	  IconDisplay		  "Port number"
 	}
 	Line {
-	  SrcBlock		  "Mux"
+	  SrcBlock		  "Modello \nInterno"
 	  SrcPort		  1
-	  DstBlock		  "filtro di kalman"
+	  DstBlock		  "F1"
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "u"
+	  SrcBlock		  "e()"
 	  SrcPort		  1
-	  Points		  [0, 35]
-	  DstBlock		  "Mux"
+	  DstBlock		  "Modello \nInterno"
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "filtro di kalman"
+	  SrcBlock		  "F1"
 	  SrcPort		  1
-	  DstBlock		  "xi0"
+	  DstBlock		  "K*F1"
 	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "y"
-	  SrcPort		  1
-	  DstBlock		  "Mux"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "dd"
-	  SrcPort		  1
-	  Points		  [0, -70]
-	  DstBlock		  "Mux"
-	  DstPort		  3
 	}
       }
-    }
-    Block {
-      BlockType		      StateSpace
-      Name		      "Modello \nInterno"
-      SID		      "21"
-      Position		      [240, 98, 300, 132]
-      A			      "AMI"
-      B			      "BMI"
-      C			      "CMI"
-      D			      "DMI"
     }
     Block {
       BlockType		      SubSystem
@@ -1224,7 +1182,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 113, 525, 167]
 	  Floating		  off
-	  Location		  [201, 81, 1221, 592]
+	  Location		  [181, 91, 1201, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1258,7 +1216,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 208, 525, 262]
 	  Floating		  off
-	  Location		  [241, 81, 1261, 592]
+	  Location		  [231, 91, 1251, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1291,7 +1249,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 333, 525, 387]
 	  Floating		  off
-	  Location		  [221, 81, 1241, 592]
+	  Location		  [211, 91, 1231, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1414,9 +1372,9 @@ Model {
       Name		      "Refs"
       SID		      "83"
       Ports		      [1]
-      Position		      [870, 359, 900, 391]
+      Position		      [1155, 339, 1185, 371]
       Floating		      off
-      Location		      [64, 81, 1084, 617]
+      Location		      [64, 91, 1084, 627]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1451,6 +1409,234 @@ Model {
       LowerLimit	      "-60"
     }
     Block {
+      BlockType		      SubSystem
+      Name		      "Subsystem"
+      SID		      "111"
+      Ports		      [3, 1]
+      Position		      [435, 190, 535, 250]
+      BlockMirror	      on
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"Subsystem"
+	Location		[410, 327, 723, 514]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "u()"
+	  SID			  "113"
+	  Position		  [260, 58, 290, 72]
+	  BlockMirror		  on
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "y()"
+	  SID			  "114"
+	  Position		  [275, 103, 305, 117]
+	  BlockMirror		  on
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "d()"
+	  SID			  "115"
+	  Position		  [260, 143, 290, 157]
+	  BlockMirror		  on
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "F2"
+	  SID			  "17"
+	  Position		  [27, 65, 73, 115]
+	  BlockRotation		  270
+	  Gain			  "F2"
+	  Multiplication	  "Matrix(K*u) (u vector)"
+	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "Kalman"
+	  SID			  "4"
+	  Ports			  [3, 1]
+	  Position		  [185, 100, 225, 160]
+	  BlockMirror		  on
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "Kalman"
+	    Location		    [53, 82, 1057, 547]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "A4"
+	    PaperUnits		    "centimeters"
+	    TiledPaperMargins	    [1.270000, 1.270000, 1.270000, 1.270000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "u"
+	      SID		      "5"
+	      Position		      [225, 13, 255, 27]
+	      BlockMirror	      on
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "y"
+	      SID		      "7"
+	      Position		      [230, 58, 260, 72]
+	      BlockMirror	      on
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "dd"
+	      SID		      "55"
+	      Position		      [225, 138, 255, 152]
+	      BlockMirror	      on
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Mux
+	      Name		      "Mux"
+	      SID		      "1"
+	      Ports		      [3, 1]
+	      Position		      [195, 46, 200, 84]
+	      BlockMirror	      on
+	      ShowName		      off
+	      Inputs		      "[4 4 1]"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      StateSpace
+	      Name		      "filtro di kalman"
+	      SID		      "3"
+	      Position		      [95, 48, 155, 82]
+	      BlockMirror	      on
+	      A			      "Aoss"
+	      B			      "Boss"
+	      C			      "Coss"
+	      D			      "Doss"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "xi0"
+	      SID		      "6"
+	      Position		      [40, 58, 70, 72]
+	      BlockMirror	      on
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      SrcBlock		      "Mux"
+	      SrcPort		      1
+	      DstBlock		      "filtro di kalman"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "u"
+	      SrcPort		      1
+	      Points		      [0, 35]
+	      DstBlock		      "Mux"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "filtro di kalman"
+	      SrcPort		      1
+	      DstBlock		      "xi0"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "y"
+	      SrcPort		      1
+	      DstBlock		      "Mux"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "dd"
+	      SrcPort		      1
+	      Points		      [0, -70]
+	      DstBlock		      "Mux"
+	      DstPort		      3
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "K*F2"
+	  SID			  "112"
+	  Position		  [35, 25, 65, 40]
+	  BlockRotation		  270
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  "Kalman"
+	  SrcPort		  1
+	  DstBlock		  "F2"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "u()"
+	  SrcPort		  1
+	  Points		  [0, 45]
+	  DstBlock		  "Kalman"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "y()"
+	  SrcPort		  1
+	  Points		  [0, 20]
+	  DstBlock		  "Kalman"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "d()"
+	  SrcPort		  1
+	  DstBlock		  "Kalman"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "F2"
+	  SrcPort		  1
+	  DstBlock		  "K*F2"
+	  DstPort		  1
+	}
+      }
+    }
+    Block {
       BlockType		      Sum
       Name		      "Sum"
       SID		      "23"
@@ -1480,10 +1666,9 @@ Model {
       BlockType		      Switch
       Name		      "Switch"
       SID		      "103"
-      Position		      [1015, 55, 1065, 95]
+      Position		      [1060, 55, 1110, 95]
       ZOrder		      -19
       BlockMirror	      on
-      Threshold		      "5"
       InputSameDT	      off
       SaturateOnIntegerOverflow	off
     }
@@ -1505,7 +1690,7 @@ Model {
       Ports		      [1]
       Position		      [930, 74, 960, 106]
       Floating		      off
-      Location		      [69, 176, 1089, 687]
+      Location		      [64, 136, 1084, 647]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1533,7 +1718,7 @@ Model {
       Name		      "disturbo"
       SID		      "50"
       Ports		      [0, 1]
-      Position		      [1195, 13, 1225, 47]
+      Position		      [1195, 28, 1225, 62]
       BlockMirror	      on
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -1545,7 +1730,7 @@ Model {
       System {
 	Name			"disturbo"
 	Location		[709, 283, 931, 433]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1623,9 +1808,9 @@ Model {
       Name		      "errore1"
       SID		      "86"
       Ports		      [1]
-      Position		      [870, 294, 900, 326]
+      Position		      [1155, 274, 1185, 306]
       Floating		      off
-      Location		      [64, 81, 1084, 617]
+      Location		      [64, 91, 1084, 627]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1653,7 +1838,7 @@ Model {
       Name		      "processo"
       SID		      "43"
       Ports		      [2, 1]
-      Position		      [565, 70, 605, 130]
+      Position		      [565, 69, 635, 131]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1750,7 +1935,7 @@ Model {
       Name		      "riferimento \ncostante"
       SID		      "11"
       Ports		      [0, 1]
-      Position		      [55, 85, 95, 145]
+      Position		      [15, 94, 95, 136]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1760,7 +1945,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"riferimento \ncostante"
-	Location		[362, 164, 1366, 629]
+	Location		[138, 168, 556, 465]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1799,7 +1984,7 @@ Model {
 	  Name			  "Mux"
 	  SID			  "10"
 	  Ports			  [4, 1]
-	  Position		  [505, 48, 510, 147]
+	  Position		  [230, 53, 235, 152]
 	  ShowName		  off
 	  Inputs		  "[1 1 1 1]"
 	  DisplayOption		  "bar"
@@ -1817,7 +2002,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "r"
 	  SID			  "12"
-	  Position		  [660, 93, 690, 107]
+	  Position		  [300, 98, 330, 112]
 	  IconDisplay		  "Port number"
 	}
 	Line {
@@ -1829,28 +2014,27 @@ Model {
 	Line {
 	  SrcBlock		  "Step"
 	  SrcPort		  1
-	  Points		  [0, 30]
+	  Points		  [10, 0; 0, 10; 145, 0]
 	  DstBlock		  "Mux"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Constant1"
 	  SrcPort		  1
-	  Points		  [5, 0; 0, -5]
 	  DstBlock		  "Mux"
 	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "Constant2"
 	  SrcPort		  1
-	  Points		  [215, 0; 0, -55]
+	  Points		  [95, 0; 0, -50]
 	  DstBlock		  "Mux"
 	  DstPort		  3
 	}
 	Line {
 	  SrcBlock		  "Constant3"
 	  SrcPort		  1
-	  Points		  [430, 0]
+	  Points		  [155, 0]
 	  DstBlock		  "Mux"
 	  DstPort		  4
 	}
@@ -1861,9 +2045,9 @@ Model {
       Name		      "u"
       SID		      "28"
       Ports		      [1]
-      Position		      [500, 14, 530, 46]
+      Position		      [505, 14, 535, 46]
       Floating		      off
-      Location		      [64, 81, 1084, 592]
+      Location		      [64, 91, 1084, 602]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1893,7 +2077,7 @@ Model {
       Ports		      [1]
       Position		      [820, 39, 850, 71]
       Floating		      off
-      Location		      [64, 81, 1084, 617]
+      Location		      [64, 91, 1084, 627]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1932,16 +2116,11 @@ Model {
     Line {
       SrcBlock		      "processo"
       SrcPort		      1
-      Points		      [20, 0]
+      Points		      [0, 0]
       Branch {
-	Points			[0, 115]
-	DstBlock		"Kalman"
-	DstPort			2
-      }
-      Branch {
-	Points			[80, 0]
+	Points			[70, 0]
 	Branch {
-	  Points		  [0, 190; -470, 0; 0, -150]
+	  Points		  [0, 180; -515, 0]
 	  DstBlock		  "Sum1"
 	  DstPort		  2
 	}
@@ -1959,30 +2138,19 @@ Model {
 	  }
 	}
       }
+      Branch {
+	Labels			[0, 0]
+	Points			[35, 0; 0, 120]
+	DstBlock		"Subsystem"
+	DstPort			2
+      }
     }
     Line {
-      SrcBlock		      "Kalman"
+      SrcBlock		      "Subsystem"
       SrcPort		      1
-      DstBlock		      "F2"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Modello \nInterno"
-      SrcPort		      1
-      DstBlock		      "F1"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "F2"
-      SrcPort		      1
+      Points		      [-25, 0]
       DstBlock		      "Sum"
       DstPort		      2
-    }
-    Line {
-      SrcBlock		      "F1"
-      SrcPort		      1
-      DstBlock		      "Sum"
-      DstPort		      1
     }
     Line {
       SrcBlock		      "Sum"
@@ -1995,10 +2163,6 @@ Model {
       SrcPort		      1
       Points		      [5, 0]
       Branch {
-	DstBlock		"Modello \nInterno"
-	DstPort			1
-      }
-      Branch {
 	Points			[0, -55; 25, 0]
 	Branch {
 	  Points		  [0, -30]
@@ -2009,6 +2173,10 @@ Model {
 	  DstBlock		  "Goto1"
 	  DstPort		  1
 	}
+      }
+      Branch {
+	DstBlock		"Modello Interno2"
+	DstPort			1
       }
     }
     Line {
@@ -2030,45 +2198,23 @@ Model {
       DstPort		      1
     }
     Line {
+      Labels		      [0, 0]
       SrcBlock		      "Clock"
       SrcPort		      1
       DstBlock		      "Switch"
       DstPort		      2
     }
     Line {
-      SrcBlock		      "Switch"
-      SrcPort		      1
-      Points		      [0, -40; -130, 0]
-      Branch {
-	Points			[0, 55]
-	DstBlock		"dist"
-	DstPort			1
-      }
-      Branch {
-	Points			[-220, 0]
-	Branch {
-	  Points		  [-110, 0]
-	  DstBlock		  "processo"
-	  DstPort		  1
-	}
-	Branch {
-	  Points		  [0, 200]
-	  DstBlock		  "Kalman"
-	  DstPort		  3
-	}
-      }
-    }
-    Line {
       SrcBlock		      "disturbo"
       SrcPort		      1
-      Points		      [-55, 0; 0, 30]
+      Points		      [-65, 0]
       DstBlock		      "Switch"
       DstPort		      1
     }
     Line {
       SrcBlock		      "Constant"
       SrcPort		      1
-      Points		      [-90, 0]
+      Points		      [-65, 0]
       DstBlock		      "Switch"
       DstPort		      3
     }
@@ -2079,20 +2225,63 @@ Model {
       Branch {
 	Points			[35, 0]
 	Branch {
-	  Points		  [0, 45; 80, 0; 0, 35]
-	  DstBlock		  "Kalman"
-	  DstPort		  1
-	}
-	Branch {
 	  DstBlock		  "processo"
 	  DstPort		  2
 	}
+	Branch {
+	  Labels		  [0, 0]
+	  Points		  [0, 45; 80, 0; 0, 40]
+	  DstBlock		  "Subsystem"
+	  DstPort		  1
+	}
       }
       Branch {
-	Points			[-5, 0]
 	DstBlock		"u"
 	DstPort			1
       }
+    }
+    Line {
+      SrcBlock		      "Switch"
+      SrcPort		      1
+      Points		      [-10, 0; 0, -10]
+      DstBlock		      " "
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Constant1"
+      SrcPort		      1
+      Points		      [-15, 0; 0, 15]
+      DstBlock		      " "
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      " "
+      SrcPort		      1
+      Points		      [0, -30; -75, 0]
+      Branch {
+	Points			[0, 65]
+	DstBlock		"dist"
+	DstPort			1
+      }
+      Branch {
+	Points			[-250, 0]
+	Branch {
+	  Points		  [-110, 0]
+	  DstBlock		  "processo"
+	  DstPort		  1
+	}
+	Branch {
+	  Points		  [0, 215]
+	  DstBlock		  "Subsystem"
+	  DstPort		  3
+	}
+      }
+    }
+    Line {
+      SrcBlock		      "Modello Interno2"
+      SrcPort		      1
+      DstBlock		      "Sum"
+      DstPort		      1
     }
   }
 }

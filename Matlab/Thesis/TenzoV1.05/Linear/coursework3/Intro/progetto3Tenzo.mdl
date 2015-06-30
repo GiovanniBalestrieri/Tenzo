@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.63"
+    ComputedModelVersion    "1.64"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Jun 04 17:22:33 2015"
+  LastModifiedDate	  "Thu Jun 04 17:23:45 2015"
   RTWModifiedTimeStamp	  355334673
-  ModelVersionFormat	  "1.%<AutoIncrement:63>"
+  ModelVersionFormat	  "1.%<AutoIncrement:64>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1192,7 +1192,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 23, 525, 77]
 	  Floating		  off
-	  Location		  [101, 81, 1121, 592]
+	  Location		  [91, 81, 1111, 592]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1224,7 +1224,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 113, 525, 167]
 	  Floating		  off
-	  Location		  [211, 81, 1231, 592]
+	  Location		  [201, 81, 1221, 592]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1258,7 +1258,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 208, 525, 262]
 	  Floating		  off
-	  Location		  [251, 81, 1271, 592]
+	  Location		  [241, 81, 1261, 592]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1291,7 +1291,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 333, 525, 387]
 	  Floating		  off
-	  Location		  [231, 81, 1251, 592]
+	  Location		  [221, 81, 1241, 592]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1447,8 +1447,8 @@ Model {
       Position		      [435, 100, 465, 130]
       ZOrder		      -15
       InputPortMap	      "u0"
-      UpperLimit	      "40"
-      LowerLimit	      "-40"
+      UpperLimit	      "60"
+      LowerLimit	      "-60"
     }
     Block {
       BlockType		      Sum

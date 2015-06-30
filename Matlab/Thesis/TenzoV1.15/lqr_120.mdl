@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.74"
+    ComputedModelVersion    "1.79"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Jun 10 16:56:11 2015"
-  RTWModifiedTimeStamp	  355856163
-  ModelVersionFormat	  "1.%<AutoIncrement:74>"
+  LastModifiedDate	  "Tue Jun 30 16:09:52 2015"
+  RTWModifiedTimeStamp	  357580786
+  ModelVersionFormat	  "1.%<AutoIncrement:79>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,7 +78,6 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "lqr_115"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -144,7 +143,7 @@ Model {
 	  $ObjectID		  4
 	  Version		  "1.12.0"
 	  StartTime		  "0.0"
-	  StopTime		  "50.0"
+	  StopTime		  "10"
 	  AbsTol		  "auto"
 	  FixedStep		  "auto"
 	  InitialStep		  "auto"
@@ -645,7 +644,7 @@ Model {
       }
       Name		      "Configuration"
       CurrentDlgPage	      "Solver"
-      ConfigPrmDlgPosition     [ 188, 60, 1178, 764 ] 
+      ConfigPrmDlgPosition     [ 218, 118, 1148, 678 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -1877,7 +1876,7 @@ Model {
       System {
 	Name			"Tenzo Linear"
 	Location		[490, 267, 1185, 687]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3093,7 +3092,7 @@ Model {
 	  ZOrder		  11
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|++"
+	  Inputs		  "|+-"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -3110,7 +3109,7 @@ Model {
 	  B			  "BMin"
 	  C			  "ClocalMin"
 	  D			  "D"
-	  X0			  "[ze0 0 phi0 0 psi0 0 0 0 ]"
+	  X0			  "[ze0 0 phi0 theta0 psi0 0 0 0 ]"
 	}
 	Block {
 	  BlockType		  ToWorkspace
@@ -4783,6 +4782,7 @@ Model {
       Location		      [54, 53, 1367, 767]
       Open		      off
       NumInputPorts	      "4"
+      ZoomMode		      "xonly"
       List {
 	ListType		AxesTitles
 	axes1			"%<SignalLabel>"
@@ -4801,8 +4801,8 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "2500~-5~-5~-5"
-      YMax		      "7000~5~5~5"
+      YMin		      "-1.25e+07~-1.67772e+07~0~-8e+12"
+      YMax		      "1e+07~2.75e+23~2.25e+23~0"
       SaveName		      "ScopeData1"
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
@@ -4927,8 +4927,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @       \"@ &\"F0 X    X    !@    @    &          4    (     0    $  "
-    "  !          D    (        \\ #$ID .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       \" !J!X0 X    X    !@    @    &          4    (     0    $   "
+    " !          D    (        0  LHD .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0

@@ -2,8 +2,8 @@
 
 % Initial Conditions
 ze0=0;
-phi0 = 0;
-theta0 = 0;
+phi0 = 1.2;
+theta0 = 1;
 psi0 = 0;
 
 % Inflow coefficient
@@ -300,12 +300,12 @@ clc;
 disp('Stabilizzazione mediante LQR dallo stato stimato');
 
 alphaK = 2;
-Qie = blkdiag([100 0 ;0 1],1*eye(3),eye(3));
+Qie = blkdiag([0.1 0 ;0 1],0.0000001*eye(3),eye(3));
 Q = eye(size(AMin));
 % [T,tx,ty,tz]
-Rie = [100000 0 0 0; 0 10000 0 0; 0 0 10000 0; 0 0 0 10000];
+Rie = [1000000 0 0 0; 0 10000000 0 0; 0 0 100000000 0; 0 0 0 10000000];
 R = eye(size(BMin,2));
-K = lqr(AMin,BMin,Qie,Rie);
+K = lqr(AMin,BMin,Q,R);
 disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
 eig(AMin-BMin*K)
 
@@ -316,7 +316,7 @@ step(tenzoLQR);
 
 %% Simulazione
 
-refs=[0 0 0 0 0 0 0 0 ]; 
+refs=[-10 0 0 0 90 0 0 0 ]; 
 tc=0.436;
 X0c = 3000;
 dz1=1247.4;
