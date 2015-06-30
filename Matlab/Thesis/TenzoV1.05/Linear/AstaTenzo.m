@@ -190,7 +190,6 @@ else
 end
 disp(rank(ctrb(A,B)));
 
-
 disp('Verifica osservabilità. Rango della matrice Q:')
 if (rank(obsv(A,Clocal))==size(A,1))
     disp('Sistema osservabile');
@@ -245,7 +244,7 @@ disp('Invariant Zeros:');
 tzero(A,B,Clocal,D,eye(12))
 
 disp('Transmission Zeros');
-tzero(PsTot)
+tzero(Ps)
 
 % Sottosistema ragg e oss con decomposizione di Kalman
 % Check wether the solution is still valid with this subsys

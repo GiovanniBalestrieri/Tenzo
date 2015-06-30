@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.79"
+    ComputedModelVersion    "1.84"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Jun 30 16:09:52 2015"
-  RTWModifiedTimeStamp	  357580786
-  ModelVersionFormat	  "1.%<AutoIncrement:79>"
+  LastModifiedDate	  "Tue Jun 30 16:28:42 2015"
+  RTWModifiedTimeStamp	  357582504
+  ModelVersionFormat	  "1.%<AutoIncrement:84>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -143,7 +143,7 @@ Model {
 	  $ObjectID		  4
 	  Version		  "1.12.0"
 	  StartTime		  "0.0"
-	  StopTime		  "10"
+	  StopTime		  "100"
 	  AbsTol		  "auto"
 	  FixedStep		  "auto"
 	  InitialStep		  "auto"
@@ -644,7 +644,7 @@ Model {
       }
       Name		      "Configuration"
       CurrentDlgPage	      "Solver"
-      ConfigPrmDlgPosition     [ 218, 118, 1148, 678 ] 
+      ConfigPrmDlgPosition     [ 178, 22, 1188, 774 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -1166,6 +1166,7 @@ Model {
 	  Location		  [54, 53, 1367, 767]
 	  Open			  off
 	  NumInputPorts		  "4"
+	  ZoomMode		  "xonly"
 	  List {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
@@ -1364,8 +1365,8 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "-1.29247e-26~-9e-10~-3.5e-08~-4.2"
-	  YMax			  "6e-10~-5.16988e-26~-6.61744e-24~-3.8"
+	  YMin			  "68.7549~-1~-1~151"
+	  YMax			  "68.7549~1~1~165"
 	  SaveName		  "ScopeData10"
 	  DataFormat		  "StructureWithTime"
 	  LimitDataPoints	  off
@@ -1876,7 +1877,7 @@ Model {
       System {
 	Name			"Tenzo Linear"
 	Location		[490, 267, 1185, 687]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3092,7 +3093,7 @@ Model {
 	  ZOrder		  11
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|+-"
+	  Inputs		  "|++"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -4801,8 +4802,8 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "-1.25e+07~-1.67772e+07~0~-8e+12"
-      YMax		      "1e+07~2.75e+23~2.25e+23~0"
+      YMin		      "-10000~-6.5e+17~0~-8000"
+      YMax		      "7500~0~2.75e+20~4000"
       SaveName		      "ScopeData1"
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
@@ -4927,8 +4928,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @       \" !J!X0 X    X    !@    @    &          4    (     0    $   "
-    " !          D    (        0  LHD .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @       \"@  250 X    X    !@    @    &          4    (     0    $   "
+    " !          D    (        @ #0ET .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0

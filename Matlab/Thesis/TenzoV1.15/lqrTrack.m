@@ -1,10 +1,10 @@
 %% Variable declaration
 
 % Initial Conditions
-ze0=0;
-phi0 = 1.2;
-theta0 = 1;
-psi0 = 0;
+ze0=1.1;
+phi0 = 1.1;
+theta0 = -1.2;
+psi0 = 0.2;
 
 % Inflow coefficient
 If = -0.3559;
@@ -316,7 +316,7 @@ step(tenzoLQR);
 
 %% Simulazione
 
-refs=[-10 0 0 0 90 0 0 0 ]; 
+refs=[5 0 1 1 2 0 0 0 ]; 
 tc=0.436;
 X0c = 3000;
 dz1=1247.4;
