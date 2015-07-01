@@ -133,7 +133,7 @@ Cremote = [ 1 0 0 0 0 0 0 0 0 0 0 0;
        
 CFull = eye(size(A));       
 DFull = zeros(size(A),4);
-inputs = {'Thrust','TauPhi','TauTheta','TauPsi'};
+inputs = {'TauPhi','TauTheta','TauPsi','Thrust'};
 D = zeros(4,4);
 
 tenzo=ss(A,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal)
@@ -244,7 +244,7 @@ disp('Invariant Zeros:');
 tzero(A,B,Clocal,D,eye(12))
 
 disp('Transmission Zeros');
-tzero(PsTot)
+tzero(Ps)
 
 % Sottosistema ragg e oss con decomposizione di Kalman
 % Check wether the solution is still valid with this subsys
@@ -415,8 +415,8 @@ Q = eye(size(Asig));
 R = eye(size(Bsig,2));
 F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
 
-disp('matrici stablizzanti:')
-F2=F(:,1:size(AMin,1))
+%disp('matrici stablizzanti:');
+F2=F(:,1:size(AMin,1));
 disp('dimensioni [pxn]:'); 
 disp(size(F2));
 F1=F(:,size(AMin,1)+1:size(F,2))
@@ -425,8 +425,8 @@ disp(size(F1));
 
 Q = eye(size(AMin,2));
 R = eye(size(BMin,2));
-disp('matrice per Kalman:')
-V=lqr((AMin-BMin*K)',ClocalMin',Q,R)'
+% disp('matrice per Kalman:');
+% V=lqr((AMin-BMin*K)',ClocalMin',Q,R)';
 disp('dimensione attesa [nxq]');
 disp(size(V));
 
@@ -460,6 +460,7 @@ DMI=zeros(q*mu,q);
 
 disp('avvio simulazione 1');
 pause;
+
 open('progetto3Tenzo.mdl')
 sim('progetto3Tenzo.mdl')
 

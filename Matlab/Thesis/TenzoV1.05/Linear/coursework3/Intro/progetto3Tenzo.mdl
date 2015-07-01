@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.64"
+    ComputedModelVersion    "1.66"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Jun 04 17:23:45 2015"
-  RTWModifiedTimeStamp	  355334673
-  ModelVersionFormat	  "1.%<AutoIncrement:64>"
+  LastModifiedDate	  "Thu Jul 02 00:13:48 2015"
+  RTWModifiedTimeStamp	  357618372
+  ModelVersionFormat	  "1.%<AutoIncrement:66>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -113,7 +113,7 @@ Model {
 	  $ObjectID		  2
 	  Version		  "1.12.0"
 	  StartTime		  "0.0"
-	  StopTime		  "30"
+	  StopTime		  "80"
 	  AbsTol		  "auto"
 	  FixedStep		  "auto"
 	  InitialStep		  "auto"
@@ -588,7 +588,7 @@ Model {
       }
       Name		      "Configuration"
       CurrentDlgPage	      "Solver"
-      ConfigPrmDlgPosition     [ 188, 60, 1178, 764 ] 
+      ConfigPrmDlgPosition     [ 178, 22, 1188, 774 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -881,7 +881,7 @@ Model {
       BlockType		      Constant
       Name		      "Constant"
       SID		      "106"
-      Position		      [1175, 130, 1205, 160]
+      Position		      [1195, 80, 1225, 110]
       ZOrder		      -4
       BlockMirror	      on
       Value		      "0"
@@ -913,7 +913,7 @@ Model {
       BlockType		      From
       Name		      "From1"
       SID		      "69"
-      Position		      [730, 120, 780, 140]
+      Position		      [855, 185, 905, 205]
       ZOrder		      -9
       GotoTag		      "Refs"
     }
@@ -921,7 +921,7 @@ Model {
       BlockType		      From
       Name		      "From2"
       SID		      "84"
-      Position		      [775, 365, 825, 385]
+      Position		      [810, 365, 860, 385]
       ZOrder		      -9
       GotoTag		      "Refs"
     }
@@ -929,7 +929,7 @@ Model {
       BlockType		      From
       Name		      "From3"
       SID		      "85"
-      Position		      [775, 300, 825, 320]
+      Position		      [810, 300, 860, 320]
       ZOrder		      -9
       GotoTag		      "Err"
     }
@@ -1083,7 +1083,7 @@ Model {
       Name		      "Output"
       SID		      "71"
       Ports		      [2]
-      Position		      [815, 85, 855, 145]
+      Position		      [915, 85, 955, 145]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1414,7 +1414,7 @@ Model {
       Name		      "Refs"
       SID		      "83"
       Ports		      [1]
-      Position		      [870, 359, 900, 391]
+      Position		      [905, 359, 935, 391]
       Floating		      off
       Location		      [64, 81, 1084, 617]
       Open		      off
@@ -1503,7 +1503,7 @@ Model {
       Name		      "dist"
       SID		      "54"
       Ports		      [1]
-      Position		      [930, 74, 960, 106]
+      Position		      [1195, 219, 1225, 251]
       Floating		      off
       Location		      [69, 176, 1089, 687]
       Open		      off
@@ -1545,7 +1545,7 @@ Model {
       System {
 	Name			"disturbo"
 	Location		[709, 283, 931, 433]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1623,7 +1623,7 @@ Model {
       Name		      "errore1"
       SID		      "86"
       Ports		      [1]
-      Position		      [870, 294, 900, 326]
+      Position		      [905, 294, 935, 326]
       Floating		      off
       Location		      [64, 81, 1084, 617]
       Open		      off
@@ -1653,7 +1653,7 @@ Model {
       Name		      "processo"
       SID		      "43"
       Ports		      [2, 1]
-      Position		      [565, 70, 605, 130]
+      Position		      [705, 70, 745, 130]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1891,9 +1891,9 @@ Model {
       Name		      "uscite"
       SID		      "88"
       Ports		      [1]
-      Position		      [820, 39, 850, 71]
+      Position		      [920, 39, 950, 71]
       Floating		      off
-      Location		      [64, 81, 1084, 617]
+      Location		      [54, 91, 1074, 627]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1932,22 +1932,22 @@ Model {
     Line {
       SrcBlock		      "processo"
       SrcPort		      1
-      Points		      [20, 0]
+      Points		      [30, 0]
       Branch {
-	Points			[0, 115]
+	Points			[30, 0; 0, 115]
 	DstBlock		"Kalman"
 	DstPort			2
       }
       Branch {
-	Points			[80, 0]
+	Points			[30, 0]
 	Branch {
-	  Points		  [0, 190; -470, 0; 0, -150]
+	  Points		  [10, 0; 0, 185; -625, 0]
 	  DstBlock		  "Sum1"
 	  DstPort		  2
 	}
 	Branch {
 	  Labels		  [0, 0]
-	  Points		  [0, 0]
+	  Points		  [10, 0]
 	  Branch {
 	    DstBlock		    "Output"
 	    DstPort		    1
@@ -2014,6 +2014,7 @@ Model {
     Line {
       SrcBlock		      "From1"
       SrcPort		      1
+      Points		      [0, -35; -30, 0; 0, -30]
       DstBlock		      "Output"
       DstPort		      2
     }
@@ -2038,16 +2039,16 @@ Model {
     Line {
       SrcBlock		      "Switch"
       SrcPort		      1
-      Points		      [0, -40; -130, 0]
+      Points		      [-45, 0; 0, -40]
       Branch {
-	Points			[0, 55]
+	Points			[0, 200]
 	DstBlock		"dist"
 	DstPort			1
       }
       Branch {
-	Points			[-220, 0]
+	Points			[-175, 0]
 	Branch {
-	  Points		  [-110, 0]
+	  Points		  [-100, 0]
 	  DstBlock		  "processo"
 	  DstPort		  1
 	}
@@ -2068,7 +2069,7 @@ Model {
     Line {
       SrcBlock		      "Constant"
       SrcPort		      1
-      Points		      [-90, 0]
+      Points		      [-110, 0]
       DstBlock		      "Switch"
       DstPort		      3
     }
@@ -2077,9 +2078,9 @@ Model {
       SrcPort		      1
       Points		      [20, 0]
       Branch {
-	Points			[35, 0]
+	Points			[-5, 0]
 	Branch {
-	  Points		  [0, 45; 80, 0; 0, 35]
+	  Points		  [0, 45; 120, 0; 0, 35]
 	  DstBlock		  "Kalman"
 	  DstPort		  1
 	}
