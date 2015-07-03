@@ -454,7 +454,7 @@ disp(eig(AMin-BMin*K-V*ClocalMin));
 
 disp('specifica 3 ) definizione matrici per simulink:');
 
-M=[ 1 0 0 0 1 1 1 1]';
+M=[ 1 0 0.3 0.4 0.5 0.3 0.4 0.5]';
 N=[ 0;  0; 0; 0];
 %per disturbo sul processo definisco Bmod:
 Bmod=[M BMin]; %nota prima d e poi u scambio la somma per comodit�
@@ -474,9 +474,9 @@ DMI=zeros(q*mu,q);
 
 disp('avvio simulazione 1');
 
-N_psi = [59260.0621820611 3429565.45270113 ...
-         27702908.9364068 53625940.9126871];
-D_psi = [1 378.139322580724 35127.9961825618 0];
+N_psi = [440.513056398418 26779.6272064186 ...
+        272303.182447317 584729.91630594];
+D_psi = [1 325.437715018286 23852.1596168943 0];
 
 N_theta = [440.513056398418 26779.6272064186 ...
         272303.182447317 584729.91630594];

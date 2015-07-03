@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.81"
+    ComputedModelVersion    "1.84"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Jul 03 16:22:46 2015"
-  RTWModifiedTimeStamp	  357788551
-  ModelVersionFormat	  "1.%<AutoIncrement:81>"
+  LastModifiedDate	  "Fri Jul 03 16:44:36 2015"
+  RTWModifiedTimeStamp	  357842663
+  ModelVersionFormat	  "1.%<AutoIncrement:84>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -862,7 +862,7 @@ Model {
   }
   System {
     Name		    "progetto3NO_LQG"
-    Location		    [53, 206, 1366, 679]
+    Location		    [53, 234, 1366, 707]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -876,7 +876,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "152"
+    SIDHighWatermark	    "154"
     Block {
       BlockType		      Clock
       Name		      "Clock"
@@ -1108,7 +1108,7 @@ Model {
       LibraryVersion	      "1.260"
       SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
       SourceType	      "Manual Switch"
-      sw		      "1"
+      sw		      "0"
       action		      "0"
       varsize		      off
     }
@@ -1137,8 +1137,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Output"
-	Location		[668, 163, 1297, 600]
-	Open			on
+	Location		[668, 247, 1297, 684]
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1236,7 +1236,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 23, 525, 77]
 	  Floating		  off
-	  Location		  [64, 91, 1084, 602]
+	  Location		  [54, 91, 1074, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1269,7 +1269,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 113, 525, 167]
 	  Floating		  off
-	  Location		  [171, 91, 1191, 602]
+	  Location		  [161, 91, 1181, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1304,7 +1304,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 208, 525, 262]
 	  Floating		  off
-	  Location		  [231, 91, 1251, 602]
+	  Location		  [191, 91, 1211, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1338,10 +1338,11 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 333, 525, 387]
 	  Floating		  off
-	  Location		  [211, 91, 1231, 602]
+	  Location		  [191, 91, 1211, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
+	  ZoomMode		  "xonly"
 	  List {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
@@ -1492,7 +1493,7 @@ Model {
       Name		      "Sat1"
       SID		      "145"
       Ports		      [1, 1]
-      Position		      [530, 350, 560, 380]
+      Position		      [495, 205, 525, 235]
       ZOrder		      -15
       InputPortMap	      "u0"
       UpperLimit	      "60"
@@ -1563,7 +1564,7 @@ Model {
       Ports		      [1]
       Position		      [805, 64, 835, 96]
       Floating		      off
-      Location		      [64, 166, 1084, 677]
+      Location		      [54, 156, 1074, 667]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1833,8 +1834,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"q Siso Par "
-	Location		[555, 336, 1155, 687]
-	Open			off
+	Location		[556, 393, 1156, 744]
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1875,7 +1876,7 @@ Model {
 	}
 	Block {
 	  BlockType		  TransferFcn
-	  Name			  "T"
+	  Name			  "Ps-Phi"
 	  SID			  "129"
 	  Position		  [185, 40, 245, 70]
 	  ZOrder		  -9
@@ -1884,7 +1885,7 @@ Model {
 	}
 	Block {
 	  BlockType		  TransferFcn
-	  Name			  "Transfer Fcn2"
+	  Name			  "Ps-Psi"
 	  SID			  "130"
 	  Position		  [185, 151, 260, 179]
 	  ZOrder		  -9
@@ -1893,21 +1894,21 @@ Model {
 	}
 	Block {
 	  BlockType		  TransferFcn
-	  Name			  "Transfer Fcn3"
-	  SID			  "131"
-	  Position		  [185, 207, 255, 233]
-	  ZOrder		  -9
-	  Numerator		  "N_thrust"
-	  Denominator		  "D_thrust"
-	}
-	Block {
-	  BlockType		  TransferFcn
-	  Name			  "Transfer Fcn4"
+	  Name			  "Ps-Theta"
 	  SID			  "132"
 	  Position		  [180, 97, 250, 123]
 	  ZOrder		  -9
 	  Numerator		  "N_theta"
 	  Denominator		  "D_theta"
+	}
+	Block {
+	  BlockType		  TransferFcn
+	  Name			  "Ps_Altitude"
+	  SID			  "131"
+	  Position		  [185, 207, 255, 233]
+	  ZOrder		  -9
+	  Numerator		  "N_thrust"
+	  Denominator		  "D_thrust"
 	}
 	Block {
 	  BlockType		  Outport
@@ -1929,13 +1930,13 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Transfer Fcn2"
+	  SrcBlock		  "Ps-Psi"
 	  SrcPort		  1
 	  DstBlock		  "Mux"
 	  DstPort		  3
 	}
 	Line {
-	  SrcBlock		  "Transfer Fcn4"
+	  SrcBlock		  "Ps-Theta"
 	  SrcPort		  1
 	  DstBlock		  "Mux"
 	  DstPort		  2
@@ -1943,17 +1944,17 @@ Model {
 	Line {
 	  SrcBlock		  "Demux1"
 	  SrcPort		  2
-	  DstBlock		  "Transfer Fcn4"
+	  DstBlock		  "Ps-Theta"
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Transfer Fcn3"
+	  SrcBlock		  "Ps_Altitude"
 	  SrcPort		  1
 	  DstBlock		  "Mux"
 	  DstPort		  4
 	}
 	Line {
-	  SrcBlock		  "T"
+	  SrcBlock		  "Ps-Phi"
 	  SrcPort		  1
 	  DstBlock		  "Mux"
 	  DstPort		  1
@@ -1961,19 +1962,19 @@ Model {
 	Line {
 	  SrcBlock		  "Demux1"
 	  SrcPort		  4
-	  DstBlock		  "Transfer Fcn3"
+	  DstBlock		  "Ps_Altitude"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Demux1"
 	  SrcPort		  3
-	  DstBlock		  "Transfer Fcn2"
+	  DstBlock		  "Ps-Psi"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Demux1"
 	  SrcPort		  1
-	  DstBlock		  "T"
+	  DstBlock		  "Ps-Phi"
 	  DstPort		  1
 	}
       }
@@ -2116,9 +2117,10 @@ Model {
       Ports		      [1]
       Position		      [590, 119, 620, 151]
       Floating		      off
-      Location		      [64, 91, 1084, 602]
+      Location		      [54, 91, 1074, 602]
       Open		      off
       NumInputPorts	      "1"
+      ZoomMode		      "xonly"
       List {
 	ListType		AxesTitles
 	axes1			"%<SignalLabel>"
@@ -2144,9 +2146,9 @@ Model {
       Name		      "uscite"
       SID		      "88"
       Ports		      [1]
-      Position		      [910, 144, 940, 176]
+      Position		      [910, 149, 940, 181]
       Floating		      off
-      Location		      [64, 91, 1084, 627]
+      Location		      [54, 91, 1074, 627]
       Open		      off
       NumInputPorts	      "1"
       ZoomMode		      "yonly"
@@ -2165,6 +2167,9 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
+      TimeRange		      "80"
+      YMin		      "-17.45927637246444"
+      YMax		      "15.6384603336206"
       SaveName		      "ScopeData2"
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
@@ -2200,7 +2205,7 @@ Model {
 	  DstPort		  1
 	}
 	Branch {
-	  Points		  [0, -45]
+	  Points		  [0, -40]
 	  DstBlock		  "uscite"
 	  DstPort		  1
 	}
@@ -2271,16 +2276,8 @@ Model {
       Labels		      [0, 0]
       SrcBlock		      "q Siso Par "
       SrcPort		      1
-      Points		      [105, 0]
-      Branch {
-	DstBlock		"processo"
-	DstPort			2
-      }
-      Branch {
-	Points			[0, -85]
-	DstBlock		"u"
-	DstPort			1
-      }
+      DstBlock		      "Sat1"
+      DstPort		      1
     }
     Line {
       SrcBlock		      "Constant1"
@@ -2307,6 +2304,21 @@ Model {
       Branch {
 	Points			[0, 40]
 	DstBlock		"dist"
+	DstPort			1
+      }
+    }
+    Line {
+      Labels		      [0, 0]
+      SrcBlock		      "Sat1"
+      SrcPort		      1
+      Points		      [35, 0]
+      Branch {
+	DstBlock		"processo"
+	DstPort			2
+      }
+      Branch {
+	Points			[0, -85]
+	DstBlock		"u"
 	DstPort			1
       }
     }
