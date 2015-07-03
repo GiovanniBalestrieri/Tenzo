@@ -250,7 +250,13 @@ D_psi = Ps(3,3).den{1};
 N_thrust = Ps(4,4).num{1};
 D_thrust = Ps(4,4).den{1};
 
-%Ps(1,1)
+Ps(1,1)Ps(1,1)
+
+Ps(1,1)
+
+[numexpr, denexpr] = numden(paa) 
+[num,den,Ts] = tfdata(paa)
+[num,den] = tfdata(Ps)
 
 
 % invarianzZero
@@ -491,8 +497,8 @@ N_phi = [440.513056398418 26779.6272064186 ...
         272303.182447317 584729.91630594];
 D_phi = [1 325.437715018286 23852.1596168943 0];
 
-N_thrust = [682900.887332905 4668183.15145263];
-D_thrust = [1 963.786798861645 190423.384445206 0];
+N_thrust = Ps(4,4).num{1};
+D_thrust = Ps(4,4).den{1};
 
 disp('Premere un tasto per continuare...');
 pause;

@@ -473,11 +473,6 @@ CMI=eye(q*mu);
 DMI=zeros(q*mu,q);
 
 disp('avvio simulazione 1');
-pause;
-
-open('progetto3Tenzo.mdl')
-sim('progetto3Tenzo.mdl')
-
 
 N_psi = [59260.0621820611 3429565.45270113 ...
          27702908.9364068 53625940.9126871];
@@ -491,8 +486,13 @@ N_phi = [440.513056398418 26779.6272064186 ...
         272303.182447317 584729.91630594];
 D_phi = [1 325.437715018286 23852.1596168943 0];
 
-N_thrust = [682900.887332905 4668183.15145263];
-D_thrust = [1 963.786798861645 190423.384445206 0];
+N_thrust = [2882048.25903061 3827833.12977005];
+D_thrust = [1 888.737639530835 157281.746006557];
+
+
+
+open('progetto3NO_LQG.mdl')
+sim('progetto3NO_LQG.mdl')
 
 disp('Premere un tasto per continuare...');
 pause;
