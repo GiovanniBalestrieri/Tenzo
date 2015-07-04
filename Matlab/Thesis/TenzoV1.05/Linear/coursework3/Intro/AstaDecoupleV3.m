@@ -489,10 +489,11 @@ D_phi = [1 325.437715018286 23852.1596168943 0];
 N_thrust = [2882048.25903061 3827833.12977005];
 D_thrust = [1 888.737639530835 157281.746006557];
 
+satThrust = 60;
+satTau = 100;
 
-
-open('progetto3NO_LQG.mdl')
-sim('progetto3NO_LQG.mdl')
+open('progetto3TenzoDecouple.mdl')
+sim('progetto3TenzoDecouple.mdl')
 
 disp('Premere un tasto per continuare...');
 pause;
