@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.90"
+    ComputedModelVersion    "1.93"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Jul 04 05:00:46 2015"
+  LastModifiedDate	  "Sat Jul 04 17:11:58 2015"
   RTWModifiedTimeStamp	  357788551
-  ModelVersionFormat	  "1.%<AutoIncrement:90>"
+  ModelVersionFormat	  "1.%<AutoIncrement:93>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -876,7 +876,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "160"
+    SIDHighWatermark	    "192"
     Block {
       BlockType		      Clock
       Name		      "Clock"
@@ -905,9 +905,9 @@ Model {
     }
     Block {
       BlockType		      Gain
-      Name		      "F2"
-      SID		      "137"
-      Position		      [425, 434, 465, 486]
+      Name		      "F1"
+      SID		      "191"
+      Position		      [340, 349, 380, 401]
       Gain		      "F1"
       Multiplication	      "Matrix(K*u) (u vector)"
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
@@ -1097,15 +1097,15 @@ Model {
       LibraryVersion	      "1.260"
       SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
       SourceType	      "Manual Switch"
-      sw		      "1"
+      sw		      "0"
       action		      "0"
       varsize		      off
     }
     Block {
       BlockType		      StateSpace
-      Name		      "Modello \nInterno1"
-      SID		      "136"
-      Position		      [160, 448, 220, 482]
+      Name		      "Modello \nInterno2"
+      SID		      "192"
+      Position		      [220, 348, 280, 382]
       A			      "AMI"
       B			      "BMI"
       C			      "CMI"
@@ -1126,8 +1126,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Output"
-	Location		[668, 303, 1297, 740]
-	Open			on
+	Location		[668, 331, 1297, 768]
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1258,7 +1258,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 113, 525, 167]
 	  Floating		  off
-	  Location		  [121, 91, 1141, 602]
+	  Location		  [111, 91, 1131, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1293,7 +1293,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 208, 525, 262]
 	  Floating		  off
-	  Location		  [181, 91, 1201, 602]
+	  Location		  [161, 91, 1181, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -1327,8 +1327,8 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 333, 525, 387]
 	  Floating		  off
-	  Location		  [161, 91, 1181, 602]
-	  Open			  on
+	  Location		  [101, 91, 1121, 602]
+	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
 	  ZoomMode		  "xonly"
@@ -1573,7 +1573,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"disturbo"
-	Location		[709, 283, 931, 433]
+	Location		[709, 339, 931, 489]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1600,7 +1600,7 @@ Model {
 	  Ports			  [0, 1]
 	  Position		  [140, 75, 170, 105]
 	  BlockMirror		  on
-	  Amplitude		  "3"
+	  Amplitude		  "0.5"
 	  Frequency		  "omega"
 	  SampleTime		  "0"
 	}
@@ -1654,7 +1654,7 @@ Model {
       Ports		      [1]
       Position		      [1195, 269, 1225, 301]
       Floating		      off
-      Location		      [64, 81, 1084, 617]
+      Location		      [64, 91, 1084, 627]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1707,7 +1707,7 @@ Model {
       }
       System {
 	Name			"processo"
-	Location		[432, 233, 739, 336]
+	Location		[432, 261, 739, 364]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1791,10 +1791,10 @@ Model {
     }
     Block {
       BlockType		      SubSystem
-      Name		      "q Siso Par "
-      SID		      "125"
+      Name		      "q Siso Par 1"
+      SID		      "161"
       Ports		      [1, 1]
-      Position		      [370, 201, 455, 239]
+      Position		      [460, 356, 545, 394]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1803,9 +1803,9 @@ Model {
       RequestExecContextInheritance off
       MaskHideContents	      off
       System {
-	Name			"q Siso Par "
+	Name			"q Siso Par 1"
 	Location		[556, 393, 1156, 744]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1820,14 +1820,14 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "e(t)"
-	  SID			  "126"
+	  SID			  "162"
 	  Position		  [15, 133, 45, 147]
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Demux
 	  Name			  "Demux1"
-	  SID			  "127"
+	  SID			  "163"
 	  Ports			  [1, 4]
 	  Position		  [90, 28, 95, 247]
 	  ZOrder		  -7
@@ -1837,7 +1837,7 @@ Model {
 	Block {
 	  BlockType		  Mux
 	  Name			  "Mux"
-	  SID			  "128"
+	  SID			  "164"
 	  Ports			  [4, 1]
 	  Position		  [395, 28, 400, 247]
 	  ZOrder		  -16
@@ -1847,8 +1847,8 @@ Model {
 	Block {
 	  BlockType		  TransferFcn
 	  Name			  "Ps-Phi"
-	  SID			  "129"
-	  Position		  [185, 40, 245, 70]
+	  SID			  "165"
+	  Position		  [170, 36, 245, 74]
 	  ZOrder		  -9
 	  Numerator		  "N_phi"
 	  Denominator		  "D_phi"
@@ -1856,8 +1856,8 @@ Model {
 	Block {
 	  BlockType		  TransferFcn
 	  Name			  "Ps-Psi"
-	  SID			  "130"
-	  Position		  [185, 151, 260, 179]
+	  SID			  "166"
+	  Position		  [165, 143, 250, 187]
 	  ZOrder		  -9
 	  Numerator		  "N_psi"
 	  Denominator		  "D_psi"
@@ -1865,8 +1865,8 @@ Model {
 	Block {
 	  BlockType		  TransferFcn
 	  Name			  "Ps-Theta"
-	  SID			  "132"
-	  Position		  [180, 97, 250, 123]
+	  SID			  "167"
+	  Position		  [170, 91, 250, 129]
 	  ZOrder		  -9
 	  Numerator		  "N_theta"
 	  Denominator		  "D_theta"
@@ -1874,8 +1874,8 @@ Model {
 	Block {
 	  BlockType		  TransferFcn
 	  Name			  "Ps_Altitude"
-	  SID			  "131"
-	  Position		  [185, 207, 255, 233]
+	  SID			  "168"
+	  Position		  [170, 201, 255, 239]
 	  ZOrder		  -9
 	  Numerator		  "N_thrust"
 	  Denominator		  "D_thrust"
@@ -1883,7 +1883,7 @@ Model {
 	Block {
 	  BlockType		  Saturate
 	  Name			  "SatPsi"
-	  SID			  "156"
+	  SID			  "169"
 	  Ports			  [1, 1]
 	  Position		  [310, 150, 340, 180]
 	  ZOrder		  -15
@@ -1894,7 +1894,7 @@ Model {
 	Block {
 	  BlockType		  Saturate
 	  Name			  "SatTau"
-	  SID			  "158"
+	  SID			  "170"
 	  Ports			  [1, 1]
 	  Position		  [310, 40, 340, 70]
 	  ZOrder		  -15
@@ -1905,7 +1905,7 @@ Model {
 	Block {
 	  BlockType		  Saturate
 	  Name			  "SatTheta"
-	  SID			  "157"
+	  SID			  "171"
 	  Ports			  [1, 1]
 	  Position		  [310, 95, 340, 125]
 	  ZOrder		  -15
@@ -1916,18 +1916,18 @@ Model {
 	Block {
 	  BlockType		  Saturate
 	  Name			  "SatThrust"
-	  SID			  "145"
+	  SID			  "172"
 	  Ports			  [1, 1]
 	  Position		  [310, 205, 340, 235]
 	  ZOrder		  -15
 	  InputPortMap		  "u0"
 	  UpperLimit		  "satThrust"
-	  LowerLimit		  "0"
+	  LowerLimit		  "-satNegThrust"
 	}
 	Block {
 	  BlockType		  Scope
 	  Name			  "u1"
-	  SID			  "154"
+	  SID			  "173"
 	  Ports			  [1]
 	  Position		  [395, 274, 425, 306]
 	  Floating		  off
@@ -1958,7 +1958,279 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "u(t)"
-	  SID			  "133"
+	  SID			  "174"
+	  Position		  [490, 133, 520, 147]
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  "SatTau"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "SatTheta"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "SatPsi"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "SatThrust"
+	  SrcPort		  1
+	  Points		  [20, 0]
+	  Branch {
+	    Points		    [0, 70]
+	    DstBlock		    "u1"
+	    DstPort		    1
+	  }
+	  Branch {
+	    DstBlock		    "Mux"
+	    DstPort		    4
+	  }
+	}
+	Line {
+	  SrcBlock		  "Demux1"
+	  SrcPort		  1
+	  DstBlock		  "Ps-Phi"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Demux1"
+	  SrcPort		  3
+	  DstBlock		  "Ps-Psi"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Demux1"
+	  SrcPort		  4
+	  DstBlock		  "Ps_Altitude"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Ps-Phi"
+	  SrcPort		  1
+	  DstBlock		  "SatTau"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Ps_Altitude"
+	  SrcPort		  1
+	  DstBlock		  "SatThrust"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Demux1"
+	  SrcPort		  2
+	  DstBlock		  "Ps-Theta"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Ps-Theta"
+	  SrcPort		  1
+	  DstBlock		  "SatTheta"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Ps-Psi"
+	  SrcPort		  1
+	  DstBlock		  "SatPsi"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "e(t)"
+	  SrcPort		  1
+	  DstBlock		  "Demux1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Mux"
+	  SrcPort		  1
+	  DstBlock		  "u(t)"
+	  DstPort		  1
+	}
+	Annotation {
+	  SID			  "175"
+	  Name			  "TauPsi, TauTheta, TauPsi\n can be abs(ui)<= thTau\nThrust <= satThrust"
+	  Position		  [483, 26]
+	}
+      }
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "q Siso Par 2"
+      SID		      "176"
+      Ports		      [1, 1]
+      Position		      [415, 201, 500, 239]
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"q Siso Par 2"
+	Location		[556, 393, 1156, 744]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "e(t)"
+	  SID			  "177"
+	  Position		  [15, 133, 45, 147]
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  "Demux1"
+	  SID			  "178"
+	  Ports			  [1, 4]
+	  Position		  [90, 28, 95, 247]
+	  ZOrder		  -7
+	  ShowName		  off
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Mux
+	  Name			  "Mux"
+	  SID			  "179"
+	  Ports			  [4, 1]
+	  Position		  [395, 28, 400, 247]
+	  ZOrder		  -16
+	  ShowName		  off
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  TransferFcn
+	  Name			  "Ps-Phi"
+	  SID			  "180"
+	  Position		  [170, 36, 245, 74]
+	  ZOrder		  -9
+	  Numerator		  "N_phi"
+	  Denominator		  "D_phi"
+	}
+	Block {
+	  BlockType		  TransferFcn
+	  Name			  "Ps-Psi"
+	  SID			  "181"
+	  Position		  [165, 143, 250, 187]
+	  ZOrder		  -9
+	  Numerator		  "N_psi"
+	  Denominator		  "D_psi"
+	}
+	Block {
+	  BlockType		  TransferFcn
+	  Name			  "Ps-Theta"
+	  SID			  "182"
+	  Position		  [170, 91, 250, 129]
+	  ZOrder		  -9
+	  Numerator		  "N_theta"
+	  Denominator		  "D_theta"
+	}
+	Block {
+	  BlockType		  TransferFcn
+	  Name			  "Ps_Altitude"
+	  SID			  "183"
+	  Position		  [170, 201, 255, 239]
+	  ZOrder		  -9
+	  Numerator		  "N_thrust"
+	  Denominator		  "D_thrust"
+	}
+	Block {
+	  BlockType		  Saturate
+	  Name			  "SatPsi"
+	  SID			  "184"
+	  Ports			  [1, 1]
+	  Position		  [310, 150, 340, 180]
+	  ZOrder		  -15
+	  InputPortMap		  "u0"
+	  UpperLimit		  "satTau"
+	  LowerLimit		  "-satTau"
+	}
+	Block {
+	  BlockType		  Saturate
+	  Name			  "SatTau"
+	  SID			  "185"
+	  Ports			  [1, 1]
+	  Position		  [310, 40, 340, 70]
+	  ZOrder		  -15
+	  InputPortMap		  "u0"
+	  UpperLimit		  "satTau"
+	  LowerLimit		  "-satTau"
+	}
+	Block {
+	  BlockType		  Saturate
+	  Name			  "SatTheta"
+	  SID			  "186"
+	  Ports			  [1, 1]
+	  Position		  [310, 95, 340, 125]
+	  ZOrder		  -15
+	  InputPortMap		  "u0"
+	  UpperLimit		  "satTau"
+	  LowerLimit		  "-satTau"
+	}
+	Block {
+	  BlockType		  Saturate
+	  Name			  "SatThrust"
+	  SID			  "187"
+	  Ports			  [1, 1]
+	  Position		  [310, 205, 340, 235]
+	  ZOrder		  -15
+	  InputPortMap		  "u0"
+	  UpperLimit		  "satThrust"
+	  LowerLimit		  "-satNegThrust"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "u1"
+	  SID			  "188"
+	  Ports			  [1]
+	  Position		  [395, 274, 425, 306]
+	  Floating		  off
+	  Location		  [64, 91, 1084, 602]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "xonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  SaveName		  "ScopeData9"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "u(t)"
+	  SID			  "189"
 	  Position		  [490, 133, 520, 147]
 	  IconDisplay		  "Port number"
 	}
@@ -2055,8 +2327,8 @@ Model {
 	  DstPort		  1
 	}
 	Annotation {
-	  SID			  "155"
-	  Name			  "TauPsi, TauTheta, TauPsi\n can be abs(ui)<= thTau"
+	  SID			  "190"
+	  Name			  "TauPsi, TauTheta, TauPsi\n can be abs(ui)<= thTau\nThrust <= satThrust"
 	  Position		  [483, 26]
 	}
       }
@@ -2091,7 +2363,7 @@ Model {
       }
       System {
 	Name			"riferimento \ncostante"
-	Location		[362, 248, 1366, 713]
+	Location		[362, 276, 1366, 741]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -2311,7 +2583,7 @@ Model {
 	}
       }
       Branch {
-	DstBlock		"q Siso Par "
+	DstBlock		"q Siso Par 2"
 	DstPort			1
       }
     }
@@ -2355,21 +2627,6 @@ Model {
       DstPort		      3
     }
     Line {
-      Labels		      [0, 0]
-      SrcBlock		      "q Siso Par "
-      SrcPort		      1
-      Points		      [105, 0]
-      Branch {
-	DstBlock		"processo"
-	DstPort			2
-      }
-      Branch {
-	Points			[0, -85]
-	DstBlock		"u"
-	DstPort			1
-      }
-    }
-    Line {
       SrcBlock		      "Constant1"
       SrcPort		      1
       DstBlock		      "Manual Switch"
@@ -2394,6 +2651,20 @@ Model {
       Branch {
 	Points			[0, 40]
 	DstBlock		"dist"
+	DstPort			1
+      }
+    }
+    Line {
+      SrcBlock		      "q Siso Par 2"
+      SrcPort		      1
+      Points		      [60, 0]
+      Branch {
+	DstBlock		"processo"
+	DstPort			2
+      }
+      Branch {
+	Points			[0, -85]
+	DstBlock		"u"
 	DstPort			1
       }
     }

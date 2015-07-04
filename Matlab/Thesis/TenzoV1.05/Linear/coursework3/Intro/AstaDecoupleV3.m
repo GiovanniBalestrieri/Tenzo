@@ -65,7 +65,7 @@ Km=cp*4*rho*rp^5/pi()^3;
 % Constant value to calculate the thrust provided
 % by a propeller given its angular speed (kg.m.rad^-1) 
 %Kt=ct*4*rho*rp^4/pi()^2; 
-Kt=ct*rho*rp^4*pi();
+Kt=ct*rho*rp^2*pi();
 % Constant that relates thrust and moment of a propeller.
 Ktm=Km/Kt;
 k1=2.028; %Transfer-function gain of motor 1
@@ -486,10 +486,11 @@ N_phi = [440.513056398418 26779.6272064186 ...
         272303.182447317 584729.91630594];
 D_phi = [1 325.437715018286 23852.1596168943 0];
 
-N_thrust = [2882048.25903061 3827833.12977005];
-D_thrust = [1 888.737639530835 157281.746006557];
+N_thrust = [89621.1714776559 38561.3185176831];
+D_thrust = [1 735.796806125825 58661.9699849149];
 
-satThrust = 60;
+satThrust = 56;
+satNegThrust = 6;
 satTau = 100;
 
 open('progetto3TenzoDecouple.mdl')
