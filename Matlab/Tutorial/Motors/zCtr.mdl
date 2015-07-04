@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.63"
+    ComputedModelVersion    "1.78"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Jul 05 00:50:13 2015"
-  RTWModifiedTimeStamp	  357844417
-  ModelVersionFormat	  "1.%<AutoIncrement:63>"
+  LastModifiedDate	  "Sun Jul 05 00:59:19 2015"
+  RTWModifiedTimeStamp	  357958606
+  ModelVersionFormat	  "1.%<AutoIncrement:78>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,7 +78,6 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "zCtr"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -866,7 +865,7 @@ Model {
   }
   System {
     Name		    "zCtr"
-    Location		    [53, 134, 1366, 550]
+    Location		    [53, 162, 1366, 578]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -909,6 +908,21 @@ Model {
       ShowName		      off
       Inputs		      "2"
       DisplayOption	      "bar"
+      Port {
+	PortNumber		1
+	Array {
+	  Type			  "Struct"
+	  Dimension		  1
+	  MATStruct {
+	    Type		    "out"
+	    OpenLoop		    "off"
+	    BusElementName	    ""
+	  }
+	  PropName		  "LinearAnalysisIO"
+	}
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
     }
     Block {
       BlockType		      Scope
@@ -918,7 +932,7 @@ Model {
       Position		      [780, 189, 810, 221]
       ZOrder		      -16
       Floating		      off
-      Location		      [269, 81, 925, 767]
+      Location		      [249, 81, 905, 767]
       Open		      off
       NumInputPorts	      "1"
       ZoomMode		      "xonly"
@@ -1078,7 +1092,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"System"
-	Location		[153, 208, 1018, 641]
+	Location		[153, 264, 1018, 697]
 	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1114,7 +1128,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Control"
-	    Location		    [223, 342, 453, 430]
+	    Location		    [223, 370, 453, 458]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -1181,9 +1195,24 @@ Model {
 	  Opaque		  off
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
+	  Port {
+	    PortNumber		    1
+	    Array {
+	      Type		      "Struct"
+	      Dimension		      1
+	      MATStruct {
+		Type			"in"
+		OpenLoop		"off"
+		BusElementName		""
+	      }
+	      PropName		      "LinearAnalysisIO"
+	    }
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
 	  System {
 	    Name		    "Disturbi"
-	    Location		    [551, 284, 1276, 655]
+	    Location		    [551, 368, 1276, 739]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -1261,7 +1290,7 @@ Model {
 	      LibraryVersion	      "1.260"
 	      SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
 	      SourceType	      "Manual Switch"
-	      sw		      "1"
+	      sw		      "0"
 	      action		      "0"
 	      varsize		      off
 	    }
@@ -1350,6 +1379,12 @@ Model {
 	      DstBlock		      "  d(t)"
 	      DstPort		      1
 	    }
+	    Line {
+	      SrcBlock		      "Manual Switch1"
+	      SrcPort		      1
+	      DstBlock		      "Gain"
+	      DstPort		      1
+	    }
 	  }
 	}
 	Block {
@@ -1368,6 +1403,21 @@ Model {
 	  Opaque		  off
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
+	  Port {
+	    PortNumber		    1
+	    Array {
+	      Type		      "Struct"
+	      Dimension		      1
+	      MATStruct {
+		Type			"in"
+		OpenLoop		"off"
+		BusElementName		""
+	      }
+	      PropName		      "LinearAnalysisIO"
+	    }
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
 	  System {
 	    Name		    "Err Mes"
 	    Location		    [551, 396, 1276, 767]
@@ -1421,21 +1471,6 @@ Model {
 	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
 	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
 	      SaturateOnIntegerOverflow	off
-	      Port {
-		PortNumber		1
-		Array {
-		  Type			  "Struct"
-		  Dimension		  1
-		  MATStruct {
-		    Type		    "in"
-		    OpenLoop		    "off"
-		    BusElementName	    ""
-		  }
-		  PropName		  "LinearAnalysisIO"
-		}
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
 	    }
 	    Block {
 	      BlockType		      Reference
@@ -1551,7 +1586,8 @@ Model {
 	  Name			  "NonLin"
 	  SID			  "55"
 	  Ports			  [1, 1]
-	  Position		  [265, 184, 330, 226]
+	  Position		  [275, 184, 340, 226]
+	  BackgroundColor	  "red"
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -1561,7 +1597,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "NonLin"
-	    Location		    [350, 117, 990, 408]
+	    Location		    [350, 145, 990, 436]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -1612,7 +1648,7 @@ Model {
 	      Position		      [540, 28, 570, 62]
 	      ZOrder		      -16
 	      Floating		      off
-	      Location		      [64, 81, 720, 767]
+	      Location		      [54, 81, 710, 767]
 	      Open		      off
 	      NumInputPorts	      "1"
 	      List {
@@ -1630,7 +1666,6 @@ Model {
 		MarkerStyles		"none|none|none|none|none|none"
 	      }
 	      ShowLegends	      on
-	      LegendLocations	      "0.78011     0.89158     0.12881    0.051931"
 	      TimeRange		      "15"
 	      YMin		      "-150000"
 	      YMax		      "250000"
@@ -1698,7 +1733,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Plant"
-	    Location		    [703, 342, 923, 430]
+	    Location		    [703, 370, 923, 458]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -1823,28 +1858,13 @@ Model {
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
-	  Port {
-	    PortNumber		    1
-	    Array {
-	      Type		      "Struct"
-	      Dimension		      1
-	      MATStruct {
-		Type			"out"
-		OpenLoop		"off"
-		BusElementName		""
-	      }
-	      PropName		      "LinearAnalysisIO"
-	    }
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
 	}
 	Block {
 	  BlockType		  Sum
 	  Name			  "Sum4"
 	  SID			  "42"
 	  Ports			  [2, 1]
-	  Position		  [370, 195, 390, 215]
+	  Position		  [395, 195, 415, 215]
 	  ZOrder		  -18
 	  ShowName		  off
 	  IconShape		  "round"
@@ -1892,7 +1912,7 @@ Model {
 	  Position		  [175, 119, 205, 151]
 	  ZOrder		  -16
 	  Floating		  off
-	  Location		  [64, 81, 720, 767]
+	  Location		  [54, 81, 710, 767]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  List {
@@ -1943,6 +1963,7 @@ Model {
 	  DstPort		  2
 	}
 	Line {
+	  Labels		  [0, 0]
 	  SrcBlock		  "Sum2"
 	  SrcPort		  1
 	  Points		  [120, 0]
@@ -1973,7 +1994,7 @@ Model {
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [-145, 0]
+	    Points		    [-120, 0]
 	    DstBlock		    "Sum4"
 	    DstPort		    1
 	  }
@@ -2083,8 +2104,8 @@ MatData {
     "&          4    (               !          D         #@   #@    &    \"     8         !0    @    !     0    $     "
     "    \"0    @           #P/PX    P    !@    @    &          4    (               !          D         #@   #     & "
     "   \"     8         !0    @               $         \"0         .    .     8    (    !@         %    \"     $    !"
-    "     0         )    \"          &^(Y #@   #@    &    \"     8         !0    @    !     0    $         \"0    @    "
-    "     !EB/0 X    P    !@    @    &          4    (               !          D         "
+    "     0         )    \"         ! #RY #@   #@    &    \"     8         !0    @    !     0    $         \"0    @    "
+    "     1(!-0 X    P    !@    @    &          4    (               !          D         "
   }
   DataRecord {
     Tag			    DataTag0
