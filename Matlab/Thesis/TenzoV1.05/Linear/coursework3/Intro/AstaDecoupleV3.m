@@ -94,6 +94,7 @@ PWM_max=2200; %Upper limit of the PWM signal provided to
 w0c=sqrt(g*mq/Kt);
 %X0c=w0c;
 Ft0=mq*g;
+
 %% Linearized Model
 disp('Welcome to Tenzo!');
 disp('Press X to show the Linearized Model:');
@@ -486,18 +487,33 @@ N_phi = [440.513056398418 26779.6272064186 ...
         272303.182447317 584729.91630594];
 D_phi = [1 325.437715018286 23852.1596168943 0];
 
-N_thrust = [89621.1714776559 38561.3185176831];
-D_thrust = [1 735.796806125825 58661.9699849149];
+% Disturbi e errori di misura over 50Hz
+%N_thrust = [89621.1714776559 38561.3185176831];
+%D_thrust = [1 735.796806125825 58661.9699849149];
+
+% Disturbi a 0.5 Hz di grossa ampiezza e errori di misura over 50 Hz
+N_thrust = [5335544999.98817 31552366214.0332];
+D_thrust = [1 17553.9896685018 39222156.5274236];
+
+% livello di Disturbi e Errori di misura: PANICO!
+N_thrust = [1073231686.12918 1273486031.3238];
+D_thrust = [1 5043.9968441748 6107158.06951568];
+
+%% Non Linearities
+
 
 satThrust = 56;
 satNegThrust = 6;
 satTau = 100;
 
-open('progetto3TenzoDecouple.mdl')
-sim('progetto3TenzoDecouple.mdl')
+satMaxRPM = 6000;
+deadMotorsZone = 800;
 
-disp('Premere un tasto per continuare...');
-pause;
+EasyHardSat=0 % Easy Sat
+%EasyHardSat=1 % Har Sat: motor dynamics saturation and Deadzones
+
+open('progetto3TenzoDecouple.mdl');
+sim('progetto3TenzoDecouple.mdl');
 
 %% Simulazione
 

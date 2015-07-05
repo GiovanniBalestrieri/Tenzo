@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.406"
+    ComputedModelVersion    "1.408"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon May 04 17:16:25 2015"
-  RTWModifiedTimeStamp	  352660585
-  ModelVersionFormat	  "1.%<AutoIncrement:406>"
+  LastModifiedDate	  "Sun Jul 05 01:11:22 2015"
+  RTWModifiedTimeStamp	  357959480
+  ModelVersionFormat	  "1.%<AutoIncrement:408>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,6 +78,7 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "tenzo1_15_lqr"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -954,7 +955,7 @@ Model {
   System {
     Name		    "tenzo1_15_lqr"
     Location		    [53, 79, 1366, 768]
-    Open		    off
+    Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -3544,8 +3545,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Motors dynamics"
-	Location		[93, 511, 728, 639]
-	Open			off
+	Location		[93, 539, 728, 667]
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3918,7 +3919,7 @@ Model {
 	  Name			  "T*toW"
 	  SID			  "541"
 	  Ports			  [4, 4]
-	  Position		  [215, 36, 285, 84]
+	  Position		  [150, 36, 220, 84]
 	  ZOrder		  -4
 	  LibraryVersion	  "1.32"
 	  ErrorFcn		  "Stateflow.Translate.translate"
@@ -4804,7 +4805,7 @@ Model {
 	Line {
 	  SrcBlock		  "T*toW"
 	  SrcPort		  1
-	  Points		  [5, 0]
+	  Points		  [70, 0]
 	  DstBlock		  "Mux3"
 	  DstPort		  1
 	}
@@ -4817,14 +4818,14 @@ Model {
 	Line {
 	  SrcBlock		  "T*toW"
 	  SrcPort		  3
-	  Points		  [5, 0]
+	  Points		  [70, 0]
 	  DstBlock		  "Mux3"
 	  DstPort		  3
 	}
 	Line {
 	  SrcBlock		  "T*toW"
 	  SrcPort		  4
-	  Points		  [5, 0]
+	  Points		  [70, 0]
 	  DstBlock		  "Mux3"
 	  DstPort		  4
 	}
@@ -8799,8 +8800,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @       \" !(!U0 X    X    !@    @    &          4    (     0    $   "
-    " !          D    (        P \"@G$ .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @         \"_!W0 X    X    !@    @    &          4    (     0    $   "
+    " !          D    (        P -8D4 .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag2
@@ -8927,8 +8928,8 @@ MatData {
     " &    \"     8         !0    @    !     0    $         \"0    @           #POPX    X    !@    @    &          4   "
     " (     0    $    !          D    (            \\#\\.    ,     8    (    !@         %    \"                0       "
     "  )          X    P    !@    @    &          4    (               !          D         #@   #@    &    \"     8   "
-    "      !0    @    !     0    $         \"0    @       \" !(!U0 X    X    !@    @    &          4    (     0    $   "
-    " !          D    (        @ 2P=4 .    ,     8    (    !@         %    \"                0         )          "
+    "      !0    @    !     0    $         \"0    @         \"_!W0 X    X    !@    @    &          4    (     0    $   "
+    " !          D    (          L@>$ .    ,     8    (    !@         %    \"                0         )          "
   }
   DataRecord {
     Tag			    DataTag0

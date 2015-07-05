@@ -94,6 +94,7 @@ PWM_max=2200; %Upper limit of the PWM signal provided to
 w0c=sqrt(g*mq/Kt);
 %X0c=w0c;
 Ft0=mq*g;
+
 %% Linearized Model
 disp('Welcome to Tenzo!');
 disp('Press X to show the Linearized Model:');
@@ -494,17 +495,25 @@ D_phi = [1 325.437715018286 23852.1596168943 0];
 N_thrust = [5335544999.98817 31552366214.0332];
 D_thrust = [1 17553.9896685018 39222156.5274236];
 
+% livello di Disturbi e Errori di misura: PANICO!
+N_thrust = [1073231686.12918 1273486031.3238];
+D_thrust = [1 5043.9968441748 6107158.06951568];
+
+%% Non Linearities
 
 
 satThrust = 56;
 satNegThrust = 6;
 satTau = 100;
 
-open('progetto3TenzoDecouple.mdl')
-sim('progetto3TenzoDecouple.mdl')
+satMaxRPM = 6000;
+deadMotorsZone = 800;
 
-disp('Premere un tasto per continuare...');
-pause;
+EasyHardSat=0 % Easy Sat
+%EasyHardSat=1 % Har Sat: motor dynamics saturation and Deadzones
+
+open('progetto3TenzoDecoupleV3.mdl');
+sim('progetto3TenzoDecoupleV3.mdl');
 
 %% Simulazione
 
