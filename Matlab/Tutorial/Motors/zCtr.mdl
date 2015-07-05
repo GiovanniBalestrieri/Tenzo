@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.78"
+    ComputedModelVersion    "1.79"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Jul 05 00:59:19 2015"
-  RTWModifiedTimeStamp	  357958606
-  ModelVersionFormat	  "1.%<AutoIncrement:78>"
+  LastModifiedDate	  "Sun Jul 05 02:41:53 2015"
+  RTWModifiedTimeStamp	  357959367
+  ModelVersionFormat	  "1.%<AutoIncrement:79>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,6 +78,7 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "zCtr"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -865,7 +866,7 @@ Model {
   }
   System {
     Name		    "zCtr"
-    Location		    [53, 162, 1366, 578]
+    Location		    [53, 190, 1366, 606]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -879,7 +880,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "71"
+    SIDHighWatermark	    "72"
     Block {
       BlockType		      From
       Name		      "From"
@@ -1092,7 +1093,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"System"
-	Location		[153, 264, 1018, 697]
+	Location		[153, 320, 1018, 753]
 	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1128,7 +1129,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Control"
-	    Location		    [223, 370, 453, 458]
+	    Location		    [223, 426, 453, 514]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -1597,7 +1598,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "NonLin"
-	    Location		    [350, 145, 990, 436]
+	    Location		    [350, 173, 990, 464]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -2104,8 +2105,8 @@ MatData {
     "&          4    (               !          D         #@   #@    &    \"     8         !0    @    !     0    $     "
     "    \"0    @           #P/PX    P    !@    @    &          4    (               !          D         #@   #     & "
     "   \"     8         !0    @               $         \"0         .    .     8    (    !@         %    \"     $    !"
-    "     0         )    \"         ! #RY #@   #@    &    \"     8         !0    @    !     0    $         \"0    @    "
-    "     1(!-0 X    P    !@    @    &          4    (               !          D         "
+    "     0         )    \"         \"@ #E #@   #@    &    \"     8         !0    @    !     0    $         \"0    @   "
+    "      < !-0 X    P    !@    @    &          4    (               !          D         "
   }
   DataRecord {
     Tag			    DataTag0

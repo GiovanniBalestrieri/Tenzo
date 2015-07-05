@@ -512,8 +512,8 @@ deadMotorsZone = 800;
 EasyHardSat=0 % Easy Sat
 %EasyHardSat=1 % Har Sat: motor dynamics saturation and Deadzones
 
-open('progetto3TenzoDecouple.mdl');
-sim('progetto3TenzoDecouple.mdl');
+open('progetto3TenzoDecoupleV3.mdl');
+sim('progetto3TenzoDecoupleV3.mdl');
 
 %% Simulazione
 
