@@ -509,7 +509,7 @@ satTau = 100;
 satMaxRPM = 6000;
 deadMotorsZone = 800;
 
-EasyHardSat=0 % Easy Sat
+EasyHardSat=0; % Easy Sat
 %EasyHardSat=1 % Har Sat: motor dynamics saturation and Deadzones
 
 open('progetto3TenzoDecoupleV3.mdl');

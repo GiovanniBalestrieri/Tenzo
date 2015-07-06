@@ -27,8 +27,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Jul 05 01:37:57 2015"
-  RTWModifiedTimeStamp	  357788551
+  LastModifiedDate	  "Sun Jul 05 03:09:11 2015"
+  RTWModifiedTimeStamp	  357962903
   ModelVersionFormat	  "1.%<AutoIncrement:116>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
@@ -896,7 +896,7 @@ Model {
   }
   System {
     Name		    "progetto3TenzoDecouple"
-    Location		    [53, 162, 1366, 708]
+    Location		    [51, 190, 1364, 736]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -1163,8 +1163,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Motors dynamics1"
-	Location		[93, 595, 728, 723]
-	Open			on
+	Location		[93, 623, 728, 751]
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1595,6 +1595,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  SFBlockType		  "MATLAB Function"
+	  MaskSelfModifiable	  on
 	  MaskDisplay		  "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('private/"
 	  "eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'mixer']);"
 	  MaskIconFrame		  on
@@ -1617,7 +1618,7 @@ Model {
 	    TiledPageScale	    1
 	    ShowPageBoundaries	    off
 	    ZoomFactor		    "100"
-	    SIDHighWatermark	    "31"
+	    SIDHighWatermark	    "296"
 	    Block {
 	      BlockType		      Inport
 	      Name		      "taux"
@@ -1828,7 +1829,7 @@ Model {
 	  System {
 	    Name		    "WtoTreal"
 	    Location		    [226, 181, 1176, 768]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -3132,8 +3133,8 @@ Model {
       }
       System {
 	Name			"processo"
-	Location		[432, 289, 739, 392]
-	Open			on
+	Location		[432, 317, 739, 420]
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3502,7 +3503,7 @@ Model {
       System {
 	Name			"q Siso Par 2"
 	Location		[556, 393, 1156, 744]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -4139,8 +4140,6 @@ Stateflow {
     firstJunction	    4
     viewObj		    2
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    11
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
