@@ -165,7 +165,7 @@ end
 figure(5)
 hold on
 for secteur = 1:size(stats,1)    
-        rectangle('Position',stats(secteur,1).BoundingBox,'EdgeColor','r','LineWidth',10,'LineStyle','--');
+        rectangle('Position',stats(secteur,1).BoundingBox,'FaceColor','r','LineWidth',2,'LineStyle','--');
 end
 
 %% Plots Global convexHull figure

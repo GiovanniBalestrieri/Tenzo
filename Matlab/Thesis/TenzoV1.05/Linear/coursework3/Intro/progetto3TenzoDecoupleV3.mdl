@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.158"
+    ComputedModelVersion    "1.169"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Jul 05 02:41:52 2015"
-  RTWModifiedTimeStamp	  357788551
-  ModelVersionFormat	  "1.%<AutoIncrement:158>"
+  LastModifiedDate	  "Fri Jul 10 23:37:16 2015"
+  RTWModifiedTimeStamp	  358470739
+  ModelVersionFormat	  "1.%<AutoIncrement:169>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -904,7 +904,7 @@ Model {
   }
   System {
     Name		    "progetto3TenzoDecoupleV3"
-    Location		    [268, 152, 1284, 649]
+    Location		    [114, 214, 1130, 712]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -918,7 +918,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "737"
+    SIDHighWatermark	    "740"
     Block {
       BlockType		      Scope
       Name		      "Dist"
@@ -946,8 +946,8 @@ Model {
       }
       ShowLegends	      off
       TimeRange		      "15              "
-      YMin		      "-0.25"
-      YMax		      "2.75"
+      YMin		      "-0.1"
+      YMax		      "0.09"
       SaveName		      "ScopeData22"
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
@@ -967,9 +967,24 @@ Model {
       Opaque		      off
       RequestExecContextInheritance off
       MaskHideContents	      off
+      Port {
+	PortNumber		1
+	Array {
+	  Type			  "Struct"
+	  Dimension		  1
+	  MATStruct {
+	    Type		    "in"
+	    OpenLoop		    "off"
+	    BusElementName	    ""
+	  }
+	  PropName		  "LinearAnalysisIO"
+	}
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
       System {
 	Name			"Disturbi"
-	Location		[728, 207, 1228, 372]
+	Location		[742, 407, 1242, 572]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1017,7 +1032,7 @@ Model {
 	      Name		      "0.2 sen(0.5 t)"
 	      SID		      "712"
 	      Ports		      [0, 1]
-	      Position		      [635, 250, 665, 280]
+	      Position		      [635, 295, 665, 325]
 	      ZOrder		      -21
 	      BlockMirror	      on
 	      Amplitude		      "0.2"
@@ -1027,43 +1042,29 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Sin
+	      Name		      "0.2 sen(0.5 t)1"
+	      SID		      "739"
+	      Ports		      [0, 1]
+	      Position		      [635, 215, 665, 245]
+	      ZOrder		      -21
+	      BlockMirror	      on
+	      Amplitude		      "0.1"
+	      Frequency		      "1.5"
+	      Phase		      "1.5"
+	      SampleTime	      "0"
+	    }
+	    Block {
+	      BlockType		      Sin
 	      Name		      "0.5sen(0.5 t)"
 	      SID		      "713"
 	      Ports		      [0, 1]
-	      Position		      [635, 25, 665, 55]
+	      Position		      [635, 20, 665, 50]
 	      ZOrder		      -21
 	      BlockMirror	      on
 	      Amplitude		      "0.5"
 	      Frequency		      "0.5"
 	      Phase		      "1"
 	      SampleTime	      "0"
-	      Port {
-		PortNumber		1
-		Array {
-		  Type			  "Struct"
-		  Dimension		  1
-		  MATStruct {
-		    Type		    "in"
-		    OpenLoop		    "off"
-		    BusElementName	    ""
-		  }
-		  PropName		  "LinearAnalysisIO"
-		}
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
-	    }
-	    Block {
-	      BlockType		      Gain
-	      Name		      "Gain"
-	      SID		      "714"
-	      Position		      [160, 120, 190, 150]
-	      ZOrder		      -8
-	      BlockMirror	      on
-	      NamePlacement	      "alternate"
-	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
-	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
 	      BlockType		      Reference
@@ -1090,19 +1091,20 @@ Model {
 	      BlockMirror	      on
 	      NamePlacement	      "alternate"
 	      Numerator		      "1"
-	      Denominator	      "[1 0.1]"
+	      Denominator	      "[1 4]"
 	    }
 	    Block {
 	      BlockType		      Sum
 	      Name		      "Sum3"
 	      SID		      "717"
-	      Ports		      [2, 1]
+	      Ports		      [3, 1]
 	      Position		      [560, 220, 580, 240]
 	      ZOrder		      -18
 	      BlockMirror	      on
 	      NamePlacement	      "alternate"
 	      ShowName		      off
 	      IconShape		      "round"
+	      Inputs		      "+++"
 	      InputSameDT	      off
 	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
 	      SaturateOnIntegerOverflow	off
@@ -1111,12 +1113,58 @@ Model {
 	      BlockType		      UniformRandomNumber
 	      Name		      "Uniform Random\nNumber"
 	      SID		      "718"
-	      Position		      [635, 164, 665, 196]
+	      Position		      [635, 104, 665, 136]
 	      ZOrder		      -23
 	      BlockMirror	      on
 	      Minimum		      "-0.5"
 	      Maximum		      "0.5"
 	      SampleTime	      "0.1"
+	    }
+	    Block {
+	      BlockType		      Gain
+	      Name		      "d(t)"
+	      SID		      "714"
+	      Position		      [160, 120, 190, 150]
+	      ZOrder		      -8
+	      BlockMirror	      on
+	      NamePlacement	      "alternate"
+	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "d(t) raw"
+	      SID		      "740"
+	      Ports		      [1]
+	      Position		      [490, 299, 520, 331]
+	      Floating		      off
+	      Location		      [54, 81, 1074, 617]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      ZoomMode		      "yonly"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      List {
+		ListType		ScopeGraphics
+		FigureColor		"[0.5 0.5 0.5]"
+		AxesColor		"[0 0 0]"
+		AxesTickColor		"[1 1 1]"
+		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		LineStyles		"-|-|-|-|-|-"
+		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+		MarkerStyles		"none|none|none|none|none|none"
+	      }
+	      ShowLegends	      off
+	      TimeRange		      "15              "
+	      YMin		      "-0.65"
+	      YMax		      "0.05"
+	      SaveName		      "ScopeData24"
+	      DataFormat	      "StructureWithTime"
+	      LimitDataPoints	      off
+	      SampleTime	      "0"
 	    }
 	    Block {
 	      BlockType		      Outport
@@ -1138,18 +1186,26 @@ Model {
 	      SrcPort		      1
 	      Points		      [-60, 0]
 	      DstBlock		      "Sum3"
-	      DstPort		      2
+	      DstPort		      3
 	    }
 	    Line {
 	      SrcBlock		      "Sum3"
 	      SrcPort		      1
-	      DstBlock		      "P(s)1"
-	      DstPort		      1
+	      Points		      [-100, 0]
+	      Branch {
+		DstBlock		"P(s)1"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, 85]
+		DstBlock		"d(t) raw"
+		DstPort			1
+	      }
 	    }
 	    Line {
 	      SrcBlock		      "0.5sen(0.5 t)"
 	      SrcPort		      1
-	      Points		      [-335, 0; 0, 85]
+	      Points		      [-335, 0; 0, 90]
 	      DstBlock		      "Manual Switch1"
 	      DstPort		      1
 	    }
@@ -1161,7 +1217,7 @@ Model {
 	      DstPort		      2
 	    }
 	    Line {
-	      SrcBlock		      "Gain"
+	      SrcBlock		      "d(t)"
 	      SrcPort		      1
 	      DstBlock		      "  d(t)"
 	      DstPort		      1
@@ -1169,8 +1225,14 @@ Model {
 	    Line {
 	      SrcBlock		      "Manual Switch1"
 	      SrcPort		      1
-	      DstBlock		      "Gain"
+	      DstBlock		      "d(t)"
 	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "0.2 sen(0.5 t)1"
+	      SrcPort		      1
+	      DstBlock		      "Sum3"
+	      DstPort		      2
 	    }
 	  }
 	}
@@ -1255,21 +1317,6 @@ Model {
 	      Threshold		      "5"
 	      InputSameDT	      off
 	      SaturateOnIntegerOverflow	off
-	      Port {
-		PortNumber		1
-		Array {
-		  Type			  "Struct"
-		  Dimension		  1
-		  MATStruct {
-		    Type		    "in"
-		    OpenLoop		    "off"
-		    BusElementName	    ""
-		  }
-		  PropName		  "LinearAnalysisIO"
-		}
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
 	    }
 	    Block {
 	      BlockType		      Scope
@@ -1604,7 +1651,7 @@ Model {
 	  BlockMirror		  on
 	  NamePlacement		  "alternate"
 	  Numerator		  "1"
-	  Denominator		  "[1 0.1]"
+	  Denominator		  "[1 9]"
 	}
 	Block {
 	  BlockType		  Sum
@@ -2761,6 +2808,7 @@ Model {
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      SFBlockType	      "MATLAB Function"
+	      MaskSelfModifiable      on
 	      MaskDisplay	      "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('p"
 	      "rivate/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'mixer']);"
 	      MaskIconFrame	      on
@@ -2783,7 +2831,7 @@ Model {
 		TiledPageScale		1
 		ShowPageBoundaries	off
 		ZoomFactor		"100"
-		SIDHighWatermark	"31"
+		SIDHighWatermark	"737"
 		Block {
 		  BlockType		  Inport
 		  Name			  "taux"
@@ -4299,7 +4347,7 @@ Model {
       Position		      [925, 359, 955, 391]
       ZOrder		      -16
       Floating		      off
-      Location		      [64, 210, 672, 472]
+      Location		      [64, 200, 672, 462]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -4321,6 +4369,135 @@ Model {
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
       SampleTime	      "0"
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Setpoints"
+      SID		      "11"
+      Ports		      [0, 1]
+      Position		      [45, 190, 85, 250]
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      Port {
+	PortNumber		1
+	Array {
+	  Type			  "Struct"
+	  Dimension		  1
+	  MATStruct {
+	    Type		    "in"
+	    OpenLoop		    "off"
+	    BusElementName	    ""
+	  }
+	  PropName		  "LinearAnalysisIO"
+	}
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+      System {
+	Name			"Setpoints"
+	Location		[362, 276, 1366, 741]
+	Open			on
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"A4"
+	PaperUnits		"centimeters"
+	TiledPaperMargins	[1.270000, 1.270000, 1.270000, 1.270000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Mux
+	  Name			  "Mux"
+	  SID			  "10"
+	  Ports			  [4, 1]
+	  Position		  [505, 21, 510, 234]
+	  ShowName		  off
+	  Inputs		  "[1 1 1 1]"
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Step
+	  Name			  "PsiRef"
+	  SID			  "152"
+	  Position		  [15, 135, 45, 165]
+	  Time			  "0.8"
+	  After			  "2.5"
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Step
+	  Name			  "ThetRef"
+	  SID			  "151"
+	  Position		  [15, 85, 45, 115]
+	  Time			  "0.5"
+	  After			  "2"
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Step
+	  Name			  "ZRef"
+	  SID			  "146"
+	  Position		  [15, 190, 45, 220]
+	  Time			  "3"
+	  After			  "2.5"
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Step
+	  Name			  "phiRef"
+	  SID			  "150"
+	  Position		  [15, 30, 45, 60]
+	  After			  "1.5"
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "r"
+	  SID			  "12"
+	  Position		  [660, 123, 690, 137]
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  "Mux"
+	  SrcPort		  1
+	  DstBlock		  "r"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "phiRef"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "ThetRef"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "PsiRef"
+	  SrcPort		  1
+	  Points		  [440, 0]
+	  DstBlock		  "Mux"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "ZRef"
+	  SrcPort		  1
+	  Points		  [440, 0]
+	  DstBlock		  "Mux"
+	  DstPort		  4
+	}
+      }
     }
     Block {
       BlockType		      Sum
@@ -5256,137 +5433,6 @@ Model {
       }
     }
     Block {
-      BlockType		      SubSystem
-      Name		      "riferimento \ncostante"
-      SID		      "11"
-      Ports		      [0, 1]
-      Position		      [45, 190, 85, 250]
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
-      RequestExecContextInheritance off
-      MaskHideContents	      off
-      Port {
-	PortNumber		1
-	Array {
-	  Type			  "Struct"
-	  Dimension		  1
-	  MATStruct {
-	    Type		    "in"
-	    OpenLoop		    "off"
-	    BusElementName	    ""
-	  }
-	  PropName		  "LinearAnalysisIO"
-	}
-	RTWStorageClass		"Auto"
-	DataLoggingNameMode	"SignalName"
-      }
-      System {
-	Name			"riferimento \ncostante"
-	Location		[362, 276, 1366, 741]
-	Open			off
-	ModelBrowserVisibility	off
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"A4"
-	PaperUnits		"centimeters"
-	TiledPaperMargins	[1.270000, 1.270000, 1.270000, 1.270000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	Block {
-	  BlockType		  Mux
-	  Name			  "Mux"
-	  SID			  "10"
-	  Ports			  [4, 1]
-	  Position		  [505, 48, 510, 147]
-	  ShowName		  off
-	  Inputs		  "[1 1 1 1]"
-	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  Step
-	  Name			  "PsiRef"
-	  SID			  "152"
-	  Position		  [15, 150, 45, 180]
-	  Time			  "0.8"
-	  After			  "2.5"
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Step
-	  Name			  "ThetRef"
-	  SID			  "151"
-	  Position		  [15, 70, 45, 100]
-	  Time			  "0.5"
-	  After			  "2"
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Step
-	  Name			  "ZRef"
-	  SID			  "146"
-	  Position		  [15, 200, 45, 230]
-	  Time			  "3"
-	  After			  "2.5"
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Step
-	  Name			  "phiRef"
-	  SID			  "150"
-	  Position		  [15, 15, 45, 45]
-	  After			  "1.5"
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "r"
-	  SID			  "12"
-	  Position		  [660, 93, 690, 107]
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "Mux"
-	  SrcPort		  1
-	  DstBlock		  "r"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "phiRef"
-	  SrcPort		  1
-	  Points		  [10, 0; 0, 30]
-	  DstBlock		  "Mux"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "ThetRef"
-	  SrcPort		  1
-	  Points		  [0, 5; 15, 0; 0, -5]
-	  DstBlock		  "Mux"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "PsiRef"
-	  SrcPort		  1
-	  Points		  [225, 0; 0, -55]
-	  DstBlock		  "Mux"
-	  DstPort		  3
-	}
-	Line {
-	  SrcBlock		  "ZRef"
-	  SrcPort		  1
-	  Points		  [440, 0]
-	  DstBlock		  "Mux"
-	  DstPort		  4
-	}
-      }
-    }
-    Block {
       BlockType		      Scope
       Name		      "u"
       SID		      "28"
@@ -5454,7 +5500,7 @@ Model {
       SampleTime	      "0"
     }
     Line {
-      SrcBlock		      "riferimento \ncostante"
+      SrcBlock		      "Setpoints"
       SrcPort		      1
       Points		      [25, 0]
       Branch {
@@ -5462,7 +5508,7 @@ Model {
 	DstPort			1
       }
       Branch {
-	Points			[-5, 0]
+	Points			[0, -60]
 	DstBlock		"Goto"
 	DstPort			1
       }
@@ -5621,8 +5667,6 @@ Stateflow {
     firstJunction	    4
     viewObj		    2
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    11
     decomposition	    CLUSTER_CHART
     type		    EML_CHART

@@ -20,9 +20,9 @@ a2=1;
 % b2 = ureal('b2',1,'Plusminus',.2); 
 
 k1 = 0.1; %Costante elastica
-k2 = ureal('k2',0.1,'Range',[0.0 0.9]); 
+k2 = ureal('k2',0.1,'Range',[0.0 0.9]);
 b1 = .1; %Attrito viscoso
-b2 = ureal('b2',.1,'Plusminus',.05); 
+b2 = ureal('b2',.1,'Plusminus',.05);
 
 A=[zeros(2,2) eye(2); -(k1+k2)/m1 k2/m1 -(b1+b2)/m1 b2/m1; k2/m2 -k2/m2 b1/m2 -b2/m2];
 B=[zeros(2,2); a1/m1 0;0 a2/m2];
@@ -38,12 +38,18 @@ N=10
 
 for i=1:1:N
 sys{i} = usample(modello_unc);
+% Additive
 deltaA_sys{i} = tf(sys{i}) - tf(modello_nominale);
+% Moltiplicative riportate sull'Ingresso
 deltaMin_sys{i} = (inv(tf(modello_nominale))) * deltaA_sys{i};
+% Moltiplicative riportate sull'Usicta
 deltaMout_sys{i} = deltaA_sys{i} * (inv(tf(modello_nominale)));
 end
 
+% generates 150 points between decades 10^( -2 ) and 10^( 1 ).
 omega = logspace(-2,1,150);
+% Plots the singular values of the frequency response of a model nominale
+% specifies the frequency range or frequency points to be used for the plot
 temp = sigma(modello_nominale,omega);
 max_sig_nom = temp(1,:);
 
@@ -57,11 +63,17 @@ for i=1:1:N
   temp = sigma(deltaMout_sys{i},omega);
   max_sig_dMout(i,:) = temp(1,:);
 end
-
+max_sig_unc
+% Returns a row vector containing the maximum element from each column.
 top_unc = max(max_sig_unc);
 top_dA = max(max_sig_dA);
 top_dMin = max(max_sig_dMin);
 top_dMout = max(max_sig_dMout);
+% 
+% subplot(211)
+% sigma(sys{i},[],1)
+% subplot(212)
+% sigma(temp,[],2)
 
 %%
 figure(1);
