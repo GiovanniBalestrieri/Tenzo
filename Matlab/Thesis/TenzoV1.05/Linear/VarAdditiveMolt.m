@@ -66,7 +66,7 @@ wF = 10^4
 
 [SEmodello_nominale,w] = sigma(modello_nominiale,{wI,wF});
 figure
-for i=1:1:1
+for i=1:1:N
 SV{i} = sigma(deltaM_sys{i},w);
 sigma(deltaM_sys{i},w);
 hold on;
@@ -97,12 +97,12 @@ end
 semilogx(lm_w,lm_module,'r','LineWidth',2)
 % sigma(lm,'r','Linewidth',2)
 
-% lm_value2 = sigma(lm,w);
-% for j=1:1:length(w)
-%     difference(1,j) = SV_max(1,j)-lm_value2(1,j);
-% end
-% 
-% pause; 
-% 
-% plot(w,difference,'k','LineWidth',2)
-% grid on;
+lm_value2 = sigma(lm,w);
+for j=1:1:length(w)
+    difference(1,j) = SV_max(1,j)-lm_value2(1,j);
+end
+
+pause; 
+
+plot(w,difference,'k','LineWidth',2)
+grid on;
