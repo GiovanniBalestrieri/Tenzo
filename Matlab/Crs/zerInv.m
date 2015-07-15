@@ -62,3 +62,8 @@ cloop = inv(1+Cs*po) * Cs;
 % KalmanC = Clocal*U';
 
 % sysr
+
+%% Singular values toughts
+
+A=[1 1; 0 2]
+[V,Sig]=eig(A)

@@ -48,6 +48,24 @@ end
 
 % generates 150 points between decades 10^( -2 ) and 10^( 1 ).
 omega = logspace(-2,1,150);
+
+% Plots all bode magnitude of all Ps
+% modNomTf = tf(modello_nominale);
+% aa = modNomTf(1,1)
+% figure
+% bodemag(aa)
+% 
+% bb = modNomTf(1,2)
+% figure
+% bodemag(bb)
+% cc = modNomTf(2,1)
+% figure
+% bodemag(cc)
+% dd = modNomTf(2,2)
+% figure
+% bodemag(dd)
+
+
 % Plots the singular values of the frequency response of a model nominale
 % specifies the frequency range or frequency points to be used for the plot
 temp = sigma(modello_nominale,omega);
@@ -63,6 +81,7 @@ for i=1:1:N
   temp = sigma(deltaMout_sys{i},omega);
   max_sig_dMout(i,:) = temp(1,:);
 end
+
 max_sig_unc
 % Returns a row vector containing the maximum element from each column.
 top_unc = max(max_sig_unc);
@@ -135,9 +154,9 @@ figure(5);
 semilogx(omega,mag2db(top_dA),'b','LineWidth',2)
 grid on;
 hold on;
-semilogx(omega,mag2db(bb_dA2(1,:)),'r:','LineWidth',2)
-semilogx(omega,mag2db(bb_dA5(1,:)),'k:','LineWidth',2)
-semilogx(omega,mag2db(bb_dA7(1,:)),'m:','LineWidth',2)
+semilogx(omega,mag2db(bb_dA2(1,:)),'r','LineWidth',2)
+semilogx(omega,mag2db(bb_dA5(1,:)),'k','LineWidth',2)
+semilogx(omega,mag2db(bb_dA7(1,:)),'m','LineWidth',2)
 title('Bound on additive uncertainties');
 legend('strict bound', 'Rational stable min phase, order 2',...
   'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
@@ -161,9 +180,9 @@ figure(6);
 semilogx(omega,mag2db(top_dMin),'b','LineWidth',2)
 grid on;
 hold on;
-semilogx(omega,mag2db(bb_dMin2(1,:)),'r:','LineWidth',2)
-semilogx(omega,mag2db(bb_dMin5(1,:)),'k:','LineWidth',2)
-semilogx(omega,mag2db(bb_dMin7(1,:)),'m:','LineWidth',2)
+semilogx(omega,mag2db(bb_dMin2(1,:)),'r','LineWidth',2)
+semilogx(omega,mag2db(bb_dMin5(1,:)),'k','LineWidth',2)
+semilogx(omega,mag2db(bb_dMin7(1,:)),'m','LineWidth',2)
 title('Bound on additive uncertainties');
 legend('strict bound', 'Rational stable min phase, order 2',...
   'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
