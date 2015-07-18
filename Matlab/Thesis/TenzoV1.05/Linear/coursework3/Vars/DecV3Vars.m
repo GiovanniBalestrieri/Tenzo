@@ -72,7 +72,7 @@ k1=2.028; %Transfer-function gain of motor 1
 k2=1.869; %Transfer-function gain of motor 2
 k3=2.002; %Transfer-function gain of motor 3
 k4=1.996; %Transfer-function gain of motor 4
-tc=0.436; %Time-constant of the motors (assumed equal for all motors)
+tc=0.0436; %Time-constant of the motors (assumed equal for all motors)
 
 dz1=1247.4; %PWM dead-zone of motor 1 given its first-order transfer
 % function (micro-seconds)
@@ -475,17 +475,14 @@ DMI=zeros(q*mu,q);
 
 disp('avvio simulazione 1');
 
-N_psi = [440.513056398418 26779.6272064186 ...
-        272303.182447317 584729.91630594];
-D_psi = [1 325.437715018286 23852.1596168943 0];
+N_psi = [3029.1617545382 41884.8274476077 0];
+D_psi = [1 1877.59274550691 0];
 
-N_theta = [440.513056398418 26779.6272064186 ...
-        272303.182447317 584729.91630594];
-D_theta = [1 325.437715018286 23852.1596168943 0];
+N_theta = [3029.1617545382 41884.8274476077 0];
+D_theta = [1 1877.59274550691 0];
 
-N_phi = [440.513056398418 26779.6272064186 ...
-        272303.182447317 584729.91630594];
-D_phi = [1 325.437715018286 23852.1596168943 0];
+N_phi = [3029.1617545382 41884.8274476077 0];
+D_phi = [1 1877.59274550691 0];
 
 % Disturbi e errori di misura over 50Hz
 %N_thrust = [89621.1714776559 38561.3185176831];
@@ -507,13 +504,14 @@ satNegThrust = 6;
 satTau = 100;
 
 satMaxRPM = 6000;
+satMinRPM = -1300;
 deadMotorsZone = 800;
 
 EasyHardSat=0; % Easy Sat
 %EasyHardSat=1 % Har Sat: motor dynamics saturation and Deadzones
 
-open('progetto3TenzoDecoupleV3.mdl');
-sim('progetto3TenzoDecoupleV3.mdl');
+open('TenzoDecV3DeltaP.mdl');
+sim('TenzoDecV3DeltaP.mdl');
 
 %% Simulazione
 

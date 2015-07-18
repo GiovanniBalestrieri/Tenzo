@@ -13,5 +13,4 @@ G3 = tf(3*[0.1 1],[1 3 2]);
 bode(G1,G2,G3);
 nyquist(G1,G2,G3)
 a = legend('1','2','3')
-set(a,'font
 

@@ -1,12 +1,12 @@
 Model {
-  Name			  "zCtr"
+  Name			  "Psi"
   Version		  7.9
   MdlSubVersion		  0
   GraphicalInterface {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.80"
+    ComputedModelVersion    "1.89"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -18,7 +18,7 @@ Model {
       Type		      "Cell"
       Dimension		      2
       Cell		      "HDLSubsystem"
-      Cell		      "zCtr"
+      Cell		      "Psi"
       PropName		      "mdlProps"
     }
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Jul 17 01:16:57 2015"
-  RTWModifiedTimeStamp	  358996615
-  ModelVersionFormat	  "1.%<AutoIncrement:80>"
+  LastModifiedDate	  "Sat Jul 18 02:57:53 2015"
+  RTWModifiedTimeStamp	  359089071
+  ModelVersionFormat	  "1.%<AutoIncrement:89>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -77,12 +77,12 @@ Model {
     $PropName		    "DataLoggingOverride"
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
-    model_		    "zCtr"
+    model_		    "Psi"
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
       Dimension		      1
-      Cell		      "zCtr"
+      Cell		      "Psi"
       PropName		      "logAsSpecifiedByModels_"
     }
     Array {
@@ -864,8 +864,8 @@ Model {
     }
   }
   System {
-    Name		    "zCtr"
-    Location		    [53, 190, 1366, 606]
+    Name		    "Psi"
+    Location		    [53, 189, 1366, 606]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -932,7 +932,7 @@ Model {
       Position		      [780, 189, 810, 221]
       ZOrder		      -16
       Floating		      off
-      Location		      [249, 81, 905, 767]
+      Location		      [239, 81, 895, 767]
       Open		      off
       NumInputPorts	      "1"
       ZoomMode		      "xonly"
@@ -1078,7 +1078,7 @@ Model {
     }
     Block {
       BlockType		      SubSystem
-      Name		      "Z Dynamic"
+      Name		      "Yaw\n\n Dynamic"
       SID		      "58"
       Ports		      [1, 1]
       Position		      [470, 165, 580, 225]
@@ -1091,9 +1091,9 @@ Model {
       RequestExecContextInheritance off
       MaskHideContents	      off
       System {
-	Name			"Z Dynamic"
+	Name			"Yaw\n\n Dynamic"
 	Location		[153, 320, 1018, 753]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1155,8 +1155,8 @@ Model {
 	      Position		      [90, 27, 150, 63]
 	      ZOrder		      -9
 	      BackgroundColor	      "blue"
-	      Numerator		      "[1073231686.12918 1273486031.3238]"
-	      Denominator	      "[1 5043.9968441748 6107158.06951568]"
+	      Numerator		      "[3029.1617545382 41884.8274476077 0]"
+	      Denominator	      "[1 1877.59274550691 0]"
 	    }
 	    Block {
 	      BlockType		      Outport
@@ -1760,8 +1760,8 @@ Model {
 	      Position		      [80, 27, 140, 63]
 	      ZOrder		      -9
 	      BackgroundColor	      "lightBlue"
-	      Numerator		      "1.22"
-	      Denominator	      "[1 0.3559 0]"
+	      Numerator		      "44.25"
+	      Denominator	      "[1 0 0]"
 	    }
 	    Block {
 	      BlockType		      Outport
@@ -1792,7 +1792,7 @@ Model {
 	  Position		  [625, 309, 655, 341]
 	  ZOrder		  -16
 	  Floating		  off
-	  Location		  [64, 230, 672, 492]
+	  Location		  [54, 220, 662, 482]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  List {
@@ -2066,7 +2066,7 @@ Model {
       }
       Branch {
 	Labels			[0, 0]
-	DstBlock		"Z Dynamic"
+	DstBlock		"Yaw\n\n Dynamic"
 	DstPort			1
       }
     }
@@ -2083,7 +2083,7 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Z Dynamic"
+      SrcBlock		      "Yaw\n\n Dynamic"
       SrcPort		      1
       DstBlock		      "Mux"
       DstPort		      1
@@ -2104,8 +2104,8 @@ MatData {
     "&          4    (               !          D         #@   #@    &    \"     8         !0    @    !     0    $     "
     "    \"0    @           #P/PX    P    !@    @    &          4    (               !          D         #@   #     & "
     "   \"     8         !0    @               $         \"0         .    .     8    (    !@         %    \"     $    !"
-    "     0         )    \"        ( (^(% #@   #@    &    \"     8         !0    @    !     0    $         \"0    @    "
-    "   !  R\"\"0 X    P    !@    @    &          4    (               !          D         "
+    "     0         )    \"        , !>() #@   #@    &    \"     8         !0    @    !     0    $         \"0    @    "
+    "   \"  :\"\"0 X    P    !@    @    &          4    (               !          D         "
   }
   DataRecord {
     Tag			    DataTag0

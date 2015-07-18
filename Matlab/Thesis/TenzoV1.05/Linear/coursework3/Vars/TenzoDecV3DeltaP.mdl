@@ -1,12 +1,12 @@
 Model {
-  Name			  "progetto3TenzoDecoupleV3"
+  Name			  "TenzoDecV3DeltaP"
   Version		  7.9
   MdlSubVersion		  0
   GraphicalInterface {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.172"
+    ComputedModelVersion    "1.191"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Jul 17 00:42:13 2015"
-  RTWModifiedTimeStamp	  358994325
-  ModelVersionFormat	  "1.%<AutoIncrement:172>"
+  LastModifiedDate	  "Sat Jul 18 02:59:27 2015"
+  RTWModifiedTimeStamp	  359089125
+  ModelVersionFormat	  "1.%<AutoIncrement:191>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -588,7 +588,7 @@ Model {
       }
       Name		      "Configuration"
       CurrentDlgPage	      "Solver"
-      ConfigPrmDlgPosition     [ 178, 22, 1188, 774 ] 
+      ConfigPrmDlgPosition     [ 208, 108, 1158, 716 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -666,6 +666,15 @@ Model {
       BlockType		      From
       IconDisplay	      "Tag"
       TagVisibility	      "local"
+    }
+    Block {
+      BlockType		      FromWorkspace
+      VariableName	      "simulink_input"
+      OutDataTypeStr	      "Inherit: auto"
+      SampleTime	      "-1"
+      Interpolate	      on
+      ZeroCross		      off
+      OutputAfterFinalValue   "Extrapolation"
     }
     Block {
       BlockType		      Gain
@@ -903,8 +912,8 @@ Model {
     }
   }
   System {
-    Name		    "progetto3TenzoDecoupleV3"
-    Location		    [114, 214, 1130, 712]
+    Name		    "TenzoDecV3DeltaP"
+    Location		    [204, 144, 1220, 642]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -918,7 +927,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "742"
+    SIDHighWatermark	    "767"
     Block {
       BlockType		      Scope
       Name		      "Dist"
@@ -960,7 +969,6 @@ Model {
       Ports		      [0, 1]
       Position		      [875, 37, 970, 93]
       BlockMirror	      on
-      BackgroundColor	      "red"
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1977,10 +1985,10 @@ Model {
 	}
 	Block {
 	  BlockType		  SubSystem
-	  Name			  "Easy"
-	  SID			  "607"
+	  Name			  "Easy1"
+	  SID			  "747"
 	  Ports			  [1, 1]
-	  Position		  [150, 228, 235, 292]
+	  Position		  [150, 288, 235, 352]
 	  ZOrder		  -45
 	  BackgroundColor	  "green"
 	  MinAlgLoopOccurrences	  off
@@ -1991,7 +1999,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  System {
-	    Name		    "Easy"
+	    Name		    "Easy1"
 	    Location		    [545, 290, 1132, 743]
 	    Open		    off
 	    ModelBrowserVisibility  off
@@ -2008,7 +2016,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "wRif"
-	      SID		      "608"
+	      SID		      "748"
 	      Position		      [30, 173, 60, 187]
 	      ZOrder		      -1
 	      IconDisplay	      "Port number"
@@ -2016,7 +2024,7 @@ Model {
 	    Block {
 	      BlockType		      DeadZone
 	      Name		      "DZ2"
-	      SID		      "609"
+	      SID		      "749"
 	      Position		      [475, 460, 505, 490]
 	      ZOrder		      -3
 	      LowerValue	      "0"
@@ -2025,7 +2033,7 @@ Model {
 	    Block {
 	      BlockType		      DeadZone
 	      Name		      "DZ3"
-	      SID		      "610"
+	      SID		      "750"
 	      Position		      [475, 515, 505, 545]
 	      ZOrder		      -3
 	      LowerValue	      "0"
@@ -2034,7 +2042,7 @@ Model {
 	    Block {
 	      BlockType		      DeadZone
 	      Name		      "DZ4"
-	      SID		      "611"
+	      SID		      "751"
 	      Position		      [420, 405, 450, 435]
 	      ZOrder		      -3
 	      LowerValue	      "0"
@@ -2043,7 +2051,7 @@ Model {
 	    Block {
 	      BlockType		      Demux
 	      Name		      "Demux5"
-	      SID		      "612"
+	      SID		      "752"
 	      Ports		      [1, 4]
 	      Position		      [85, 71, 90, 284]
 	      ZOrder		      -6
@@ -2053,7 +2061,7 @@ Model {
 	    Block {
 	      BlockType		      Mux
 	      Name		      "Mux"
-	      SID		      "613"
+	      SID		      "753"
 	      Ports		      [4, 1]
 	      Position		      [240, 71, 245, 284]
 	      ZOrder		      -12
@@ -2063,7 +2071,7 @@ Model {
 	    Block {
 	      BlockType		      Saturate
 	      Name		      "Sat1"
-	      SID		      "614"
+	      SID		      "754"
 	      Ports		      [1, 1]
 	      Position		      [415, 460, 445, 490]
 	      ZOrder		      -15
@@ -2074,7 +2082,7 @@ Model {
 	    Block {
 	      BlockType		      Saturate
 	      Name		      "Sat2"
-	      SID		      "615"
+	      SID		      "755"
 	      Ports		      [1, 1]
 	      Position		      [420, 515, 450, 545]
 	      ZOrder		      -15
@@ -2085,7 +2093,7 @@ Model {
 	    Block {
 	      BlockType		      Saturate
 	      Name		      "Sat3"
-	      SID		      "616"
+	      SID		      "756"
 	      Ports		      [1, 1]
 	      Position		      [145, 80, 175, 110]
 	      ZOrder		      -15
@@ -2096,7 +2104,7 @@ Model {
 	    Block {
 	      BlockType		      Saturate
 	      Name		      "Sat4"
-	      SID		      "617"
+	      SID		      "757"
 	      Ports		      [1, 1]
 	      Position		      [485, 405, 515, 435]
 	      ZOrder		      -15
@@ -2107,7 +2115,7 @@ Model {
 	    Block {
 	      BlockType		      Saturate
 	      Name		      "Sat5"
-	      SID		      "618"
+	      SID		      "758"
 	      Ports		      [1, 1]
 	      Position		      [145, 135, 175, 165]
 	      ZOrder		      -15
@@ -2118,7 +2126,7 @@ Model {
 	    Block {
 	      BlockType		      Saturate
 	      Name		      "Sat6"
-	      SID		      "619"
+	      SID		      "759"
 	      Ports		      [1, 1]
 	      Position		      [145, 245, 175, 275]
 	      ZOrder		      -15
@@ -2129,7 +2137,7 @@ Model {
 	    Block {
 	      BlockType		      Saturate
 	      Name		      "Sat7"
-	      SID		      "620"
+	      SID		      "760"
 	      Ports		      [1, 1]
 	      Position		      [145, 190, 175, 220]
 	      ZOrder		      -15
@@ -2140,7 +2148,7 @@ Model {
 	    Block {
 	      BlockType		      Scope
 	      Name		      "w1"
-	      SID		      "621"
+	      SID		      "761"
 	      Ports		      [1]
 	      Position		      [275, 24, 305, 56]
 	      ZOrder		      -3
@@ -2173,7 +2181,7 @@ Model {
 	    Block {
 	      BlockType		      Scope
 	      Name		      "w2"
-	      SID		      "622"
+	      SID		      "762"
 	      Ports		      [1]
 	      Position		      [255, 369, 285, 401]
 	      ZOrder		      -3
@@ -2206,7 +2214,7 @@ Model {
 	    Block {
 	      BlockType		      Scope
 	      Name		      "w3"
-	      SID		      "623"
+	      SID		      "763"
 	      Ports		      [1]
 	      Position		      [120, 24, 150, 56]
 	      ZOrder		      -3
@@ -2239,99 +2247,15 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "w"
-	      SID		      "624"
+	      SID		      "764"
 	      Position		      [275, 173, 305, 187]
 	      ZOrder		      -20
 	      IconDisplay	      "Port number"
 	    }
 	    Line {
-	      SrcBlock		      "Sat2"
-	      SrcPort		      1
-	      DstBlock		      "DZ3"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Sat1"
-	      SrcPort		      1
-	      DstBlock		      "DZ2"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "DZ4"
-	      SrcPort		      1
-	      DstBlock		      "Sat4"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Mux"
-	      SrcPort		      1
-	      DstBlock		      "w"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "wRif"
-	      SrcPort		      1
-	      DstBlock		      "Demux5"
-	      DstPort		      1
-	    }
-	    Line {
 	      SrcBlock		      "Demux5"
-	      SrcPort		      1
-	      Points		      [5, 0]
-	      Branch {
-		Points			[0, -55]
-		DstBlock		"w3"
-		DstPort			1
-	      }
-	      Branch {
-		DstBlock		"Sat3"
-		DstPort			1
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Sat3"
-	      SrcPort		      1
-	      Points		      [35, 0]
-	      Branch {
-		Points			[0, -55]
-		DstBlock		"w1"
-		DstPort			1
-	      }
-	      Branch {
-		DstBlock		"Mux"
-		DstPort			1
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Sat5"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Sat6"
-	      SrcPort		      1
-	      Points		      [15, 0]
-	      Branch {
-		DstBlock		"Mux"
-		DstPort			4
-	      }
-	      Branch {
-		Points			[0, -5; 10, 0; 0, 130]
-		DstBlock		"w2"
-		DstPort			1
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Sat7"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "Demux5"
-	      SrcPort		      2
-	      DstBlock		      "Sat5"
+	      SrcPort		      4
+	      DstBlock		      "Sat6"
 	      DstPort		      1
 	    }
 	    Line {
@@ -2342,8 +2266,92 @@ Model {
 	    }
 	    Line {
 	      SrcBlock		      "Demux5"
-	      SrcPort		      4
-	      DstBlock		      "Sat6"
+	      SrcPort		      2
+	      DstBlock		      "Sat5"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Sat7"
+	      SrcPort		      1
+	      DstBlock		      "Mux"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Sat6"
+	      SrcPort		      1
+	      Points		      [15, 0]
+	      Branch {
+		Points			[0, -5; 10, 0; 0, 130]
+		DstBlock		"w2"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"Mux"
+		DstPort			4
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Sat5"
+	      SrcPort		      1
+	      DstBlock		      "Mux"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Sat3"
+	      SrcPort		      1
+	      Points		      [35, 0]
+	      Branch {
+		DstBlock		"Mux"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, -55]
+		DstBlock		"w1"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Demux5"
+	      SrcPort		      1
+	      Points		      [5, 0]
+	      Branch {
+		DstBlock		"Sat3"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, -55]
+		DstBlock		"w3"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "wRif"
+	      SrcPort		      1
+	      DstBlock		      "Demux5"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Mux"
+	      SrcPort		      1
+	      DstBlock		      "w"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "DZ4"
+	      SrcPort		      1
+	      DstBlock		      "Sat4"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Sat1"
+	      SrcPort		      1
+	      DstBlock		      "DZ2"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Sat2"
+	      SrcPort		      1
+	      DstBlock		      "DZ3"
 	      DstPort		      1
 	    }
 	  }
@@ -2552,11 +2560,11 @@ Model {
 		  Name			  "Sat3"
 		  SID			  "642"
 		  Ports			  [1, 1]
-		  Position		  [355, 75, 385, 105]
+		  Position		  [245, 80, 275, 110]
 		  ZOrder		  -15
 		  InputPortMap		  "u0"
 		  UpperLimit		  "satMaxRPM"
-		  LowerLimit		  "0"
+		  LowerLimit		  "satMinRPM"
 		}
 		Block {
 		  BlockType		  Saturate
@@ -2568,6 +2576,39 @@ Model {
 		  InputPortMap		  "u0"
 		  UpperLimit		  "satMaxRPM"
 		  LowerLimit		  "0"
+		}
+		Block {
+		  BlockType		  Saturate
+		  Name			  "Sat5"
+		  SID			  "765"
+		  Ports			  [1, 1]
+		  Position		  [250, 135, 280, 165]
+		  ZOrder		  -15
+		  InputPortMap		  "u0"
+		  UpperLimit		  "satMaxRPM"
+		  LowerLimit		  "satMinRPM"
+		}
+		Block {
+		  BlockType		  Saturate
+		  Name			  "Sat6"
+		  SID			  "766"
+		  Ports			  [1, 1]
+		  Position		  [245, 190, 275, 220]
+		  ZOrder		  -15
+		  InputPortMap		  "u0"
+		  UpperLimit		  "satMaxRPM"
+		  LowerLimit		  "satMinRPM"
+		}
+		Block {
+		  BlockType		  Saturate
+		  Name			  "Sat7"
+		  SID			  "767"
+		  Ports			  [1, 1]
+		  Position		  [265, 245, 295, 275]
+		  ZOrder		  -15
+		  InputPortMap		  "u0"
+		  UpperLimit		  "satMaxRPM"
+		  LowerLimit		  "satMinRPM"
 		}
 		Block {
 		  BlockType		  Scope
@@ -2640,7 +2681,7 @@ Model {
 		  Name			  "w3"
 		  SID			  "646"
 		  Ports			  [1]
-		  Position		  [120, 19, 150, 51]
+		  Position		  [120, 24, 150, 56]
 		  ZOrder		  -3
 		  NamePlacement		  "alternate"
 		  Floating		  off
@@ -2685,7 +2726,7 @@ Model {
 		    DstPort		    1
 		  }
 		  Branch {
-		    Points		    [0, -60]
+		    Points		    [0, -55]
 		    DstBlock		    "w3"
 		    DstPort		    1
 		  }
@@ -2723,40 +2764,32 @@ Model {
 		Line {
 		  SrcBlock		  "Motore 5"
 		  SrcPort		  1
-		  Points		  [125, 0]
-		  Branch {
-		    DstBlock		    "Mux"
-		    DstPort		    1
-		  }
-		  Branch {
-		    Points		    [0, -55]
-		    DstBlock		    "w1"
-		    DstPort		    1
-		  }
+		  DstBlock		  "Sat3"
+		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "Motore 1"
 		  SrcPort		  1
-		  DstBlock		  "Mux"
-		  DstPort		  2
+		  DstBlock		  "Sat5"
+		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "Motore 2"
 		  SrcPort		  1
-		  DstBlock		  "Mux"
-		  DstPort		  3
+		  DstBlock		  "Sat6"
+		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "Motore 3"
 		  SrcPort		  1
 		  Points		  [65, 0]
 		  Branch {
-		    DstBlock		    "Mux"
-		    DstPort		    4
-		  }
-		  Branch {
 		    Points		    [0, 65]
 		    DstBlock		    "w2"
+		    DstPort		    1
+		  }
+		  Branch {
+		    DstBlock		    "Sat7"
 		    DstPort		    1
 		  }
 		}
@@ -2777,6 +2810,38 @@ Model {
 		  SrcPort		  1
 		  DstBlock		  "DZ3"
 		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Sat3"
+		  SrcPort		  1
+		  Points		  [30, 0]
+		  Branch {
+		    DstBlock		    "Mux"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [0, -55]
+		    DstBlock		    "w1"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "Sat5"
+		  SrcPort		  1
+		  DstBlock		  "Mux"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Sat6"
+		  SrcPort		  1
+		  DstBlock		  "Mux"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "Sat7"
+		  SrcPort		  1
+		  DstBlock		  "Mux"
+		  DstPort		  4
 		}
 	      }
 	    }
@@ -2881,7 +2946,7 @@ Model {
 		  BlockType		  S-Function
 		  Name			  " SFunction "
 		  SID			  "649::29"
-		  Tag			  "Stateflow S-Function progetto3TenzoDecoupleV3 2"
+		  Tag			  "Stateflow S-Function TenzoDecV3DeltaP 2"
 		  Ports			  [4, 5]
 		  Position		  [180, 100, 230, 220]
 		  ZOrder		  15
@@ -3663,7 +3728,101 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Scope
-	      Name		      "errore2"
+	      Name		      "ideal"
+	      SID		      "744"
+	      Ports		      [1]
+	      Position		      [70, 109, 100, 141]
+	      Floating		      off
+	      Location		      [64, 91, 1084, 627]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      List {
+		ListType		ScopeGraphics
+		FigureColor		"[0.5 0.5 0.5]"
+		AxesColor		"[0 0 0]"
+		AxesTickColor		"[1 1 1]"
+		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		LineStyles		"-|-|-|-|-|-"
+		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+		MarkerStyles		"none|none|none|none|none|none"
+	      }
+	      ShowLegends	      off
+	      YMin		      "-5e+71"
+	      YMax		      "4e+71"
+	      SaveName		      "ScopeData25"
+	      DataFormat	      "StructureWithTime"
+	      LimitDataPoints	      off
+	      SampleTime	      "0"
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "real"
+	      SID		      "745"
+	      Ports		      [1]
+	      Position		      [580, 109, 610, 141]
+	      Floating		      off
+	      Location		      [64, 91, 1084, 627]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      List {
+		ListType		ScopeGraphics
+		FigureColor		"[0.5 0.5 0.5]"
+		AxesColor		"[0 0 0]"
+		AxesTickColor		"[1 1 1]"
+		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		LineStyles		"-|-|-|-|-|-"
+		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+		MarkerStyles		"none|none|none|none|none|none"
+	      }
+	      ShowLegends	      off
+	      YMin		      "-2.5e+113"
+	      YMax		      "4.25e+114"
+	      SaveName		      "ScopeData26"
+	      DataFormat	      "StructureWithTime"
+	      LimitDataPoints	      off
+	      SampleTime	      "0"
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "wReal"
+	      SID		      "746"
+	      Ports		      [1]
+	      Position		      [450, 109, 480, 141]
+	      Floating		      off
+	      Location		      [64, 91, 1084, 627]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      List {
+		ListType		ScopeGraphics
+		FigureColor		"[0.5 0.5 0.5]"
+		AxesColor		"[0 0 0]"
+		AxesTickColor		"[1 1 1]"
+		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		LineStyles		"-|-|-|-|-|-"
+		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+		MarkerStyles		"none|none|none|none|none|none"
+	      }
+	      ShowLegends	      off
+	      SaveName		      "ScopeData27"
+	      DataFormat	      "StructureWithTime"
+	      LimitDataPoints	      off
+	      SampleTime	      "0"
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "wideal"
 	      SID		      "737"
 	      Ports		      [1]
 	      Position		      [340, 109, 370, 141]
@@ -3686,6 +3845,8 @@ Model {
 		MarkerStyles		"none|none|none|none|none|none"
 	      }
 	      ShowLegends	      off
+	      YMin		      "-4.5e+73"
+	      YMax		      "4.5e+73"
 	      SaveName		      "ScopeData23"
 	      DataFormat	      "StructureWithTime"
 	      LimitDataPoints	      off
@@ -3749,8 +3910,15 @@ Model {
 	    Line {
 	      SrcBlock		      "Motors"
 	      SrcPort		      1
-	      DstBlock		      "WtoTreal"
-	      DstPort		      1
+	      Points		      [15, 0]
+	      Branch {
+		DstBlock		"WtoTreal"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"wReal"
+		DstPort			1
+	      }
 	    }
 	    Line {
 	      SrcBlock		      "Mux3"
@@ -3762,21 +3930,36 @@ Model {
 	      }
 	      Branch {
 		Points			[0, 65]
-		DstBlock		"errore2"
+		DstBlock		"wideal"
 		DstPort			1
 	      }
 	    }
 	    Line {
 	      SrcBlock		      "Ideal Inputs"
 	      SrcPort		      1
-	      DstBlock		      "Demux11"
-	      DstPort		      1
+	      Points		      [5, 0]
+	      Branch {
+		DstBlock		"Demux11"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"ideal"
+		DstPort			1
+	      }
 	    }
 	    Line {
 	      SrcBlock		      "WtoTreal"
 	      SrcPort		      1
-	      DstBlock		      "Real"
-	      DstPort		      1
+	      Points		      [5, 0]
+	      Branch {
+		DstBlock		"Real"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, 65]
+		DstBlock		"real"
+		DstPort			1
+	      }
 	    }
 	    Annotation {
 	      SID		      "677"
@@ -3859,7 +4042,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [445, 304, 475, 336]
 	  Floating		  off
-	  Location		  [54, 91, 1074, 627]
+	  Location		  [64, 91, 1084, 627]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  List {
@@ -3906,43 +4089,30 @@ Model {
 	  SrcPort		  1
 	  Points		  [30, 0]
 	  Branch {
-	    Points		    [0, 75]
-	    DstBlock		    "Easy"
-	    DstPort		    1
-	  }
-	  Branch {
 	    Labels		    [0, 0]
 	    Points		    [0, -80]
 	    DstBlock		    "Hard"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 135]
+	    DstBlock		    "Easy1"
 	    DstPort		    1
 	  }
 	}
 	Line {
 	  SrcBlock		  "Hard"
 	  SrcPort		  1
-	  Points		  [70, 0]
+	  Points		  [65, 0]
 	  Branch {
-	    Points		    [0, -50]
+	    Points		    [5, 0; 0, -50]
 	    DstBlock		    "Sum1"
 	    DstPort		    1
 	  }
 	  Branch {
+	    Points		    [0, 65]
 	    DstBlock		    "Switch"
 	    DstPort		    1
-	  }
-	}
-	Line {
-	  SrcBlock		  "Easy"
-	  SrcPort		  1
-	  Points		  [70, 0]
-	  Branch {
-	    Points		    [0, 60]
-	    DstBlock		    "Sum2"
-	    DstPort		    2
-	  }
-	  Branch {
-	    DstBlock		    "Switch"
-	    DstPort		    3
 	  }
 	}
 	Line {
@@ -3968,6 +4138,19 @@ Model {
 	  DstBlock		  "Switch"
 	  DstPort		  2
 	}
+	Line {
+	  SrcBlock		  "Easy1"
+	  SrcPort		  1
+	  Points		  [70, 0]
+	  Branch {
+	    DstBlock		    "Sum2"
+	    DstPort		    2
+	  }
+	  Branch {
+	    DstBlock		    "Switch"
+	    DstPort		    3
+	  }
+	}
 	Annotation {
 	  SID			  "684"
 	  Position		  [349, 252]
@@ -3989,7 +4172,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Output"
-	Location		[668, 331, 1297, 768]
+	Location		[368, 165, 997, 602]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -4064,7 +4247,7 @@ Model {
 	  Name			  "Mux4"
 	  SID			  "79"
 	  Ports			  [2, 1]
-	  Position		  [350, 197, 355, 273]
+	  Position		  [355, 197, 360, 273]
 	  ZOrder		  -12
 	  ShowName		  off
 	  Inputs		  "2"
@@ -4108,8 +4291,8 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "-3.5"
-	  YMax			  "7"
+	  YMin			  "1.495"
+	  YMax			  "1.5065"
 	  DataFormat		  "StructureWithTime"
 	  LimitDataPoints	  off
 	  SampleTime		  "0"
@@ -4121,7 +4304,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 113, 525, 167]
 	  Floating		  off
-	  Location		  [111, 91, 1131, 602]
+	  Location		  [91, 91, 1111, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -4156,7 +4339,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [480, 208, 525, 262]
 	  Floating		  off
-	  Location		  [151, 91, 1171, 602]
+	  Location		  [111, 91, 1131, 602]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  TickLabels		  "on"
@@ -4176,6 +4359,7 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
+	  TimeRange		  "15"
 	  YMin			  "0.75"
 	  YMax			  "4.25"
 	  SaveName		  "ScopeData6"
@@ -4210,8 +4394,8 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "0.75"
-	  YMax			  "4.25"
+	  YMin			  "0.55"
+	  YMax			  "0.8"
 	  SaveName		  "ScopeData7"
 	  DataFormat		  "StructureWithTime"
 	  LimitDataPoints	  off
@@ -4348,7 +4532,7 @@ Model {
       Position		      [925, 359, 955, 391]
       ZOrder		      -16
       Floating		      off
-      Location		      [54, 190, 662, 452]
+      Location		      [54, 180, 662, 442]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -4434,21 +4618,117 @@ Model {
 	  SampleTime		  "0"
 	}
 	Block {
+	  BlockType		  SubSystem
+	  Name			  "Signal Builder"
+	  SID			  "743"
+	  Tag			  "STV Subsys"
+	  Ports			  [0, 1]
+	  Position		  [15, 185, 100, 225]
+	  ZOrder		  -20
+	  CopyFcn		  "sigbuilder_block('copy');"
+	  DeleteFcn		  "sigbuilder_block('delete');"
+	  LoadFcn		  "sigbuilder_block('load');"
+	  ModelCloseFcn		  "sigbuilder_block('modelClose');"
+	  PreSaveFcn		  "sigbuilder_block('preSave');"
+	  StartFcn		  "sigbuilder_block('start');"
+	  PauseFcn		  "sigbuilder_block('pause');"
+	  ContinueFcn		  "sigbuilder_block('continue');"
+	  StopFcn		  "sigbuilder_block('stop');"
+	  NameChangeFcn		  "sigbuilder_block('namechange');"
+	  ClipboardFcn		  "sigbuilder_block('clipboard');"
+	  OpenFcn		  "sigbuilder_block('open',[357.6 120.8 550.4 400 ]);"
+	  CloseFcn		  "sigbuilder_block('close');"
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  on
+	  MaskType		  "Sigbuilder block"
+	  MaskDescription	  "Simulink:masks:SigbuilderBlock_MD"
+	  MaskInitialization	  "if ~strcmp(get_param(bdroot(gcbh),'SimulationStatus'),'stopped') tuvar = sigbuilder_block('ma"
+	  "skInit'); end"
+	  MaskSelfModifiable	  on
+	  MaskDisplay		  "plot(0, 0, 100, 100,[2, 2, 32, 32, 2], [68, 8, 8, 68, 68],[32, 2], [38, 38], [32, 19, 2],[53, 60, 4"
+	  "4], [32, 17, 17, 2],[16, 16, 31, 31]);txt = getActiveGroup(gcbh);text(2, 100, txt,'verticalAlignment', 'top');"
+	  MaskIconFrame		  on
+	  MaskIconOpaque	  off
+	  MaskIconRotate	  "port"
+	  MaskPortRotate	  "default"
+	  MaskIconUnits		  "autoscale"
+	  MaskCapabilities	  "slmaskedcaps(gcbh)"
+	  System {
+	    Name		    "Signal Builder"
+	    Location		    [480, 85, 980, 386]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    SIDHighWatermark	    "4"
+	    Block {
+	      BlockType		      Demux
+	      Name		      "Demux"
+	      SID		      "743:1"
+	      Tag		      "STV Demux"
+	      Ports		      [1, 1]
+	      Position		      [150, 34, 160, 606]
+	      ZOrder		      -1
+	      Outputs		      "1"
+	    }
+	    Block {
+	      BlockType		      FromWorkspace
+	      Name		      "FromWs"
+	      SID		      "743:2"
+	      Tag		      "STV FromWs"
+	      Position		      [30, 300, 115, 350]
+	      ZOrder		      -2
+	      VariableName	      "tuvar"
+	      SampleTime	      "0"
+	      ZeroCross		      on
+	      SigBuilderData	      "DataTag0"
+	      VnvData		      "DataTag1"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "Signal 1"
+	      SID		      "743:3"
+	      Tag		      "STV Outport"
+	      Position		      [280, 30, 300, 40]
+	      ZOrder		      -3
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      SrcBlock		      "Demux"
+	      SrcPort		      1
+	      Points		      [50, 0; 0, -285]
+	      DstBlock		      "Signal 1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "FromWs"
+	      SrcPort		      1
+	      Points		      [5, 0; 0, -5]
+	      DstBlock		      "Demux"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
 	  BlockType		  Step
 	  Name			  "ThetRef"
 	  SID			  "151"
 	  Position		  [15, 85, 45, 115]
 	  Time			  "0.5"
 	  After			  "2"
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Step
-	  Name			  "ZRef"
-	  SID			  "146"
-	  Position		  [15, 190, 45, 220]
-	  Time			  "3"
-	  After			  "2.5"
 	  SampleTime		  "0"
 	}
 	Block {
@@ -4492,9 +4772,9 @@ Model {
 	  DstPort		  3
 	}
 	Line {
-	  SrcBlock		  "ZRef"
+	  SrcBlock		  "Signal Builder"
 	  SrcPort		  1
-	  Points		  [440, 0]
+	  Points		  [385, 0]
 	  DstBlock		  "Mux"
 	  DstPort		  4
 	}
@@ -5451,7 +5731,7 @@ Model {
       Name		      "u"
       SID		      "28"
       Ports		      [2]
-      Position		      [500, 91, 530, 124]
+      Position		      [565, 91, 595, 124]
       Floating		      off
       Location		      [54, 81, 1367, 767]
       Open		      off
@@ -5472,8 +5752,8 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "-5~-5"
-      YMax		      "5~5"
+      YMin		      "-5e+71~-1e+116"
+      YMax		      "4e+71~2e+117"
       SaveName		      "ScopeData3"
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
@@ -5486,7 +5766,7 @@ Model {
       Ports		      [1]
       Position		      [910, 134, 940, 166]
       Floating		      off
-      Location		      [54, 91, 1074, 627]
+      Location		      [64, 91, 1084, 627]
       Open		      off
       NumInputPorts	      "1"
       ZoomMode		      "yonly"
@@ -5506,7 +5786,7 @@ Model {
       }
       ShowLegends	      off
       TimeRange		      "15              "
-      YMin		      "1.3"
+      YMin		      "0.6"
       YMax		      "2.6"
       SaveName		      "ScopeData2"
       DataFormat	      "StructureWithTime"
@@ -5530,10 +5810,10 @@ Model {
     Line {
       SrcBlock		      "processo"
       SrcPort		      1
-      Points		      [10, 0]
+      Points		      [20, 0]
       Branch {
 	Labels			[0, 0]
-	Points			[10, 0]
+	Points			[0, 0]
 	Branch {
 	  DstBlock		  "Output"
 	  DstPort		  1
@@ -5545,7 +5825,6 @@ Model {
 	}
       }
       Branch {
-	Points			[10, 0]
 	DstBlock		"Sum2"
 	DstPort			1
       }
@@ -5607,13 +5886,13 @@ Model {
     Line {
       SrcBlock		      "NonLinearities2"
       SrcPort		      1
-      Points		      [40, 0]
+      Points		      [45, 0]
       Branch {
 	DstBlock		"Sum3"
 	DstPort			2
       }
       Branch {
-	Points			[5, 0; 0, -70; -110, 0]
+	Points			[0, 0; 0, -55; -80, 0; 0, -50]
 	DstBlock		"u"
 	DstPort			2
       }
@@ -5665,6 +5944,93 @@ Model {
     }
   }
 }
+MatData {
+  NumRecords		  2
+  DataRecord {
+    Tag			    DataTag1
+    Data		    "  %)30     .    R ,   8    (     @         %    \"     $    !     0         %  0 $0    $   #,    =F5R:6"
+    "9Y0FQK4&%T:',   !V97)I9GE\";&M(86YD;&5S '9N=DUG<DED>           86-T:79E1W)O=7        !R97%$:7-P4')C;G0      &)L:T1"
+    "I<W!-;V1E        9W)O=7!#;G0           !G<F]U<%)E<4-N=        &=R;W5P1$]/4E-I9       ;6]D96Q(              !B;&]C:"
+    "T@              &]V97)I9&53971T:6YG<P        X    P    !@    @    &          4    (               !          D    "
+    "     #@   #     &    \"     8         !0    @               $         \"0         .    ,     8    (    !@         "
+    "%    \"                0         )          X    X    !@    @    &          4    (     0    $    !          D    ("
+    "            \\#\\.    ,     8    (    !@         %    \"                0         )          X    P    !@    @    "
+    "&          4    (               !          D         #@   #@    &    \"     8         !0    @    !     0    $     "
+    "    \"0    @           #P/PX    P    !@    @    &          4    (               !          D         #@   #     & "
+    "   \"     8         !0    @               $         \"0         .    .     8    (    !@         %    \"     $    !"
+    "     0         )    \"         \"  PA #@   #@    &    \"     8         !0    @    !     0    $         \"0    @   "
+    "    \" !H!V0 X    P    !@    @    &          4    (               !          D         "
+  }
+  DataRecord {
+    Tag			    DataTag0
+    Data		    "  %)30     .    P H   8    (     @         %    \"     $    !     0         %  0 %@    $   \"P    9W)I9"
+    "%-E='1I;F<              &-H86YN96QS                  !A>&5S                        8V]M;6]N                     &1"
+    "A=&%3970                   !D871A4V5T261X                :7-697)I9FEC871I;VY6:7-I8FQE '-B;V)J                     "
+    "  .    ,     8    (    !          %    \"     $    \"     0         0  ( ;VX   X   #@ @  !@    @    \"          4 "
+    "   (     0    $    !          4 !  *     0   %H   !S=&5P6       <W1E<%D      'E-:6X       !Y36%X        8V]L;W(   "
+    "   &QI;F53='EL90!L:6YE5VED=&@ ;&%B96P      &]U=$EN9&5X           .    .     8    (    !@         %    \"     $    "
+    "!     0         )    \"               #@   #@    &    \"     8         !0    @    !     0    $         \"0    @   "
+    "            X    X    !@    @    &          4    (     0    $    !          D    (            \\/\\.    .     8   "
+    " (    !@         %    \"     $    !     0         )    \"            /!_#@   $@    &    \"     8         !0    @  "
+    "  !     P    $         \"0   !@   !\"/NC9K/KJ/P                     .    ,     8    (    !          %    \"     $ "
+    "   !     0         0  $ +0    X    X    !@    @    &          4    (     0    $    !          D    (            ^#"
+    "\\.    .     8    (    !          %    \"     $    (     0         0    \"    %-I9VYA;\" Q#@   #@    &    \"     8"
+    "         !0    @    !     0    $         \"0    @           #P/PX   \"P 0  !@    @    \"          4    (     0    "
+    "$    !          4 !  +     0   #<   !C:&%N;F5L<P   'E,:6T         ;&%B96Q0;W,   !L86)E;$@      &QA8F5L4&%T8V@   X "
+    "   X    !@    @    &          4    (     0    $    !          D    (            \\#\\.    0     8    (    !@      "
+    "   %    \"     $    \"     0         )    $    )J9F9F9F;F_FIF9F9F9\\3\\.    ,     8    (    !          %    \"    "
+    " $    \"     0         0  ( 5$P   X    X    !@    @    &          4    (     0    $    !          D    (        ( "
+    "$(E$ .    .     8    (    !@         %    \"     $    !     0         )    \"        & !%)% #@   &@\"   &    \"   "
+    "  (         !0    @    !     0    $         !0 $  X    !    8@   &1I<W!4:6UE        9&ES<$UO9&4       !M:6Y4:6UE  "
+    "       &UA>%1I;64         869T97)&:6YA;%-T<@!S86UP;&54:6UE     'IE<F]#<F]S<P              #@   $     &    \"     8"
+    "         !0    @    !     @    $         \"0   !                       \"1 #@   #@    &    \"     8         !0    "
+    "@    !     0    $         \"0    @           #P/PX    X    !@    @    &          4    (     0    $    !          D"
+    "    (               .    .     8    (    !@         %    \"     $    !     0         )    \"            \"1 #@   $"
+    "     &    \"     0         !0    @    !    \"P    $         $     L   !%>'1R87!O;&%T90      #@   #@    &    \"    "
+    " 8         !0    @    !     0    $         \"0    @               X    P    !@    @    $          4    (     0    "
+    "(    !         !   @!O;@  #@   ( !   &    \"     (         !0    @    !     0    $         !0 $  X    !    .    &%"
+    "C=&EV941I<W!)9'@ =&EM95)A;F=E      !N86UE             &1I<W!L87E286YG90  #@   #@    &    \"     8         !0    @ "
+    "   !     0    $         \"0    @           #P/PX   !     !@    @    &          4    (     0    (    !          D  "
+    "  0                       D0 X    X    !@    @    $          4    (     0    <    !         !     '    1W)O=7 @,0 "
+    ".    0     8    (    !@         %    \"     $    \"     0         )    $                       )$ .    .     8    "
+    "(    !@         %    \"     $    !     0         )    \"            / _#@   #@    &    \"     8         !0    @   "
+    " !     0    $         \"0    @               X   \"     !@    @    1          $          0 $ $U#3U,!    \"    %-I9"
+    "U-U:71E#@   $@    &    \"     T         !0    @    &     0    $         !@   !@       #= @    $    !     0    ,   "
+    " .    L H   8    (    \"0         %    \"     $   \" \"@   0         \"    @ H    !24T     #@   . )   &    \"     "
+    "(         !0    @    !     0    $         !0 $  4    !    !0   $U#3U,     #@   )@)   &    \"    !$          0     "
+    "    !  0 34-/4P$    -    1FEL95=R87!P97)?7P    X   !8\"0  !@    @    !          4    (    \"0    $    !          X"
+    "      @  !@    @    )          4    (    T $   $    !          (   #0 0   @    T   \"P    \\    /    !0 0  L $  - "
+    "!             $=R;W5P<P!.86UE %-I9VYA;', 6$1A=&$ 641A=&$ 4VEG4W5I=&53:6=N86P 57-E<D1A=&$ 4VEG4W5I=&5'<F]U< !!8W1I="
+    "F53:6=N86P 4F5Q=6ER96UE;G1);F9O %1I;65286YG90!3:6=3=6ET90!!8W1I=F5'<F]U<                                     8    "
+    "                (                    #                                                P                    $    # "
+    "    @                    (    \"     0                    ,    !               !     0    $    %     @    (    !  "
+    "        ,    !    !          #     @    $    !    !     $    \"    !0    $    #                                   "
+    "            .          X    X    !@    @    $          4    (     0    <    !         !     '    1W)O=7 @,0 .    ."
+    "     8    (    !          %    \"     $    (     0         0    \"    %-I9VYA;\" Q#@   %@    &    \"     8        "
+    " !0    @    !    !0    $         \"0   \"@              #X*UZ-P/1!         &$         80        \"1 #@   %@    &  "
+    "  \"     8         !0    @    !    !0    $         \"0   \"@           \" O        / _        \\#_7HW ]\"M?O/W$]\""
+    "M>C<.D_#@   $@    &    \"     T         !0    @    &     0    $         !@   !@       #= @    $    !     P    $   "
+    " .    2     8    (    #0         %    \"     8    !     0         &    &        -T\"     0    $    \"     @    X  "
+    "  X!0  !@    @    !          4    (    !     $    !          X    X    !@    @    \"          4    (     0        "
+    " !          4 !  !     0         .    0 $   8    (     @         %    \"     $    !     0         %  0 \"0    $   "
+    " D    3F%M90      6$1A=&$     641A=&$     57-E<D1A=&$       X    P    !@    @    $          4    (               !"
+    "         !          #@   #     &    \"     8         !0    @               $         \"0         .    ,     8    ("
+    "    !@         %    \"                0         )          X    P    !@    @    &          4    (               ! "
+    "         D         #@   ! \"   &    \"     (         !0    @    !     0    $         !0 $ !     !    8    $YA;64  "
+    "             !3:6=N86QS            06-T:79E4VEG;F%L     %)E<75I<F5M96YT26YF;P!5<V5R1&%T80          5&EM95)A;F=E   "
+    "       X    P    !@    @    $          4    (               !         !          #@   $@    &    \"     T         "
+    "!0    @    %     0    $         !@   !0       #= @               0         .    ,     8    (    !@         %    \""
+    "                0         )          X    P    !@    @    $          4    (               !         !          #@ "
+    "  #     &    \"     8         !0    @               $         \"0         .    0     8    (    !@         %    \" "
+    "    $    \"     0         )    $                       )$ .    : $   8    (     @         %    \"     $    !     0"
+    "         %  0 #     $    P    3F%M90          1W)O=7!S        06-T:79E1W)O=7  57-E<D1A=&$     #@   #     &    \"  "
+    "   0         !0    @               $         $          .    2     8    (    #0         %    \"     4    !     0  "
+    "       &    %        -T\"               \"          X    X    !@    @    &          4    (     0    $    !        "
+    "  D    (            \\#\\.    ,     8    (    !@         %    \"                0         )          X   \"(    !@"
+    "    @    )          4    (     0   %@    !          (   !8      %)30     .    2     8    (     @         %    \"  "
+    "   $    !     0         %  0 !0    $    %    34-/4P     .          "
+  }
+}
 # Finite State Machines
 #
 #    Stateflow Version 7.6 (R2011b) dated Jan 25 2012, 12:15:34
@@ -5675,7 +6041,7 @@ Model {
 Stateflow {
   machine {
     id			    1
-    name		    "progetto3TenzoDecoupleV3"
+    name		    "TenzoDecV3DeltaP"
     created		    "05-Jul-2015 01:11:32"
     isLibrary		    0
     firstTarget		    15
@@ -5728,20 +6094,20 @@ Stateflow {
       "eller given its angular speed (kg.m.rad^-1) \n%Kt=ct*4*rho*rp^4/pi()^2; \nKt=ct*rho*rp^2*pi();\n% Constant that "
       "relates thrust and moment of a propeller.\nKtm=Km/Kt;\nk1=2.028; %Transfer-function gain of motor 1\nk2=1.869; %"
       "Transfer-function gain of motor 2\nk3=2.002; %Transfer-function gain of motor 3\nk4=1.996; %Transfer-function ga"
-      "in of motor 4\ntc=0.436; %Time-constant of the motors (assumed equal for all motors)\n\ndz1=1247.4; %PWM dead-zo"
-      "ne of motor 1 given its first-order transfer\n% function (micro-seconds)\ndz2=1247.8; % PWM dead-zone of motor 2"
-      " given its first-order transfer\n%function (micro-seconds)\ndz3=1246.4; % PWM dead-zone of motor 3 given its fir"
-      "st-order transfer\n%function (micro-seconds)\ndz4=1247.9; % PWM dead-zone of motor 4 given its first-order trans"
-      "fer\n% \n% g_m1=tf(k1,[tc 1]); % First-order transfer-function of motor 1\n% g_m2=tf(k2,[tc 1]); % First-order t"
-      "ransfer-function of motor 2\n% g_m3=tf(k3,[tc 1]); % First-order transfer-function of motor 3\n% g_m4=tf(k4,[tc "
-      "1]); % First-order transfer-function of motor 4\n\n%vNote: If the behavior of the motors is not linear, lineariz"
-      "ation around\n% an operating point is required to attain these transfer-functions.\nPWM_max=2200; %Upper limit o"
-      "f the PWM signal provided to\n%the motors (micro-seconds)\nw0c=sqrt(g*mq/Kt);\n%X0c=w0c;\nFt0=mq*g;\n\n\n%% u=[T"
-      "; taux; tauy; tauz];\n\n% WTF = [ -Kt -Kt -Kt -Kt;\n%          0   -lx*Kt  0  lx*Kt;\n%         ly*Kt  0  -ly*Kt"
-      "  0;\n%         Ktm -Ktm Ktm -Ktm];   \n%    T= WTF^(-1)*[Thrust; taux; tauy; tauz];\n\n%%  u=[taux; tauy; tauz,"
-      " T];\n\nWTF = [     0   -lx*Kt  0  lx*Kt;\n            ly*Kt  0  -ly*Kt  0;\n            Ktm -Ktm Ktm -Ktm;\n   "
-      "         -Kt -Kt -Kt -Kt];   \n\nWTFm1 = WTF^(-1);\nT= WTFm1*[taux; tauy; tauz; Thrust];5\n\n%% Conversion\n\n  "
-      "  w1 = T(1);\n    w2 = T(2);\n    w3 = T(3);\n    w4 = T(4);\n"
+      "in of motor 4\ntc=0.00436; %Time-constant of the motors (assumed equal for all motors) 0.436\n\ndz1=1247.4; %PWM"
+      " dead-zone of motor 1 given its first-order transfer\n% function (micro-seconds)\ndz2=1247.8; % PWM dead-zone of"
+      " motor 2 given its first-order transfer\n%function (micro-seconds)\ndz3=1246.4; % PWM dead-zone of motor 3 given"
+      " its first-order transfer\n%function (micro-seconds)\ndz4=1247.9; % PWM dead-zone of motor 4 given its first-ord"
+      "er transfer\n% \n% g_m1=tf(k1,[tc 1]); % First-order transfer-function of motor 1\n% g_m2=tf(k2,[tc 1]); % First"
+      "-order transfer-function of motor 2\n% g_m3=tf(k3,[tc 1]); % First-order transfer-function of motor 3\n% g_m4=tf"
+      "(k4,[tc 1]); % First-order transfer-function of motor 4\n\n%vNote: If the behavior of the motors is not linear, "
+      "linearization around\n% an operating point is required to attain these transfer-functions.\nPWM_max=2200; %Upper"
+      " limit of the PWM signal provided to\n%the motors (micro-seconds)\nw0c=sqrt(g*mq/Kt);\n%X0c=w0c;\nFt0=mq*g;\n\n\n"
+      "%% u=[T; taux; tauy; tauz];\n\n% WTF = [ -Kt -Kt -Kt -Kt;\n%          0   -lx*Kt  0  lx*Kt;\n%         ly*Kt  0 "
+      " -ly*Kt  0;\n%         Ktm -Ktm Ktm -Ktm];   \n%    T= WTF^(-1)*[Thrust; taux; tauy; tauz];\n\n%%  u=[taux; tauy"
+      "; tauz, T];\n\nWTF = [     0   -lx*Kt  0  lx*Kt;\n            ly*Kt  0  -ly*Kt  0;\n            Ktm -Ktm Ktm -Kt"
+      "m;\n            -Kt -Kt -Kt -Kt];  \nT= WTF\\[taux; tauy; tauz; Thrust];\n\n%% Conversion\n\n    w1 = T(1);\n   "
+      " w2 = T(2);\n    w3 = T(3);\n    w4 = T(4);\n"
       editorLayout	      "100 M4x1[10 5 700 500]"
     }
   }
