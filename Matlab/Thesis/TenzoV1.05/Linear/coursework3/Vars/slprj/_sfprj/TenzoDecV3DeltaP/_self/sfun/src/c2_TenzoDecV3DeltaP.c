@@ -16,9 +16,9 @@
 /* Variable Declarations */
 
 /* Variable Definitions */
-static const char * c2_debug_family_names[38] = { "g", "rho", "mq", "lx", "ly",
+static const char * c2_debug_family_names[39] = { "g", "rho", "mq", "lx", "ly",
   "lz", "dcg", "If", "cp", "ct", "rp", "Km", "Kt", "Ktm", "k1", "k2", "k3", "k4",
-  "tc", "dz1", "dz2", "dz3", "dz4", "PWM_max", "w0c", "Ft0", "WTF", "T",
+  "tc", "dz1", "dz2", "dz3", "dz4", "w0c", "Ft0", "WTF", "T2", "T2Sign", "T",
   "nargin", "nargout", "taux", "tauy", "tauz", "Thrust", "w1", "w2", "w3", "w4"
 };
 
@@ -63,8 +63,8 @@ static void c2_b_sf_marshallIn(void *chartInstanceVoid, const mxArray
   *c2_mxArrayInData, const char_T *c2_varName, void *c2_outData);
 static const mxArray *c2_c_sf_marshallOut(void *chartInstanceVoid, void
   *c2_inData);
-static void c2_info_helper(c2_ResolvedFunctionInfo c2_info[109]);
-static void c2_b_info_helper(c2_ResolvedFunctionInfo c2_info[109]);
+static void c2_info_helper(c2_ResolvedFunctionInfo c2_info[112]);
+static void c2_b_info_helper(c2_ResolvedFunctionInfo c2_info[112]);
 static void c2_eml_error(SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance);
 static void c2_eml_lusolve(SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance,
   real_T c2_B[4], real_T c2_X[4]);
@@ -243,7 +243,7 @@ static void sf_c2_TenzoDecV3DeltaP(SFc2_TenzoDecV3DeltaPInstanceStruct
   c2_tauy = (real_T *)ssGetInputPortSignal(chartInstance->S, 1);
   c2_taux = (real_T *)ssGetInputPortSignal(chartInstance->S, 0);
   _sfTime_ = (real_T)ssGetT(chartInstance->S);
-  _SFD_CC_CALL(CHART_ENTER_SFUNCTION_TAG, 0U, chartInstance->c2_sfEvent);
+  _SFD_CC_CALL(CHART_ENTER_SFUNCTION_TAG, 1U, chartInstance->c2_sfEvent);
   _SFD_DATA_RANGE_CHECK(*c2_taux, 0U);
   _SFD_DATA_RANGE_CHECK(*c2_tauy, 1U);
   _SFD_DATA_RANGE_CHECK(*c2_tauz, 2U);
@@ -269,7 +269,7 @@ static void c2_chartstep_c2_TenzoDecV3DeltaP(SFc2_TenzoDecV3DeltaPInstanceStruct
   real_T c2_tauy;
   real_T c2_tauz;
   real_T c2_Thrust;
-  uint32_T c2_debug_family_var_map[38];
+  uint32_T c2_debug_family_var_map[39];
   real_T c2_g;
   real_T c2_rho;
   real_T c2_mq;
@@ -293,10 +293,11 @@ static void c2_chartstep_c2_TenzoDecV3DeltaP(SFc2_TenzoDecV3DeltaPInstanceStruct
   real_T c2_dz2;
   real_T c2_dz3;
   real_T c2_dz4;
-  real_T c2_PWM_max;
   real_T c2_w0c;
   real_T c2_Ft0;
   real_T c2_WTF[16];
+  real_T c2_T2[4];
+  real_T c2_T2Sign[4];
   real_T c2_T[4];
   real_T c2_nargin = 4.0;
   real_T c2_nargout = 4.0;
@@ -306,17 +307,36 @@ static void c2_chartstep_c2_TenzoDecV3DeltaP(SFc2_TenzoDecV3DeltaPInstanceStruct
   real_T c2_w4;
   real_T c2_x;
   int32_T c2_i0;
-  static real_T c2_dv0[16] = { 0.0, 8.0834517164645556E-6, 4.3325606937667151E-7,
-    -0.00028067540682168596, -8.0834517164645556E-6, 0.0, -4.3325606937667151E-7,
-    -0.00028067540682168596, 0.0, -8.0834517164645556E-6, 4.3325606937667151E-7,
-    -0.00028067540682168596, 8.0834517164645556E-6, 0.0, -4.3325606937667151E-7,
-    -0.00028067540682168596 };
+  static real_T c2_dv0[16] = { 0.0, -5.21511970939427E-9, 0.00067154825063034244,
+    -1.8108054546507884E-7, -5.21511970939427E-9, 0.0, -0.00067154825063034244,
+    -1.8108054546507884E-7, 0.0, 5.21511970939427E-9, 0.00067154825063034244,
+    -1.8108054546507884E-7, 5.21511970939427E-9, 0.0, -0.00067154825063034244,
+    -1.8108054546507884E-7 };
 
   real_T c2_B[4];
   int32_T c2_i1;
   real_T c2_b_B[4];
   real_T c2_dv1[4];
   int32_T c2_i2;
+  int32_T c2_i3;
+  int32_T c2_i4;
+  int32_T c2_k;
+  real_T c2_b_k;
+  real_T c2_b_x;
+  real_T c2_c_x;
+  int32_T c2_i5;
+  int32_T c2_c_k;
+  real_T c2_d_k;
+  real_T c2_d_x;
+  real_T c2_y;
+  real_T c2_b_y[4];
+  int32_T c2_i6;
+  int32_T c2_e_k;
+  real_T c2_f_k;
+  int32_T c2_g_k;
+  real_T c2_e_x;
+  real_T c2_f_x;
+  int32_T c2_i7;
   real_T *c2_b_taux;
   real_T *c2_b_tauy;
   real_T *c2_b_tauz;
@@ -333,7 +353,7 @@ static void c2_chartstep_c2_TenzoDecV3DeltaP(SFc2_TenzoDecV3DeltaPInstanceStruct
   c2_b_tauz = (real_T *)ssGetInputPortSignal(chartInstance->S, 2);
   c2_b_tauy = (real_T *)ssGetInputPortSignal(chartInstance->S, 1);
   c2_b_taux = (real_T *)ssGetInputPortSignal(chartInstance->S, 0);
-  _SFD_CC_CALL(CHART_ENTER_DURING_FUNCTION_TAG, 0U, chartInstance->c2_sfEvent);
+  _SFD_CC_CALL(CHART_ENTER_DURING_FUNCTION_TAG, 1U, chartInstance->c2_sfEvent);
   c2_hoistedGlobal = *c2_b_taux;
   c2_b_hoistedGlobal = *c2_b_tauy;
   c2_c_hoistedGlobal = *c2_b_tauz;
@@ -342,7 +362,7 @@ static void c2_chartstep_c2_TenzoDecV3DeltaP(SFc2_TenzoDecV3DeltaPInstanceStruct
   c2_tauy = c2_b_hoistedGlobal;
   c2_tauz = c2_c_hoistedGlobal;
   c2_Thrust = c2_d_hoistedGlobal;
-  sf_debug_symbol_scope_push_eml(0U, 38U, 38U, c2_debug_family_names,
+  sf_debug_symbol_scope_push_eml(0U, 39U, 39U, c2_debug_family_names,
     c2_debug_family_var_map);
   sf_debug_symbol_scope_add_eml(&c2_g, 0U, c2_sf_marshallOut);
   sf_debug_symbol_scope_add_eml(&c2_rho, 1U, c2_sf_marshallOut);
@@ -379,30 +399,32 @@ static void c2_chartstep_c2_TenzoDecV3DeltaP(SFc2_TenzoDecV3DeltaPInstanceStruct
     c2_sf_marshallIn);
   sf_debug_symbol_scope_add_eml_importable(&c2_dz4, 22U, c2_sf_marshallOut,
     c2_sf_marshallIn);
-  sf_debug_symbol_scope_add_eml_importable(&c2_PWM_max, 23U, c2_sf_marshallOut,
+  sf_debug_symbol_scope_add_eml_importable(&c2_w0c, 23U, c2_sf_marshallOut,
     c2_sf_marshallIn);
-  sf_debug_symbol_scope_add_eml_importable(&c2_w0c, 24U, c2_sf_marshallOut,
+  sf_debug_symbol_scope_add_eml_importable(&c2_Ft0, 24U, c2_sf_marshallOut,
     c2_sf_marshallIn);
-  sf_debug_symbol_scope_add_eml_importable(&c2_Ft0, 25U, c2_sf_marshallOut,
-    c2_sf_marshallIn);
-  sf_debug_symbol_scope_add_eml(c2_WTF, 26U, c2_c_sf_marshallOut);
-  sf_debug_symbol_scope_add_eml_importable(c2_T, 27U, c2_b_sf_marshallOut,
+  sf_debug_symbol_scope_add_eml(c2_WTF, 25U, c2_c_sf_marshallOut);
+  sf_debug_symbol_scope_add_eml_importable(c2_T2, 26U, c2_b_sf_marshallOut,
     c2_b_sf_marshallIn);
-  sf_debug_symbol_scope_add_eml_importable(&c2_nargin, 28U, c2_sf_marshallOut,
+  sf_debug_symbol_scope_add_eml_importable(c2_T2Sign, 27U, c2_b_sf_marshallOut,
+    c2_b_sf_marshallIn);
+  sf_debug_symbol_scope_add_eml_importable(c2_T, 28U, c2_b_sf_marshallOut,
+    c2_b_sf_marshallIn);
+  sf_debug_symbol_scope_add_eml_importable(&c2_nargin, 29U, c2_sf_marshallOut,
     c2_sf_marshallIn);
-  sf_debug_symbol_scope_add_eml_importable(&c2_nargout, 29U, c2_sf_marshallOut,
+  sf_debug_symbol_scope_add_eml_importable(&c2_nargout, 30U, c2_sf_marshallOut,
     c2_sf_marshallIn);
-  sf_debug_symbol_scope_add_eml(&c2_taux, 30U, c2_sf_marshallOut);
-  sf_debug_symbol_scope_add_eml(&c2_tauy, 31U, c2_sf_marshallOut);
-  sf_debug_symbol_scope_add_eml(&c2_tauz, 32U, c2_sf_marshallOut);
-  sf_debug_symbol_scope_add_eml(&c2_Thrust, 33U, c2_sf_marshallOut);
-  sf_debug_symbol_scope_add_eml_importable(&c2_w1, 34U, c2_sf_marshallOut,
+  sf_debug_symbol_scope_add_eml(&c2_taux, 31U, c2_sf_marshallOut);
+  sf_debug_symbol_scope_add_eml(&c2_tauy, 32U, c2_sf_marshallOut);
+  sf_debug_symbol_scope_add_eml(&c2_tauz, 33U, c2_sf_marshallOut);
+  sf_debug_symbol_scope_add_eml(&c2_Thrust, 34U, c2_sf_marshallOut);
+  sf_debug_symbol_scope_add_eml_importable(&c2_w1, 35U, c2_sf_marshallOut,
     c2_sf_marshallIn);
-  sf_debug_symbol_scope_add_eml_importable(&c2_w2, 35U, c2_sf_marshallOut,
+  sf_debug_symbol_scope_add_eml_importable(&c2_w2, 36U, c2_sf_marshallOut,
     c2_sf_marshallIn);
-  sf_debug_symbol_scope_add_eml_importable(&c2_w3, 36U, c2_sf_marshallOut,
+  sf_debug_symbol_scope_add_eml_importable(&c2_w3, 37U, c2_sf_marshallOut,
     c2_sf_marshallIn);
-  sf_debug_symbol_scope_add_eml_importable(&c2_w4, 37U, c2_sf_marshallOut,
+  sf_debug_symbol_scope_add_eml_importable(&c2_w4, 38U, c2_sf_marshallOut,
     c2_sf_marshallIn);
   CV_EML_FCN(0, 0);
   _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 4);
@@ -430,9 +452,9 @@ static void c2_chartstep_c2_TenzoDecV3DeltaP(SFc2_TenzoDecV3DeltaPInstanceStruct
   _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 35);
   c2_Km = 1.2160432353026188E-10;
   _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 39);
-  c2_Kt = 0.00028067540682168596;
+  c2_Kt = 1.8108054546507884E-7;
   _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 41);
-  c2_Ktm = 4.3325606937667151E-7;
+  c2_Ktm = 0.00067154825063034244;
   _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 42);
   c2_k1 = 2.028;
   _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 43);
@@ -451,10 +473,8 @@ static void c2_chartstep_c2_TenzoDecV3DeltaP(SFc2_TenzoDecV3DeltaPInstanceStruct
   c2_dz3 = 1246.4;
   _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 54);
   c2_dz4 = 1247.9;
-  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 63);
-  c2_PWM_max = 2200.0;
-  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 65);
-  c2_w0c = 28660.152633574013;
+  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 64);
+  c2_w0c = 4.442332542869059E+7;
   if (c2_w0c < 0.0) {
     c2_eml_error(chartInstance);
   }
@@ -462,9 +482,9 @@ static void c2_chartstep_c2_TenzoDecV3DeltaP(SFc2_TenzoDecV3DeltaPInstanceStruct
   c2_x = c2_w0c;
   c2_w0c = c2_x;
   c2_w0c = muDoubleScalarSqrt(c2_w0c);
-  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 67);
+  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 66);
   c2_Ft0 = 8.0442;
-  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 80);
+  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 79);
   for (c2_i0 = 0; c2_i0 < 16; c2_i0++) {
     c2_WTF[c2_i0] = c2_dv0[c2_i0];
   }
@@ -480,24 +500,84 @@ static void c2_chartstep_c2_TenzoDecV3DeltaP(SFc2_TenzoDecV3DeltaPInstanceStruct
 
   c2_eml_lusolve(chartInstance, c2_b_B, c2_dv1);
   for (c2_i2 = 0; c2_i2 < 4; c2_i2++) {
-    c2_T[c2_i2] = c2_dv1[c2_i2];
+    c2_T2[c2_i2] = c2_dv1[c2_i2];
   }
 
-  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 88);
-  c2_w1 = c2_T[0];
-  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 89);
-  c2_w2 = c2_T[1];
-  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 90);
-  c2_w3 = c2_T[2];
+  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 85);
+  for (c2_i3 = 0; c2_i3 < 4; c2_i3++) {
+    c2_B[c2_i3] = c2_T2[c2_i3];
+  }
+
+  for (c2_i4 = 0; c2_i4 < 4; c2_i4++) {
+    c2_T2Sign[c2_i4] = c2_B[c2_i4];
+  }
+
+  for (c2_k = 0; c2_k < 4; c2_k++) {
+    c2_b_k = 1.0 + (real_T)c2_k;
+    c2_b_x = c2_T2Sign[_SFD_EML_ARRAY_BOUNDS_CHECK("", (int32_T)
+      _SFD_INTEGER_CHECK("", c2_b_k), 1, 4, 1, 0) - 1];
+    c2_c_x = c2_b_x;
+    c2_c_x = muDoubleScalarSign(c2_c_x);
+    c2_T2Sign[_SFD_EML_ARRAY_BOUNDS_CHECK("", (int32_T)_SFD_INTEGER_CHECK("",
+      c2_b_k), 1, 4, 1, 0) - 1] = c2_c_x;
+  }
+
+  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 86);
+  for (c2_i5 = 0; c2_i5 < 4; c2_i5++) {
+    c2_B[c2_i5] = c2_T2[c2_i5];
+  }
+
+  for (c2_c_k = 0; c2_c_k < 4; c2_c_k++) {
+    c2_d_k = 1.0 + (real_T)c2_c_k;
+    c2_d_x = c2_B[_SFD_EML_ARRAY_BOUNDS_CHECK("", (int32_T)_SFD_INTEGER_CHECK("",
+      c2_d_k), 1, 4, 1, 0) - 1];
+    c2_y = muDoubleScalarAbs(c2_d_x);
+    c2_b_y[_SFD_EML_ARRAY_BOUNDS_CHECK("", (int32_T)_SFD_INTEGER_CHECK("",
+      c2_d_k), 1, 4, 1, 0) - 1] = c2_y;
+  }
+
+  for (c2_i6 = 0; c2_i6 < 4; c2_i6++) {
+    c2_T[c2_i6] = c2_b_y[c2_i6];
+  }
+
+  for (c2_e_k = 0; c2_e_k < 4; c2_e_k++) {
+    c2_f_k = 1.0 + (real_T)c2_e_k;
+    if (c2_T[_SFD_EML_ARRAY_BOUNDS_CHECK("", (int32_T)_SFD_INTEGER_CHECK("",
+          c2_f_k), 1, 4, 1, 0) - 1] < 0.0) {
+      c2_eml_error(chartInstance);
+    }
+  }
+
+  for (c2_g_k = 0; c2_g_k < 4; c2_g_k++) {
+    c2_f_k = 1.0 + (real_T)c2_g_k;
+    c2_e_x = c2_T[_SFD_EML_ARRAY_BOUNDS_CHECK("", (int32_T)_SFD_INTEGER_CHECK("",
+      c2_f_k), 1, 4, 1, 0) - 1];
+    c2_f_x = c2_e_x;
+    c2_f_x = muDoubleScalarSqrt(c2_f_x);
+    c2_T[_SFD_EML_ARRAY_BOUNDS_CHECK("", (int32_T)_SFD_INTEGER_CHECK("", c2_f_k),
+      1, 4, 1, 0) - 1] = c2_f_x;
+  }
+
+  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 87);
+  for (c2_i7 = 0; c2_i7 < 4; c2_i7++) {
+    c2_T[c2_i7] *= c2_T2Sign[c2_i7];
+  }
+
   _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 91);
+  c2_w1 = c2_T[0];
+  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 92);
+  c2_w2 = c2_T[1];
+  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 93);
+  c2_w3 = c2_T[2];
+  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, 94);
   c2_w4 = c2_T[3];
-  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, -91);
+  _SFD_EML_CALL(0U, chartInstance->c2_sfEvent, -94);
   sf_debug_symbol_scope_pop();
   *c2_b_w1 = c2_w1;
   *c2_b_w2 = c2_w2;
   *c2_b_w3 = c2_w3;
   *c2_b_w4 = c2_w4;
-  _SFD_CC_CALL(EXIT_OUT_OF_FUNCTION_TAG, 0U, chartInstance->c2_sfEvent);
+  _SFD_CC_CALL(EXIT_OUT_OF_FUNCTION_TAG, 1U, chartInstance->c2_sfEvent);
 }
 
 static void initSimStructsc2_TenzoDecV3DeltaP
@@ -571,20 +651,20 @@ static const mxArray *c2_b_sf_marshallOut(void *chartInstanceVoid, void
   *c2_inData)
 {
   const mxArray *c2_mxArrayOutData = NULL;
-  int32_T c2_i3;
+  int32_T c2_i8;
   real_T c2_b_inData[4];
-  int32_T c2_i4;
+  int32_T c2_i9;
   real_T c2_u[4];
   const mxArray *c2_y = NULL;
   SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance;
   chartInstance = (SFc2_TenzoDecV3DeltaPInstanceStruct *)chartInstanceVoid;
   c2_mxArrayOutData = NULL;
-  for (c2_i3 = 0; c2_i3 < 4; c2_i3++) {
-    c2_b_inData[c2_i3] = (*(real_T (*)[4])c2_inData)[c2_i3];
+  for (c2_i8 = 0; c2_i8 < 4; c2_i8++) {
+    c2_b_inData[c2_i8] = (*(real_T (*)[4])c2_inData)[c2_i8];
   }
 
-  for (c2_i4 = 0; c2_i4 < 4; c2_i4++) {
-    c2_u[c2_i4] = c2_b_inData[c2_i4];
+  for (c2_i9 = 0; c2_i9 < 4; c2_i9++) {
+    c2_u[c2_i9] = c2_b_inData[c2_i9];
   }
 
   c2_y = NULL;
@@ -598,10 +678,10 @@ static void c2_c_emlrt_marshallIn(SFc2_TenzoDecV3DeltaPInstanceStruct
   real_T c2_y[4])
 {
   real_T c2_dv2[4];
-  int32_T c2_i5;
+  int32_T c2_i10;
   sf_mex_import(c2_parentId, sf_mex_dup(c2_u), c2_dv2, 1, 0, 0U, 1, 0U, 1, 4);
-  for (c2_i5 = 0; c2_i5 < 4; c2_i5++) {
-    c2_y[c2_i5] = c2_dv2[c2_i5];
+  for (c2_i10 = 0; c2_i10 < 4; c2_i10++) {
+    c2_y[c2_i10] = c2_dv2[c2_i10];
   }
 
   sf_mex_destroy(&c2_u);
@@ -614,7 +694,7 @@ static void c2_b_sf_marshallIn(void *chartInstanceVoid, const mxArray
   const char_T *c2_identifier;
   emlrtMsgIdentifier c2_thisId;
   real_T c2_y[4];
-  int32_T c2_i6;
+  int32_T c2_i11;
   SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance;
   chartInstance = (SFc2_TenzoDecV3DeltaPInstanceStruct *)chartInstanceVoid;
   c2_T = sf_mex_dup(c2_mxArrayInData);
@@ -623,8 +703,8 @@ static void c2_b_sf_marshallIn(void *chartInstanceVoid, const mxArray
   c2_thisId.fParent = NULL;
   c2_c_emlrt_marshallIn(chartInstance, sf_mex_dup(c2_T), &c2_thisId, c2_y);
   sf_mex_destroy(&c2_T);
-  for (c2_i6 = 0; c2_i6 < 4; c2_i6++) {
-    (*(real_T (*)[4])c2_outData)[c2_i6] = c2_y[c2_i6];
+  for (c2_i11 = 0; c2_i11 < 4; c2_i11++) {
+    (*(real_T (*)[4])c2_outData)[c2_i11] = c2_y[c2_i11];
   }
 
   sf_mex_destroy(&c2_mxArrayInData);
@@ -634,34 +714,35 @@ static const mxArray *c2_c_sf_marshallOut(void *chartInstanceVoid, void
   *c2_inData)
 {
   const mxArray *c2_mxArrayOutData = NULL;
-  int32_T c2_i7;
-  int32_T c2_i8;
-  int32_T c2_i9;
-  real_T c2_b_inData[16];
-  int32_T c2_i10;
-  int32_T c2_i11;
   int32_T c2_i12;
+  int32_T c2_i13;
+  int32_T c2_i14;
+  real_T c2_b_inData[16];
+  int32_T c2_i15;
+  int32_T c2_i16;
+  int32_T c2_i17;
   real_T c2_u[16];
   const mxArray *c2_y = NULL;
   SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance;
   chartInstance = (SFc2_TenzoDecV3DeltaPInstanceStruct *)chartInstanceVoid;
   c2_mxArrayOutData = NULL;
-  c2_i7 = 0;
-  for (c2_i8 = 0; c2_i8 < 4; c2_i8++) {
-    for (c2_i9 = 0; c2_i9 < 4; c2_i9++) {
-      c2_b_inData[c2_i9 + c2_i7] = (*(real_T (*)[16])c2_inData)[c2_i9 + c2_i7];
+  c2_i12 = 0;
+  for (c2_i13 = 0; c2_i13 < 4; c2_i13++) {
+    for (c2_i14 = 0; c2_i14 < 4; c2_i14++) {
+      c2_b_inData[c2_i14 + c2_i12] = (*(real_T (*)[16])c2_inData)[c2_i14 +
+        c2_i12];
     }
 
-    c2_i7 += 4;
+    c2_i12 += 4;
   }
 
-  c2_i10 = 0;
-  for (c2_i11 = 0; c2_i11 < 4; c2_i11++) {
-    for (c2_i12 = 0; c2_i12 < 4; c2_i12++) {
-      c2_u[c2_i12 + c2_i10] = c2_b_inData[c2_i12 + c2_i10];
+  c2_i15 = 0;
+  for (c2_i16 = 0; c2_i16 < 4; c2_i16++) {
+    for (c2_i17 = 0; c2_i17 < 4; c2_i17++) {
+      c2_u[c2_i17 + c2_i15] = c2_b_inData[c2_i17 + c2_i15];
     }
 
-    c2_i10 += 4;
+    c2_i15 += 4;
   }
 
   c2_y = NULL;
@@ -673,36 +754,36 @@ static const mxArray *c2_c_sf_marshallOut(void *chartInstanceVoid, void
 const mxArray *sf_c2_TenzoDecV3DeltaP_get_eml_resolved_functions_info(void)
 {
   const mxArray *c2_nameCaptureInfo;
-  c2_ResolvedFunctionInfo c2_info[109];
+  c2_ResolvedFunctionInfo c2_info[112];
   const mxArray *c2_m0 = NULL;
-  int32_T c2_i13;
+  int32_T c2_i18;
   c2_ResolvedFunctionInfo *c2_r0;
   c2_nameCaptureInfo = NULL;
   c2_nameCaptureInfo = NULL;
   c2_info_helper(c2_info);
   c2_b_info_helper(c2_info);
-  sf_mex_assign(&c2_m0, sf_mex_createstruct("nameCaptureInfo", 1, 109), FALSE);
-  for (c2_i13 = 0; c2_i13 < 109; c2_i13++) {
-    c2_r0 = &c2_info[c2_i13];
+  sf_mex_assign(&c2_m0, sf_mex_createstruct("nameCaptureInfo", 1, 112), FALSE);
+  for (c2_i18 = 0; c2_i18 < 112; c2_i18++) {
+    c2_r0 = &c2_info[c2_i18];
     sf_mex_addfield(c2_m0, sf_mex_create("nameCaptureInfo", c2_r0->context, 15,
       0U, 0U, 0U, 2, 1, strlen(c2_r0->context)), "context", "nameCaptureInfo",
-                    c2_i13);
+                    c2_i18);
     sf_mex_addfield(c2_m0, sf_mex_create("nameCaptureInfo", c2_r0->name, 15, 0U,
-      0U, 0U, 2, 1, strlen(c2_r0->name)), "name", "nameCaptureInfo", c2_i13);
+      0U, 0U, 2, 1, strlen(c2_r0->name)), "name", "nameCaptureInfo", c2_i18);
     sf_mex_addfield(c2_m0, sf_mex_create("nameCaptureInfo", c2_r0->dominantType,
       15, 0U, 0U, 0U, 2, 1, strlen(c2_r0->dominantType)), "dominantType",
-                    "nameCaptureInfo", c2_i13);
+                    "nameCaptureInfo", c2_i18);
     sf_mex_addfield(c2_m0, sf_mex_create("nameCaptureInfo", c2_r0->resolved, 15,
       0U, 0U, 0U, 2, 1, strlen(c2_r0->resolved)), "resolved", "nameCaptureInfo",
-                    c2_i13);
+                    c2_i18);
     sf_mex_addfield(c2_m0, sf_mex_create("nameCaptureInfo", &c2_r0->fileTimeLo,
-      7, 0U, 0U, 0U, 0), "fileTimeLo", "nameCaptureInfo", c2_i13);
+      7, 0U, 0U, 0U, 0), "fileTimeLo", "nameCaptureInfo", c2_i18);
     sf_mex_addfield(c2_m0, sf_mex_create("nameCaptureInfo", &c2_r0->fileTimeHi,
-      7, 0U, 0U, 0U, 0), "fileTimeHi", "nameCaptureInfo", c2_i13);
+      7, 0U, 0U, 0U, 0), "fileTimeHi", "nameCaptureInfo", c2_i18);
     sf_mex_addfield(c2_m0, sf_mex_create("nameCaptureInfo", &c2_r0->mFileTimeLo,
-      7, 0U, 0U, 0U, 0), "mFileTimeLo", "nameCaptureInfo", c2_i13);
+      7, 0U, 0U, 0U, 0), "mFileTimeLo", "nameCaptureInfo", c2_i18);
     sf_mex_addfield(c2_m0, sf_mex_create("nameCaptureInfo", &c2_r0->mFileTimeHi,
-      7, 0U, 0U, 0U, 0), "mFileTimeHi", "nameCaptureInfo", c2_i13);
+      7, 0U, 0U, 0U, 0), "mFileTimeHi", "nameCaptureInfo", c2_i18);
   }
 
   sf_mex_assign(&c2_nameCaptureInfo, c2_m0, FALSE);
@@ -710,7 +791,7 @@ const mxArray *sf_c2_TenzoDecV3DeltaP_get_eml_resolved_functions_info(void)
   return c2_nameCaptureInfo;
 }
 
-static void c2_info_helper(c2_ResolvedFunctionInfo c2_info[109])
+static void c2_info_helper(c2_ResolvedFunctionInfo c2_info[112])
 {
   c2_info[0].context = "";
   c2_info[0].name = "mtimes";
@@ -1349,7 +1430,7 @@ static void c2_info_helper(c2_ResolvedFunctionInfo c2_info[109])
   c2_info[63].mFileTimeHi = 0U;
 }
 
-static void c2_b_info_helper(c2_ResolvedFunctionInfo c2_info[109])
+static void c2_b_info_helper(c2_ResolvedFunctionInfo c2_info[112])
 {
   c2_info[64].context =
     "[ILXE]/home/userk/Programs/Matlab/toolbox/eml/lib/matlab/elfun/abs.m";
@@ -1801,19 +1882,47 @@ static void c2_b_info_helper(c2_ResolvedFunctionInfo c2_info[109])
   c2_info[108].fileTimeHi = 0U;
   c2_info[108].mFileTimeLo = 0U;
   c2_info[108].mFileTimeHi = 0U;
+  c2_info[109].context = "";
+  c2_info[109].name = "sign";
+  c2_info[109].dominantType = "double";
+  c2_info[109].resolved =
+    "[ILXE]/home/userk/Programs/Matlab/toolbox/eml/lib/matlab/elfun/sign.m";
+  c2_info[109].fileTimeLo = 1286818750U;
+  c2_info[109].fileTimeHi = 0U;
+  c2_info[109].mFileTimeLo = 0U;
+  c2_info[109].mFileTimeHi = 0U;
+  c2_info[110].context =
+    "[ILXE]/home/userk/Programs/Matlab/toolbox/eml/lib/matlab/elfun/sign.m";
+  c2_info[110].name = "eml_scalar_sign";
+  c2_info[110].dominantType = "double";
+  c2_info[110].resolved =
+    "[ILXE]/home/userk/Programs/Matlab/toolbox/eml/lib/matlab/elfun/eml_scalar_sign.m";
+  c2_info[110].fileTimeLo = 1307651238U;
+  c2_info[110].fileTimeHi = 0U;
+  c2_info[110].mFileTimeLo = 0U;
+  c2_info[110].mFileTimeHi = 0U;
+  c2_info[111].context = "";
+  c2_info[111].name = "abs";
+  c2_info[111].dominantType = "double";
+  c2_info[111].resolved =
+    "[ILXE]/home/userk/Programs/Matlab/toolbox/eml/lib/matlab/elfun/abs.m";
+  c2_info[111].fileTimeLo = 1286818694U;
+  c2_info[111].fileTimeHi = 0U;
+  c2_info[111].mFileTimeLo = 0U;
+  c2_info[111].mFileTimeHi = 0U;
 }
 
 static void c2_eml_error(SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance)
 {
-  int32_T c2_i14;
+  int32_T c2_i19;
   static char_T c2_varargin_1[30] = { 'C', 'o', 'd', 'e', 'r', ':', 't', 'o',
     'o', 'l', 'b', 'o', 'x', ':', 's', 'q', 'r', 't', '_', 'd', 'o', 'm', 'a',
     'i', 'n', 'E', 'r', 'r', 'o', 'r' };
 
   char_T c2_u[30];
   const mxArray *c2_y = NULL;
-  for (c2_i14 = 0; c2_i14 < 30; c2_i14++) {
-    c2_u[c2_i14] = c2_varargin_1[c2_i14];
+  for (c2_i19 = 0; c2_i19 < 30; c2_i19++) {
+    c2_u[c2_i19] = c2_varargin_1[c2_i19];
   }
 
   c2_y = NULL;
@@ -1825,19 +1934,19 @@ static void c2_eml_error(SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance)
 static void c2_eml_lusolve(SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance,
   real_T c2_B[4], real_T c2_X[4])
 {
-  int32_T c2_i15;
+  int32_T c2_i20;
   int32_T c2_i;
   int32_T c2_b_i;
-  static int32_T c2_iv0[4] = { 4, 2, 4, 4 };
+  static int32_T c2_iv0[4] = { 3, 4, 4, 4 };
 
   int32_T c2_ip;
   real_T c2_temp;
-  int32_T c2_i16;
-  static real_T c2_A[16] = { -0.00028067540682168596, -0.0288, -0.0,
-    -0.0015436196362295488, -0.00028067540682168596, -8.0834517164645556E-6, 1.0,
-    0.10719580807149645, -0.00028067540682168596, -1.6166903432929111E-5,
-    1.6166903432929111E-5, 0.10719580807149645, -0.00028067540682168596,
-    -8.0834517164645556E-6, 1.6166903432929111E-5, -1.733024277506686E-6 };
+  int32_T c2_i21;
+  static real_T c2_A[16] = { 0.00067154825063034244, -0.00026964636613245483,
+    -7.7658153446146977E-6, 0.0, -0.00067154825063034244, -3.6216109093015768E-7,
+    0.0144, 0.0144, 0.00067154825063034244, 0.0, 1.0430239418788541E-8, 0.0,
+    -0.00067154825063034244, -3.6216109093015768E-7, 0.0, 1.0430239418788541E-8
+  };
 
   real_T c2_b_A[16];
   int32_T c2_k;
@@ -1858,16 +1967,16 @@ static void c2_eml_lusolve(SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance,
   int32_T c2_c_b;
   int32_T c2_f_c;
   real_T c2_x;
-  static real_T c2_dv3[16] = { -0.00028067540682168596, -0.0288, -0.0,
-    -0.0015436196362295488, -0.00028067540682168596, -8.0834517164645556E-6, 1.0,
-    0.10719580807149645, -0.00028067540682168596, -1.6166903432929111E-5,
-    1.6166903432929111E-5, 0.10719580807149645, -0.00028067540682168596,
-    -8.0834517164645556E-6, 1.6166903432929111E-5, -1.733024277506686E-6 };
+  static real_T c2_dv3[16] = { 0.00067154825063034244, -0.00026964636613245483,
+    -7.7658153446146977E-6, 0.0, -0.00067154825063034244, -3.6216109093015768E-7,
+    0.0144, 0.0144, 0.00067154825063034244, 0.0, 1.0430239418788541E-8, 0.0,
+    -0.00067154825063034244, -3.6216109093015768E-7, 0.0, 1.0430239418788541E-8
+  };
 
   real_T c2_y;
   real_T c2_z;
   int32_T c2_f_a;
-  int32_T c2_i17;
+  int32_T c2_i22;
   int32_T c2_c_i;
   int32_T c2_d_i;
   int32_T c2_g_a;
@@ -1879,8 +1988,8 @@ static void c2_eml_lusolve(SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance,
   int32_T c2_j_a;
   int32_T c2_d_b;
   int32_T c2_j_c;
-  for (c2_i15 = 0; c2_i15 < 4; c2_i15++) {
-    c2_X[c2_i15] = c2_B[c2_i15];
+  for (c2_i20 = 0; c2_i20 < 4; c2_i20++) {
+    c2_X[c2_i20] = c2_B[c2_i20];
   }
 
   c2_eml_int_forloop_overflow_check(chartInstance);
@@ -1900,8 +2009,8 @@ static void c2_eml_lusolve(SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance,
     }
   }
 
-  for (c2_i16 = 0; c2_i16 < 16; c2_i16++) {
-    c2_b_A[c2_i16] = c2_A[c2_i16];
+  for (c2_i21 = 0; c2_i21 < 16; c2_i21++) {
+    c2_b_A[c2_i21] = c2_A[c2_i21];
   }
 
   c2_b_eml_xtrsm(chartInstance, c2_b_A, c2_X);
@@ -1935,9 +2044,9 @@ static void c2_eml_lusolve(SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance,
       c2_X[_SFD_EML_ARRAY_BOUNDS_CHECK("", (int32_T)_SFD_INTEGER_CHECK("",
         (real_T)c2_d_c), 1, 4, 1, 0) - 1] = c2_z;
       c2_f_a = c2_b_k - 1;
-      c2_i17 = c2_f_a;
-      c2_b_eml_int_forloop_overflow_check(chartInstance, 1, c2_i17);
-      for (c2_c_i = 1; c2_c_i <= c2_i17; c2_c_i++) {
+      c2_i22 = c2_f_a;
+      c2_b_eml_int_forloop_overflow_check(chartInstance, 1, c2_i22);
+      for (c2_c_i = 1; c2_c_i <= c2_i22; c2_c_i++) {
         c2_d_i = c2_c_i;
         c2_g_a = c2_d_i;
         c2_g_c = c2_g_a;
@@ -1972,14 +2081,14 @@ static void c2_b_eml_int_forloop_overflow_check
   int32_T c2_b_b;
   boolean_T c2_overflow;
   boolean_T c2_safe;
-  int32_T c2_i18;
+  int32_T c2_i23;
   static char_T c2_cv0[34] = { 'C', 'o', 'd', 'e', 'r', ':', 't', 'o', 'o', 'l',
     'b', 'o', 'x', ':', 'i', 'n', 't', '_', 'f', 'o', 'r', 'l', 'o', 'o', 'p',
     '_', 'o', 'v', 'e', 'r', 'f', 'l', 'o', 'w' };
 
   char_T c2_u[34];
   const mxArray *c2_y = NULL;
-  int32_T c2_i19;
+  int32_T c2_i24;
   static char_T c2_cv1[5] = { 'i', 'n', 't', '3', '2' };
 
   char_T c2_b_u[5];
@@ -1995,15 +2104,15 @@ static void c2_b_eml_int_forloop_overflow_check
   c2_safe = !c2_overflow;
   if (c2_safe) {
   } else {
-    for (c2_i18 = 0; c2_i18 < 34; c2_i18++) {
-      c2_u[c2_i18] = c2_cv0[c2_i18];
+    for (c2_i23 = 0; c2_i23 < 34; c2_i23++) {
+      c2_u[c2_i23] = c2_cv0[c2_i23];
     }
 
     c2_y = NULL;
     sf_mex_assign(&c2_y, sf_mex_create("y", c2_u, 10, 0U, 1U, 0U, 2, 1, 34),
                   FALSE);
-    for (c2_i19 = 0; c2_i19 < 5; c2_i19++) {
-      c2_b_u[c2_i19] = c2_cv1[c2_i19];
+    for (c2_i24 = 0; c2_i24 < 5; c2_i24++) {
+      c2_b_u[c2_i24] = c2_cv1[c2_i24];
     }
 
     c2_b_y = NULL;
@@ -2017,15 +2126,15 @@ static void c2_b_eml_int_forloop_overflow_check
 static void c2_eml_xtrsm(SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance,
   real_T c2_A[16], real_T c2_B[4], real_T c2_b_B[4])
 {
-  int32_T c2_i20;
-  int32_T c2_i21;
+  int32_T c2_i25;
+  int32_T c2_i26;
   real_T c2_b_A[16];
-  for (c2_i20 = 0; c2_i20 < 4; c2_i20++) {
-    c2_b_B[c2_i20] = c2_B[c2_i20];
+  for (c2_i25 = 0; c2_i25 < 4; c2_i25++) {
+    c2_b_B[c2_i25] = c2_B[c2_i25];
   }
 
-  for (c2_i21 = 0; c2_i21 < 16; c2_i21++) {
-    c2_b_A[c2_i21] = c2_A[c2_i21];
+  for (c2_i26 = 0; c2_i26 < 16; c2_i26++) {
+    c2_b_A[c2_i26] = c2_A[c2_i26];
   }
 
   c2_b_eml_xtrsm(chartInstance, c2_b_A, c2_b_B);
@@ -2065,9 +2174,9 @@ static int32_T c2_d_emlrt_marshallIn(SFc2_TenzoDecV3DeltaPInstanceStruct
   *chartInstance, const mxArray *c2_u, const emlrtMsgIdentifier *c2_parentId)
 {
   int32_T c2_y;
-  int32_T c2_i22;
-  sf_mex_import(c2_parentId, sf_mex_dup(c2_u), &c2_i22, 1, 6, 0U, 0, 0U, 0);
-  c2_y = c2_i22;
+  int32_T c2_i27;
+  sf_mex_import(c2_parentId, sf_mex_dup(c2_u), &c2_i27, 1, 6, 0U, 0, 0U, 0);
+  c2_y = c2_i27;
   sf_mex_destroy(&c2_u);
   return c2_y;
 }
@@ -2131,7 +2240,7 @@ static void c2_b_eml_xtrsm(SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance,
   int32_T c2_b_a;
   int32_T c2_c_c;
   int32_T c2_c_a;
-  int32_T c2_i23;
+  int32_T c2_i28;
   int32_T c2_i;
   int32_T c2_b_i;
   int32_T c2_d_a;
@@ -2159,9 +2268,9 @@ static void c2_b_eml_xtrsm(SFc2_TenzoDecV3DeltaPInstanceStruct *chartInstance,
     if (c2_B[_SFD_EML_ARRAY_BOUNDS_CHECK("", (int32_T)_SFD_INTEGER_CHECK("",
           (real_T)c2_c_c), 1, 4, 1, 0) - 1] != 0.0) {
       c2_c_a = c2_b_k + 1;
-      c2_i23 = c2_c_a;
-      c2_b_eml_int_forloop_overflow_check(chartInstance, c2_i23, 4);
-      for (c2_i = c2_i23; c2_i < 5; c2_i++) {
+      c2_i28 = c2_c_a;
+      c2_b_eml_int_forloop_overflow_check(chartInstance, c2_i28, 4);
+      for (c2_i = c2_i28; c2_i < 5; c2_i++) {
         c2_b_i = c2_i;
         c2_d_a = c2_b_i;
         c2_d_c = c2_d_a;
@@ -2191,10 +2300,10 @@ static void init_dsm_address_info(SFc2_TenzoDecV3DeltaPInstanceStruct
 /* SFunction Glue Code */
 void sf_c2_TenzoDecV3DeltaP_get_check_sum(mxArray *plhs[])
 {
-  ((real_T *)mxGetPr((plhs[0])))[0] = (real_T)(3985442010U);
-  ((real_T *)mxGetPr((plhs[0])))[1] = (real_T)(2171431412U);
-  ((real_T *)mxGetPr((plhs[0])))[2] = (real_T)(3049227239U);
-  ((real_T *)mxGetPr((plhs[0])))[3] = (real_T)(1458161001U);
+  ((real_T *)mxGetPr((plhs[0])))[0] = (real_T)(593072353U);
+  ((real_T *)mxGetPr((plhs[0])))[1] = (real_T)(1045746469U);
+  ((real_T *)mxGetPr((plhs[0])))[2] = (real_T)(2664457481U);
+  ((real_T *)mxGetPr((plhs[0])))[3] = (real_T)(795281596U);
 }
 
 mxArray *sf_c2_TenzoDecV3DeltaP_get_autoinheritance_info(void)
@@ -2206,7 +2315,7 @@ mxArray *sf_c2_TenzoDecV3DeltaP_get_autoinheritance_info(void)
     autoinheritanceFields);
 
   {
-    mxArray *mxChecksum = mxCreateString("K6Gd2iO7erbAbN7IKtUtJC");
+    mxArray *mxChecksum = mxCreateString("EB0KSyAPsI38yrP4Qm42FB");
     mxSetField(mxAutoinheritanceInfo,0,"checksum",mxChecksum);
   }
 
@@ -2465,7 +2574,7 @@ static void chart_debug_initialization(SimStruct *S, unsigned int
 
         /* Initialization of MATLAB Function Model Coverage */
         _SFD_CV_INIT_EML(0,1,1,0,0,0,0,0,0,0);
-        _SFD_CV_INIT_EML_FCN(0,0,"eML_blk_kernel",0,-1,2739);
+        _SFD_CV_INIT_EML_FCN(0,0,"eML_blk_kernel",0,-1,2751);
         _SFD_TRANS_COV_WTS(0,0,0,1,0);
         if (chartAlreadyPresent==0) {
           _SFD_TRANS_COV_MAPS(0,
@@ -2528,7 +2637,7 @@ static void chart_debug_initialization(SimStruct *S, unsigned int
 
 static const char* sf_get_instance_specialization()
 {
-  return "gJdQEn19CGL0AR5pXWjWVG";
+  return "t1G7pOJEFqOZXQUImdcz1F";
 }
 
 static void sf_opaque_initialize_c2_TenzoDecV3DeltaP(void *chartInstanceVar)
@@ -2690,10 +2799,10 @@ static void mdlSetWorkWidths_c2_TenzoDecV3DeltaP(SimStruct *S)
   }
 
   ssSetOptions(S,ssGetOptions(S)|SS_OPTION_WORKS_WITH_CODE_REUSE);
-  ssSetChecksum0(S,(1628554583U));
-  ssSetChecksum1(S,(421262345U));
-  ssSetChecksum2(S,(2364745737U));
-  ssSetChecksum3(S,(4024565787U));
+  ssSetChecksum0(S,(2513056156U));
+  ssSetChecksum1(S,(3869487973U));
+  ssSetChecksum2(S,(3312375155U));
+  ssSetChecksum3(S,(3576901685U));
   ssSetmdlDerivatives(S, NULL);
   ssSetExplicitFCSSCtrl(S,1);
 }

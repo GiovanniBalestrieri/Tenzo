@@ -72,7 +72,9 @@ k1=2.028; %Transfer-function gain of motor 1
 k2=1.869; %Transfer-function gain of motor 2
 k3=2.002; %Transfer-function gain of motor 3
 k4=1.996; %Transfer-function gain of motor 4
-tc=0.0436; %Time-constant of the motors (assumed equal for all motors)
+
+% Real -----> 0.436
+tc=0.436; %Time-constant of the motors (assumed equal for all motors)
 
 dz1=1247.4; %PWM dead-zone of motor 1 given its first-order transfer
 % function (micro-seconds)
@@ -478,6 +480,7 @@ disp('avvio simulazione 1');
 N_psi = [3029.1617545382 41884.8274476077 0];
 D_psi = [1 1877.59274550691 0];
 
+% La perfezione!
 N_theta = [3029.1617545382 41884.8274476077 0];
 D_theta = [1 1877.59274550691 0];
 
@@ -498,7 +501,6 @@ D_thrust = [1 5043.9968441748 6107158.06951568];
 
 %% Non Linearities
 
-
 satThrust = 56;
 satNegThrust = 6;
 satTau = 100;
@@ -508,7 +510,7 @@ satMinRPM = -1300;
 deadMotorsZone = 800;
 
 EasyHardSat=0; % Easy Sat
-%EasyHardSat=1 % Har Sat: motor dynamics saturation and Deadzones
+EasyHardSat=1 % Har Sat: motor dynamics saturation and Deadzones
 
 open('TenzoDecV3DeltaP.mdl');
 sim('TenzoDecV3DeltaP.mdl');

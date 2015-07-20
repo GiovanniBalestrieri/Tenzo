@@ -9,7 +9,11 @@ LD = $(CC)
 MACHINE     = TenzoDecV3DeltaP
 TARGET      = sfun
 CHART_SRCS 	= \
-     c2_TenzoDecV3DeltaP.c
+     c1_TenzoDecV3DeltaP.c\
+     c2_TenzoDecV3DeltaP.c\
+     c3_TenzoDecV3DeltaP.c\
+     c4_TenzoDecV3DeltaP.c\
+     c5_TenzoDecV3DeltaP.c
 MACHINE_SRC	= TenzoDecV3DeltaP_sfun.c
 MACHINE_REG = TenzoDecV3DeltaP_sfun_registry.c
 MEX_WRAPPER =
