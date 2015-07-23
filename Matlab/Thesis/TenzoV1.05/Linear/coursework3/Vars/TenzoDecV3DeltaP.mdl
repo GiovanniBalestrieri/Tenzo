@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.278"
+    ComputedModelVersion    "1.282"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Jul 20 03:46:54 2015"
+  LastModifiedDate	  "Mon Jul 20 15:29:04 2015"
   RTWModifiedTimeStamp	  359089125
-  ModelVersionFormat	  "1.%<AutoIncrement:278>"
+  ModelVersionFormat	  "1.%<AutoIncrement:282>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1969,7 +1969,7 @@ Model {
       System {
 	Name			"NonLinearities2"
 	Location		[411, 137, 1278, 682]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -4025,7 +4025,7 @@ Model {
 	  LibraryVersion	  "1.260"
 	  SourceBlock		  "simulink/Signal\nRouting/Manual Switch"
 	  SourceType		  "Manual Switch"
-	  sw			  "1"
+	  sw			  "0"
 	  action		  "0"
 	  varsize		  off
 	}
@@ -4060,7 +4060,7 @@ Model {
 	  System {
 	    Name		    "Medium"
 	    Location		    [160, 79, 933, 768]
-	    Open		    off
+	    Open		    on
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -4189,10 +4189,10 @@ Model {
 	      Name		      "Sat1"
 	      SID		      "1087"
 	      Ports		      [1, 1]
-	      Position		      [315, 340, 345, 370]
+	      Position		      [315, 145, 345, 175]
 	      ZOrder		      -15
 	      InputPortMap	      "u0"
-	      UpperLimit	      "10000"
+	      UpperLimit	      "8000"
 	      LowerLimit	      "-10000"
 	    }
 	    Block {
@@ -4802,16 +4802,8 @@ Model {
 	    Line {
 	      SrcBlock		      "Mux3"
 	      SrcPort		      1
-	      Points		      [65, 0]
-	      Branch {
-		DstBlock		"Demux2"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 90]
-		DstBlock		"Omega Sat"
-		DstPort			1
-	      }
+	      DstBlock		      "Sat1"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Ideal Inputs"
@@ -4907,6 +4899,20 @@ Model {
 	      DstBlock		      "Difference"
 	      DstPort		      1
 	    }
+	    Line {
+	      SrcBlock		      "Sat1"
+	      SrcPort		      1
+	      Points		      [5, 0]
+	      Branch {
+		DstBlock		"Demux2"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, 90]
+		DstBlock		"Omega Sat"
+		DstPort			1
+	      }
+	    }
 	    Annotation {
 	      SID		      "677"
 	      Position		      [564, 172]
@@ -4930,7 +4936,7 @@ Model {
 	  System {
 	    Name		    "RHard"
 	    Location		    [160, 79, 933, 768]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -4987,7 +4993,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Motor's dynamic1"
-		Location		[665, 344, 1252, 797]
+		Location		[665, 315, 1252, 768]
 		Open			off
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
@@ -7605,7 +7611,7 @@ Model {
       System {
 	Name			"Subsystem"
 	Location		[1014, 258, 1239, 421]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -7836,8 +7842,8 @@ Model {
 	      }
 	      ShowLegends	      off
 	      TimeRange		      "15"
-	      YMin		      "-10"
-	      YMax		      "17.5"
+	      YMin		      "-1.75e+15"
+	      YMax		      "1.75e+15"
 	      SaveName		      "ScopeData6"
 	      DataFormat	      "StructureWithTime"
 	      LimitDataPoints	      off
@@ -7997,8 +8003,8 @@ Model {
 	  }
 	  ShowLegends		  off
 	  TimeRange		  "15              "
-	  YMin			  "-600"
-	  YMax			  "100"
+	  YMin			  "-1.4e+10"
+	  YMax			  "6e+09"
 	  SaveName		  "ScopeData2"
 	  DataFormat		  "StructureWithTime"
 	  LimitDataPoints	  off

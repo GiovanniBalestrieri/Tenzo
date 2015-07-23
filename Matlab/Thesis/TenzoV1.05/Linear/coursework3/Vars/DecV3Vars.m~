@@ -510,7 +510,7 @@ satMinRPM = -1300;
 deadMotorsZone = 800;
 
 EasyHardSat=0; % Easy Sat
-EasyHardSat=1 % Har Sat: motor dynamics saturation and Deadzones
+%EasyHardSat=1 % Har Sat: motor dynamics saturation and Deadzones
 
 open('TenzoDecV3DeltaP.mdl');
 sim('TenzoDecV3DeltaP.mdl');

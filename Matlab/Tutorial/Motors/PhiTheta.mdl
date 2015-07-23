@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.91"
+    ComputedModelVersion    "1.95"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Jul 18 02:56:54 2015"
-  RTWModifiedTimeStamp	  359088241
-  ModelVersionFormat	  "1.%<AutoIncrement:91>"
+  LastModifiedDate	  "Mon Jul 20 15:43:26 2015"
+  RTWModifiedTimeStamp	  359307137
+  ModelVersionFormat	  "1.%<AutoIncrement:95>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,6 +78,7 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "PhiTheta"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -1003,7 +1004,7 @@ Model {
 	      Position		      [90, 27, 150, 63]
 	      ZOrder		      -9
 	      BackgroundColor	      "blue"
-	      Numerator		      "[3029.1617545382 41884.8274476077 0]"
+	      Numerator		      "[5582.54637971166 77190.9890523944 0]"
 	      Denominator	      "[1 1877.59274550691 0]"
 	    }
 	    Block {
@@ -1911,7 +1912,7 @@ Model {
       Position		      [780, 189, 810, 221]
       ZOrder		      -16
       Floating		      off
-      Location		      [217, 81, 873, 767]
+      Location		      [197, 81, 853, 767]
       Open		      off
       NumInputPorts	      "1"
       ZoomMode		      "xonly"
@@ -2104,8 +2105,8 @@ MatData {
     "&          4    (               !          D         #@   #@    &    \"     8         !0    @    !     0    $     "
     "    \"0    @           #P/PX    P    !@    @    &          4    (               !          D         #@   #     & "
     "   \"     8         !0    @               $         \"0         .    .     8    (    !@         %    \"     $    !"
-    "     0         )    \"          !>() #@   #@    &    \"     8         !0    @    !     0    $         \"0    @    "
-    "   #  *B20 X    P    !@    @    &          4    (               !          D         "
+    "     0         )    \"          !8(U #@   #@    &    \"     8         !0    @    !     0    $         \"0    @    "
+    "   !  $JM0 X    P    !@    @    &          4    (               !          D         "
   }
   DataRecord {
     Tag			    DataTag0

@@ -74,7 +74,7 @@ k3=2.002; %Transfer-function gain of motor 3
 k4=1.996; %Transfer-function gain of motor 4
 
 % Real -----> 0.436
-tc=0.0136; %Time-constant of the motors (assumed equal for all motors)
+tc=0.436; %Time-constant of the motors (assumed equal for all motors)
 
 dz1=1247.4; %PWM dead-zone of motor 1 given its first-order transfer
 % function (micro-seconds)
