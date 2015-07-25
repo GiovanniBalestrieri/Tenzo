@@ -2,7 +2,7 @@
 #include "Pid.h"
 
 boolean printBlue = false;
-boolean processing = true;
+boolean processing = false;
 boolean printMotorsVals = false;
 boolean printPIDVals = false;
 boolean printSerial = false;
@@ -15,11 +15,12 @@ boolean printAnglesEst = false;
 #endif
 
 MPU6050 mpu;
-#define OUTPUT_READABLE_EULER
 
+//#define OUTPUT_READABLE_EULER1
 //#define OUTPUT_READABLE_YAWPITCHROLL
 
-//#define OUTPUT_READABLE_REALACCEL
+#define OUTPUT_REAL_ACC
+#define OUTPUT_READABLE_REALACCEL
 
 //#define OUTPUT_READABLE_WORLDACCEL
 
@@ -82,12 +83,13 @@ void setup()
     mpu.initialize();
 
     // verify connection
-    if (!processing){
-    Serial.println(F("Testing device connections..."));
-    Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
-    
-    // load and configure the DMP
-    Serial.println(F("Initializing DMP..."));
+    if (!processing)
+    {
+      Serial.println(F("Testing device connections..."));
+      Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
+      
+      // load and configure the DMP
+      Serial.println(F("Initializing DMP..."));
     }
     devStatus = mpu.dmpInitialize();
 
@@ -181,7 +183,10 @@ void loop()
 
 void serialRoutine()
 {
-      printSerialAngle();
+      #ifdef OUTPUT_READABLE_EULER1
+          printSerialAngle();
+      #endif
+      
       #ifdef OUTPUT_READABLE_EULER
           printEulerSerial();
       #endif
@@ -189,6 +194,10 @@ void serialRoutine()
       #ifdef OUTPUT_READABLE_YAWPITCHROLL
           printYPRSerial();
       #endif 
+      
+      #ifdef OUTPUT_REAL_ACC
+          printRealAcc();
+      #endif
 }
 
 void mpuRoutine()
@@ -267,7 +276,7 @@ void printSerialAngle()
   { 
     //mpu.dmpGetQuaternion(&q, fifoBuffer);
     //mpu.dmpGetEuler(euler, &q);
-    Serial.print(",");
+    Serial.print(" ");
     Serial.print(euler[0] * 180/M_PI);
     Serial.print(",");
     Serial.print(euler[1] * 180/M_PI);
@@ -278,19 +287,18 @@ void printSerialAngle()
 }
 
 void printRealAcc()
-{
-            // display real acceleration, adjusted to remove gravity
-            mpu.dmpGetQuaternion(&q, fifoBuffer);
-            mpu.dmpGetAccel(&aa, fifoBuffer);
-            mpu.dmpGetGravity(&gravity, &q);
-            mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-            Serial.print("areal\t");
-            Serial.print(aaReal.x);
-            Serial.print("\t");
-            Serial.print(aaReal.y);
-            Serial.print("\t");
-            Serial.println(aaReal.z);
-        #endif
-  
+{           
+  // display real acceleration, adjusted to remove gravity
+  mpu.dmpGetQuaternion(&q, fifoBuffer);
+  mpu.dmpGetAccel(&aa, fifoBuffer);
+  mpu.dmpGetGravity(&gravity, &q);
+  mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+  Serial.print("areal\t");
+  Serial.print(aaReal.x);
+  Serial.print("\t");
+  Serial.print(aaReal.y);
+  Serial.print("\t");
+  Serial.println(aaReal.z);
+
 }
 
