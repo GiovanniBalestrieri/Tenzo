@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.282"
+    ComputedModelVersion    "1.283"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Jul 20 15:29:04 2015"
-  RTWModifiedTimeStamp	  359089125
-  ModelVersionFormat	  "1.%<AutoIncrement:282>"
+  LastModifiedDate	  "Thu Jul 23 10:52:05 2015"
+  RTWModifiedTimeStamp	  359549523
+  ModelVersionFormat	  "1.%<AutoIncrement:283>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1969,7 +1969,7 @@ Model {
       System {
 	Name			"NonLinearities2"
 	Location		[411, 137, 1278, 682]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -4185,17 +4185,6 @@ Model {
 	      SampleTime	      "0"
 	    }
 	    Block {
-	      BlockType		      Saturate
-	      Name		      "Sat1"
-	      SID		      "1087"
-	      Ports		      [1, 1]
-	      Position		      [315, 145, 345, 175]
-	      ZOrder		      -15
-	      InputPortMap	      "u0"
-	      UpperLimit	      "8000"
-	      LowerLimit	      "-10000"
-	    }
-	    Block {
 	      BlockType		      Sum
 	      Name		      "Sum2"
 	      SID		      "1043"
@@ -4802,8 +4791,16 @@ Model {
 	    Line {
 	      SrcBlock		      "Mux3"
 	      SrcPort		      1
-	      DstBlock		      "Sat1"
-	      DstPort		      1
+	      Points		      [65, 0]
+	      Branch {
+		DstBlock		"Demux2"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, 90]
+		DstBlock		"Omega Sat"
+		DstPort			1
+	      }
 	    }
 	    Line {
 	      SrcBlock		      "Ideal Inputs"
@@ -4898,20 +4895,6 @@ Model {
 	      Points		      [0, -30]
 	      DstBlock		      "Difference"
 	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Sat1"
-	      SrcPort		      1
-	      Points		      [5, 0]
-	      Branch {
-		DstBlock		"Demux2"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 90]
-		DstBlock		"Omega Sat"
-		DstPort			1
-	      }
 	    }
 	    Annotation {
 	      SID		      "677"
@@ -7611,7 +7594,7 @@ Model {
       System {
 	Name			"Subsystem"
 	Location		[1014, 258, 1239, 421]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -9105,8 +9088,8 @@ MatData {
     "&          4    (               !          D         #@   #@    &    \"     8         !0    @    !     0    $     "
     "    \"0    @           #P/PX    P    !@    @    &          4    (               !          D         #@   #     & "
     "   \"     8         !0    @               $         \"0         .    .     8    (    !@         %    \"     $    !"
-    "     0         )    \"         \"  PA #@   #@    &    \"     8         !0    @    !     0    $         \"0    @   "
-    "    \" !H!V0 X    P    !@    @    &          4    (               !          D         "
+    "     0         )    \"         !  PA #@   #@    &    \"     8         !0    @    !     0    $         \"0    @    "
+    "   #  (B$0 X    P    !@    @    &          4    (               !          D         "
   }
   DataRecord {
     Tag			    DataTag0
@@ -9205,8 +9188,6 @@ Stateflow {
     firstJunction	    4
     viewObj		    2
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    11
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -9755,8 +9736,6 @@ Stateflow {
     firstJunction	    30
     viewObj		    28
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    11
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -10031,8 +10010,6 @@ Stateflow {
     firstJunction	    43
     viewObj		    41
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    11
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -10308,8 +10285,6 @@ Stateflow {
     firstJunction	    56
     viewObj		    54
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    11
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
