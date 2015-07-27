@@ -1,0 +1,55 @@
+%% Arduino Matlab communication
+
+%  The sensor used in this project is the gyroscope L3G4200D
+%  
+%  Wiring instructions:
+
+%  TODO
+%  Z -> A0
+%  Y -> A1
+%  X -> A2
+%     G-Range | GS1 | GS2 | Sensitivity
+%      1.5 G   GND    GND     800mV/g
+%      2 G     GND    3.3     600mV/g
+%      4 G     3.3    GND     300mV/g
+%      6 G     3.3    3.3     200mV/g
+
+%% Check serial objects & Connect to Port
+    port = '/dev/ttyS101';
+    oldSerial = instrfind('Port', port); 
+    % can also use instrfind() with no input arguments to find ALL existing serial objects
+    if (~isempty(oldSerial))  % if the set of such objects is not(~) empty
+        disp('WARNING:  Port in use. Closing.')
+        delete(oldSerial)
+    end
+    
+    disp('Connection to serial port...');
+    %%  Setting up serial communication
+    % XBee expects the end of commands to be delineated by a carriage return.
+    xbee = serial(port,'baudrate',9600,'terminator','CR','tag','Quad');
+
+    set(xbee, 'TimeOut', 5);  %I am willing to wait 1.5 secs for data to arive
+    % I wanted to make my buffer only big enough to store one message
+    set(xbee, 'InputBufferSize',  390 )
+    % Before you can write to your serial port, you need to open it:
+    fopen(xbee);
+    
+    disp('Serial port opened');
+    %% Disp incoming serial message
+    
+    disp(fscanf(xbee,'%s');
+    %% Testing Wireless communication
+    
+    % Ask for data
+    fprintf(xbee,'T');
+    ack = fscanf( xbee, '%s');
+    if (strcmp(deblank(ack), 'K0') == 1)
+        yes = [11];
+        fwrite(xbee,yes);
+        disp ('Ok');
+    else
+        no =[0];
+        fwrite(xbee,no);
+        disp ('No');
+    end
+    wx=0;

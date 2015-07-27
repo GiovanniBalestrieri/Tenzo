@@ -1,0 +1,65 @@
+%% Arduino Gyroscope real time plot
+
+%  The sensor used in this project is the L3G4200D
+%  !!Caution!! operative voltage: 3.3 V
+
+
+% Connect the sleep pin to 3.3V.
+% clear all;
+% clc;
+
+% declaring the arduino varialble and establishing connection
+Wx = 0, Wy = 0, Wz=0;
+
+% Figure options
+figure;
+hold on;
+grid on;
+ax = axes('box','on');
+
+%% Initializinig the rolling plot
+
+buf_len = 100;
+index = 1:buf_len;
+
+% create variables for the Xaxis
+gxdata = zeros(buf_len,1);
+gydata = zeros(buf_len,1);
+gzdata = zeros(buf_len,1);
+
+%% Data collection and Plotting
+while abs(wx)< 3.5
+    
+% Reads raw data
+Wx = wx
+
+    %[gx, gy, gz] = [Xacc, Yacc, Zacc];
+    % Update the rolling plot. Append the new reading to the end of the
+    % rolling plot data
+    gxdata = [ gxdata(2:end) ; Xacc ];
+    gydata = [ gydata(2:end) ; Yacc ];
+    gzdata = [ gzdata(2:end) ; Zacc ];    
+    %Plot the X magnitude
+    subplot(3,1,1);
+    title('X Axis Acceleration in G');
+    plot(index,gxdata,'r','LineWidth',1);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+    xlabel('Time');
+    ylabel('X Acc (G)');
+    axis([1 buf_len -3.5 3.5]);
+    %hold on;
+    subplot(3,1,2);
+    title('Y Axis Acceleration in G');
+    plot(index,gydata,'b','LineWidth',1);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+    xlabel('Time');
+    ylabel('Y Acc');
+    axis([1 buf_len -3.5 3.5]);
+    subplot(3,1,3);
+    title('Z Axis Acceleration in G');
+    %hold on;
+    plot(index,gzdata,'g','LineWidth',1);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+    axis([1 buf_len -3.5 3.5]);
+    xlabel('Time');
+    ylabel('Z Acc');
+    drawnow;
+end
+
