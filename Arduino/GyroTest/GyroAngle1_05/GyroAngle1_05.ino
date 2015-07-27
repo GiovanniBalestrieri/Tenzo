@@ -38,7 +38,7 @@ void setup()
   Serial.println("starting up L3G4200D");
   setupL3G4200D(2000); // Configure L3G4200  - 250, 500 or 2000 deg/sec
   delay(1500); //wait for the sensor to be ready   
-  //calcBias();
+  calcBias();
   k = micros();
 }
 
@@ -51,10 +51,12 @@ void loop()
   {
     kMRoutine = micros();    
     // Update x, y, and z with new values 2.5ms
-    getGyroValues();  
+    getGyroValues();      
+    removeBias();
     
     count += 1;
     calcAngle();
+    
     if (count >= 200)
     {
       count = 0;
@@ -82,7 +84,7 @@ void calcAngle()
  psi=psi+z*(double)dt/1000000.0;
  
   Serial.print("       ThetaNEW:");
-  Serial.print(psi);
+  Serial.println(psi);
  
 // Serial.print("SSSSS  ");
 // Serial.print(dt);
@@ -125,9 +127,6 @@ void getGyroValues()
   byte zMSB = readRegister(L3G4200D_Address, 0x2D);
   byte zLSB = readRegister(L3G4200D_Address, 0x2C);
   z = ((zMSB << 8) | zLSB);
-
-  removeBias();
-  
   //samplingTime = micros() - samplingTime;
 }
 
@@ -186,7 +185,7 @@ void printAngle()
 void calcBias()
 {  
   Serial.println(" Bias estimation ...");
-  int c = 2000;
+  int c = 1000;
   for (int i = 0; i<c; i++)
   {
     getGyroValues(); 
@@ -198,7 +197,7 @@ void calcBias()
   by = byS / c;
   bz = bzS / c;
   
-  Serial.print(" Bias: [ ");
+  Serial.print("\n Bias: [ ");
   Serial.print(bx);
   Serial.print("  ;  ");
   Serial.print(by);

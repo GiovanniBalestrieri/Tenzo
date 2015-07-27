@@ -92,17 +92,18 @@ Tdata = zeros(buf_len,1);
 Pdata = zeros(buf_len,1);
 Ydata = zeros(buf_len,1);
 
-%% Check to see if there are existing serial objects (instrfind) whos 'Port' property is set to 'COM3'
-    oldSerial = instrfind('Port', 'COM3'); 
+%% Check to see if there are existing serial objects (instrfind) whos 'Port' property is set to port
+    port = '/dev/ttyS101';
+    oldSerial = instrfind('Port', port); 
     % can also use instrfind() with no input arguments to find ALL existing serial objects
     if (~isempty(oldSerial))  % if the set of such objects is not(~) empty
-        disp('WARNING:  COM3 in use.  Closing.')
+        disp('WARNING:  Port in use. Closing.')
         delete(oldSerial)
     end
 
     %%  Setting up serial communication
     % XBee expects the end of commands to be delineated by a carriage return.
-    xbee = serial('COM3','baudrate',57600,'terminator','CR','tag','Quad');
+    xbee = serial(port,'baudrate',9600,'terminator','CR','tag','Quad');
 
     set(xbee, 'TimeOut', 5);  %I am willing to wait 1.5 secs for data to arive
     % I wanted to make my buffer only big enough to store one message

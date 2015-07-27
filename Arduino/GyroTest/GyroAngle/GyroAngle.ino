@@ -40,7 +40,12 @@ void setup()
 
 void loop()
 {
-  getGyroValues();  // This will update x, y, and z with new values
+  // This will update x, y, and z with new values
+  getGyroValues(); 
+  // Removes Bias
+  removeBias();
+  
+  // Inner Loop
   timerLoop = millis()-kM1;
   if (timerLoop >= deltaT)
   {
@@ -117,7 +122,6 @@ void getGyroValues()
   byte zLSB = readRegister(L3G4200D_Address, 0x2C);
   z = ((zMSB << 8) | zLSB);
 
-  removeBias();
 }
 
 void removeBias()
@@ -211,6 +215,20 @@ void printOmega()
   Serial.print("       Wz:");
   Serial.println(z);
 }
+
+void printCSVomega()
+{
+  Serial.print(",");
+  Serial.print(x);
+
+  Serial.print(",");
+  Serial.print(y);
+
+  Serial.print(",");
+  Serial.print(z);
+  Serial.println(",");
+}
+
 
 void printAngle()
 {
