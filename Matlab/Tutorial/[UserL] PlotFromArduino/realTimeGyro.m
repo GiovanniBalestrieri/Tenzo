@@ -55,9 +55,7 @@
 Wx = 0; Wy = 0; Wz=0;
 % 
 % % Figure options
-% figure;
-% hold on;
-% grid on;
+figure(1);
 % ax = axes('box','on');
 
 %% Initializinig the rolling plot
@@ -73,15 +71,17 @@ gydata = zeros(buf_len,1);
 gzdata = zeros(buf_len,1);
 
 %% Data collection and Plotting
-while (read & abs(Wz) < 10000)
+while (read & abs(Wz) < 5000)
     % Polling 
     pause(0.1);
     fprintf(xbee,'M') ; 
+    notArrived = false;
     try
-        while (get(xbee, 'BytesAvailable')~=0)
+        while (get(xbee, 'BytesAvailable')~=0 && ~notArrived)
             % read until terminator
             sentence = fscanf( xbee, '%s'); % this reads in as a string (until a terminater is reached)
             if (strcmp(sentence(1,1),'A'))
+                notArrived = true;
                 %decodes "sentence" seperated (delimted) by commaseck Unit')
                 C = textscan(sentence,'%c %d %d %d %c','delimiter',',');
                 Wx = C{2};
@@ -89,34 +89,34 @@ while (read & abs(Wz) < 10000)
                 Wz = C{4};
                 
                 %% Plotting angles
-                figure(1);
-                grid on;
 
                 %[gx, gy, gz] = [Xacc, Yacc, Zacc];
                 % Update the rolling plot. Append the new reading to the end of the
                 % rolling plot data
                 gxdata = [ gxdata(2:end) ; Wx ];
                 gydata = [ gydata(2:end) ; Wy ];
-                gzdata = [ gzdata(2:end) ; Wz ];    
+                gzdata = [ gzdata(2:end) ; Wz ]; 
+                
+                
                 %Plot the X magnitude
                 subplot(3,1,1);
                 title('X Axis Omega in deg/s');
                 plot(index,gxdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                 xlabel('Sample');
                 ylabel('Wx (deg/sec)');
-                axis([1 buf_len -100 100]);
+                %axis([1 buf_len -100 100]);
                 %hold on;
                 subplot(3,1,2);
                 title('Y  Axis Omega in deg/s');
                 plot(index,gydata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                 xlabel('Sample');
                 ylabel('Wy');
-                axis([1 buf_len -100 100]);
+                %axis([1 buf_len -100 100]);
                 subplot(3,1,3);
                 title('Z  Axis Omega in deg/s');
                 %hold on;
                 plot(index,gzdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                axis([1 buf_len -100 100]);
+                %axis([1 buf_len -100 100]);
                 xlabel('Sample');
                 ylabel('Wz');
                 
@@ -125,7 +125,7 @@ while (read & abs(Wz) < 10000)
         end
     end
 end
-
+disp('threshold reached. Closing');
 %% Close connection    
 
 fclose(xbee);
