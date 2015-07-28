@@ -1,33 +1,24 @@
 %% Arduino Matlab communication
-
-%  The sensor used in this project is the gyroscope L3G4200D
-%  
-%  Wiring instructions:
-
-%  TODO
-%  Z -> A0
-%  Y -> A1
-%  X -> A2
-%     G-Range | GS1 | GS2 | Sensitivity
-%      1.5 G   GND    GND     800mV/g
-%      2 G     GND    3.3     600mV/g
-%      4 G     3.3    GND     300mV/g
-%      6 G     3.3    3.3     200mV/g
-
+    clear all;
+    clc;
+    clear('instrfindall');
 %% Check serial objects & Connect to Port
 
-%   First run userk@dopamine:~$ sudo ln -s /dev/ttyNUMBER /dev/ttyS101
-    disp('Have you run the simbolic link with ttyS101?');
+%   Check the port you are using with the arduino, then run: sudo ln -s /dev/ttyNUMBER /dev/ttyS101
+    disp('Linux User? Have you run the simbolic link with ttyS101?');
+    disp('sudo ln -s /dev/tty_NUMBER_ /dev/ttyS101');
     port = '/dev/ttyS101';
     oldSerial = instrfind('Port', port); 
     % can also use instrfind() with no input arguments to find ALL existing serial objects
     if (~isempty(oldSerial))  % if the set of such objects is not(~) empty
-        disp('WARNING:  Port in use. Closing.')
+        disp('WARNING:  Port in use. Check your port. Closing.')
         delete(oldSerial)
+        a = true;
+    else        
+        disp('Connection to serial port...');
     end
     
-    disp('Connection to serial port...');
-    %%  Setting up serial communication
+%%  Setting up serial communication
     % XBee expects the end of commands to be delineated by a carriage return.
     xbee = serial(port,'baudrate',9600,'terminator','CR','tag','Quad');
 
@@ -38,7 +29,8 @@
     fopen(xbee);
     
     disp('Serial port opened');
-%% Disp incoming serial message
+    
+    %% Disp incoming serial message
     
     % disp(fscanf(xbee,'%s'));
     
@@ -46,19 +38,25 @@
     
     % Ask for data
     fprintf(xbee,'T');
+    pause(5);
+    disp('Sent: T');
     ack = fscanf( xbee, '%s');
     if (strcmp(deblank(ack), 'Ok') == 1)
-        yes = [1];
-        fwrite(xbee,yes);
-        disp ('Ok');
+        disp ('Received: OK');
     else
-        no =[0];
-        fwrite(xbee,no);
-        disp ('No');
+        disp ('Received a mess:');
+        disp (ack);
     end
-    wx=0;    
     
+    fprintf(xbee,'M');
+    disp ('Sent: M');
+    ack = fscanf( xbee, '%s');
+    disp('Received:');
+    disp(ack);
+    
+    
+%% Close connection    
 
-    
-    %% Close connection
-    xbee(close)
+fclose(xbee);
+delete(xbee);
+clear xbee

@@ -1,38 +1,68 @@
-%% Arduino Accelerometer real time plot
+%% Arduino Gyroscope real time plot
 
-%  The sensor used in this project is the MMA7260Q
+%  The sensor used in this project is the L3G4200D
 %  !!Caution!! operative voltage: 3.3 V
-%  Wiring instrucitons:
-%  Z -> A0
-%  Y -> A1
-%  X -> A2
-%     G-Range | GS1 | GS2 | Sensitivity
-%      1.5 G   GND    GND     800mV/g
-%      2 G     GND    3.3     600mV/g
-%      4 G     3.3    GND     300mV/g
-%      6 G     3.3    3.3     200mV/g
 
-% Connect the sleep pin to 3.3V. For power saving connect 
-% the sleep pin to GND
-clear all;
-clc;
+    clear all;
+    clc;
+    clear('instrfindall');
+%% Check serial objects & Connect to Port
 
+%   Check the port you are using with the arduino, then run: sudo ln -s /dev/ttyNUMBER /dev/ttyS101
+    disp('Linux User? Have you run the simbolic link with ttyS101?');
+    disp('sudo ln -s /dev/tty_NUMBER_ /dev/ttyS101');
+    port = '/dev/ttyS101';
+    oldSerial = instrfind('Port', port); 
+    % can also use instrfind() with no input arguments to find ALL existing serial objects
+    if (~isempty(oldSerial))  % if the set of such objects is not(~) empty
+        disp('WARNING:  Port in use. Check your port. Closing.')
+        delete(oldSerial)
+        a = true;
+    else        
+        disp('Connection to serial port...');
+    end
+    
+%%  Setting up serial communication
+    % XBee expects the end of commands to be delineated by a carriage return.
+    xbee = serial(port,'baudrate',9600,'terminator','CR','tag','Quad');
+
+    set(xbee, 'TimeOut', 5);  %I am willing to wait 1.5 secs for data to arive
+    % I wanted to make my buffer only big enough to store one message
+    set(xbee, 'InputBufferSize',  390 )
+    % Before you can write to your serial port, you need to open it:
+    fopen(xbee);
+    
+    disp('Serial port opened');
+    
+    %% Disp incoming serial message
+    fprintf(xbee,'T')
+    disp(fscanf(xbee,'%s'));
+    
+%% Testing Connection 
+    
+    % Ask for data
+    fprintf(xbee,'T');
+    disp('Sent: T');
+    pause(1);
+    ack = fscanf( xbee, '%s');
+    if (strcmp(deblank(ack), 'Ok') == 1)
+        disp ('Received: OK');
+    else
+        disp ('Communication problem. Check Hardware and retry.');
+    end       
+%% Setup Plot
 % declaring the arduino varialble and establishing connection
-a = arduino('Com13');
-modeG = 0.800
-midV = 1.65;
-Xacc = 0, Yacc = 0, Zacc=0;
-% Figure options
-figure;
-hold on;
-grid on;
-ax = axes('box','on');
-% Defines pin to AnalogInputs
-% a.pinMode(A0,'input');
-% a.pinMode(A1,'input');
-% a.pinMode(A2,'input');
+Wx = 0; Wy = 0; Wz=0;
+% 
+% % Figure options
+% figure;
+% hold on;
+% grid on;
+% ax = axes('box','on');
 
 %% Initializinig the rolling plot
+
+read = true;
 
 buf_len = 100;
 index = 1:buf_len;
@@ -43,48 +73,61 @@ gydata = zeros(buf_len,1);
 gzdata = zeros(buf_len,1);
 
 %% Data collection and Plotting
-while abs(Xacc)< 3.5
-    
-% Reads raw data
-ZVal = a.analogRead(0);
-YVal = a.analogRead(1);
-XVal = a.analogRead(2);
+while (read & abs(Wz) < 10000)
+    % Polling 
+    pause(0.1);
+    fprintf(xbee,'M') ; 
+    try
+        while (get(xbee, 'BytesAvailable')~=0)
+            % read until terminator
+            sentence = fscanf( xbee, '%s'); % this reads in as a string (until a terminater is reached)
+            if (strcmp(sentence(1,1),'A'))
+                %decodes "sentence" seperated (delimted) by commaseck Unit')
+                C = textscan(sentence,'%c %d %d %d %c','delimiter',',');
+                Wx = C{2};
+                Wy = C{3};
+                Wz = C{4};
+                
+                %% Plotting angles
+                figure(1);
+                grid on;
 
-%Convertion
-Zav = ZVal*0.005;
-Yav = YVal*0.005;
-Xav = XVal*0.005;
-Zacc = -(Zav-midV)/modeG;
-Yacc = -(Yav-midV)/modeG;
-Xacc = -(Xav-midV)/modeG;
-
-    %[gx, gy, gz] = [Xacc, Yacc, Zacc];
-    % Update the rolling plot. Append the new reading to the end of the
-    % rolling plot data
-    gxdata = [ gxdata(2:end) ; Xacc ];
-    gydata = [ gydata(2:end) ; Yacc ];
-    gzdata = [ gzdata(2:end) ; Zacc ];    
-    %Plot the X magnitude
-    subplot(3,1,1);
-    title('X Axis Acceleration in G');
-    plot(index,gxdata,'r','LineWidth',1);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-    xlabel('Time');
-    ylabel('X Acc (G)');
-    axis([1 buf_len -3.5 3.5]);
-    %hold on;
-    subplot(3,1,2);
-    title('Y Axis Acceleration in G');
-    plot(index,gydata,'b','LineWidth',1);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-    xlabel('Time');
-    ylabel('Y Acc');
-    axis([1 buf_len -3.5 3.5]);
-    subplot(3,1,3);
-    title('Z Axis Acceleration in G');
-    %hold on;
-    plot(index,gzdata,'g','LineWidth',1);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-    axis([1 buf_len -3.5 3.5]);
-    xlabel('Time');
-    ylabel('Z Acc');
-    drawnow;
+                %[gx, gy, gz] = [Xacc, Yacc, Zacc];
+                % Update the rolling plot. Append the new reading to the end of the
+                % rolling plot data
+                gxdata = [ gxdata(2:end) ; Wx ];
+                gydata = [ gydata(2:end) ; Wy ];
+                gzdata = [ gzdata(2:end) ; Wz ];    
+                %Plot the X magnitude
+                subplot(3,1,1);
+                title('X Axis Omega in deg/s');
+                plot(index,gxdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                xlabel('Sample');
+                ylabel('Wx (deg/sec)');
+                axis([1 buf_len -100 100]);
+                %hold on;
+                subplot(3,1,2);
+                title('Y  Axis Omega in deg/s');
+                plot(index,gydata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                xlabel('Sample');
+                ylabel('Wy');
+                axis([1 buf_len -100 100]);
+                subplot(3,1,3);
+                title('Z  Axis Omega in deg/s');
+                %hold on;
+                plot(index,gzdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                axis([1 buf_len -100 100]);
+                xlabel('Sample');
+                ylabel('Wz');
+                
+                drawnow;
+            end
+        end
+    end
 end
 
+%% Close connection    
+
+fclose(xbee);
+delete(xbee);
+clear xbee
