@@ -50,6 +50,14 @@
     else
         disp ('Communication problem. Check Hardware and retry.');
     end       
+    
+    
+%% Ask desired Sample Rate in Hz
+rate=input('Enter the samplerate in Hz. Max 500Hz. Non sgravare...      ');
+delay = 1/rate;
+str = sprintf('SampleRate fixed to: %f.', delay);
+disp(str);
+
 %% Setup Plot
 % declaring the arduino varialble and establishing connection
 Wx = 0; Wy = 0; Wz=0;
@@ -60,8 +68,6 @@ figure(1);
 
 %% Initializinig the rolling plot
 
-read = true;
-
 buf_len = 100;
 index = 1:buf_len;
 
@@ -71,9 +77,9 @@ gydata = zeros(buf_len,1);
 gzdata = zeros(buf_len,1);
 
 %% Data collection and Plotting
-while (read & abs(Wz) < 5000)
+while (abs(Wz) < 2500)
     % Polling 
-    pause(0.1);
+    pause(delay);
     fprintf(xbee,'M') ; 
     notArrived = false;
     try
@@ -96,8 +102,7 @@ while (read & abs(Wz) < 5000)
                 gxdata = [ gxdata(2:end) ; Wx ];
                 gydata = [ gydata(2:end) ; Wy ];
                 gzdata = [ gzdata(2:end) ; Wz ]; 
-                
-                
+                                
                 %Plot the X magnitude
                 subplot(3,1,1);
                 title('X Axis Omega in deg/s');
@@ -123,6 +128,8 @@ while (read & abs(Wz) < 5000)
                 drawnow;
             end
         end
+    catch exeption
+        disp('Warning');
     end
 end
 disp('threshold reached. Closing');
