@@ -50,6 +50,14 @@
     else
         disp ('Communication problem. Check Hardware and retry.');
     end       
+    
+    
+%% Ask desired Sample Rate in Hz
+rate=input('Enter the samplerate in Hz. Max 500Hz. Non sgravare...      ');
+delay = 1/rate;
+str = sprintf('SampleRate fixed to: %f.', delay);
+disp(str);
+
 %% Setup Plot
 % declaring the arduino varialble and establishing connection
 Wx = 0; Wy = 0; Wz=0;
@@ -58,9 +66,9 @@ Wx = 0; Wy = 0; Wz=0;
 figure(1);
 % ax = axes('box','on');
 
-%% Initializinig the rolling plot
+%% Initializinig rolling plot
 
-buf_len = 100;
+buf_len = rate;
 index = 1:buf_len;
 
 % create variables for the Xaxis
@@ -68,14 +76,10 @@ gxdata = zeros(buf_len,1);
 gydata = zeros(buf_len,1);
 gzdata = zeros(buf_len,1);
 
-%% Ask desired Sample Rate in Hz
-rate=input('Enter the samplerate in Hz. Max 500Hz. Non sgravare.',s);
-delay = 1/rate;
-disp('Fixed SampleRate
 %% Data collection and Plotting
 while (abs(Wz) < 2500)
     % Polling 
-    pause(0.005);
+    pause(delay);
     fprintf(xbee,'M') ; 
     notArrived = false;
     try
@@ -105,19 +109,19 @@ while (abs(Wz) < 2500)
                 plot(index,gxdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                 xlabel('Sample');
                 ylabel('Wx (deg/sec)');
-                %axis([1 buf_len -100 100]);
+                %axis([1 buf_len -rate 100]);
                 %hold on;
                 subplot(3,1,2);
                 title('Y  Axis Omega in deg/s');
                 plot(index,gydata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                 xlabel('Sample');
                 ylabel('Wy');
-                %axis([1 buf_len -100 100]);
+                %axis([1 buf_len -rate rate]);
                 subplot(3,1,3);
                 title('Z  Axis Omega in deg/s');
                 %hold on;
                 plot(index,gzdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                %axis([1 buf_len -100 100]);
+                %axis([1 buf_len -rate rate]);
                 xlabel('Sample');
                 ylabel('Wz');
                 

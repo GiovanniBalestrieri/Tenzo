@@ -8,7 +8,7 @@ gzFdata = 0;
 % Loads samples from file
 dat = load('AccSamples.mat');
 
-% Plots raw data
+% Plots raw data vs time
 figure(1);
 plot(dat.time,dat.x);
 title('Noisy acceleration along X axis');
@@ -17,7 +17,7 @@ ylabel('Amplitude [m*s^-2]');
 grid on
 grid minor
 
-% Plots raw data
+% Plots raw data vs samples
 figure(2);
 plot(dat.x);
 title('Noisy acceleration along X axis');

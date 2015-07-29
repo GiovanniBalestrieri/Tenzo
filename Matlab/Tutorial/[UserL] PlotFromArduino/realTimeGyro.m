@@ -66,9 +66,9 @@ Wx = 0; Wy = 0; Wz=0;
 figure(1);
 % ax = axes('box','on');
 
-%% Initializinig the rolling plot
+%% Initializinig rolling plot
 
-buf_len = 100;
+buf_len = rate;
 index = 1:buf_len;
 
 % create variables for the Xaxis
