@@ -32,7 +32,7 @@ xlabel('Normalized frequency [\pi rads/samples]');
 ylabel('Magnitude');
 
 % Designs a second order filter using a butterworth design guidelines
-[b a] = butter(2,0.9,'high');
+[b a] = butter(2,0.5,'high');
 
 % Plot the frequency response (normalized frequency)
 H = freqz(b,a,floor(num_bins/2));
@@ -51,7 +51,7 @@ xlabel('Samples');
 ylabel('Amplitude');
 
 % Redesign the filter using a higher order filter
-[b2 a2] = butter(3,0.9,'high');
+[b2 a2] = butter(3,0.5,'high');
 
 % Plots the magnitude spectrum and compare with lower order
 H2 = freqz(b2,a2,floor(num_bins/2));
@@ -78,7 +78,7 @@ gxFdata3 = zeros(num_bins,1);
 % gzFdata = zeros(num_bins,1);
 
 for i = 1:num_bins
-    %axF = (1 - alpha)*axF + alpha*dat.x(i);
+    axF = dat.x(i) - mean(dat.x);
     
     if (i>2 && i<num_bins-2)
         axF2 = b(1)*dat.x(i-2)+(b(2)-b(1))*dat.x(i-1)+(b(3)-b(2))*dat.x(i)...
@@ -91,7 +91,7 @@ for i = 1:num_bins
             + (a2(1)-a2(2))*gxFdata3(num_bins-(i+2)) + (a2(2)-a2(3))*gxFdata3(num_bins-(i+1)); 
         %axF2 = (1 - 2*a(2)*a(3))*gxFdata2(num_bins-(i+2)) + (2*alpha - alpha^2)*gxFdata2(num_bins-(i+1)) + alpha^2*dat.x(i);
     end
-    %gxFdata = [ gxFdata(2:end) ; axF ];
+    gxFdata = [ gxFdata(2:end) ; axF ];
     gxFdata2 = [ gxFdata2(2:end) ; axF2 ];
     gxFdata3 = [ gxFdata3(2:end) ; axF3 ];
 %     gyFdata = [ gyFdata(2:end) ; gyFilt ];
@@ -99,7 +99,9 @@ for i = 1:num_bins
 end
 
 figure(6)
-plot(dat.x,'r');
+plot(dat.x,'r--*');
+hold on
+plot(gxFdata,'b');
 hold on
 plot(gxFdata2,'g');
 hold on
