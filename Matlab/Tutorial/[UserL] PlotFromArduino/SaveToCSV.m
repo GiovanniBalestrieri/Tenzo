@@ -7,6 +7,9 @@
     clc;
     clear('instrfindall');
     
+    global finished
+    global recording
+    finished = false;
     recording = true;
     if recording 
        disp('Record data enabled');
@@ -31,7 +34,7 @@
     
 %%  Setting up serial communication
     % XBee expects the end of commands to be delineated by a carriage return.
-    xbee = serial(port,'baudrate',9600,'terminator','CR','tag','Quad');
+    xbee = serial(port,'baudrate',57600,'terminator','CR','tag','Quad');
 
     set(xbee, 'TimeOut', 5);  %I am willing to wait 1.5 secs for data to arive
     % I wanted to make my buffer only big enough to store one message
@@ -65,14 +68,6 @@ delay = 1/rate;
 str = sprintf('SampleRate fixed to: %f.', delay);
 disp(str);
 
-%% Setup Plot
-% declaring the arduino varialble and establishing connection
-Wx = 0; Wy = 0; Wz=0;
-% 
-% % Figure options
-figure(1);
-% ax = axes('box','on');
-
 %% Initializinig rolling plot
 
 buf_len = rate;
@@ -84,21 +79,31 @@ gydata = zeros(buf_len,1);
 gzdata = zeros(buf_len,1);
 
 if recording
-    resp = input('Press "r" to record 2 seconds of data');
-    if (strcmp(resp(1,1),'r'))
+    resp = input('Press r to record 2 seconds of data','s');
+    if (strcmp(resp,'r'))
+        disp('Record!');
         record = true;
         numberOfSamples = 0;
     end
 end
+%% Setup Plot
+% declaring the arduino varialble and establishing connection
+Wx = 0; Wy = 0; Wz=0;
+% 
+% % Figure options
+figure(1);
+% ax = axes('box','on');
 %% Data collection and Plotting
-while (abs(Wz) < 2500)
+while (abs(Wz) < 2500 && ~finished)
+    finished
     % Polling 
     pause(delay);
     fprintf(xbee,'M') ; 
     notArrived = false;
     try
-        while (get(xbee, 'BytesAvailable')~=0 && ~notArrived)
+        while (get(xbee, 'BytesAvailable')~=0 && ~notArrived && ~finished)
             % read until terminator
+            finished
             sentence = fscanf( xbee, '%s'); % this reads in as a string (until a terminater is reached)
             if (strcmp(sentence(1,1),'A'))
                 notArrived = true;
@@ -140,29 +145,20 @@ while (abs(Wz) < 2500)
                 ylabel('Wz');
                 
                 drawnow;
-                numberOfSamples = numberOfSamples + 1;
+                numberOfSamples = numberOfSamples + 1
                 % wait one second then record
-                if numberOfSamples==rate && recording
+                if numberOfSamples==rate*2 && recording
                     disp('saving samples to file');
-                    accDataToWrite = [gxdata,time];
-                    csvwrite('accx.txt',accDataToWrite);
+                    gDataToWrite = [gxdata];
+                    csvwrite('gyro.txt',gDataToWrite);
                     disp('saving file to structure');
                     dat.x = gxdata;
                     dat.y = gydata;
                     dat.z = gzdata;
-                    dat.time = time;
                     save('GyroSamples.mat','-struct','dat');
-                    disp(deltaT);
+                    disp('Saved.');
 
-                    % Reset Arrays
-%                     AccX = zeros(buffLen,1);
-%                     AccY = zeros(buffLen,1);
-%                     AccZ = zeros(buffLen,1);
-%                     axdata = zeros(buffLen,1);
-%                     aydata = zeros(buffLen,1);
-%                     azdata = zeros(buffLen,1);
-%                     time  = zeros(buffLen,1);
-                    break;
+                    finished = true;
                 end
             end
         end
@@ -170,9 +166,15 @@ while (abs(Wz) < 2500)
         disp('Warning');
     end
 end
-disp('threshold reached. Closing');
+if abs(Wz) >= 2500
+    disp('Threshold reached. Closing');
+end
+if finished
+   disp('Check your local folder.');
+end
 %% Close connection    
 
 fclose(xbee);
 delete(xbee);
 clear xbee
+clear all
