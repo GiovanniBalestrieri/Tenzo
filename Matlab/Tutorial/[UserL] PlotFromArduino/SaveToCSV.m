@@ -95,15 +95,13 @@ figure(1);
 % ax = axes('box','on');
 %% Data collection and Plotting
 while (abs(Wz) < 2500 && ~finished)
-    finished
     % Polling 
     pause(delay);
     fprintf(xbee,'M') ; 
     notArrived = false;
     try
-        while (get(xbee, 'BytesAvailable')~=0 && ~notArrived && ~finished)
+        while (get(xbee, 'BytesAvailable')~=0 && ~notArrived)
             % read until terminator
-            finished
             sentence = fscanf( xbee, '%s'); % this reads in as a string (until a terminater is reached)
             if (strcmp(sentence(1,1),'A'))
                 notArrived = true;
@@ -118,9 +116,9 @@ while (abs(Wz) < 2500 && ~finished)
                 %[gx, gy, gz] = [Xacc, Yacc, Zacc];
                 % Update the rolling plot. Append the new reading to the end of the
                 % rolling plot data
-                gxdata = [ gxdata(2:end) ; Wx ];
-                gydata = [ gydata(2:end) ; Wy ];
-                gzdata = [ gzdata(2:end) ; Wz ]; 
+                gxdata = [ gxdata(2:end) ; double(Wx) ];
+                gydata = [ gydata(2:end) ; double(Wy) ];
+                gzdata = [ gzdata(2:end) ; double(Wz) ]; 
                                 
                 %Plot the X magnitude
                 subplot(3,1,1);
@@ -149,7 +147,7 @@ while (abs(Wz) < 2500 && ~finished)
                 % wait one second then record
                 if numberOfSamples==rate*2 && recording
                     disp('saving samples to file');
-                    gDataToWrite = [gxdata];
+                    gDataToWrite = [gxdata gydata gzdata];
                     csvwrite('gyro.txt',gDataToWrite);
                     disp('saving file to structure');
                     dat.x = gxdata;
@@ -177,4 +175,6 @@ end
 fclose(xbee);
 delete(xbee);
 clear xbee
+clear('instrfindall');
+    
 clear all

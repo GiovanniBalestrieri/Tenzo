@@ -23,7 +23,7 @@ double dt=0;
 void setup()
 {
   Wire.begin();
-  Serial.begin(9600);
+  Serial.begin(57600);
   Serial.println("starting up L3G4200D");
   // Configure L3G4200  - 250, 500 or 2000 deg/sec
   setupL3G4200D(2000); 
