@@ -7,8 +7,6 @@
     clc;
     clear('instrfindall');
     
-    global finished
-    global recording
     finished = false;
     recording = true;
     if recording 
