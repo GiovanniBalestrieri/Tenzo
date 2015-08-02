@@ -61,7 +61,7 @@
     
     
 %% Ask desired Sample Rate in Hz
-rate=input('Enter the samplerate in Hz. Max 500Hz. Non sgravare...      ');
+rate=input('Enter the sampleRate in Hz. Max 500Hz. Non sgravare...      ');
 delay = 1/rate;
 str = sprintf('SampleRate fixed to: %f.', delay);
 disp(str);

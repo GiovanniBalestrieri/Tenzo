@@ -7,6 +7,7 @@ gzFdata = 0;
 
 % Loads samples from file
 dat = load('GyroSamples.mat');
+dat = load('samples.mat');
 
 % Plots raw data vs samples
 figure(2);
