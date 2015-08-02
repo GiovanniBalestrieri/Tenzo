@@ -7,7 +7,7 @@ clc;
 %% Signal definition
 
 % Sampling Frequency Fs
-Fs = 2500;
+Fs = 500;
 % Sinusoid frequency
 NoiseFreq = 150;
 freq = 9;
@@ -46,12 +46,12 @@ ylabel('Magnitude');
 
 %% Normalize X_mags
 
-X_magsNorm = (X_mags - min(X_mags)) / ( max(X_mags) - min(X_mags) )
+X_magsNorm = (X_mags - min(X_mags)) / ( max(X_mags) - min(X_mags) );
 
 %% Filter Design
 
 % Designs a third order filter using butterworth command
-[b a] = butter(3,0.08,'low');
+[b a] = butter(3,0.3,'low');
 
 % Plot the frequency response (normalized frequency)
 figure(3)
