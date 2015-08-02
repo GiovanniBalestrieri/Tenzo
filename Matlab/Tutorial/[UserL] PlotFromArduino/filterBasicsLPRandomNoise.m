@@ -4,7 +4,7 @@
 clear all;
 clc;
 
-%% Signal definition
+%% Signal definition             PART ONE
 
 % Sampling Frequency Fs
 Fs = 500;
@@ -18,9 +18,9 @@ t = 0:1/Fs:maxTime;
 % Generate random values [min,max] = [xm,xM]
 xm = [0.2];
 xM = [0.5];
-amp = xm+ (xM-xm).*rand(1,Fs/maxTime+1);
+amp = xm+ (xM-xm).*rand(1,1);
 
-y = cos(2*pi*freq*t) + amp;
+y = sin(2*pi*freq*t) + amp*sin(2*pi*NoiseFreq*t);
 
 % Plots raw data vs samples
 figure(1);
@@ -75,4 +75,85 @@ title('Filtered Signal - Second Order Butterworth');
 xlabel('Samples');
 ylabel('Amplitude');
 
+%%                          PART TWO
+%% Signal definition
 
+% Sampling Frequency Fs
+Fs = 500;
+
+maxTime = 2;
+t = 0:1/Fs:maxTime;
+
+% Generate random values [min,max] = [xm,xM]
+xm = 0.2;
+xM = 0.5;
+amp = xm+ (xM-xm).*rand(1,Fs*maxTime+1);
+
+yNoise = sin(2*pi*freq*t + 90*pi/180) + amp;
+
+% Plots raw data vs samples
+figure(5);
+plot(t,yNoise);
+title('Real Noise scenario');
+xlabel('Samples');
+ylabel('Amplitude of signal [V]');
+grid on
+grid minor
+
+%% Apply previous filter
+
+x_filtered = filter(b,a,yNoise);
+
+% Plots the filtered signal
+figure(6)
+plot(yNoise,'k')
+hold on
+plot(x_filtered,'r','LineWidth',3)
+title('Filtered Signal - third Order Butterworth');
+xlabel('Samples');
+ylabel('Amplitude');
+
+% Surprise! Not that good anymore. Back to the drawing board!
+
+%% Analyze signal
+
+% Plots magnitude spectrum of the signal
+X_mags=abs(fft(yNoise));
+figure(7)
+plot(X_mags);
+xlabel('DFT Bins');
+ylabel('Magnitude');
+
+% Plots first half of DFT (normalized frequency)
+num_bins = length(X_mags);
+plot([0:1/(num_bins/2 -1):1],X_mags(1:num_bins/2),'r')
+xlabel('Normalized frequency [\pi rads/samples]');
+ylabel('Magnitude');
+
+
+X_magsNorm = (X_mags - min(X_mags)) / ( max(X_mags) - min(X_mags) );
+
+%% Filter Design
+
+% Designs a second order filter using a butterworth design guidelines
+[bN aN] = butter(5,0.08,'low');
+
+% Plot the frequency response (normalized frequency)
+figure(8)
+H = freqz(bN,aN,floor(num_bins/2));
+plot(0:1/(num_bins/2 -1):1, abs(H),'r');
+hold on
+plot(0:1/(num_bins/2 -1):1, X_magsNorm(1:num_bins/2),'g')
+
+% Filters the signal using coefficients obtained by the butter filter
+% design
+x_filtered = filter(bN,aN,yNoise);
+
+% Plots the filtered signal
+figure(9)
+plot(yNoise,'k')
+hold on
+plot(x_filtered,'r','LineWidth',3)
+title('Filtered Signal with Butterworth');
+xlabel('Samples');
+ylabel('Amplitude');
