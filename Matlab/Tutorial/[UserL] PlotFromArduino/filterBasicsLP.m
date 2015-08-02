@@ -7,15 +7,15 @@ clc;
 %% Signal definition
 
 % Sampling Frequency Fs
-Fs = 2000;
+Fs = 2500;
 % Sinusoid frequency
-NoiseFreq = 100;
+NoiseFreq = 150;
 freq = 9;
 t = 0:1/Fs:1;
 
 % Generate random values [min,max] = [xm,xM]
-xm = [ 1 0.04];
-xM = [ 10 0.4];
+xm = [ 1 0.2];
+xM = [ 5 0.5];
 amp = xm+ (xM-xm).*rand(1,2);
 
 y = amp(1)*sin(2*pi*freq*t) + amp(2)*sin(2*pi*NoiseFreq*t);
@@ -40,7 +40,7 @@ ylabel('Magnitude');
 
 % Plots first half of DFT (normalized frequency)
 num_bins = length(X_mags);
-plot([0:1/(num_bins/2 -1):1],X_mags(1:num_bins/2))
+plot([0:1/(num_bins/2 -1):1],X_mags(1:num_bins/2),'r')
 xlabel('Normalized frequency [\pi rads/samples]');
 ylabel('Magnitude');
 
@@ -50,8 +50,8 @@ X_magsNorm = (X_mags - min(X_mags)) / ( max(X_mags) - min(X_mags) )
 
 %% Filter Design
 
-% Designs a second order filter using a butterworth design guidelines
-[b a] = butter(2,0.2,'high');
+% Designs a third order filter using butterworth command
+[b a] = butter(3,0.08,'low');
 
 % Plot the frequency response (normalized frequency)
 figure(3)
@@ -67,6 +67,8 @@ x_filtered = filter(b,a,y);
 % Plots the filtered signal
 figure(4)
 plot(x_filtered,'r')
+hold on
+plot(y,'k')
 title('Filtered Signal - Second Order Butterworth');
 xlabel('Samples');
 ylabel('Amplitude');
