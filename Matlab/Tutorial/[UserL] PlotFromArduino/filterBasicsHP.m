@@ -7,9 +7,9 @@ clc;
 %% Signal definition
 
 % Sampling Frequency Fs
-Fs = 1500;
+Fs = 350;
 % Sinusoid frequency
-freq = 100;
+freq = 30;
 bias = 15
 t = 0:1/Fs:1;
 

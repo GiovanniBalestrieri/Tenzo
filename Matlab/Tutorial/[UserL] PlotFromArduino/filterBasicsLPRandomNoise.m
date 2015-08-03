@@ -4,7 +4,8 @@
 clear all;
 clc;
 
-%% Signal definition             PART ONE
+%%             PART ONE
+%          Signal definition
 
 % Sampling Frequency Fs
 Fs = 500;
@@ -16,8 +17,8 @@ maxTime = 1;
 t = 0:1/Fs:maxTime;
 
 % Generate random values [min,max] = [xm,xM]
-xm = [0.2];
-xM = [0.5];
+xm = 0.2;
+xM = 0.5;
 amp = xm+ (xM-xm).*rand(1,1);
 
 y = sin(2*pi*freq*t) + amp*sin(2*pi*NoiseFreq*t);
@@ -71,12 +72,12 @@ figure(4)
 plot(y,'k')
 hold on
 plot(x_filtered,'r','LineWidth',3)
-title('Filtered Signal - Second Order Butterworth');
+title('Filtered Signal - Third Order ButterWorth');
 xlabel('Samples');
 ylabel('Amplitude');
 
 %%                          PART TWO
-%% Signal definition
+%                       Signal definition
 
 % Sampling Frequency Fs
 Fs = 500;
