@@ -1,16 +1,16 @@
 clc 
 clear all
 
-XMin = -10;
-XMax = 10;
-YMin = -10;
-YMax = 10;
+XMin = -100;
+XMax = 100;
+YMin = -100;
+YMax = 100;
 addpath('Reference/c2xyz/');
 addpath('Reference/export/');
 
 %% Random Radial Basis functions in space 
 disp('3D case with random path - 10 rbf:');
-N = 10 % number of random functions
+N = 100 % number of random functions
 stepMesh = 0.1;
 Z = zeros((XMax-XMin)/stepMesh+1,(XMax-XMin)/stepMesh+1);
 [X,Y] = meshgrid(XMin:stepMesh:XMax);
@@ -111,7 +111,7 @@ plot(centroids(:,1),centroids(:,2), 'b*')
 hold off
 
 % Plot centroids in convex sectors
-figure(5)
+h = figure(5)
 CH_objects = bwconvhull(BW,'objects',8);
 imshow(CH_objects);
 hold on
@@ -196,9 +196,12 @@ for i=1:sector.numberOfZones-1
     %hold on
 end
 hold off
-%%
+%% Calculate sectors
 
-figure(7)
+set(0,'CurrentFigure',h);
+voronoi(centroids(:,1),centroids(:,2))
+
+%figure(7)
 for i=1:sector.numberOfZones-1
     %i
     for j=1:size(sector.zones(i).x,2)-1

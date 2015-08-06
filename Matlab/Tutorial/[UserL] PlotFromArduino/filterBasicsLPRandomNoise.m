@@ -90,7 +90,7 @@ xm = 0.2;
 xM = 0.5;
 amp = xm+ (xM-xm).*rand(1,Fs*maxTime+1);
 
-yNoise = sin(2*pi*freq*t + 90*pi/180) + amp;
+yNoise = sin(2*pi*freq*t) + amp;
 
 % Plots raw data vs samples
 figure(5);

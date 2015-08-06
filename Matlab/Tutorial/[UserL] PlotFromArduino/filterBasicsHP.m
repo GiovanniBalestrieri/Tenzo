@@ -24,17 +24,17 @@ y = amp*sin(2*pi*freq*t) + bias;
 yEasy = y - mean(y);
 
 y0 = 0;
-y18 = 18;
+y15 = 15;
 % Plots raw data vs samples
 figure(1);
 plot(t,y);
 hold on
 plot(t,y0,'k','LineWidth',2);
 hold on
-plot(t,y18,'k');
+plot(t,y15,'k');
 hold on
-plot(t,yEasy,'k');
-title('Sinusoid');
+plot(t,yEasy,'r');
+title('Sinusoid ');
 xlabel('Time [s]');
 ylabel('Amplitude of f');
 grid on
