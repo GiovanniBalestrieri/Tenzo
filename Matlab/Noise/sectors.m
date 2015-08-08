@@ -1,23 +1,23 @@
 clc 
 clear all
 
-XMin = -100;
-XMax = 100;
-YMin = -100;
-YMax = 100;
+XMin = -10;
+XMax = 10;
+YMin = -10;
+YMax = 10;
 addpath('Reference/c2xyz/');
 addpath('Reference/export/');
 
 %% Random Radial Basis functions in space 
 disp('3D case with random path - 10 rbf:');
-N = 100 % number of random functions
+N = 20 % number of random functions
 stepMesh = 0.1;
 Z = zeros((XMax-XMin)/stepMesh+1,(XMax-XMin)/stepMesh+1);
 [X,Y] = meshgrid(XMin:stepMesh:XMax);
-% random variance in [a;b] = [0.3;1.5]
-variances = 0.3 + (1.5-0.3).*rand(N,1);
-% random amplitude [0.1;1]
-amplitudes = 0.1 + (1-0.1).*rand(N,1);
+% random variance in [a;b] = [0.2;1.5]
+variances = 0.2 + (1.5-0.2).*rand(N,1);
+% random amplitude [3;18]
+amplitudes = 3 + (18-3).*rand(N,1);
 % Random Xcenters in [-XMin;xMax]
 Xcenters = XMin+ (XMax-XMin).*rand(N,1);
 Ycenters = YMin+ (YMax-YMin).*rand(N,1);
@@ -34,10 +34,10 @@ for i=1:1:N
     disp(variances(i,1))
     disp(Xcenters(i,1))
     disp(Ycenters(i,1))
-    Z = Z + 1*exp(-((X-Xci(:,1:((XMax-XMin)/stepMesh+1))).^2+(Y-Yci(:,((XMax-XMin)/stepMesh+2):((YMax-YMin)/stepMesh+1)*2)).^2)*esp(i,1).^2);
+    Z = Z + amplitudes(i,1)*exp(-((X-Xci(:,1:((XMax-XMin)/stepMesh+1))).^2+(Y-Yci(:,((XMax-XMin)/stepMesh+2):((YMax-YMin)/stepMesh+1)*2)).^2)*esp(i,1).^2);
 end
 figure(1);
-surf(X,Y,Z)
+start = surf(X,Y,Z,'LineStyle','none','FaceLighting','phong');
 
 %% Analyze data -  Post elaboration 
 % Contour[Required]
@@ -58,7 +58,7 @@ figure(2)
 % Same ad the commented code above + more options
 figure(3)
 hold on; % Allows plotting atop the preexisting peaks plot. 
-threshold = 0.8;
+threshold = 12;
 sector.numberOfZones = 1;
 % analyze all the level curves
 for n = find(z1==threshold); 
@@ -75,7 +75,6 @@ title('Contours of interest');
 hold off
 disp('Number of zones founded:');
 disp(sector.numberOfZones);
-
 
 %% Convert to BW
 
@@ -113,7 +112,7 @@ hold off
 % Plot centroids in convex sectors
 h = figure(5)
 CH_objects = bwconvhull(BW,'objects',8);
-imshow(CH_objects);
+    imshow(CH_objects);
 hold on
 plot(centroids(:,1),centroids(:,2), 'b*')
 hold off
@@ -161,53 +160,47 @@ for secteur = 1:size(stats,1)
     hold on
 end
 
-%% Plot bounding box
-figure(5)
-hold on
-for secteur = 1:size(stats,1)    
-        rectangle('Position',stats(secteur,1).BoundingBox,'EdgeColor','r','LineWidth',10,'LineStyle','--');
-end
-
-%% Plots Global convexHull figure
-
-figure(6)
-title('Union Convex Hull');
-CH = bwconvhull(BW);
-imshow(CH);
 
 %% Scaling sectors up by a factor of K
 
-k=1
-%figure(9)
-% For each sector
-figure(4)
-for i=1:sector.numberOfZones-1
-    % for each point of the sector
-    for j=1:size(sector.zones(i).x,2)-1        
-        plot(sector.zones(i).x(1,j),sector.zones(i).y(1,j),'-b','LineWidth',3)
-        v=[sector.zones(i).x(1,j) - stats(i).Centroid(1); sector.zones(i).y(1,j) - stats(i).Centroid(2)];
-        sector.zone(i).x(1,j) = sector.zones(i).x(1,j) + k*v(1) ;
-        sector.zone(i).y(1,j) = sector.zones(i).y(1,j) + k*v(2) ;
-        hold on
-        %plot(sector.zone(i).x(1,j),sector.zone(i).y(1,j),'-r','LineWidth',3)
-    end
-    
-    %plot(centroids(i,1),centroids(i,2), 'r*')
-    %hold on
-end
-hold off
+% k=10
+% %figure(9)
+% % For each sector
+% figure(4)
+% for i=1:sector.numberOfZones-3
+%     
+%     % for each point of the sector
+%     for j=1:size(sector.zones(i).x,2)-2    
+%         
+%         plot(sector.zones(i).x(1,j),sector.zones(i).y(1,j),'-k','LineWidth',5)
+%         v=[sector.zones(i).x(1,j) - stats(i).Centroid(1); sector.zones(i).y(1,j) - stats(i).Centroid(2)];
+%         sector.zone(i).x(1,j) = sector.zones(i).x(1,j) + k*v(1) ;
+%         sector.zone(i).y(1,j) = sector.zones(i).y(1,j) + k*v(2) ;
+%         hold on
+%         %plot(sector.zone(i).x(1,j),sector.zone(i).y(1,j),'-r','LineWidth',3)
+%     end
+%     
+%     %plot(centroids(i,1),centroids(i,2), 'r*')
+%     %hold on
+% end
+% hold off
+
+
+%% Plot bounding box
+% figure(5)
+% hold on
+% for secteur = 1:size(stats,1)    
+%         rectangle('Position',stats(secteur,1).BoundingBox,'EdgeColor','r','LineWidth',10,'LineStyle','--');
+% end
+
+%% Plots Global convexHull figure
+
+% figure(6)
+% title('Union Convex Hull');
+% CH = bwconvhull(BW);
+% imshow(CH);
+
 %% Calculate sectors
 
 set(0,'CurrentFigure',h);
 voronoi(centroids(:,1),centroids(:,2))
-
-%figure(7)
-for i=1:sector.numberOfZones-1
-    %i
-    for j=1:size(sector.zones(i).x,2)-1
-        %hold on
-        %plot(sector.zone(i).x(1,j),sector.zone(i).y(1,j),'--rs')
-        %hold on
-        %plot(stats(i).Centroid(1),stats(i).Centroid(2),'+','LineWidth',4)
-    end
-end
