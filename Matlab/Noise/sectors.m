@@ -62,7 +62,7 @@ figure(2)
 % Same ad the commented code above + more options
 figure(3)
 hold on; % Allows plotting atop the preexisting peaks plot. 
-threshold = MaxAmpli*0.6;
+threshold = MaxAmpli*0.9;
 sector.numberOfZones = 1;
 % analyze all the level curves
 for n = find(floor(z1)==floor(threshold)); 
@@ -94,7 +94,7 @@ BW = ~im2bw(uint8(255.*im2double(im)),0.99);
 
 %%// Remove
 BW = bwmorph(BW,'skel',Inf);
-figure(4);
+bwFig = figure(4);
 imshow(BW)
 title('BW sectors');
 % Save it
@@ -207,4 +207,7 @@ end
 %% Calculate sectors
 
 set(0,'CurrentFigure',h);
+voronoi(centroids(:,1),centroids(:,2))
+
+set(0,'CurrentFigure',bwFig);
 voronoi(centroids(:,1),centroids(:,2))

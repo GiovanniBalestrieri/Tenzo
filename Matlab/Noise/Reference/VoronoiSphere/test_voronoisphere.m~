@@ -13,6 +13,7 @@ set(f,'Renderer','zbuffer');
 ax = axes('Parent', f);
 hold(ax, 'on');
 axis(ax,'equal');
+grid on
 
 plot3(ax, xyz(1,:),xyz(2,:),xyz(3,:),'ro');
 clmap = cool();
