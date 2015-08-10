@@ -5,6 +5,10 @@ XMin = -10;
 XMax = 10;
 YMin = -10;
 YMax = 10;
+
+MaxAmpli = 18;
+MinAmpli = 3;
+
 addpath('Reference/c2xyz/');
 addpath('Reference/export/');
 
@@ -16,8 +20,8 @@ Z = zeros((XMax-XMin)/stepMesh+1,(XMax-XMin)/stepMesh+1);
 [X,Y] = meshgrid(XMin:stepMesh:XMax);
 % random variance in [a;b] = [0.2;1.5]
 variances = 0.2 + (1.5-0.2).*rand(N,1);
-% random amplitude [3;18]
-amplitudes = 3 + (18-3).*rand(N,1);
+% random amplitude 
+amplitudes = MinAmpli + (MaxAmpli-MinAmpli).*rand(N,1);
 % Random Xcenters in [-XMin;xMax]
 Xcenters = XMin+ (XMax-XMin).*rand(N,1);
 Ycenters = YMin+ (YMax-YMin).*rand(N,1);
@@ -48,7 +52,7 @@ start = surf(X,Y,Z,'LineStyle','none','FaceLighting','phong');
 % % axis tight
 % % contour(X,Y,Z);
 figure(2)
- cl = contour(X,Y,Z);
+ cl = contour(X,Y,Z,100);
 [x1,y1,z1] = C2xyz(cl);
 % 
 % % countours at 0.8
@@ -58,10 +62,10 @@ figure(2)
 % Same ad the commented code above + more options
 figure(3)
 hold on; % Allows plotting atop the preexisting peaks plot. 
-threshold = 12;
+threshold = MaxAmpli*0.6;
 sector.numberOfZones = 1;
 % analyze all the level curves
-for n = find(z1==threshold); 
+for n = find(floor(z1)==floor(threshold)); 
    %n
    %xTh(1,n) = x1{n};
    %yTh(1,n) = y1{n};
