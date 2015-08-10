@@ -1,0 +1,7 @@
+sectors:
+
+Les secteurs devraient prendre en considération des polygones au lieu de simple points. Matlab n'a pas de fonction voronoi qui accepte comme input des polygoness. Long story short. Fallo coi punti. 
+
+Will:
+
+Take local maxima and check whether other maxima are closer than x. 
