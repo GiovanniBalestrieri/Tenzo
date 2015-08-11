@@ -24,7 +24,7 @@
     
 %%  Setting up serial communication
     % XBee expects the end of commands to be delineated by a carriage return.
-    xbee = serial(port,'baudrate',9600,'terminator','CR','tag','Quad');
+    xbee = serial(port,'baudrate',57600,'terminator','CR','tag','Quad');
 
     set(xbee, 'TimeOut', 5);  %I am willing to wait 1.5 secs for data to arive
     % I wanted to make my buffer only big enough to store one message
