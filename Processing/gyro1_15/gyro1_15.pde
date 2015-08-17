@@ -40,7 +40,7 @@ void setup()
   lights();
   smooth();
   // Serial 
-  String portName = Serial.list()[1]; //change the 0 to a 1 or 2 etc. to match your port
+  String portName = Serial.list()[0]; //change the 0 to a 1 or 2 etc. to match your port
   port = new Serial(this, portName, 115200); 
 }
 
