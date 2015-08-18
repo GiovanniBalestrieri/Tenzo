@@ -59,9 +59,17 @@ void setup()
  pinMode(zaxis,INPUT);
 
  XError =  AccelAdjust(xaxis);
+ Serial.print("Error X: ");
+ Serial.println(XError);
  YError =  AccelAdjust(yaxis);
+ Serial.print("Error Y: ");
+ Serial.println(YError);
  ZError =  AccelAdjust(zaxis);
+ Serial.print("Error Z: ");
+ Serial.println(ZError);
  ZError = ZError - ZOUT_1G;
+ Serial.print("now: ");
+ Serial.println(ZError);
  
  // Timer settings
    // Initialize Timer
@@ -197,8 +205,8 @@ void serialRoutine()
     if (count >= 3)
     {
       count = 0;
-      printSerialAngle();
-      //printAcc();
+      //printSerialAngle();
+      printAcc();
       //printT();
     }
   }
