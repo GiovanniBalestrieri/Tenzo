@@ -26,7 +26,7 @@
 #include <CMPS10.h>
 #include "PID_v2.h"
 
-boolean processing = true;
+boolean processing = false;
 boolean printMotorsVals = true;
 boolean printPIDVals = false;
 
@@ -311,8 +311,8 @@ void setup()
   TCCR3B = 0;
 
   // Set compare match register to the desired timer count
-  OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
-  //OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
+  //OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
+  OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
   //OCR3A=780; //16*10^6/(20Hz*1024)-1 = 780 -> 20 Hz 
   //OCR3A=50; //16*10^6/(308Hz*1024)-1 = 50 -> 308 Hz 
 
@@ -348,7 +348,7 @@ ISR(TIMER3_COMPB_vect)
   //read values
   getGyroValues(); 
   getAcc();
-  getCompassValues();
+  //getCompassValues();
   calcAngle();
   estAngle();
   cont++;
@@ -958,10 +958,10 @@ void calcBias()
 {
   if (!processing)
     Serial.println("Bias");
-  int c = 2000;
+  int c = 1000;
   for (int i = 0; i<c; i++)
   {
-    delay(1);
+    delay(5);
     getGyroValues(); 
     bxS = bxS + x;
     byS = byS + y;

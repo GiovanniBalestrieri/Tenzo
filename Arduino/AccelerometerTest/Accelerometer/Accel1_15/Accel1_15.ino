@@ -219,7 +219,7 @@ void printSerialAngle()
 {
    Serial.print(angleXAcc);
    Serial.print(",");
-   Serial.printl(angleYAcc);
+   Serial.println(angleYAcc);
 }
 
 float AccelAdjust(int axis)
