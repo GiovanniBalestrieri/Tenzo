@@ -11,10 +11,13 @@ void setup()
 {
   Wire.begin();
   Serial.begin(9600);
+  //delay(1000);
+  //Serial.println("Restoring Factory calibration");
+  //restoreFactory();
 }
 
 void loop()
-{                            
+{   
   requestData();
   getData();
   displayData(bearing, fine, pitch, roll);  // Display data to the LCD03
@@ -47,6 +50,28 @@ void getData()
 
    // Calculate decimal place of bearing   
    fine = ((highByte<<8)+lowByte)%10;   
+}
+
+void restoreFactory()
+{
+ //starts communication with CMPS10
+ Wire.beginTransmission(ADDRESS); 
+ //Sends the register we wish to start reading from   
+ Wire.write(22);     
+ Wire.write(0x20); 
+ Wire.endTransmission();   
+ delay(100); 
+ Wire.beginTransmission(ADDRESS); 
+ //Sends the register we wish to start reading from   
+ Wire.write(22);     
+ Wire.write(0x2A); 
+ Wire.endTransmission();   
+ delay(100); 
+ Wire.beginTransmission(ADDRESS); 
+ //Sends the register we wish to start reading from   
+ Wire.write(22);     
+ Wire.write(0x60); 
+ Wire.endTransmission();   
 }
 
 void displayData(int b, int f, int p, int r)
