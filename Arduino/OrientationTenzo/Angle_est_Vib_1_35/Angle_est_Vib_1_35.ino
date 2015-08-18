@@ -259,7 +259,7 @@ volatile float kG = 0.98, kA = 0.02, kGZ=0.60, kAZ = 0.40;
 void setup()
 {  
   Wire.begin();
-  Serial.begin(57600); // 9600 bps
+  Serial.begin(115200); // 9600 bps
   pinMode(xaxis,INPUT);
   pinMode(yaxis,INPUT);
   pinMode(zaxis,INPUT);
@@ -348,7 +348,7 @@ ISR(TIMER3_COMPB_vect)
   //read values
   getGyroValues(); 
   getAcc();
-  //getCompassValues();
+  getCompassValues();
   calcAngle();
   estAngle();
   cont++;
@@ -966,6 +966,7 @@ void calcBias()
     bxS = bxS + x;
     byS = byS + y;
     bzS = bzS + z;
+    Serial.println(i);
   }
 
   bx = bxS / c;
