@@ -259,7 +259,7 @@ volatile float kG = 0.98, kA = 0.02, kGZ=0.60, kAZ = 0.40;
 void setup()
 {  
   Wire.begin();
-  Serial.begin(115200); // 9600 bps
+  Serial.begin(57600); // 9600 bps
   pinMode(xaxis,INPUT);
   pinMode(yaxis,INPUT);
   pinMode(zaxis,INPUT);
@@ -348,7 +348,7 @@ ISR(TIMER3_COMPB_vect)
   //read values
   getGyroValues(); 
   getAcc();
-  //getCompassValues();
+  getCompassValues();
   calcAngle();
   estAngle();
   cont++;
@@ -368,6 +368,7 @@ void protocol1()
     }
   }
 }
+
 void land()
 {
   if (initialized)
@@ -381,8 +382,7 @@ void land()
       Serial.print(" ");
     }
     for (int j=throttle; j>40 ;j--)
-    {
-      
+    {      
       motorSpeedPID(j, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
       //motorSpeed(j);
       Serial.println(j);
@@ -698,7 +698,7 @@ void calcAngle() //ISR
   k=micros();  
 }
 
-void estAngle()
+void estAngle() // ISR
 {
   estXAngle = (estXAngle + x/**scale2000/1000*/*(float)dt/1000000.0)*kG + angleXAcc*kA;
   estYAngle = (estYAngle + y/**scale2000/1000*/*(float)dt/1000000.0)*kG + angleYAcc*kA;
@@ -875,7 +875,7 @@ void getGyroValues()
   z = ((zMSB << 8) | zLSB);
   
   if (initializedGyroCalib)
-    removeBias();
+    removeBiasAndScale();
 
   samplingTime = micros()- samplingTime;
   contSamples++;
@@ -937,7 +937,7 @@ void printSerialAngle()
   Serial.println(bearing1);
 }
 
-void removeBias()
+void removeBiasAndScale()
 {
   x = (x - bx)*scale2000/1000;
   y = (y - by)*scale2000/1000;
