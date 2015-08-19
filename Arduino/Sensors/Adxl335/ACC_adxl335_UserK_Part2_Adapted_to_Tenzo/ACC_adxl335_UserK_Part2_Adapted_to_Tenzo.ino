@@ -81,7 +81,11 @@ void scaleAccs()
 void calcAngle()
 {
   angleXAcc = ((atan2(-yAccel,-zAccel)))* RAD_TO_DEG;
-  angleYAcc = ((atan2(xAccel,-zAccel)))* RAD_TO_DEG;  
+  angleYAcc = -((atan2(-xAccel,-zAccel)))* RAD_TO_DEG;  
+  
+  
+//  angleXAcc = ((atan2(-yAccel,-zAccel)))* RAD_TO_DEG;
+//  angleYAcc = ((atan2(xAccel,-zAccel)))* RAD_TO_DEG; 
   
 //  angleXAcc = (atan2(xAccel,zAccel)) * RAD_TO_DEG;
 //  angleYAcc = (atan2(yAccel,zAccel)) * RAD_TO_DEG;  
