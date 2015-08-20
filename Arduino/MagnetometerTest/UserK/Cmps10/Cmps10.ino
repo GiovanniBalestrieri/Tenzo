@@ -10,7 +10,7 @@ int bearing;
 void setup()
 {
   Wire.begin();
-  Serial.begin(9600);
+  Serial.begin(115200);
   //delay(1000);
   //Serial.println("Restoring Factory calibration");
   //restoreFactory();
