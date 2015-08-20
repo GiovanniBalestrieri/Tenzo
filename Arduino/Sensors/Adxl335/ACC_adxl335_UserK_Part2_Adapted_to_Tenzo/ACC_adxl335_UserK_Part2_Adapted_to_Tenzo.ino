@@ -25,14 +25,14 @@ int zRawMin = 418;
 int zRawMax = 284;
 
 // 3.3 V con carico Tenzo V2
-int xRawMin = 406;
-int xRawMax = 271;
+int xRawMin = 428;
+int xRawMax = 290;
 // 
-int yRawMin = 401;
-int yRawMax = 266;
+int yRawMin = 423;
+int yRawMax = 286;
 // 
-int zRawMin = 418;
-int zRawMax = 284;
+int zRawMin = 444;
+int zRawMax = 301;
 
 // 5 V
 //int xRawMin = 628;
