@@ -15,14 +15,14 @@ float xRaw,yRaw,zRaw;
 float xAccel,yAccel,zAccel;
 
 // 3.3 V a vuoto
-int xRawMin = 406;
-int xRawMax = 271;
-// 
-int yRawMin = 401;
-int yRawMax = 266;
-// 
-int zRawMin = 418;
-int zRawMax = 284;
+//int xRawMin = 406;
+//int xRawMax = 271;
+//// 
+//int yRawMin = 401;
+//int yRawMax = 266;
+//// 
+//int zRawMin = 418;
+//int zRawMax = 284;
 
 // 3.3 V con carico Tenzo V2
 int xRawMin = 428;
