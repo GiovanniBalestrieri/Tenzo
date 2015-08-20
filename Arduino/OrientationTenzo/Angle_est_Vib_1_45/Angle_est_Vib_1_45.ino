@@ -611,7 +611,7 @@ void getCompassValues()
   requestCompassData();
   getCompassData();
   // bearing1 =  my_compass.bearing();
-  bearing1 = (float) (bearing + fine*0.10);
+  bearing1 = (float) -(bearing + fine*0.10);
 }
 
 

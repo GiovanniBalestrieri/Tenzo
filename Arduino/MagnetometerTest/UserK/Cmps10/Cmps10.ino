@@ -11,9 +11,9 @@ void setup()
 {
   Wire.begin();
   Serial.begin(115200);
-  //delay(1000);
-  //Serial.println("Restoring Factory calibration");
-  //restoreFactory();
+  delay(1000);
+  Serial.println("Restoring Factory calibration");
+  restoreFactory();
 }
 
 void loop()
