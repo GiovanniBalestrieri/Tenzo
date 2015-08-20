@@ -822,9 +822,9 @@ void serialRoutine()
       {
          printPIDVals = !printPIDVals; 
       }
-      else if (modeS == 'v')
+      else if (modeS == 't')
       {
-         printPIDVals = !printPIDVals; 
+        Serial.println("Ok!");
       }
     }
   
