@@ -978,7 +978,7 @@ void calcBias()
     bxS = bxS + x;
     byS = byS + y;
     bzS = bzS + z;
-    Serial.println(i);
+    //Serial.println(i);
   }
 
   bx = bxS / c;

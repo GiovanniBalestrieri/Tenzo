@@ -129,14 +129,17 @@ void SerialRoutine()
         rpy[4] =  Float.parseFloat(vals[4]);
         rpy[5] =  Float.parseFloat(vals[5]);
         rpy[6] =  Float.parseFloat(vals[6]);
-        //rpy[7] =  Float.parseFloat(vals[7]);
-        rotx = rpy[0]*PI/180;
-        roty = rpy[2]*PI/180;
-        rotz = -rpy[1]*PI/180;
+        rpy[7] =  Float.parseFloat(vals[7]);
+        // Acc
         accRotz = -rpy[3]*PI/180;
         accRotx = -rpy[4]*PI/180;
+        // Gyro
+        rotx = -rpy[0]*PI/180;
+        roty = rpy[2]*PI/180;
+        rotz = -rpy[1]*PI/180;
+        // Complementary
         mixRotx = -rpy[6]*PI/180;
-        //mixRoty = rpy[7]*PI/180;
+        mixRoty = rpy[7]*PI/180;
         mixRotz = -rpy[5]*PI/180;
       }
       if (vals.length==9)
