@@ -822,6 +822,10 @@ void serialRoutine()
       {
          printPIDVals = !printPIDVals; 
       }
+      else if (modeS == 'v')
+      {
+         printPIDVals = !printPIDVals; 
+      }
     }
   
   timerSec = micros()-secRoutine;
