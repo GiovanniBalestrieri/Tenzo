@@ -1,0 +1,22 @@
+% Cazzeggio
+clc;
+clear all;
+
+n=5;
+m=3;
+
+i=1:n;
+j=i;
+% Define identity matrix
+I3 = eye(n);
+
+
+plot3(i,j,I3(i,j));
+
+plot3(i,j,I3(i,j));
+
+
+
+% Define A nxm random matrix
+
+AmM = bsxfun(@minus,A,mean(A))
