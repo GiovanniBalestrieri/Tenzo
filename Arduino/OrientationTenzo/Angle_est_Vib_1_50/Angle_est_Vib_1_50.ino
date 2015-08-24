@@ -803,7 +803,6 @@ void serialRoutine()
       
       if (modeS== '1')
       {
-        Serial.println("M1");
         testMotor(1);
       }
       else if (modeS== '2')
@@ -1083,12 +1082,12 @@ int setupL3G4200D(int scale)
 
 void testMotor(int x)
 {   
-  //Serial.print(" Testing motor: ");
+  Serial.print(" Testing motor: ");
   Serial.println(x);
   if (x==1)
   {
-    Serial.println('M1');
-    //Serial.println(" Increasing angular velocity");
+    //Serial.println('M1');
+    Serial.println(" Increasing angular velocity");
     servo1.write(40);
     delay(500);
     servo1.write(60);
@@ -1099,11 +1098,12 @@ void testMotor(int x)
     servo1.write(40);
     delay(500);
     servo1.write(0);
+    Serial.println('Stop M1');
   }
   else if (x==2)
   {
-    Serial.println('M2');
-    //Serial.println(" Increasing angular velocity");
+    //Serial.println('M2');
+    Serial.println(" Increasing angular 2 velocity");
     servo2.write(40);
     delay(500);
     servo2.write(60);
@@ -1114,11 +1114,12 @@ void testMotor(int x)
     servo2.write(40);
     delay(500);
     servo2.write(0);
+    Serial.println('Stop M2');
   }
   else if (x==3)
   {
-    Serial.println('M3');
-    //Serial.println(" Increasing angular velocity");
+    //Serial.println('M3');
+    Serial.println(" Increasing angular 3 velocity");
     servo3.write(40);
     delay(500);
     servo3.write(60);
@@ -1129,11 +1130,12 @@ void testMotor(int x)
     servo3.write(40);
     delay(500);
     servo3.write(0);
+    Serial.println('Stop M3');
   }
   else if (x==4)
   {
-    Serial.println('M4');
-    //Serial.println(" Increasing angular velocity");
+    //Serial.println('MM4');
+    Serial.println(" Increasing angular 4 velocity");
     servo4.write(0);
     delay(500);
     servo4.write(20);
@@ -1154,6 +1156,7 @@ void testMotor(int x)
     servo4.write(40);
     delay(500);
     servo4.write(0);
+    Serial.println('Stop M4');
   }
 }
 

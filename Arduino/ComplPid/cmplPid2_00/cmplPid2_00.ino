@@ -30,13 +30,14 @@ boolean printBlue = false;
 boolean processing = false;
 boolean printMotorsVals = false;
 boolean printPIDVals = false;
-boolean printSerialInfo = false;
-boolean printSerial = false;
+boolean printSerialInfo = true;
+boolean printSerial = true;
 boolean printTimers = false; // true
 boolean printAccs = false;
 boolean printOmegas = false;
 boolean sendBlueAngle = false;
-boolean printVerboseSerial = false;
+boolean serialByteProtocol = false;
+boolean printVerboseSerial = true;
 
 /**
  * Modes
@@ -1554,31 +1555,39 @@ void serialRoutine()
   {                
     Serial.print("Received: ");
     Serial.println(Serial.available());
-    for (int j=0;j<=inputBuffSize;j++)
+    
+    /////////////////////////////////////////////////////////////////   !!!!!!!! leva if
+    if (serialByteProtocol)
     {
-      bufferBytes[j] = Serial.read();
-
-      if (printVerboseSerial && !printBlue)
+      for (int j=0;j<=inputBuffSize;j++)
       {
-        //Serial.print("Received: ");
-        Serial.print(bufferBytes[j]); // Ok that works
-        Serial.println();
-        delay(3);
+        bufferBytes[j] = Serial.read();
+  
+        if (printVerboseSerial && !printBlue)
+        {
+          //Serial.print("Received: ");
+          Serial.print(bufferBytes[j]); // Ok that works
+          Serial.println();
+          delay(3);
+        }
       }
+      //Serial.println("K");
     }
-    //Serial.println("K");
 
-
-    for (int j=0;j<=inputBuffSize;j++)
+    if (serialByteProtocol)
     {
-      Serial.println(bufferBytes[j]);
-      delay(10);
-    }  
+      for (int j=0;j<=inputBuffSize;j++)
+      {
+        Serial.println(bufferBytes[j]);
+        delay(10);
+      }  
+    }
 
     boolean temp = false;
+    if (serialByteProtocol)
     if (bufferBytes[0] == 2 && bufferBytes[1]==1 && temp)
     {        
-      Serial.println("K");
+      Serial.println("Protocol active");
       /**
        * Message has been correctly sent by Android and delivered to the Arduino 
        * Decoding Header
