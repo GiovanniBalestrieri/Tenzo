@@ -2,7 +2,7 @@
 /* Pin: 3,5,22,9*/
 #define MAX_SIGNAL 2000
 #define MIN_SIGNAL 700
-#define MOTOR_PIN 3
+#define MOTOR_PIN 5
 
 Servo motor;
 char readChar, readCh;

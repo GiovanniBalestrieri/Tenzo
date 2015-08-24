@@ -36,7 +36,7 @@ byte modeS;
  * VTOL settings
  */
  // Take Off settings
-int rampTill = 50;
+int rampTill = 70;
 int motorRampDelayFast = 150;
 int motorRampDelayMedium = 350;
 int motorRampDelaySlow = 550;
@@ -872,7 +872,7 @@ void serialRoutine()
       count = 0;
       printSerialAngle();
       //control();  
-      //motorSpeedPID(throttle, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
+      motorSpeedPID(throttle, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
 
       //servoTime = micros();
       //servoTime = micros() - servoTime;
@@ -982,7 +982,7 @@ void removeBiasAndScale()
 void calcBias()
 {
   if (!processing)
-    Serial.println("Bias");
+    Serial.println("Decting Bias ...");
   int c = 500;
   for (int i = 0; i<c; i++)
   {

@@ -1186,7 +1186,6 @@ void land()
     }
     resetMotorsPidOff();
     initialized = false;
-    //Serial.print("   finished");
     landing = false;
     // updateStates
     landed=1;
@@ -1203,8 +1202,8 @@ void land()
 
 void resetMotorsPidOff()
 {
-  throttle = 1000;
-  motorSpeed(1000);
+  throttle = 700;
+  motorSpeed(700);
   // Sets timerStart to 0
   timerStart = 0;
   checkpoint = 0;
@@ -1556,10 +1555,7 @@ void serialRoutine()
     Serial.print("Received: ");
     Serial.println(Serial.available());
     
-    /////////////////////////////////////////////////////////////////   !!!!!!!! leva if
-    if (serialByteProtocol)
-    {
-      for (int j=0;j<=inputBuffSize;j++)
+     for (int j=0;j<=inputBuffSize;j++)
       {
         bufferBytes[j] = Serial.read();
   
@@ -1572,19 +1568,15 @@ void serialRoutine()
         }
       }
       //Serial.println("K");
-    }
 
-    if (serialByteProtocol)
-    {
+
       for (int j=0;j<=inputBuffSize;j++)
       {
         Serial.println(bufferBytes[j]);
         delay(10);
       }  
-    }
 
     boolean temp = false;
-    if (serialByteProtocol)
     if (bufferBytes[0] == 2 && bufferBytes[1]==1 && temp)
     {        
       Serial.println("Protocol active");
