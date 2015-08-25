@@ -17,20 +17,8 @@ char readAnswer, readChar, readCh;
 void setup() {
   Serial.begin(115200);
   Serial.println("Welcome!");
-    
+  calibrate();
   Serial.println("Do you want to calibrate or test? [c/t]");
-  // Wait for input
-  while (!Serial.available());
-  readAnswer = Serial.read();
-  if (readAnswer == 'c')
-  { 
-   calibrate();
-  }
-  else if (readAnswer == 't')
-  {
-    test();
-  }  
-  question();  
 }
 
 void loop() {  
@@ -103,7 +91,7 @@ void test()
   {  
     Serial.println("Caution! Testing motor!");
     Serial.println("Increasing speed...");
-    for (int i = 700 ;i<1500;i++)
+    for (int i = 1000 ;i<1500;i++)
     {
       if (i==700 || i == 1000)
         Serial.println("tick");
@@ -126,7 +114,7 @@ void test()
     Serial.println("1000 us");
     delay(2000);
     Serial.println("shutting down");
-    for (int i = 1000;i<=700;i--)
+    for (int i = 1000;i<700;i--)
     {
       delay(2);
       motor1.writeMicroseconds(i);
