@@ -87,8 +87,6 @@ void question()
 
 void test()
 {
-  if (readChar == 'y' || readAnswer == 't')
-  {  
     Serial.println("Caution! Testing motor!");
     Serial.println("Increasing speed...");
     for (int i = 1000 ;i<1500;i++)
@@ -122,23 +120,6 @@ void test()
       motor3.writeMicroseconds(i);
       motor4.writeMicroseconds(i);
     }
-//    for (int i = 600 ;i<1000;i++)
-//    {
-//      if (i==700 || i == 1000)
-//        Serial.println("tick");
-//      delay(2);
-//      motor.writeMicroseconds(i);
-//    }
-//    Serial.println("800. ");
-//    for (int i = 1000;i<=0;i--)
-//    {
-//      delay(2);
-//      motor.writeMicroseconds(i);
-//    }
     Serial.println("Stop.");
-  }
-  else if (readChar == 'n')
-  {  
-    Serial.println("Have a good one!");
-  }
+  
 }
