@@ -34,6 +34,8 @@ void SerialRoutine()
         test();
       else if (t == 'c')
         calibrate();
+      else if (t == 's')
+        stopAll();
   }
 }
 
@@ -53,43 +55,40 @@ void calibrate()
   motor4.attach(MOTOR_4);
   delay(100);
   
+  //stopAll();
+  
+  // Send min output
+  Serial.println("Press key to start.");
+  // Wait for input
+  while (!Serial.available());
+  Serial.read();
+  
   motor1.writeMicroseconds(MAX_SIGNAL);
   motor2.writeMicroseconds(MAX_SIGNAL);
   motor3.writeMicroseconds(MAX_SIGNAL);
   motor4.writeMicroseconds(MAX_SIGNAL);
 
   // Send min output
-  Serial.println("Sending minimum output. Press key");
+  Serial.println("It knows the max. Press jey to send minimum output.");
   // Wait for input
   while (!Serial.available());
   Serial.read();
-
-  motor1.writeMicroseconds(MIN_SIGNAL);
-  motor2.writeMicroseconds(MIN_SIGNAL);
-  motor3.writeMicroseconds(MIN_SIGNAL);
-  motor4.writeMicroseconds(MIN_SIGNAL);
+  for (int i = 2000;i<=700;i--)
+  {
+    delay(1);
+    motor1.writeMicroseconds(i);
+    motor2.writeMicroseconds(i);
+    motor3.writeMicroseconds(i);
+    motor4.writeMicroseconds(i);
+  }
   Serial.println("Done!");
-}
-
-void question()
-{
-  Serial.println("Want to test it? [y/n]");
-  while (!Serial.available());
-  readChar = Serial.read();
-  // Wait for input
-  test();
-  Serial.println("Again? [y/n]");
-  while (!Serial.available());
-  readCh = Serial.read();
-  if (readCh == 'y')
-    test();
 }
 
 void test()
 {
     Serial.println("Caution! Testing motor!");
     Serial.println("Increasing speed...");
-    for (int i = 1000 ;i<1500;i++)
+    for (int i = 700 ;i<1500;i++)
     {
       if (i==700 || i == 1000)
         Serial.println("tick");
@@ -121,5 +120,14 @@ void test()
       motor4.writeMicroseconds(i);
     }
     Serial.println("Stop.");
+}
+
+void stopAll()
+{
   
+  Serial.println("Arresto forzato.");
+  motor1.writeMicroseconds(0);
+  motor2.writeMicroseconds(0);
+  motor3.writeMicroseconds(0);
+  motor4.writeMicroseconds(0);
 }
