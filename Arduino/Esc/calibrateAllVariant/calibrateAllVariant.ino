@@ -12,6 +12,8 @@ Servo motor2;
 Servo motor3;
 Servo motor4;
 
+int throttle = 700;
+
 char readAnswer, readChar, readCh;
 
 void setup() {
@@ -28,6 +30,7 @@ void setup() {
 
 void loop() {  
   SerialRoutine();
+  motors(throttle);
 }
 
 void SerialRoutine()
@@ -42,7 +45,21 @@ void SerialRoutine()
       else if (t == 's')
         stopAll();
       else if (t == 'r')
-        reset();
+        resetMotors();
+      else if (t == 'q')
+      {
+        throttle = throttle + 10;
+        Serial.println(throttle);
+      }
+      else if (t == 'a')
+      {
+        throttle = throttle - 10;
+        Serial.println(throttle);
+      }
+      else if (t == 'v')
+      {
+        Serial.println(throttle);
+      }
   }
 }
 
@@ -68,7 +85,7 @@ void calibrate()
   motor4.writeMicroseconds(MAX_SIGNAL);
 
   // Send min output
-  Serial.println("Sending minimum output. Press key");
+  Serial.println("Sending minimum output.");
 //  // Wait for input
 //  while (!Serial.available());
 //  Serial.read();
@@ -80,11 +97,11 @@ void calibrate()
   motor4.writeMicroseconds(MIN_SIGNAL);
   
   Serial.println("Done!");
+  throttle = MIN_SIGNAL;
 }
 
-
-void reset()
-{  
+void resetMotors()
+{
   Serial.println("This program will calibrate the ESC.");
 
   Serial.println("Now writing maximum output.");
@@ -131,7 +148,7 @@ void test()
       motor3.writeMicroseconds(i);
       motor4.writeMicroseconds(i);
     }
-    Serial.println("1000 us");
+    Serial.println("Like that!");
     delay(2000);
     Serial.println("And stop.");
     for (int i = 1000;i<=700;i--)
@@ -148,14 +165,18 @@ void test()
     motor3.writeMicroseconds(700);
     motor4.writeMicroseconds(700);
 }
-
-
+void motors(int thr)
+{
+  motor1.writeMicroseconds(thr);
+  motor2.writeMicroseconds(thr);
+  motor3.writeMicroseconds(thr);
+  motor4.writeMicroseconds(thr);
+}
 void stopAll()
 {
-  
   Serial.println("Arresto forzato.");
-  motor1.writeMicroseconds(0);
-  motor2.writeMicroseconds(0);
-  motor3.writeMicroseconds(0);
-  motor4.writeMicroseconds(0);
+  motor1.writeMicroseconds(700);
+  motor2.writeMicroseconds(700);
+  motor3.writeMicroseconds(700);
+  motor4.writeMicroseconds(700);
 }

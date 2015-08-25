@@ -28,12 +28,13 @@
 
 boolean processing = false;
 boolean printBlue = false;
-boolean printMotorsVals = false;
+boolean printMotorsVals = true;
 boolean printPIDVals = false;
 boolean printSerialInfo = true;
 boolean printSerial = true;
 boolean printTimers = false; // true
 boolean printAccs = false;
+boolean printMotorsPid = true;
 boolean printOmegas = false;
 boolean sendBlueAngle = false;
 boolean serialByteProtocol = false;
@@ -56,6 +57,7 @@ int warning = 0;
  */
  // Take Off settings
 int rampTill = 1300;
+int idle = 1000;
 int motorRampDelayFast = 2;
 int motorRampDelayMedium = 5;
 int motorRampDelaySlow = 15;
@@ -352,6 +354,8 @@ volatile float kG = 0.98, kA = 0.02, kGZ=0.60, kAZ = 0.40;
 #define MIN_MICRO_THRESHOLD 700
 #define MAX_MICRO_THRESHOLD 2000
 
+int MOTOR_1 = 3, MOTOR_2 = 5, MOTOR_3 = 22, MOTOR_4 = 9;
+
 void setupAcceleromter()
 {
   pinMode(xaxis,INPUT);
@@ -364,6 +368,10 @@ void setupAcceleromter()
 //    ZError =  AccelAdjust(zaxis);
 //    ZError = ZError - ZOUT_1G;
 //  #endif
+  if (!processing)
+  {
+    Serial.println("[OK] Initializing accelerometer");
+  }
 }
 
 /** 
@@ -371,14 +379,14 @@ void setupAcceleromter()
  **/
 void setupMotors()
 {
-  calibrate();
+  calibrateOnce();
 }
 
 void setupGyro()
 {
   if (!processing)
   {
-    Serial.println("starting up L3G4200D");
+    Serial.println("       Init Gyro");
   }
   
   // Configure L3G4200  - 250, 500 or 2000 deg/sec
@@ -398,6 +406,10 @@ void setupGyro()
     Serial.print(biasCalcTime);
     Serial.print("      Samples: ");
     Serial.println(contSamples);
+  }
+  if (!processing)
+  {
+    Serial.println("[ OK ] Init Gyro");
   }
 }
 
@@ -429,18 +441,27 @@ void setupTimerInterrupt()
   // you can choose a prescaler from above.
   // PS_16, PS_32, PS_64 or PS_128
   ADCSRA |= PS_32;    // set our own prescaler to 64 
+  if (!processing)
+  {
+     Serial.println("[ OK ] Init Timers"); 
+  }
 }
 
 void setupCtx()
 {
   initializedSetup = true;
   k = micros();
+  if (!processing)
+  {
+     Serial.println("[ OK ] Init ctx"); 
+  }
 }
 
 void setupCommunication()
 {
   Wire.begin();
   Serial.begin(115200); 
+  Serial.println("[Ok] InitCOM");
 }
 
 void setup()
@@ -488,6 +509,7 @@ void protocol1()
     // if Tenzo has already been initialized for a timeToLand period then land
     if (initialized && timerStart>=timeToLand)
     {
+      Serial.println("Time to Land my friend!");
       land();
     }
   }
@@ -539,8 +561,8 @@ void land()
 
 void resetMotorsPidOff()
 {
-  throttle = MIN_MICRO_THRESHOLD;
-  motorSpeed(MIN_MICRO_THRESHOLD);
+  throttle = 1000;
+  motorSpeed(1000);
   // Sets timerStart to 0
   timerStart = 0;
   checkpoint = 0;
@@ -617,28 +639,34 @@ void motorSpeedPID(int thr, float rollpid, float pitchpid, float yawpid, float a
   motorC = thr + altpid - rollpid - yawpid;
   motorD = thr + altpid - pitchpid + yawpid; 
   
-  if (printMotorsVals && !processing)
+  if (printMotorsVals && !processing && printMotorsPid)
   {
     Serial.println();
-    Serial.print(" Motors:[  ");
-    Serial.print(motorA);
-    Serial.print("   ;   ");
-    Serial.print(motorB);
-    Serial.print("   ;   ");
-    Serial.print(motorC);
-    Serial.print("   ;   ");
-    Serial.print(motorD);
-    Serial.println("   ]");  
-    Serial.print("        PID:[ROLL  ");
-    Serial.print(rollpid);
-    Serial.print("   ;PITCH   ");
-    Serial.print(pitchpid);
-    Serial.print("   ;YAW   ");
-    Serial.print(yawpid);
-    Serial.print("   ; THROTTLE    ");
-    Serial.print(thr);
-    Serial.print("   ]");
-    Serial.println();
+    if (printMotorsVals)
+    {
+      Serial.print(" Motors:[  ");
+      Serial.print(motorA);
+      Serial.print("   ;   ");
+      Serial.print(motorB);
+      Serial.print("   ;   ");
+      Serial.print(motorC);
+      Serial.print("   ;   ");
+      Serial.print(motorD);
+      Serial.println("   ]");  
+    }
+    if (printMotorsPid)
+    {
+      Serial.print("Pid:[R: ");
+      Serial.print(rollpid);
+      Serial.print(" P: ");
+      Serial.print(pitchpid);
+      Serial.print(" Y: ");
+      Serial.print(yawpid);
+      Serial.print(" Th: ");
+      Serial.print(thr);
+      Serial.print("   ]");
+      Serial.println();
+    }
   }
   
   if (motorA>70)
@@ -650,10 +678,10 @@ void motorSpeedPID(int thr, float rollpid, float pitchpid, float yawpid, float a
   if (motorD>70)
    motorD = 70;
   // send input to motors
-  servo1.write(motorA);
-  servo2.write(motorB);
-  servo3.write(motorC);
-  servo4.write(motorD);
+  servo1.writeMicroseconds(motorA);
+  servo2.writeMicroseconds(motorB);
+  servo3.writeMicroseconds(motorC);
+  servo4.writeMicroseconds(motorD);
 }
 
 void initialize()
@@ -710,16 +738,16 @@ void initializeFast()
 
 void motorSpeed(int x)
 {    
-  servo1.write(x);      
-  servo2.write(x); 
-  servo3.write(x); 
-  servo4.write(x); 
+  servo1.writeMicroseconds(x);      
+  servo2.writeMicroseconds(x); 
+  servo3.writeMicroseconds(x); 
+  servo4.writeMicroseconds(x); 
 }
 
 void resetMotors()
 {
-  throttle = 0;
-  motorSpeed(0);
+  throttle = MIN_MICRO_THRESHOLD;
+  motorSpeed(throttle);
   // Sets timerStart to 0
   timerStart = 0;
   checkpoint = 0;
@@ -953,13 +981,17 @@ void serialRoutine()
       {
          printPIDVals = !printPIDVals; 
       }
-      else if (modeS == 't')
+      else if (modeS == 'k')
       {
         Serial.println("Ok!");
       }
+      else if (modeS == 't')
+      {
+        test();
+      }
       else if (modeS == 'c')
       {
-        calibrate();
+        calibrateAgain();
       }
     }
   
@@ -1010,53 +1042,133 @@ void serialRoutine()
   }
 }
 
-void calibrate()
+void test()
+{
+    Serial.println("Testing motor!");
+    Serial.println("They should start spinning.");
+    for (int i = 700 ;i<1500;i++)
+    {
+      if (i==700 || i == 1000)
+        Serial.println("tick");
+      delay(2);
+      servo1.writeMicroseconds(i);
+      servo2.writeMicroseconds(i);
+      servo3.writeMicroseconds(i);
+      servo4.writeMicroseconds(i);
+    }
+    delay(1000);
+    Serial.println("Now, decreasing");
+    for (int i = 1500;i<=1000;i--)
+    {
+      delay(2);
+      servo1.writeMicroseconds(i);
+      servo2.writeMicroseconds(i);
+      servo3.writeMicroseconds(i);
+      servo4.writeMicroseconds(i);
+    }
+    Serial.println("Like that!");
+    delay(2000);
+    Serial.println("And stop.");
+    for (int i = 1000;i<=700;i--)
+    {
+      delay(2);
+      servo1.writeMicroseconds(i);
+      servo2.writeMicroseconds(i);
+      servo3.writeMicroseconds(i);
+      servo4.writeMicroseconds(i);
+    }
+    
+    servo1.writeMicroseconds(700);
+    servo2.writeMicroseconds(700);
+    servo3.writeMicroseconds(700);
+    servo4.writeMicroseconds(700);
+    
+    throttle = 1000;
+}
+
+void calibrateOnce()
 {
   if (!processing)
   {
     Serial.println("This program will calibrate the ESC.");
     Serial.println("Now writing maximum output.");
-    Serial.println("Turn on power source, then wait 2 seconds and press any key.");
-    while (!Serial.available());
-    Serial.read();
   }
+  // Wait for input
+  //while (!Serial.available());
   
-  servo1.attach(3);  
-  servo2.attach(5);    
-  servo3.attach(22);   
-  servo4.attach(9);
-  
+  //Serial.read();
+  servo1.attach(MOTOR_1);
+  servo2.attach(MOTOR_2);
+  servo3.attach(MOTOR_3);
+  servo4.attach(MOTOR_4);
   delay(500);
-  
-  servo1.writeMicroseconds(0);
-  servo2.writeMicroseconds(0);
-  servo3.writeMicroseconds(0);
-  servo4.writeMicroseconds(0);
-  
-  delay(500);
-   
   servo1.writeMicroseconds(MAX_MICRO_THRESHOLD);
   servo2.writeMicroseconds(MAX_MICRO_THRESHOLD);
   servo3.writeMicroseconds(MAX_MICRO_THRESHOLD);
   servo4.writeMicroseconds(MAX_MICRO_THRESHOLD);
-  
+
   if (!processing)
   {
-    while (!Serial.available());
-    Serial.read();
-    Serial.println("[3 sec] ... Calibrating Motors for a better experience!");
+    Serial.println("Sending minimum output.");
   } 
+  
   delay(2000);
   
   servo1.writeMicroseconds(MIN_MICRO_THRESHOLD);
   servo2.writeMicroseconds(MIN_MICRO_THRESHOLD);
   servo3.writeMicroseconds(MIN_MICRO_THRESHOLD);
   servo4.writeMicroseconds(MIN_MICRO_THRESHOLD);
-
+  
   if (!processing)
   {
     Serial.println("Done!");
   }
+  throttle = MIN_MICRO_THRESHOLD;
+}
+
+void calibrateAgain()
+{
+  if (!processing)
+  {
+    Serial.println("This program will calibrate the ESC.");
+    Serial.println("Now writing maximum output.");
+  }
+  // Wait for input
+  //while (!Serial.available());
+  
+  //Serial.read();
+  servo1.detach();
+  servo2.detach();
+  servo3.detach();
+  servo4.detach();
+  delay(500);
+  servo1.attach(MOTOR_1);
+  servo2.attach(MOTOR_2);
+  servo3.attach(MOTOR_3);
+  servo4.attach(MOTOR_4);
+  delay(500);
+  servo1.writeMicroseconds(MAX_MICRO_THRESHOLD);
+  servo2.writeMicroseconds(MAX_MICRO_THRESHOLD);
+  servo3.writeMicroseconds(MAX_MICRO_THRESHOLD);
+  servo4.writeMicroseconds(MAX_MICRO_THRESHOLD);
+
+  if (!processing)
+  {
+    Serial.println("Sending minimum output.");
+  } 
+  
+  delay(2000);
+  
+  servo1.writeMicroseconds(MIN_MICRO_THRESHOLD);
+  servo2.writeMicroseconds(MIN_MICRO_THRESHOLD);
+  servo3.writeMicroseconds(MIN_MICRO_THRESHOLD);
+  servo4.writeMicroseconds(MIN_MICRO_THRESHOLD);
+  
+  if (!processing)
+  {
+    Serial.println("Done!");
+  }
+  throttle = 1000;
 }
 
 void getGyroValues()
@@ -1261,8 +1373,8 @@ void testMotor(int x)
   Serial.println(x);
   if (x==1)
   {
-    Serial.println("Caution! Testing motor!  Motor 1");
-    Serial.println("Increasing speed...");
+    Serial.println("Testing motor!");
+    Serial.println("They should start spinning.");
     for (int i = 700 ;i<1500;i++)
     {
       if (i==700 || i == 1000)
@@ -1270,27 +1382,28 @@ void testMotor(int x)
       delay(2);
       servo1.writeMicroseconds(i);
     }
-    Serial.println("1500 us");
-    Serial.println("Decreasing speed ...");
+    delay(1000);
+    Serial.println("Now, decreasing");
     for (int i = 1500;i<=1000;i--)
     {
       delay(2);
       servo1.writeMicroseconds(i);
     }
-    Serial.println("1000 us");
+    Serial.println("Like that!");
     delay(2000);
-    Serial.println("shutting down");
+    Serial.println("And stop.");
     for (int i = 1000;i<=700;i--)
     {
       delay(2);
       servo1.writeMicroseconds(i);
     }
-    Serial.println("Stop.");
+    
+    servo1.writeMicroseconds(700);
   }
   else if (x==2)
   {
-    Serial.println("Caution! Testing motor! Motor2");
-    Serial.println("Increasing speed...");
+    Serial.println("Testing motor!");
+    Serial.println("They should start spinning.");
     for (int i = 700 ;i<1500;i++)
     {
       if (i==700 || i == 1000)
@@ -1298,27 +1411,28 @@ void testMotor(int x)
       delay(2);
       servo2.writeMicroseconds(i);
     }
-    Serial.println("1500 us");
-    Serial.println("Decreasing speed ...");
+    delay(1000);
+    Serial.println("Now, decreasing");
     for (int i = 1500;i<=1000;i--)
     {
       delay(2);
       servo2.writeMicroseconds(i);
     }
-    Serial.println("1000 us");
+    Serial.println("Like that!");
     delay(2000);
-    Serial.println("shutting down");
+    Serial.println("And stop.");
     for (int i = 1000;i<=700;i--)
     {
       delay(2);
       servo2.writeMicroseconds(i);
     }
-    Serial.println("Stop.");
+    
+    servo2.writeMicroseconds(700);
   }
   else if (x==3)
   {
     Serial.println("Caution! Testing motor! Motor 3");
-    Serial.println("Increasing speed...");
+    Serial.println("They should start spinning.");
     for (int i = 700 ;i<1500;i++)
     {
       if (i==700 || i == 1000)
@@ -1326,27 +1440,28 @@ void testMotor(int x)
       delay(2);
       servo3.writeMicroseconds(i);
     }
-    Serial.println("1500 us");
-    Serial.println("Decreasing speed ...");
+    delay(1000);
+    Serial.println("Now, decreasing");
     for (int i = 1500;i<=1000;i--)
     {
       delay(2);
       servo3.writeMicroseconds(i);
     }
-    Serial.println("1000 us");
+    Serial.println("Like that!");
     delay(2000);
-    Serial.println("shutting down");
+    Serial.println("And stop.");
     for (int i = 1000;i<=700;i--)
     {
       delay(2);
       servo3.writeMicroseconds(i);
     }
-    Serial.println("Stop.");
+    
+    servo3.writeMicroseconds(700);
   }
   else if (x==4)
   {
-    Serial.println("Caution! Testing motor! Motor 4");
-    Serial.println("Increasing speed...");
+    Serial.println("Testing motor!");
+    Serial.println("They should start spinning.");
     for (int i = 700 ;i<1500;i++)
     {
       if (i==700 || i == 1000)
@@ -1354,22 +1469,23 @@ void testMotor(int x)
       delay(2);
       servo4.writeMicroseconds(i);
     }
-    Serial.println("1500 us");
-    Serial.println("Decreasing speed ...");
+    delay(1000);
+    Serial.println("Now, decreasing");
     for (int i = 1500;i<=1000;i--)
     {
       delay(2);
       servo4.writeMicroseconds(i);
     }
-    Serial.println("1000 us");
+    Serial.println("Like that!");
     delay(2000);
-    Serial.println("shutting down");
+    Serial.println("And stop.");
     for (int i = 1000;i<=700;i--)
     {
       delay(2);
       servo4.writeMicroseconds(i);
     }
-    Serial.println("Stop.");
+    
+    servo4.writeMicroseconds(700);
   }
 }
 
