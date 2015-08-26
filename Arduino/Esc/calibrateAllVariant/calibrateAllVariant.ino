@@ -1,4 +1,6 @@
 #include <Servo.h>
+#include "Propulsion.h"
+
 /* Pin: 3,5,22,9*/
 #define MAX_SIGNAL 2000
 #define MIN_SIGNAL 700
@@ -9,10 +11,10 @@
 #define MOTOR_3 22
 #define MOTOR_4 9
 
-Servo motor1;
-Servo motor2;
-Servo motor3;
-Servo motor4;
+//Servo motor1;
+//Servo motor2;
+//Servo motor3;
+//Servo motor4;
 
 int throttle = 700;
 
@@ -26,15 +28,15 @@ void setup() {
   Serial.println("calibrate them sending a sequence of Max : 2.000 - Min : 700.");
   Serial.println("After the calibration you can perform a test pressing 't' or 'y' when asked.");
   Serial.println("New feature: Test your motors without calibration.");
-  calibrate();
+  //calibrate();
   Serial.println("Do you want to calibrate or test? [c/t]");
 }
 
 void loop() {  
-  SerialRoutine();
-  motors(throttle);
+  //SerialRoutine();
+  //motors(throttle);
 }
-
+/*
 void SerialRoutine()
 {
   if (Serial.available())
@@ -75,7 +77,7 @@ void calibrate()
   // Wait for input
   //while (!Serial.available());
   
-  //Serial.read();a
+  //Serial.read();
   motor1.attach(MOTOR_1);
   motor2.attach(MOTOR_2);
   motor3.attach(MOTOR_3);
@@ -100,7 +102,7 @@ void calibrate()
   
   Serial.println("Done!");
   throttle = IDLE_THRESHOLD;
-}
+}git sta
 
 void resetMotors()
 {
@@ -130,7 +132,7 @@ void test()
 {
     Serial.println("Testing motor!");
     Serial.println("They should start spinning.");
-    for (int i = 700 ;i<1500;i++)
+    for (int i = 700; i < 1500; i++)
     {
       if (i==700 || i == 1000)
         Serial.println("tick");
@@ -182,5 +184,6 @@ void stopAll()
   motor3.writeMicroseconds(700);
   motor4.writeMicroseconds(700);
 }
+*/
 
 
