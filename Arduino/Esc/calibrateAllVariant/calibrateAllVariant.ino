@@ -11,11 +11,6 @@
 #define MOTOR_3 22
 #define MOTOR_4 9
 
-//Servo motor1;
-//Servo motor2;
-//Servo motor3;
-//Servo motor4;
-
 int throttle = 700;
 
 char readAnswer, readChar, readCh;

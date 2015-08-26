@@ -51,8 +51,9 @@ void setup()
   smooth();
   // Serial 
   String portName = Serial.list()[0]; //change the 0 to a 1 or 2 etc. to match your port
-// port = new Serial(this, portName, 115200);
-  port = new Serial(this, "/dev/rfcomm0", 115200); 
+  println("Port: " + portName);
+   port = new Serial(this, portName, 115200);
+  //port = new Serial(this, "/dev/rfcomm0", 115200); 
   camera(width/2.0, height/2.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0, height/2.0, 0, 0, 1, 0);
 
 }
@@ -75,7 +76,7 @@ void SerialRoutine()
  if (port.available() > 0) 
   {  
     val = port.readStringUntil('\n'); 
-    //println("Received:" + val);
+    println("Received:" + val);
     if (val!=null)
     {
       String[] vals = split(val,",");
