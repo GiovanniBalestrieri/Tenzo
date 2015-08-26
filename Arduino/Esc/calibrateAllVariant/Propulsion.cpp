@@ -8,17 +8,24 @@
 #include "Propulsion.h"
 #include <Servo.h>
 
+#define DEBUG_PROP = 1;
+
 Propulsion::Propulsion(int M1, int M2, int M3, int M4)
 {
-	 extern Servo servo1;
-	 extern Servo servo2;
-	 extern Servo servo3;
-	 extern Servo servo4;
+  	extern Servo servo1;
+	extern Servo servo2;
+	extern Servo servo3;
+	extern Servo servo4;
 
   	_pinM1 = M1;
   	_pinM2 = M2;
   	_pinM3 = M3;
   	_pinM4 = M4;
+}
+
+void Propulsion::init()
+{
+        Serial.println("Propulsion initialized.");
 }
 
 void Propulsion::calibrateOnce()
@@ -47,23 +54,6 @@ void Propulsion::calibrateOnce()
   
   	Serial.println("Done!");
   	throttle = 790;
-}
-/*
-void Propulsion::calibrationAgain()
-{
-  digitalWrite(_pin, HIGH);
-  delay(250);
-  digitalWrite(_pin, LOW);
-  delay(250);  
-}
-*/
-
-void Propulsion::spin(int thr)
-{
-  servo1.writeMicroseconds(thr);
-  servo2.writeMicroseconds(thr);
-  servo3.writeMicroseconds(thr);
-  servo4.writeMicroseconds(thr);
 }
 /*
 int Propulsion::phase0(int throttle, float rollpid, float pitchpid, float yawpid, float altpid)

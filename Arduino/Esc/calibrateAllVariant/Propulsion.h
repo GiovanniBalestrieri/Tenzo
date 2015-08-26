@@ -19,6 +19,7 @@ class Propulsion
 {
   public:
         Propulsion(int pinM1, int pinM2, int pinM3, int pinM4);
+        void init();
         void calibrateOnce();
  	// void calibrateAgain();
         void spin(int throttle);

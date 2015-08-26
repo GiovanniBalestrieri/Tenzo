@@ -19,37 +19,39 @@
 int throttle = 700;
 
 char readAnswer, readChar, readCh;
+Propulsion tenzoProp(MOTOR_1,MOTOR_2,MOTOR_3,MOTOR_4);
 
 void setup() {
   Serial.begin(115200);
+  tenzoProp.init();
   Serial.println("Welcome!");
   Serial.println("This tool is required to calibrate your servo before flight.");
   Serial.println("You can communicate with PWM signal with your ESCs, arm them,");
   Serial.println("calibrate them sending a sequence of Max : 2.000 - Min : 700.");
   Serial.println("After the calibration you can perform a test pressing 't' or 'y' when asked.");
   Serial.println("New feature: Test your motors without calibration.");
-  //calibrate();
+  tenzoProp.calibrateOnce();
   Serial.println("Do you want to calibrate or test? [c/t]");
 }
 
 void loop() {  
-  //SerialRoutine();
-  //motors(throttle);
+  SerialRoutine();
+  motors(throttle);
 }
-/*
+
 void SerialRoutine()
 {
   if (Serial.available())
   {
       char t = Serial.read();
       if (t == 't')
-        test();
+        tenzoProp.test();
       else if (t == 'c')
-        calibrate();
+        tenzoProp.calibrateOnce();
       else if (t == 's')
-        stopAll();
+        tenzoProp.stopAll();
       else if (t == 'r')
-        resetMotors();
+        tenzoProp.resetMotors();
       else if (t == 'q')
       {
         throttle = throttle + 10;
@@ -77,6 +79,8 @@ void calibrate()
   // Wait for input
   //while (!Serial.available());
   
+  /*
+  
   //Serial.read();
   motor1.attach(MOTOR_1);
   motor2.attach(MOTOR_2);
@@ -102,7 +106,9 @@ void calibrate()
   
   Serial.println("Done!");
   throttle = IDLE_THRESHOLD;
-}git sta
+  
+  */
+}
 
 void resetMotors()
 {
@@ -113,7 +119,7 @@ void resetMotors()
   
   // Wait for input
   //while (!Serial.available());
-  
+  /*
   //Serial.read();
   motor1.attach(MOTOR_1);
   motor2.attach(MOTOR_2);
@@ -124,12 +130,13 @@ void resetMotors()
   motor2.writeMicroseconds(MIN_SIGNAL);
   motor3.writeMicroseconds(MIN_SIGNAL);
   motor4.writeMicroseconds(MIN_SIGNAL);
-  
+  */
   Serial.println("Armed!");
 }
 
 void test()
 {
+  /*
     Serial.println("Testing motor!");
     Serial.println("They should start spinning.");
     for (int i = 700; i < 1500; i++)
@@ -168,22 +175,25 @@ void test()
     motor2.writeMicroseconds(700);
     motor3.writeMicroseconds(700);
     motor4.writeMicroseconds(700);
+    */
 }
 void motors(int thr)
 {
+  /*
   motor1.writeMicroseconds(thr);
   motor2.writeMicroseconds(thr);
   motor3.writeMicroseconds(thr);
   motor4.writeMicroseconds(thr);
+  */
 }
 void stopAll()
 {
+  /*
   Serial.println("Arresto forzato.");
   motor1.writeMicroseconds(700);
   motor2.writeMicroseconds(700);
   motor3.writeMicroseconds(700);
   motor4.writeMicroseconds(700);
+  */
 }
-*/
-
 
