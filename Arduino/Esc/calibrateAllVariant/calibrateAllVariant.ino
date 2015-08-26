@@ -24,19 +24,24 @@ Propulsion tenzoProp(MOTOR_1,MOTOR_2,MOTOR_3,MOTOR_4);
 void setup() {
   Serial.begin(115200);
   tenzoProp.init();
+  tenzoProp.calibrateOnce();
+  throttle = tenzoProp.getThrottle();
+}
+
+void loop() {  
+  SerialRoutine();
+  motors(tenzoProp.getThrottle());
+}
+
+void welcome()
+{  
   Serial.println("Welcome!");
   Serial.println("This tool is required to calibrate your servo before flight.");
   Serial.println("You can communicate with PWM signal with your ESCs, arm them,");
   Serial.println("calibrate them sending a sequence of Max : 2.000 - Min : 700.");
   Serial.println("After the calibration you can perform a test pressing 't' or 'y' when asked.");
   Serial.println("New feature: Test your motors without calibration.");
-  tenzoProp.calibrateOnce();
   Serial.println("Do you want to calibrate or test? [c/t]");
-}
-
-void loop() {  
-  SerialRoutine();
-  motors(throttle);
 }
 
 void SerialRoutine()
@@ -54,17 +59,17 @@ void SerialRoutine()
         tenzoProp.resetMotors();
       else if (t == 'q')
       {
-        throttle = throttle + 10;
-        Serial.println(throttle);
+        tenzoProp.setThrottle(tenzoProp.getThrottle() + 10);
+        Serial.println(tenzoProp.getThrottle());
       }
       else if (t == 'a')
       {
-        throttle = throttle - 10;
-        Serial.println(throttle);
+        tenzoProp.setThrottle(tenzoProp.getThrottle() - 10);
+        Serial.println(tenzoProp.getThrottle());
       }
       else if (t == 'v')
       {
-        Serial.println(throttle);
+        Serial.println(tenzoProp.getThrottle());
       }
   }
 }

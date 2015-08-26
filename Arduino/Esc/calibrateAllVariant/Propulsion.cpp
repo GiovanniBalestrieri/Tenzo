@@ -16,11 +16,22 @@ Propulsion::Propulsion(int M1, int M2, int M3, int M4)
 	extern Servo servo2;
 	extern Servo servo3;
 	extern Servo servo4;
-
+          
+        wUs1=0, wUs2=0, wUs3=0, wUs4=0;        
   	_pinM1 = M1;
   	_pinM2 = M2;
   	_pinM3 = M3;
   	_pinM4 = M4;
+}
+
+int Propulsion::getThrottle()
+{
+  return  this->throttle;
+}
+
+void Propulsion::setThrottle(int t)
+{
+  this->throttle = t;
 }
 
 void Propulsion::init()
@@ -55,34 +66,34 @@ void Propulsion::calibrateOnce()
   	Serial.println("Done!");
   	throttle = 790;
 }
-/*
-int Propulsion::phase0(int throttle, float rollpid, float pitchpid, float yawpid, float altpid)
+
+void Propulsion::phase0(int throttle, float rollpid, float pitchpid, float yawpid, float altpid)
 {
   // compute motor inputs
-  servo1 = throttle + altpid + rollpid - yawpid;
-  servo2 = throttle + altpid + pitchpid + yawpid;
-  servo3 = throttle + altpid - rollpid - yawpid;
-  servo4 = throttle + altpid - pitchpid + yawpid; 
+  wUs1 = throttle + altpid + rollpid - yawpid;
+  wUs2 = throttle + altpid + pitchpid + yawpid;
+  wUs3 = throttle + altpid - rollpid - yawpid;
+  wUs4 = throttle + altpid - pitchpid + yawpid; 
 
-  if (servo1>MAX_SIGNAL)
-    servo1 = MAX_SIGNAL;
-  if (servo2>MAX_SIGNAL)
-    servo2 = MAX_SIGNAL;
-  if (servo3>MAX_SIGNAL)
-    servo3 = MAX_SIGNAL;
-  if (servo4>MAX_SIGNAL)
-    servo4 = MAX_SIGNAL;
+  if (wUs1>MAX_SIGNAL)
+    wUs1 = MAX_SIGNAL;
+  if (wUs2>MAX_SIGNAL)
+    wUs2 = MAX_SIGNAL;
+  if (wUs3>MAX_SIGNAL)
+    wUs3 = MAX_SIGNAL;
+  if (wUs4>MAX_SIGNAL)
+    wUs4 = MAX_SIGNAL;
 
   // send input to motors
-  servo1.writeMicroseconds(servo1);
-  servo2.writeMicroseconds(servo2);
-  servo3.writeMicroseconds(servo3);
-  servo4.writeMicroseconds(servo4);
+  servo1.writeMicroseconds(wUs1);
+  servo2.writeMicroseconds(wUs2);
+  servo3.writeMicroseconds(wUs3);
+  servo4.writeMicroseconds(wUs4);
 
-  // Increase control counter 
-  countCtrlAction++;			
+  // Increase control counter    ADD and FIX it!
+  //countCtrlAction++;			
 }
-*/
+
 void Propulsion::test()
 {
     Serial.println("Testing motor!");

@@ -18,7 +18,7 @@ const int IDLE_THRESHOLD = 790;
 class Propulsion
 {
   public:
-        Propulsion(int pinM1, int pinM2, int pinM3, int pinM4);
+        Propulsion(int, int, int, int);
         void init();
         void calibrateOnce();
  	// void calibrateAgain();
@@ -27,13 +27,21 @@ class Propulsion
         void test();
         void stopAll();
 	int initialize();
-	void motorSpeedPid(int throttle, float rollpid, float pitchpid, float yawpid, float altpid);
-	int phase0(); 	 
+	void phase0(int, float, float, float, float);
+	//int phase0(); 
+
+        int getThrottle();
+        void setThrottle(int);	 
 
         Servo servo1;
 	Servo servo2;
 	Servo servo3;
 	Servo servo4;
+
+        int wUs1;
+        int wUs2;
+        int wUs3;
+        int wUs4;
 
 	int throttle = 700;
   private:
