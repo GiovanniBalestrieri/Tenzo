@@ -2,6 +2,8 @@
 /* Pin: 3,5,22,9*/
 #define MAX_SIGNAL 2000
 #define MIN_SIGNAL 700
+#define IDLE_THRESHOLD 790
+
 #define MOTOR_1 3
 #define MOTOR_2 5
 #define MOTOR_3 22
@@ -73,7 +75,7 @@ void calibrate()
   // Wait for input
   //while (!Serial.available());
   
-  //Serial.read();
+  //Serial.read();a
   motor1.attach(MOTOR_1);
   motor2.attach(MOTOR_2);
   motor3.attach(MOTOR_3);
@@ -97,7 +99,7 @@ void calibrate()
   motor4.writeMicroseconds(MIN_SIGNAL);
   
   Serial.println("Done!");
-  throttle = MIN_SIGNAL;
+  throttle = IDLE_THRESHOLD;
 }
 
 void resetMotors()
@@ -180,3 +182,5 @@ void stopAll()
   motor3.writeMicroseconds(700);
   motor4.writeMicroseconds(700);
 }
+
+

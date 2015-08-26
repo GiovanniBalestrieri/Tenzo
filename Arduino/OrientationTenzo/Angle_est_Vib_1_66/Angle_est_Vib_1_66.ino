@@ -352,6 +352,7 @@ volatile float kG = 0.98, kA = 0.02, kGZ=0.60, kAZ = 0.40;
 
 // MOTORS microSecs
 #define MIN_MICRO_THRESHOLD 700
+#define IDLE_THRESHOLD 790
 #define MAX_MICRO_THRESHOLD 2000
 
 int MOTOR_1 = 3, MOTOR_2 = 5, MOTOR_3 = 22, MOTOR_4 = 9;
@@ -561,8 +562,8 @@ void land()
 
 void resetMotorsPidOff()
 {
-  throttle = 1000;
-  motorSpeed(1000);
+  throttle = MIN_MICRO_THRESHOLD;
+  motorSpeed(MIN_MICRO_THRESHOLD);
   // Sets timerStart to 0
   timerStart = 0;
   checkpoint = 0;
@@ -949,8 +950,7 @@ void serialRoutine()
       {
         changePidState(false);
         enablePid = false;
-      }
-      
+      }      
       if (modeS== '1')
       {
         testMotor(1);
@@ -1020,7 +1020,7 @@ void serialRoutine()
 
   timerRoutine = micros()-kMRoutine;
   
-  // The following loop runs every 5ms
+  // The following loop runs every 1ms
   if (timerRoutine >= deltaT*1000) 
   {      
     kMRoutine = micros();    
@@ -1082,8 +1082,6 @@ void test()
     servo2.writeMicroseconds(700);
     servo3.writeMicroseconds(700);
     servo4.writeMicroseconds(700);
-    
-    throttle = 1000;
 }
 
 void calibrateOnce()
@@ -1168,7 +1166,6 @@ void calibrateAgain()
   {
     Serial.println("Done!");
   }
-  throttle = 1000;
 }
 
 void getGyroValues()
