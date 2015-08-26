@@ -36,11 +36,13 @@ void Propulsion::setThrottle(int t)
 
 void Propulsion::init()
 {
+        this->throttle = MIN_SIGNAL;
         Serial.println("Propulsion initialized.");
 }
 
 void Propulsion::calibrateOnce()
-{
+{        
+  	Propulsion::detachAll();
   	Serial.println("This program will Arm and Calibrate the ESC.");
   	Serial.println("Now writing maximum output.");
   	Serial.println("Turn on power source, then wait 2 seconds and press any key.");
@@ -65,6 +67,12 @@ void Propulsion::calibrateOnce()
   
   	Serial.println("Done!");
   	throttle = 790;
+}
+
+void Propulsion::calibrateAgain()
+{
+  	Propulsion::calibrateOnce();
+  	Propulsion::init();
 }
 
 void Propulsion::phase0(int throttle, float rollpid, float pitchpid, float yawpid, float altpid)
@@ -162,4 +170,20 @@ void Propulsion::resetMotors()
   servo4.writeMicroseconds(MIN_SIGNAL);
   
   Serial.println("Armed!");
+}
+
+void Propulsion::setSpeedWUs(int thr)
+{  
+  servo1.writeMicroseconds(thr);
+  servo2.writeMicroseconds(thr);
+  servo3.writeMicroseconds(thr);
+  servo4.writeMicroseconds(thr);
+}
+
+void Propulsion::detachAll()
+{  
+  servo1.detach();
+  servo2.detach();
+  servo3.detach();
+  servo4.detach();
 }

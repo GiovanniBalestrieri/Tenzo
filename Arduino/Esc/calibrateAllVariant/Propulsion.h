@@ -21,14 +21,17 @@ class Propulsion
         Propulsion(int, int, int, int);
         void init();
         void calibrateOnce();
- 	// void calibrateAgain();
+ 	void calibrateAgain();
         void spin(int throttle);
 	void resetMotors();
         void test();
         void stopAll();
 	int initialize();
 	void phase0(int, float, float, float, float);
+        void setSpeedWUs(int thr);
+        void detachAll();
 	//int phase0(); 
+
 
         int getThrottle();
         void setThrottle(int);	 
