@@ -7,15 +7,27 @@
 #include "Arduino.h"
 #include "NonLinearPid.h"
 #include "Propulsion.h"
+#include "PID_v2.h"
+/*
 
-
-NonLinearPid::NonLinearPid(float setpoint, int M2, int M3, int M4)
+NonLinearPid::NonLinearPid(float setPointRoll, float setPointPitch, float setPointYaw, float setPointAlt)
 {
-  	extern Servo servo1;
-	extern Servo servo2;
-	extern Servo servo3;
-	extern Servo servo4;
-          
+  /*
+  	//Specify the links and initial tuning parameters
+        extern PID rollPID(&InputRoll, &OutputRoll, &SetpointRoll, consKpRoll, consKiRoll, consKdRoll, DIRECT);
+        extern PID pitchPID(&InputPitch, &OutputPitch, &SetpointPitch, consKpPitch, consKiPitch, consKdPitch, DIRECT);
+        extern PID yawPID(&InputYaw, &OutputYaw, &SetpointYaw, consKpYaw, consKiYaw, consKdYaw, DIRECT);
+        extern PID altitudePID(&InputAltitude, &OutputAltitude, &SetpointAltitude, consKpAltitude, consKiAltitude, consKdAltitude, DIRECT);
+        
+        
+        //Specify the links and initial tuning parameters
+        extern PID wRollPID(&InputWRoll, &OutputWRoll, &SetpointWRoll, consKpWRoll, consKiWRoll, consKdWRoll, DIRECT);
+        extern PID wPitchPID(&InputWPitch, &OutputWPitch, &SetpointWPitch, consKpWPitch, consKiWPitch, consKdWPitch, DIRECT);
+        extern PID wYawPID(&InputWYaw, &OutputWYaw, &SetpointWYaw, consKpWYaw, consKiWYaw, consKdWYaw, DIRECT);
+
+   */    
+
+/*   
         wUs1=0, wUs2=0, wUs3=0, wUs4=0;        
   	_pinM1 = M1;
   	_pinM2 = M2;
@@ -23,7 +35,20 @@ NonLinearPid::NonLinearPid(float setpoint, int M2, int M3, int M4)
   	_pinM4 = M4;
 }
 
+void NonLinearPid::init()
+{
+ 
+        extern PID rollPID(&InputRoll, &OutputRoll, &SetpointRoll, consKpRoll, consKiRoll, consKdRoll, 0);
+        extern PID pitchPID(&InputPitch, &OutputPitch, &SetpointPitch, consKpPitch, consKiPitch, consKdPitch, 0);
+        extern PID yawPID(&InputYaw, &OutputYaw, &SetpointYaw, consKpYaw, consKiYaw, consKdYaw, 0);
+        extern PID altitudePID(&InputAltitude, &OutputAltitude, &SetpointAltitude, consKpAltitude, consKiAltitude, consKdAltitude, 0); 
+        
+        //Specify the links and initial tuning parameters
+        extern PID wRollPID(&InputWRoll, &OutputWRoll, &SetpointWRoll, consKpWRoll, consKiWRoll, consKdWRoll, 0);
+        extern PID wPitchPID(&InputWPitch, &OutputWPitch, &SetpointWPitch, consKpWPitch, consKiWPitch, consKdWPitch, 0);
+        extern PID wYawPID(&InputWYaw, &OutputWYaw, &SetpointWYaw, consKpWYaw, consKiWYaw, consKdWYaw, 0);
 
+}
 void control()
 {
   if (enablePid)
@@ -36,9 +61,9 @@ void control()
       //Serial.println("    ZAK ");
       errorRoll = abs(SetpointRoll - estXAngle); //distance away from setpoint
       
-        myRollPID.SetTunings(consKpRoll, consKiRoll, consKdRoll);
+        rollPID.SetTunings(consKpRoll, consKiRoll, consKdRoll);
         
-      myRollPID.Compute(); // Computes outputRoll
+      rollPID.Compute(); // Computes outputRoll
 
       if (sakura.getPrintPIDVals())
       {
@@ -65,8 +90,8 @@ void control()
     {
       InputPitch = estYAngle;
       errorPitch = abs(SetpointPitch - estYAngle); //distance away from setpoint
-      myPitchPID.SetTunings(consKpPitch, consKiPitch, consKdPitch);
-      myPitchPID.Compute(); // Computes outputPitch
+      pitchPID.SetTunings(consKpPitch, consKiPitch, consKdPitch);
+      pitchPID.Compute(); // Computes outputPitch
 
       if (sakura.getPrintPIDVals())
       { 
@@ -158,10 +183,13 @@ void controlW()
      OutputYaw=0;
      }
      */
+          
     //if (printPIDVals)
     //{
       //Serial.println();      
     //}
+     
+     /*
   }
   else
   {
@@ -170,17 +198,4 @@ void controlW()
     OutputWYaw = 0;
   }
 }
-
-
-//Specify the links and initial tuning parameters
-PID myRollPID(&InputRoll, &OutputRoll, &SetpointRoll, consKpRoll, consKiRoll, consKdRoll, DIRECT);
-PID myPitchPID(&InputPitch, &OutputPitch, &SetpointPitch, consKpPitch, consKiPitch, consKdPitch, DIRECT);
-PID myYawPID(&InputYaw, &OutputYaw, &SetpointYaw, consKpYaw, consKiYaw, consKdYaw, DIRECT);
-PID myAltitudePID(&InputAltitude, &OutputAltitude, &SetpointAltitude, consKpAltitude, consKiAltitude, consKdAltitude, DIRECT);
-
-
-//Specify the links and initial tuning parameters
-PID wRollPID(&InputWRoll, &OutputWRoll, &SetpointWRoll, consKpWRoll, consKiWRoll, consKdWRoll, DIRECT);
-PID wPitchPID(&InputWPitch, &OutputWPitch, &SetpointWPitch, consKpWPitch, consKiWPitch, consKdWPitch, DIRECT);
-PID wYawPID(&InputWYaw, &OutputWYaw, &SetpointWYaw, consKpWYaw, consKiWYaw, consKdWYaw, DIRECT);
-
+*/

@@ -46,7 +46,7 @@ PID::PID(double* Input, double* Output, double* Setpoint,
  **********************************************************************************/ 
 bool PID::Compute()
 {
-   if(!inAuto) return false;
+   if(!inAuto)   return false;
    unsigned long now = millis();
    unsigned long timeChange = (now - lastTime);
    if(timeChange>=SampleTime)
@@ -113,7 +113,7 @@ void PID::SetSampleTime(int NewSampleTime)
       SampleTime = (unsigned long)NewSampleTime;
    }
 }
- 
+
 /* SetOutputLimits(...)****************************************************
  *     This function will be used far more often than SetInputLimits.  while
  *  the input to the controller will generally be in the 0-1023 range (which is
@@ -182,7 +182,7 @@ void PID::SetControllerDirection(int Direction)
    controllerDirection = Direction;
 }
 
-/* Status Funcions*************************************************************
+/* Status Functions*************************************************************
  * Just because you set the Kp=-1 doesn't mean it actually happened.  these
  * functions query the internal state of the PID.  they're here for display 
  * purposes.  this are the functions the PID Front-end uses for example

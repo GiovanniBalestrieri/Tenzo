@@ -3,6 +3,7 @@
 #include "Propulsion.h"
 #include "Ux.h"
 #include "PID_v2.h"
+#include "NonLinearPid.h"
 
 Ux sakura;
 Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4));
@@ -28,7 +29,7 @@ int warning = 0;
  * VTOL settings
  */
  // Take Off settings
-int rampTill = 1300;
+int rampTill = 790;
 int idle = 1000;
 int motorRampDelayFast = 2;
 int motorRampDelayMedium = 5;
@@ -58,30 +59,35 @@ float Kmy = 1, Kw = 3.7;
 /**
  * Pid Controller 
  */
+ 
+// Rimesso - check validity
+ 
+ 
+ 
 boolean autoEnablePid = true;
 boolean enablePid = false;
 
 // theta
-boolean enableRollPid = true;
-boolean enablePitchPid = false;
+boolean enableRollPid = false;
+boolean enablePitchPid = true;
 boolean enableYawPid = false;
 // w
-boolean enableWRollPid = true;
-boolean enableWPitchPid = true;
+boolean enableWRollPid = false;
+boolean enableWPitchPid = false;
 boolean enableWYawPid = false;
 boolean enableAltitudePid = false;
 
 // Define IO and setpoint for control
 double SetpointRoll = 0, InputRoll, errorRoll;
-double SetpointPitch = 0, InputPitch, errorPitch;Non
+double SetpointPitch = 0, InputPitch, errorPitch;
 double SetpointYaw = 180, InputYaw, errorYaw;
 double SetpointAltitude = 1, InputAltitude, errorAltitude;
 
 
 // Define IO and setpoint for control -----------  W
-double SetpointWRoll = 0, InputWRoll, errorWRoll;
-double SetpointWPitch = 0, InputWPitch, errorWPitch;
-double SetpointWYaw = 180, InputWYaw, errorWYaw;
+double SetpointWRoll = 0, InputWRoll = 0, errorWRoll;
+double SetpointWPitch = 0, InputWPitch = 0, errorWPitch;
+double SetpointWYaw = 180, InputWYaw = 0, errorWYaw;
 
 
 double OutputRoll = 0;
@@ -118,31 +124,17 @@ double consKpAltitude=0.1, consKiAltitude=0, consKdAltitude=0.1;
 
 // W Roll
 float aggKpWRoll=0.10, aggKiWRoll=0.06, aggKdWRoll=0.04;
-float consKpWRoll=0.1815, consKiWRoll=0.17, consKdWRoll=0.00;
+float consKpWRoll=0.10, consKiWRoll=1.00, consKdWRoll=0.00;
 float farKpWRoll=0.05, farKiWRoll=0.09, farKdWRoll=0.03;
 
 // W Pitch
 float aggKpWPitch=0.07, aggKiWPitch=0.06, aggKdWPitch=0.04;
-float consKpWPitch=0.1, consKiWPitch=0.0, consKdWPitch=0.0;
+float consKpWPitch=3, consKiWPitch=3, consKdWPitch=0.0;
 float farKpWPitch=0.02, farKiWPitch=0.09,  farKdWPitch=0.02;
 
 // W Yaw
 double aggKpWYaw=0.3, aggKiWYaw=0.0, aggKdWYaw=0.1;
 double consKpWYaw=0.3, consKiWYaw=0, consKdWYaw=0.0;
-
-
-
-//Specify the links and initial tuning parameters
-PID myRollPID(&InputRoll, &OutputRoll, &SetpointRoll, consKpRoll, consKiRoll, consKdRoll, DIRECT);
-PID myPitchPID(&InputPitch, &OutputPitch, &SetpointPitch, consKpPitch, consKiPitch, consKdPitch, DIRECT);
-PID myYawPID(&InputYaw, &OutputYaw, &SetpointYaw, consKpYaw, consKiYaw, consKdYaw, DIRECT);
-PID myAltitudePID(&InputAltitude, &OutputAltitude, &SetpointAltitude, consKpAltitude, consKiAltitude, consKdAltitude, DIRECT);
-
-
-//Specify the links and initial tuning parameters
-PID wRollPID(&InputWRoll, &OutputWRoll, &SetpointWRoll, consKpWRoll, consKiWRoll, consKdWRoll, DIRECT);
-PID wPitchPID(&InputWPitch, &OutputWPitch, &SetpointWPitch, consKpWPitch, consKiWPitch, consKdWPitch, DIRECT);
-PID wYawPID(&InputWYaw, &OutputWYaw, &SetpointWYaw, consKpWYaw, consKiWYaw, consKdWYaw, DIRECT);
 
 // Threshold
 volatile int thresholdRoll = 7;
@@ -157,6 +149,20 @@ volatile int rollPID = 0;
 volatile int pitchPID = 0;
 volatile int yawPID = 0;
 
+
+
+//Specify the links and initial tuning parameters
+PID myRollPID(&InputRoll, &OutputRoll, &SetpointRoll, consKpRoll, consKiRoll, consKdRoll, DIRECT);
+PID myPitchPID(&InputPitch, &OutputPitch, &SetpointPitch, consKpPitch, consKiPitch, consKdPitch, DIRECT);
+PID myYawPID(&InputYaw, &OutputYaw, &SetpointYaw, consKpYaw, consKiYaw, consKdYaw, DIRECT);
+PID myAltitudePID(&InputAltitude, &OutputAltitude, &SetpointAltitude, consKpAltitude, consKiAltitude, consKdAltitude, DIRECT);
+
+
+//Specify the links and initial tuning parameters
+PID wRollPID(&InputWRoll, &OutputWRoll, &SetpointWRoll, consKpWRoll, consKiWRoll, consKdWRoll, DIRECT);
+PID wPitchPID(&InputWPitch, &OutputWPitch, &SetpointWPitch, consKpWPitch, consKiWPitch, consKdWPitch, DIRECT);
+PID wYawPID(&InputWYaw, &OutputWYaw, &SetpointWYaw, consKpWYaw, consKiWYaw, consKdWYaw, DIRECT);
+ 
 /**
  * Compass
  */
@@ -481,11 +487,7 @@ void calcAngle() //ISR
   if (!filterGyro)
   {
     phi=phi+(float) x*(float)dt/1000000.0;
-    /*
-    Serial.println();
-    Serial.print("phi: ");
-    Serial.println(phi);
-    */
+    
     thetaOLD = theta; 
     theta=theta+(float) y*(float) dt/1000000.0;
 
@@ -587,6 +589,9 @@ void SerialRoutine()
       else if (t == 'x')
       {
         tenzoProp.detachAll();
+        
+        // To add in method
+        resetMotorsPidOff();
       }    
       else if (t == 'i')
       {
@@ -617,7 +622,11 @@ void SerialRoutine()
       else if (t == 'b')
       {
         sakura.setSendBlueAngle(!sakura.getSendBlueAngle());
-      }   
+      }         
+      else if (t == 'k')
+      {
+        sakura.setPrintMotorValsUs(!sakura.getPrintMotorValsUs());
+      }    
   }
   timerSec = micros()-secRoutine;
   lastTimeToRead = micros();
@@ -656,6 +665,7 @@ void SerialRoutine()
         printSerialAngleNew();
       //control();  
       controlW();
+      countCtrlAction++;
       //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
       tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
 
@@ -664,7 +674,6 @@ void SerialRoutine()
       //printAcc();
       //printOmega();
       //printT();
-      countCtrlAction++;
     }
   }
 }
@@ -909,7 +918,7 @@ void protocol1()
     // If motors are on updates timer
     if (initialized)
       timerStart = millis() - checkpoint;
-    // if Tenzo has already been initialized for a timeToLand period then land
+    // if Tenzo has already been initialized for a timeToLand period, then land
     if (initialized && timerStart>=timeToLand)
     {
       Serial.println("Time to Land my friend!");
@@ -1223,8 +1232,8 @@ void controlW()
     // Roll W PID
     if (enableWRollPid)
     {
-      InputWRoll = y;
-      errorWRoll = abs(SetpointWRoll - y); 
+      InputWRoll = x;
+      errorWRoll = abs(SetpointWRoll - x); 
 
       wRollPID.SetTunings(Kw*consKpWRoll, Kw*consKiWRoll, Kw*consKdWRoll);
 
@@ -1236,10 +1245,10 @@ void controlW()
     }
 
     // Pitch PID1
-    if (enablePitchPid)
+    if (enableWPitchPid)
     {
-      InputWPitch = x;
-      errorWPitch = abs(SetpointWPitch - x);
+      InputWPitch = y;
+      errorWPitch = abs(SetpointWPitch - y);
 
       wPitchPID.SetTunings(Kw*consKpWPitch, Kw*consKiWPitch, Kw*consKdWPitch);
 
@@ -1252,7 +1261,7 @@ void controlW()
 
     /*
     // Yaw PID
-     if (enableYawPid)
+     if (enableWYawPid)
      {
      if (filterAng == 1)
      {

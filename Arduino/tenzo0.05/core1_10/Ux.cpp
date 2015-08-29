@@ -10,7 +10,21 @@
 Ux::Ux()
 {
   // Constructor
-  Serial.print("Welcome!! XD ");
+  
+   _printMotorsVals = printMotorsVals;
+   _printMotorsValsUs = printMotorsValsUs;
+   _printMotorsPid = _printMotorsPid;
+   _processing = processing;
+   _printPIDVals = printPIDVals;
+   _printSerialInfo = printSerialInfo;
+   _printSerial = printSerial;
+   _printTimers = printTimers;
+   _printAccs = printAccs;
+   _printBlue = printBlue;
+   _printOmegas = printOmegas;
+   _sendBlueAngle = sendBlueAngle;
+   _serialByteProtocol = serialByteProtocol;
+   _printVerboseSerial = printVerboseSerial;
 }
 
 void Ux::welcome()
@@ -43,10 +57,15 @@ int Ux::getM(int i)
 }
 
 
-// GEt Methods
+// Get Methods
 boolean Ux::getPrintMotorVals()
 {
   return _printMotorsVals;
+}
+
+boolean Ux::getPrintMotorValsUs()
+{
+  return _printMotorsValsUs;
 }
 
 boolean  Ux::getPrintMotorPid()
@@ -108,11 +127,21 @@ boolean  Ux::getPrintPIDVals()
 {
   return _printPIDVals;
 }
-// SET Methods
 
+
+
+/**
+ **  SET Methods
+ **/
+ 
 void Ux::setPrintMotorVals(boolean state)
 {
   _printMotorsVals = state;
+}
+
+void Ux::setPrintMotorValsUs(boolean state)
+{
+  _printMotorsValsUs = state;
 }
 
 void  Ux::setPrintMotorPid(boolean state)

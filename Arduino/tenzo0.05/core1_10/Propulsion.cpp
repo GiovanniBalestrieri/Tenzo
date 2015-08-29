@@ -6,6 +6,7 @@
 
 #include "Arduino.h"
 #include "Propulsion.h"
+#include "Ux.h"
 #include <Servo.h>
 
 #define DEBUG_PROP = 1;
@@ -16,6 +17,8 @@ Propulsion::Propulsion(int M1, int M2, int M3, int M4)
 	extern Servo servo2;
 	extern Servo servo3;
 	extern Servo servo4;
+
+        extern Ux sakuraChan;
           
         wUs1=0, wUs2=0, wUs3=0, wUs4=0;        
   	_pinM1 = M1;
@@ -92,7 +95,18 @@ void Propulsion::setSpeeds(int throttle, float rollpid, float pitchpid, float ya
     wUs3 = MAX_SIGNAL;
   if (wUs4>MAX_SIGNAL)
     wUs4 = MAX_SIGNAL;
-
+    
+    
+  if (wUs1<MIN_SIGNAL)
+    wUs1 = MIN_SIGNAL;
+  if (wUs2<MIN_SIGNAL)
+    wUs2 = MIN_SIGNAL;
+  if (wUs3<MIN_SIGNAL)
+    wUs3 = MIN_SIGNAL;
+  if (wUs4<MIN_SIGNAL)
+    wUs4 = MIN_SIGNAL;
+  
+  
   // send input to motors
   servo1.writeMicroseconds(wUs1);
   servo2.writeMicroseconds(wUs2);
@@ -100,16 +114,20 @@ void Propulsion::setSpeeds(int throttle, float rollpid, float pitchpid, float ya
   servo4.writeMicroseconds(wUs4);
   
   
-  Serial.print("                       ");
-  Serial.print(wUs1);
-  Serial.print("     ");
-  Serial.print(wUs2);
-  Serial.print("     ");
-  Serial.print(wUs3);
-  Serial.print("     ");
-  Serial.println(wUs4);
+  
+  //if (sakuraChan.getPrintMotorValsUs())
+  //{
+    Serial.print("                       ");
+    Serial.print(wUs1);
+    Serial.print("     ");
+    Serial.print(wUs2);
+    Serial.print("     ");
+    Serial.print(wUs3);
+    Serial.print("     ");
+    Serial.println(wUs4);
+  //}
 
-  // Increase control counter    ADD and FIX it!
+  // Increase control counter    Verify it. 1st: deprecated
   //countCtrlAction++;			
 }
 
@@ -207,5 +225,5 @@ void Propulsion::detachAll()
   servo3.detach();
   servo4.detach();
   
-  Serial.println("Motors down.");
+  Serial.println("Motors down. Wait 5 secs");
 }

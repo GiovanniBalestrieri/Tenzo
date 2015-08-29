@@ -8,6 +8,7 @@
 
 #include "Arduino.h"
 #include <Servo.h>
+#include "Ux.h"
 
 
 // Constants
@@ -40,6 +41,8 @@ class Propulsion
 	Servo servo2;
 	Servo servo3;
 	Servo servo4;
+
+        Ux sakuraChan;
 
         int wUs1;
         int wUs2;
