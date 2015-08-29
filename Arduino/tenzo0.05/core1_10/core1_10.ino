@@ -103,7 +103,7 @@ double OutputWYaw = 0;
 // Define the aggressive and conservative Tuning Parameters
 // Angle Roll
 float aggKpRoll=0.10, aggKiRoll=0.06, aggKdRoll=0.04;
-float consKpRoll=0.00, consKiRoll=0.1, consKdRoll=0.03;
+float consKpRoll=3.00, consKiRoll=2, consKdRoll=0.03;
 float farKpRoll=0.05, farKiRoll=0.09, farKdRoll=0.03;
 
 // Angle Pitch
@@ -124,7 +124,7 @@ double consKpAltitude=0.1, consKiAltitude=0, consKdAltitude=0.1;
 
 // W Roll
 float aggKpWRoll=0.10, aggKiWRoll=0.06, aggKdWRoll=0.04;
-float consKpWRoll=0.10, consKiWRoll=1.00, consKdWRoll=0.00;
+float consKpWRoll=3, consKiWRoll=3.00, consKdWRoll=0.00;
 float farKpWRoll=0.05, farKiWRoll=0.09, farKdWRoll=0.03;
 
 // W Pitch
