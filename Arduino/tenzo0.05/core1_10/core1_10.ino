@@ -108,7 +108,7 @@ float farKpRoll=0.05, farKiRoll=0.09, farKdRoll=0.03;
 
 // Angle Pitch
 float aggKpPitch=0.07, aggKiPitch=0.06, aggKdPitch=0.04;
-float consKpPitch=0.23, consKiPitch=0.2, consKdPitch=0.01;
+float consKpPitch=0.00, consKiPitch=1, consKdPitch=0.01;
 float farKpPitch=0.02, farKiPitch=0.09,  farKdPitch=0.02;
 
 // Angle Yaw
