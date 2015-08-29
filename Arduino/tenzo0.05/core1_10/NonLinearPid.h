@@ -19,8 +19,13 @@ class NonLinearPid
         PID YawPID;
         PID AltitudePID;
         void init();
-	//void setSpeeds(int, float, float, float, float);
-        //void setSpeedWUs(int);
+	void setAutoPid(boolean);
+        void setEnablePid(boolean);
+	void setEnablePitch(boolean);
+        void setEnableRoll(boolean);
+	void setEnableWPitch(boolean);
+        void setEnableWRoll(boolean);
+        void setEnableAltitude(boolean);
         //void setSpeedradS(int);
         //void detachAll();
 	//void idle();
@@ -32,5 +37,6 @@ class NonLinearPid
         //void setThrottle(int);	
 };
 
+ 
 
 #endif

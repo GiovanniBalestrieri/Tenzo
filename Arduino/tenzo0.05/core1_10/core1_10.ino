@@ -62,8 +62,6 @@ float Kmy = 1, Kw = 3.7;
  
 // Rimesso - check validity
  
- 
- 
 boolean autoEnablePid = true;
 boolean enablePid = false;
 
@@ -72,10 +70,11 @@ boolean enableRollPid = true;
 boolean enablePitchPid = false;
 boolean enableYawPid = false;
 // w
-boolean enableWRollPid = false;
+boolean enableWRollPid = true;
 boolean enableWPitchPid = false;
 boolean enableWYawPid = false;
 boolean enableAltitudePid = false;
+ 
 
 // Define IO and setpoint for control
 double SetpointRoll = 0, InputRoll, errorRoll;
@@ -124,7 +123,7 @@ double consKpAltitude=0.1, consKiAltitude=0, consKdAltitude=0.1;
 
 // W Roll
 float aggKpWRoll=0.10, aggKiWRoll=0.06, aggKdWRoll=0.04;
-float consKpWRoll=3, consKiWRoll=3.00, consKdWRoll=0.00;
+float consKpWRoll=2, consKiWRoll=0.50, consKdWRoll=0.00;
 float farKpWRoll=0.05, farKiWRoll=0.09, farKdWRoll=0.03;
 
 // W Pitch
@@ -666,8 +665,8 @@ void SerialRoutine()
       control();  
       controlW();
       countCtrlAction++;
-      tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
-      //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
+      //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
+      tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
 
       //servoTime = micros();
       //servoTime = micros() - servoTime;
