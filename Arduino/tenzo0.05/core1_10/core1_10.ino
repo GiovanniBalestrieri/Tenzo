@@ -663,11 +663,11 @@ void SerialRoutine()
       count = 0;
       if (sakura.getSendBlueAngle())
         printSerialAngleNew();
-      //control();  
+      control();  
       controlW();
       countCtrlAction++;
-      //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
-      tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
+      tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
+      //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
 
       //servoTime = micros();
       //servoTime = micros() - servoTime;
