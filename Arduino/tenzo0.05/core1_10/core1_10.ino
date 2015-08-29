@@ -68,8 +68,8 @@ boolean autoEnablePid = true;
 boolean enablePid = false;
 
 // theta
-boolean enableRollPid = false;
-boolean enablePitchPid = true;
+boolean enableRollPid = true;
+boolean enablePitchPid = false;
 boolean enableYawPid = false;
 // w
 boolean enableWRollPid = false;
@@ -103,12 +103,12 @@ double OutputWYaw = 0;
 // Define the aggressive and conservative Tuning Parameters
 // Angle Roll
 float aggKpRoll=0.10, aggKiRoll=0.06, aggKdRoll=0.04;
-float consKpRoll=0.26, consKiRoll=0.09, consKdRoll=0.03;
+float consKpRoll=0.00, consKiRoll=0.1, consKdRoll=0.03;
 float farKpRoll=0.05, farKiRoll=0.09, farKdRoll=0.03;
 
 // Angle Pitch
 float aggKpPitch=0.07, aggKiPitch=0.06, aggKdPitch=0.04;
-float consKpPitch=0.00, consKiPitch=1, consKdPitch=0.01;
+float consKpPitch=2.00, consKiPitch=3.00, consKdPitch=0.00;
 float farKpPitch=0.02, farKiPitch=0.09,  farKdPitch=0.02;
 
 // Angle Yaw
