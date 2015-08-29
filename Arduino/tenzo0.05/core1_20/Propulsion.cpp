@@ -115,7 +115,7 @@ void Propulsion::setSpeeds(int throttle, float rollpid, float pitchpid, float ya
   
   
   
-  if (sakuraChan.getPrintMotorValsUs())
+  //if (sakuraChan.getPrintMotorValsUs())
   {
     Serial.print("                       ");
     Serial.print(wUs1);

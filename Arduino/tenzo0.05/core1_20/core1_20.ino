@@ -85,8 +85,10 @@ int limitPidMax = 250;;
         
         // Angle Roll
         float aggKpRoll=0.10, aggKiRoll=0.06, aggKdRoll=0.04;
-        float consKpRoll=3.00, consKiRoll=2, consKdRoll=0.03;
-        float farKpRoll=0.05, farKiRoll=0.09, farKdRoll=0.03;
+        ///float aggKpRoll=3, aggKiRoll=1.2, aggKdRoll=0.00;
+        float consKpRoll=1, consKiRoll=0.3, consKdRoll=0.00;
+//        float consKpRoll=3.00, consKiRoll=2, consKdRoll=0.03;
+        float farKpRoll=0.5, farKiRoll=0.17, farKdRoll=0.00;
         
         // Angle Pitch
         float aggKpPitch=0.07, aggKiPitch=0.06, aggKdPitch=0.04;
@@ -105,8 +107,8 @@ int limitPidMax = 250;;
         ///////////////////////  WWWWWWWWWWWWWWW  //////////////////////
         
         // W Roll
-        float aggKpWRoll=0.10, aggKiWRoll=0.06, aggKdWRoll=0.04;
-        float consKpWRoll=1.00, consKiWRoll=0.2, consKdWRoll=0.00; // 0.3 1.1
+        float aggKpWRoll=0.60, aggKiWRoll=0.1, aggKdWRoll=0.04;
+        float consKpWRoll=0.60, consKiWRoll=0.1, consKdWRoll=0.00; // 0.3 1.1
        
         float farKpWRoll=0.05, farKiWRoll=0.09, farKdWRoll=0.03;
         
@@ -145,8 +147,8 @@ int limitPidMax = 250;;
 
 
 // Threshold
-volatile int thresholdRoll = 7;
-volatile int thresholdFarRoll = 20;
+volatile int thresholdRoll = 15;
+volatile int thresholdFarRoll = 40;
 volatile int thresholdPitch = 7; 
 volatile int thresholdFarPitch = 25;
 volatile int thresholdYaw = 15;
@@ -653,6 +655,9 @@ void SerialRoutine()
       Serial.println(servoTime);
       Serial.println();
     }
+    
+      //if (sakura.getPrintPIDVals())
+
     cont=0;      
     contSamples=0;      
     contCalc=0; 
@@ -1181,46 +1186,52 @@ void control()
 
 void controlCascade()
 {
+  if (enablePid)
+  {
   // Roll PID
     if (enableRollPid)
     {
-      //Serial.println("    ZAK ");
+      Serial.println("    Cascade:");
       InputRoll = estXAngle;
       //Serial.println("    ZAK ");
       errorRoll = abs(SetpointRoll - estXAngle); //distance away from setpoint
       
+      if (errorRoll<thresholdFarRoll)
         rollPid.SetTunings(consKpRoll, consKiRoll, consKdRoll);
+      if (errorRoll<=thresholdRoll)
+        rollPid.SetTunings(aggKpRoll, aggKiRoll, aggKdRoll);
+      if (errorRoll>thresholdFarRoll)
+        rollPid.SetTunings(farKpRoll, farKiRoll, farKdRoll);
+      
         
       rollPid.Compute(); // Computes outputRoll
-
-      //if (sakura.getPrintPIDVals())
-      {
-        Serial.println();
-        Serial.print("I: ");
-        Serial.print(InputRoll);
-        Serial.print("  Er: ");
-        Serial.print(errorRoll);
-        Serial.print("  O: ");
-        Serial.print(OutputRoll);
-        Serial.println();
-      }
       
       InputWRoll = x;
       SetpointWRoll = OutputRoll;
       errorWRoll = abs(SetpointWRoll - x); 
 
-      wrollPid.SetTunings(Kw*consKpWRoll, Kw*consKiWRoll, Kw*consKdWRoll);
+      if (errorWRoll<thresholdFarRoll)
+        wrollPid.SetTunings(consKpWRoll, consKiWRoll, consKdWRoll);
+      if (errorWRoll<=thresholdFarRoll)
+        wrollPid.SetTunings(aggKpWRoll, aggKiWRoll, aggKdWRoll);
+      if (errorWRoll>thresholdFarRoll)
+        wrollPid.SetTunings(farKpWRoll, farKiWRoll, farKdWRoll);
 
-      wrollPid.Compute();
-      
+      wrollPid.Compute();      
       {
+        Serial.print("I: ");
+        Serial.print(InputRoll);
+        Serial.print("  Er: ");
+        Serial.print(errorRoll);
+        Serial.print("  OR: ");
+        Serial.print(OutputRoll);
         Serial.println();
         Serial.print(SetpointWRoll);
         Serial.print(" <-- Set ;  I: ");
         Serial.print(InputWRoll);
         Serial.print(" Err: ");
         Serial.print(errorWRoll);
-        Serial.print("                            O: ");
+        Serial.print("                   OW: ");
         Serial.print(OutputWRoll);
         Serial.println();
       }
@@ -1232,7 +1243,7 @@ void controlCascade()
       Serial.println();
       OutputRoll = 0;
     }
-
+  }
 }
 
 void controlW()
@@ -1246,8 +1257,8 @@ void controlW()
     {
       InputWRoll = x;
       errorWRoll = abs(SetpointWRoll - x); 
-
-      wrollPid.SetTunings(Kw*consKpWRoll, Kw*consKiWRoll, Kw*consKdWRoll);
+      
+        wrollPid.SetTunings(Kw*consKpWRoll, Kw*consKiWRoll, Kw*consKdWRoll);
 
       wrollPid.Compute();
     }
