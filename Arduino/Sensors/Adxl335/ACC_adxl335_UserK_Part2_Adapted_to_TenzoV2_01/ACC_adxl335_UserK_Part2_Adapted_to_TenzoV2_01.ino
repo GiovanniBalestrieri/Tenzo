@@ -1,3 +1,5 @@
+//#define 3d3volts
+//#define 5VOLTS
 
 //Analog read pins
 const int xPin = 0;
@@ -24,6 +26,18 @@ float xAccel,yAccel,zAccel;
 //int zRawMin = 418;
 //int zRawMax = 284;
 
+// 5V
+
+//  int xRawMin = 628;
+//  int xRawMax = 404;
+//   
+//  int yRawMin = 619;
+//  int yRawMax = 398;
+//   
+//  int zRawMin = 626;
+//  int zRawMax = 426;
+
+
 // 3.3 V con carico Tenzo V2.1
 int xRawMin = 425;
 int xRawMax = 280;
@@ -34,15 +48,8 @@ int yRawMax = 275;
 int zRawMin = 428;
 int zRawMax = 289;
 
-// 5 V
-//int xRawMin = 628;
-//int xRawMax = 404;
- 
-//int yRawMin = 619;
-//int yRawMax = 398;
- 
-//int zRawMin = 626;
-//int zRawMax = 426;
+
+
 
 
 // angle estimated from kalman

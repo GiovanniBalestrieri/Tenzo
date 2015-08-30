@@ -83,7 +83,7 @@ boolean enableAltitudePid = false;
         
         // Angle Roll
         float aggKpRoll=0.10, aggKiRoll=0.06, aggKdRoll=0.04;
-        float consKpRoll=3.00, consKiRoll=2, consKdRoll=0.03;
+        float consKpRoll=1.00, consKiRoll=2, consKdRoll=0.03;
         float farKpRoll=0.05, farKiRoll=0.09, farKdRoll=0.03;
         
         // Angle Pitch
@@ -104,7 +104,7 @@ boolean enableAltitudePid = false;
         
         // W Roll
         float aggKpWRoll=0.10, aggKiWRoll=0.06, aggKdWRoll=0.04;
-        float consKpWRoll=0.30, consKiWRoll=1.1, consKdWRoll=0.00;
+        float consKpWRoll=2.30, consKiWRoll=0.5, consKdWRoll=0.00;
         float farKpWRoll=0.05, farKiWRoll=0.09, farKdWRoll=0.03;
         
         // W Pitch
@@ -234,15 +234,24 @@ const int yaxis = 1;
 const int zaxis = 2;
 
 // 3.3 Fully loaded Tenzo V2.1
-int xRawMin = 425;
-int xRawMax = 280;
-// 
-int yRawMin = 410;
-int yRawMax = 275;
-// 
-int zRawMin = 428;
-int zRawMax = 289;
+//int xRawMin = 425;
+//int xRawMax = 280;
+//// 
+//int yRawMin = 410;
+//int yRawMax = 275;
+//// 
+//int zRawMin = 428;
+//int zRawMax = 289;
 
+
+int xRawMin = 628;
+int xRawMax = 404;
+ 
+int yRawMin = 619;
+int yRawMax = 398;
+ 
+int zRawMin = 626;
+int zRawMax = 426;
 
 float XError,YError,ZError;
 
