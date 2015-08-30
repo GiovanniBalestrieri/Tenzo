@@ -39,14 +39,24 @@ float xAccel,yAccel,zAccel;
 
 
 // 3.3 V con carico Tenzo V2.1
-int xRawMin = 425;
-int xRawMax = 280;
+//int xRawMin = 425;
+//int xRawMax = 280;
+//// 
+//int yRawMin = 410;
+//int yRawMax = 275;
+//// 
+//int zRawMin = 428;
+//int zRawMax = 289;
+
+// 3.3 V con  carico Tenzo V2.2
+int xRawMin = 406;
+int xRawMax = 273;
 // 
-int yRawMin = 410;
-int yRawMax = 275;
+int yRawMin = 403;
+int yRawMax = 269;
 // 
-int zRawMin = 428;
-int zRawMax = 289;
+int zRawMin = 418;
+int zRawMax = 285;
 
 
 
