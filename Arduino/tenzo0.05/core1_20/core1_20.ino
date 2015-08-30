@@ -84,8 +84,8 @@ int limitPidMax = 250;;
 // Define the aggressive and conservative Tuning Parameters
         
         // Angle Roll
-        float aggKpRoll=0.10, aggKiRoll=0.06, aggKdRoll=0.04;
-        ///float aggKpRoll=3, aggKiRoll=1.2, aggKdRoll=0.00;
+        
+        float aggKpRoll=2.0, aggKiRoll=0, aggKdRoll=0.00; //float aggKpRoll=3, aggKiRoll=1.2, aggKdRoll=0.00;
         float consKpRoll=1, consKiRoll=0.3, consKdRoll=0.00;
 //        float consKpRoll=3.00, consKiRoll=2, consKdRoll=0.03;
         float farKpRoll=0.5, farKiRoll=0.17, farKdRoll=0.00;
@@ -100,15 +100,15 @@ int limitPidMax = 250;;
         double consKpYaw=0.3, consKiYaw=0, consKdYaw=0.0;
         
         
-        // Altitude  ->> *** Add it, judst created
+        // Altitude  
         double aggKpAltitude=0.2, aggKiAltitude=0.0, aggKdAltitude=0.1;
         double consKpAltitude=0.1, consKiAltitude=0, consKdAltitude=0.1;
         
         ///////////////////////  WWWWWWWWWWWWWWW  //////////////////////
         
         // W Roll
-        float aggKpWRoll=0.60, aggKiWRoll=0.1, aggKdWRoll=0.04;
-        float consKpWRoll=0.60, consKiWRoll=0.1, consKdWRoll=0.00; // 0.3 1.1
+        float aggKpWRoll=1.0, aggKiWRoll=0.2, aggKdWRoll=0.04;
+        float consKpWRoll=1.0, consKiWRoll=0.3, consKdWRoll=0.00; // 0.3 1.1
        
         float farKpWRoll=0.05, farKiWRoll=0.09, farKdWRoll=0.03;
         
