@@ -47,9 +47,7 @@ void Propulsion::calibrateOnce()
 {        
   	Propulsion::detachAll();
         delay(1000);
-  	Serial.println("This program will Arm and Calibrate the ESC.");
-  	Serial.println("Now writing maximum output.");
-  	Serial.println("Turn on power source, then wait 2 seconds and press any key.");
+  	Serial.println("This program will Arm and Calibrate the ESC. Max...");
     
   	servo1.attach(_pinM1);
   	servo2.attach(_pinM2);
@@ -61,7 +59,7 @@ void Propulsion::calibrateOnce()
   	servo3.writeMicroseconds(MAX_SIGNAL);
   	servo4.writeMicroseconds(MAX_SIGNAL);
 
-  	Serial.println("Sending minimum output.");
+  	Serial.println("Minimum...");
   
   	delay(MAX_SIGNAL);
   	servo1.writeMicroseconds(MIN_SIGNAL);
@@ -106,27 +104,13 @@ void Propulsion::setSpeeds(int throttle, float rollpid, float pitchpid, float ya
   if (wUs4<MIN_SIGNAL)
     wUs4 = MIN_SIGNAL;
   
-  
+      
   // send input to motors
   servo1.writeMicroseconds(wUs1);
   servo2.writeMicroseconds(wUs2);
   servo3.writeMicroseconds(wUs3);
   servo4.writeMicroseconds(wUs4);
-  
-  
-  
-  if (sakuraChan.getPrintMotorValsUs())
-  {
-    Serial.print("                                                        ");
-    Serial.print(wUs1);
-    Serial.print("     ");
-    Serial.print(wUs2);
-    Serial.print("     ");
-    Serial.print(wUs3);
-    Serial.print("     ");
-    Serial.println(wUs4);
-  }
-
+    
   // Increase control counter    Verify it. 1st: deprecated
   //countCtrlAction++;			
 }
@@ -231,4 +215,20 @@ void Propulsion::detachAll()
   servo4.detach();
   
   Serial.println("Disarmed");
+}
+
+int Propulsion::getwUs1() {
+    return wUs1;
+}
+
+int Propulsion::getwUs2() {
+    return wUs2;
+}
+
+int Propulsion::getwUs3() {
+    return wUs3;
+}
+
+int Propulsion::getwUs4() {
+    return wUs4;
 }

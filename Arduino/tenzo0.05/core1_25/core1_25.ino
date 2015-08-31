@@ -286,9 +286,7 @@ const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 /**
  ** Serial 
  **/
-int BaudRateSerial = 115200;
-// Bluetooth
-int BlueRate = 115200; // Slow down in case
+ 
 // Gps
 int BaudRateGps = 4800;
 byte loBytew1, hiBytew1,loBytew2, hiBytew2;
@@ -438,8 +436,12 @@ void setupCtx()
 void setupCommunication()
 {
   Wire.begin();
-  Serial.begin(115200); 
-  Serial.println("[Ok] InitCOM");
+  Serial.begin(57600); 
+  //Serial.begin(sakura.getBaudRate()); 
+  if (!sakura.getProcessing())
+  {
+    Serial.print("[Ok] InitCOM ");
+  }
 }
 
 
@@ -449,7 +451,7 @@ void setupCommunication()
 
 void setup() {
   setupCommunication();
-  
+  Serial.println("A");
   setupAcceleromter();
   setupGyro();
   setupTimerInterrupt();  
@@ -457,7 +459,10 @@ void setup() {
   sakura.welcome();
   tenzoProp.calibrateOnce();
   tenzoProp.init();
-  Serial.println("PP");
+  if (!sakura.getProcessing())
+  {
+    Serial.println("PP");
+  }
 }
 
 void loop() {  
@@ -600,11 +605,19 @@ void SerialRoutine()
       else if (t == 'a')
       {
         tenzoProp.setThrottle(tenzoProp.getThrottle() - 10);
-        Serial.println(tenzoProp.getThrottle());
+        
+        if (!sakura.getProcessing())
+        {
+          Serial.println(tenzoProp.getThrottle());
+        }
       }
       else if (t == 'v')
       {
-        Serial.println(tenzoProp.getThrottle());
+        
+        if (!sakura.getProcessing())
+        {
+          Serial.println(tenzoProp.getThrottle());
+        }
       }      
       else if (t == 'x')
       {
@@ -666,8 +679,6 @@ void SerialRoutine()
       Serial.println();
     }
     
-      //if (sakura.getPrintPIDVals())
-
     cont=0;      
     contSamples=0;      
     contCalc=0; 
@@ -684,22 +695,47 @@ void SerialRoutine()
     if (count >= 1)
     {
       count = 0;
-      if (sakura.getSendBlueAngle())
-        printSerialAngleNew();
       //control();  
       controlCascade();
       //controlW();
       countCtrlAction++;
       //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
       tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
-
-      //servoTime = micros();
-      //servoTime = micros() - servoTime;
-      //printAcc();
-      //printOmega();
-      //printT();
+      
+      printRoutine();
+      
+      // Updates counters
+      servoTime = micros();
+      servoTime = micros() - servoTime;
     }
   }
+}
+
+void printRoutine()
+{
+  
+  if (sakura.getSendBlueAngle())
+  {
+   printSerialAngleFus();
+   //printSerialAngleNew();
+  }
+  if (sakura.getPrintMotorValsUs() && !sakura.getProcessing())
+  {
+    Serial.print("                                                        ");
+    Serial.print(tenzoProp.getwUs1());
+    Serial.print("     ");
+    Serial.print(tenzoProp.getwUs2());
+    Serial.print("     ");
+    Serial.print(tenzoProp.getwUs3());
+    Serial.print("     ");
+    Serial.println(tenzoProp.getwUs4());
+  }
+  if (sakura.getPrintAccs() && !sakura.getProcessing())
+    printAcc();
+  if (sakura.getPrintOmegas() && !sakura.getProcessing())
+    printOmega();
+  
+  //printT();
 }
 
 
@@ -1012,6 +1048,16 @@ void printSerialAngleNew()
   Serial.println(bearing1);
 }
 
+void printSerialAngleFus()
+{
+  Serial.print("P");
+  Serial.print(",");
+  Serial.print(estXAngle);
+  Serial.print(",");
+  Serial.print(estYAngle);
+  Serial.print(",");
+  Serial.println(bearing1);
+}
 
 void removeBiasAndScale()
 {

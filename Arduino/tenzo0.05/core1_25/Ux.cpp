@@ -9,8 +9,7 @@
 
 Ux::Ux()
 {
-  // Constructor
-  
+   _baudrate = baudRate;
    _printMotorsVals = printMotorsVals;
    _printMotorsValsUs = printMotorsValsUs;
    _printMotorsPid = _printMotorsPid;
@@ -197,4 +196,9 @@ void  Ux::setPrintVerboseSerial(boolean state)
 void  Ux::setPrintPIDVals(boolean state)
 {
   _printPIDVals = state;
+}
+
+int Ux::getBaudRate()
+{
+ return _baudrate; 
 }

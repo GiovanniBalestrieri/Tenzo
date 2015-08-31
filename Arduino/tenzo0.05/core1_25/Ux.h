@@ -36,6 +36,7 @@ class Ux
         boolean getSendBlueAngle();
         boolean getSerialByteProtocol();
         boolean getPrintVerboseSerial();
+        int getBaudRate();
         
         void setPrintMotorVals(boolean);
         void setPrintMotorValsUs(boolean);
@@ -52,6 +53,8 @@ class Ux
         void setSerialByteProtocol(boolean);
         void setPrintVerboseSerial(boolean);
         
+        
+        
  private:
        boolean _printMotorsVals;
        boolean _printMotorsValsUs;
@@ -67,5 +70,6 @@ class Ux
        boolean _sendBlueAngle;
        boolean _serialByteProtocol;
        boolean _printVerboseSerial;
+       int _baudrate;
 };
 #endif

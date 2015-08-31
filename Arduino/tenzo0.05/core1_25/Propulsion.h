@@ -33,6 +33,11 @@ class Propulsion
         void detachAll();
 	void idle(); 
 
+        int getwUs1();
+        int getwUs2();
+        int getwUs3();
+        int getwUs4();
+
 
         int getThrottle();
         void setThrottle(int);	 
