@@ -117,7 +117,7 @@ void Propulsion::setSpeeds(int throttle, float rollpid, float pitchpid, float ya
   
   //if (sakuraChan.getPrintMotorValsUs())
   {
-    Serial.print("                       ");
+    Serial.print("                                                        ");
     Serial.print(wUs1);
     Serial.print("     ");
     Serial.print(wUs2);
@@ -220,10 +220,15 @@ void Propulsion::setSpeedWUs(int thr)
 
 void Propulsion::detachAll()
 {  
+  servo1.writeMicroseconds(0);
+  servo2.writeMicroseconds(0);
+  servo3.writeMicroseconds(0);
+  servo4.writeMicroseconds(0);
+  
   servo1.detach();
   servo2.detach();
   servo3.detach();
   servo4.detach();
   
-  Serial.println("Motors down. Wait 5 secs");
+  Serial.println("Disarmed");
 }

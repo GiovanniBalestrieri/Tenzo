@@ -56,7 +56,7 @@ boolean initialized = false;
  **/
  
 // W constant (necessary?)
-float Kmy = 1, Kw = 3.7;
+float Kmy = 1;
 /**
  * Pid Controller 
  */
@@ -86,7 +86,7 @@ int limitPidMax = 250;;
         // Angle Roll
         
         float aggKpRoll=1.0, aggKiRoll=0, aggKdRoll=0.00; //float aggKpRoll=3, aggKiRoll=1.2, aggKdRoll=0.00;
-        float consKpRoll=1, consKiRoll=0.3, consKdRoll=0.00;
+        float consKpRoll=0, consKiRoll=0.5, consKdRoll=0.00;
 //        float consKpRoll=3.00, consKiRoll=2, consKdRoll=0.03;
         float farKpRoll=0.5, farKiRoll=0.17, farKdRoll=0.00;
         
@@ -107,10 +107,10 @@ int limitPidMax = 250;;
         ///////////////////////  WWWWWWWWWWWWWWW  //////////////////////
         
         // W Roll
-        float aggKpWRoll=1.0, aggKiWRoll=0.2, aggKdWRoll=0.04;
-        float consKpWRoll=2.0, consKiWRoll=0.6, consKdWRoll=0.00; // 0.3 1.1
+        float aggKpWRoll=0.02, aggKiWRoll=0.2, aggKdWRoll=0.00;
+        float consKpWRoll=0.35, consKiWRoll=0.70, consKdWRoll=0.00; // 0.3 1.1
        
-        float farKpWRoll=0.05, farKiWRoll=0.09, farKdWRoll=0.03;
+        float farKpWRoll=0.05, farKiWRoll=0.06, farKdWRoll=0.03;
         
         // W Pitch
         float aggKpWPitch=0.07, aggKiWPitch=0.06, aggKdWPitch=0.04;
@@ -721,6 +721,8 @@ void getCompassValues()
   getCompassData();
   // bearing1 =  my_compass.bearing();
   bearing1 = (float) -(bearing + fine*0.10);
+  // workaround
+  bearing1 = -bearing1;
 }
 
 void requestCompassData()
@@ -1268,7 +1270,7 @@ void controlW()
       InputWRoll = x;
       errorWRoll = abs(SetpointWRoll - x); 
       
-        wrollPid.SetTunings(Kw*consKpWRoll, Kw*consKiWRoll, Kw*consKdWRoll);
+        wrollPid.SetTunings(consKpWRoll, consKiWRoll, consKdWRoll);
 
       wrollPid.Compute();
     }
@@ -1283,7 +1285,7 @@ void controlW()
       InputWPitch = y;
       errorWPitch = abs(SetpointWPitch - y);
 
-      wpitchPid.SetTunings(Kw*consKpWPitch, Kw*consKiWPitch, Kw*consKdWPitch);
+      wpitchPid.SetTunings(consKpWPitch,consKiWPitch, consKdWPitch);
 
       wpitchPid.Compute();
     }  
