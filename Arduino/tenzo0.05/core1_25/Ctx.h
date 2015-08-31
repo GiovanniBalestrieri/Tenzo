@@ -17,7 +17,7 @@
   boolean processing = false;
   boolean printBlue = false;
   boolean printMotorsVals = false;
-  boolean printMotorsValsUs = false;
+  boolean printMotorsValsUs = true;
   boolean printPIDVals = false;
   boolean printSerialInfo = true;
   boolean printSerial = true;

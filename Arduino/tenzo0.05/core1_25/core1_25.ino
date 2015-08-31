@@ -623,7 +623,7 @@ void SerialRoutine()
       }
       else if (t == 'm')
       {
-         sakura.setPrintMotorVals(!sakura.getPrintMotorVals()); 
+         sakura.setPrintMotorValsUs(!sakura.getPrintMotorValsUs()); 
       }
       else if (t == 'h')
       {
