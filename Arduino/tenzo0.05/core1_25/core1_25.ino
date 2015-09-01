@@ -108,8 +108,7 @@ int limitPidMax = 250;;
         
         // W Roll
         float aggKpWRoll=0.02, aggKiWRoll=0.2, aggKdWRoll=0.00;
-        float consKpWRoll=0.87, consKiWRoll=1.2, consKdWRoll=0.11; // 0.35 0.7
-       
+        float consKpWRoll=0.95, consKiWRoll=1.6, consKdWRoll=0.13;        
         float farKpWRoll=0.05, farKiWRoll=0.06, farKdWRoll=0.03;
         
         // W Pitch
@@ -268,8 +267,8 @@ unsigned long timeToRead = 0;
 unsigned long lastTimeToRead = 0;
 unsigned long servoTime = 0;
 
-// delta T control the routine frequency
-float deltaT = 1;
+// delta T controls the routine frequency
+float deltaT = 10;
 float timerLoop = 0, timerReading = 0, timerSec = 0;
 float timerRoutine = 0, count = 0;
 float redingTime = 0, samplingTime = 0, calcTime =0, printTime = 0;
@@ -662,7 +661,7 @@ void SerialRoutine()
   if (timerSec >= 1000000)
   {
     secRoutine = micros();
-    if (!sakura.getProcessing() && sakura.getPrintTimers() && !sakura.getPrintBlue())
+    if (sakura.getPrintTimers())
     {
       //Serial.print(cont);
       Serial.print("Samples rate: [sample/sec] ");
