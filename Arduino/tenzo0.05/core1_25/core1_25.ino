@@ -108,7 +108,7 @@ int limitPidMax = 250;;
         
         // W Roll
         float aggKpWRoll=0.02, aggKiWRoll=0.2, aggKdWRoll=0.00;
-        float consKpWRoll=1.05, consKiWRoll=1.3, consKdWRoll=0.12; // 0.35 0.7
+        float consKpWRoll=0.87, consKiWRoll=1.2, consKdWRoll=0.11; // 0.35 0.7
        
         float farKpWRoll=0.05, farKiWRoll=0.06, farKdWRoll=0.03;
         
