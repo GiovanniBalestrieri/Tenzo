@@ -14,11 +14,11 @@
   #define MOTOR_3 22
   #define MOTOR_4 9
   
-  boolean processing = true;
+  boolean processing = false;
   boolean printBlue = false;
   boolean printMotorsVals = false;
-  boolean printMotorsValsUs = false;
-  boolean printPIDVals = false;
+  boolean printMotorsValsUs = true;
+  boolean printPIDVals = true;
   boolean printSerialInfo = true;
   boolean printSerial = true;
   boolean printTimers = false; // true

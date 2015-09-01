@@ -17,8 +17,6 @@ Propulsion::Propulsion(int M1, int M2, int M3, int M4)
 	extern Servo servo2;
 	extern Servo servo3;
 	extern Servo servo4;
-
-        extern Ux sakuraChan;
           
         wUs1=0, wUs2=0, wUs3=0, wUs4=0;        
   	_pinM1 = M1;
@@ -34,7 +32,12 @@ int Propulsion::getThrottle()
 
 void Propulsion::setThrottle(int t)
 {
-  this->throttle = t;
+  if (t<=MIN_SIGNAL)
+    this->throttle = MIN_SIGNAL;
+  else if (t>MAX_SIGNAL)
+    this->throttle = MAX_SIGNAL;
+  else
+    this->throttle = t;
 }
 
 void Propulsion::init()

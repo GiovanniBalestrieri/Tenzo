@@ -47,8 +47,6 @@ class Propulsion
 	Servo servo3;
 	Servo servo4;
 
-        Ux sakuraChan;
-
         int wUs1;
         int wUs2;
         int wUs3;

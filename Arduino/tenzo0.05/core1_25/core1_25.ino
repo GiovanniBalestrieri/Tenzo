@@ -108,7 +108,7 @@ int limitPidMax = 250;;
         
         // W Roll
         float aggKpWRoll=0.02, aggKiWRoll=0.2, aggKdWRoll=0.00;
-        float consKpWRoll=0.35, consKiWRoll=0.70, consKdWRoll=0.00; // 0.3 1.1
+        float consKpWRoll=1.05, consKiWRoll=1.3, consKdWRoll=0.12; // 0.35 0.7
        
         float farKpWRoll=0.05, farKiWRoll=0.06, farKdWRoll=0.03;
         
@@ -436,7 +436,7 @@ void setupCtx()
 void setupCommunication()
 {
   Wire.begin();
-  Serial.begin(57600); 
+  Serial.begin(115200); 
   //Serial.begin(sakura.getBaudRate()); 
   if (!sakura.getProcessing())
   {
@@ -451,7 +451,6 @@ void setupCommunication()
 
 void setup() {
   setupCommunication();
-  Serial.println("A");
   setupAcceleromter();
   setupGyro();
   setupTimerInterrupt();  
@@ -459,10 +458,6 @@ void setup() {
   sakura.welcome();
   tenzoProp.calibrateOnce();
   tenzoProp.init();
-  if (!sakura.getProcessing())
-  {
-    Serial.println("PP");
-  }
 }
 
 void loop() {  
@@ -695,9 +690,15 @@ void SerialRoutine()
     if (count >= 1)
     {
       count = 0;
+      if (sakura.getSendBlueAngle())
+      {
+       printSerialAngleFus();
+       //printSerialAngleNew();
+      }
+      
       //control();  
-      controlCascade();
-      //controlW();
+      //\controlCascade();
+      controlW();
       countCtrlAction++;
       //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
       tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
@@ -714,12 +715,8 @@ void SerialRoutine()
 void printRoutine()
 {
   
-  if (sakura.getSendBlueAngle())
-  {
-   printSerialAngleFus();
-   //printSerialAngleNew();
-  }
-  if (sakura.getPrintMotorValsUs() && !sakura.getProcessing())
+  
+  if (sakura.getPrintMotorValsUs())
   {
     Serial.print("                                                        ");
     Serial.print(tenzoProp.getwUs1());
@@ -730,9 +727,10 @@ void printRoutine()
     Serial.print("     ");
     Serial.println(tenzoProp.getwUs4());
   }
-  if (sakura.getPrintAccs() && !sakura.getProcessing())
+  
+  if (sakura.getPrintAccs())
     printAcc();
-  if (sakura.getPrintOmegas() && !sakura.getProcessing())
+  if (sakura.getPrintOmegas())
     printOmega();
   
   //printT();
@@ -1275,7 +1273,9 @@ void controlCascade()
       if (errorWRoll>thresholdFarRoll)
         wrollPid.SetTunings(farKpWRoll, farKiWRoll, farKdWRoll);
 
-      wrollPid.Compute();      
+      wrollPid.Compute();     
+     
+      if (sakura.getPrintPIDVals())
       {
         Serial.print("I: ");
         Serial.print(InputRoll);
@@ -1319,11 +1319,22 @@ void controlW()
         wrollPid.SetTunings(consKpWRoll, consKiWRoll, consKdWRoll);
 
       wrollPid.Compute();
+      
+      
+      if (sakura.getPrintPIDVals())
+      { 
+        Serial.print("E:  ");
+        Serial.print(errorWRoll);
+        Serial.print(" A:");
+        Serial.print(OutputWRoll);
+        Serial.println();
+      }
     }
     else
     {
       OutputWRoll = 0;
     }
+    
 
     // Pitch PID1
     if (enableWPitchPid)

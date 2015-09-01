@@ -58,10 +58,6 @@ int yRawMax = 269;
 int zRawMin = 418;
 int zRawMax = 285;
 
-
-
-
-
 // angle estimated from kalman
 float angleXAcc;
 float angleYAcc;
