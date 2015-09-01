@@ -109,7 +109,7 @@ int limitPidMax = 250;;
         // W Roll
         float aggKpWRoll=0.02, aggKiWRoll=0.2, aggKdWRoll=0.00;
         //float consKpWRoll=0.95, consKiWRoll=1.2, consKdWRoll=0.13;  500 HZ
-        float consKpWRoll=4, consKiWRoll=3.5, consKdWRoll=0.0;   // stavo testando Kd = 0.13 prima che si scaricassero le batt 
+        float consKpWRoll=3.5, consKiWRoll=2.5, consKdWRoll=0.0;    // Kp 3.5
         float farKpWRoll=0.05, farKiWRoll=0.06, farKdWRoll=0.03;
         
         // W Pitch
@@ -399,7 +399,8 @@ void setupTimerInterrupt()
 
   // Set compare match register to the desired timer count
   //OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
-  OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
+  //OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
+  OCR3A=103; //16*10^6/(150Hz*1024)-1 = 103 -> 150 Hz 
   //OCR3A=780; //16*10^6/(20Hz*1024)-1 = 780 -> 20 Hz 
   //OCR3A=50; //16*10^6/(308Hz*1024)-1 = 50 -> 308 Hz 
 
@@ -1264,7 +1265,7 @@ void controlCascade()
       
       InputWRoll = x;
       SetpointWRoll = OutputRoll;
-      errorWRoll = abs(SetpointWRoll - x); 
+      errorWRoll = SetpointWRoll - x; 
 
       if (errorWRoll<thresholdFarRoll)
         wrollPid.SetTunings(consKpWRoll, consKiWRoll, consKdWRoll);
@@ -1314,7 +1315,7 @@ void controlW()
     if (enableWRollPid)
     {
       InputWRoll = x;
-      errorWRoll = abs(SetpointWRoll - x); 
+      errorWRoll = SetpointWRoll - x; 
       
         wrollPid.SetTunings(consKpWRoll, consKiWRoll, consKdWRoll);
 
