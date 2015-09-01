@@ -14,7 +14,7 @@
 // Constants
 const int MAX_SIGNAL = 2000;
 const int MIN_SIGNAL = 700;
-const int IDLE_THRESHOLD = 790;
+const int IDLE_THRESHOLD = 870;
 
 class Propulsion
 {

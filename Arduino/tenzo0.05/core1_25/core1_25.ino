@@ -108,7 +108,7 @@ int limitPidMax = 250;;
         
         // W Roll
         float aggKpWRoll=0.02, aggKiWRoll=0.2, aggKdWRoll=0.00;
-        float consKpWRoll=0.95, consKiWRoll=1.6, consKdWRoll=0.13;        
+        float consKpWRoll=1.1, consKiWRoll=1.6, consKdWRoll=0.2;   // stavo testando Kd = 0.13 prima che si scaricassero le batt 
         float farKpWRoll=0.05, farKiWRoll=0.06, farKdWRoll=0.03;
         
         // W Pitch
@@ -268,7 +268,7 @@ unsigned long lastTimeToRead = 0;
 unsigned long servoTime = 0;
 
 // delta T controls the routine frequency
-float deltaT = 10;
+float deltaT = 9; //10
 float timerLoop = 0, timerReading = 0, timerSec = 0;
 float timerRoutine = 0, count = 0;
 float redingTime = 0, samplingTime = 0, calcTime =0, printTime = 0;
