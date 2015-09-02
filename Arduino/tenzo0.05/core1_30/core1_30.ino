@@ -10,6 +10,13 @@ Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4)
 
 //NonLinearPid controlCascade(SetpointRoll,SetpointPitch,SetpointYaw,SetpointAltitude);
 
+
+/*
+ * deltaT : Control loop frequency
+ * 8 : 75HZ
+ */
+float deltaT = 8;  
+
 char readAnswer, readChar, readCh;
 
 // REMOVE
@@ -109,7 +116,7 @@ int limitPidMax = 250;;
         // W Roll
         float aggKpWRoll=0.02, aggKiWRoll=0.2, aggKdWRoll=0.00;
         //float consKpWRoll=0.95, consKiWRoll=1.2, consKdWRoll=0.13;  500 HZ
-        float consKpWRoll=3.5, consKiWRoll=2.5, consKdWRoll=0.0;    // Kp 3.5
+        float consKpWRoll=0.7, consKiWRoll=1.3, consKdWRoll=0.0;    
         float farKpWRoll=0.05, farKiWRoll=0.06, farKdWRoll=0.03;
         
         // W Pitch
@@ -268,8 +275,8 @@ unsigned long timeToRead = 0;
 unsigned long lastTimeToRead = 0;
 unsigned long servoTime = 0;
 
-// delta T controls the routine frequency
-float deltaT = 9; //10
+
+
 float timerLoop = 0, timerReading = 0, timerSec = 0;
 float timerRoutine = 0, count = 0;
 float redingTime = 0, samplingTime = 0, calcTime =0, printTime = 0;
