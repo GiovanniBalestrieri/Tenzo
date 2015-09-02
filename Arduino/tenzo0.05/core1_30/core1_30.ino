@@ -101,7 +101,7 @@ int limitPidMax = 250;;
         
         // Angular position
         float aggKpRoll=1.0, aggKiRoll=0, aggKdRoll=0.00; //float aggKpRoll=3, aggKiRoll=1.2, aggKdRoll=0.00;
-        float consKpRoll=1, consKiRoll=1, consKdRoll=0.00;
+        float consKpRoll=2.5, consKiRoll=1.4, consKdRoll=0.4;
 //        float consKpRoll=3.00, consKiRoll=2, consKdRoll=0.03;
         float farKpRoll=0.5, farKiRoll=0.17, farKdRoll=0.00;
         
@@ -1263,7 +1263,7 @@ void controlCascade()
   // Roll PID
     if (enableRollPid)
     {
-      Serial.println("    Cascade:");
+      //Serial.println("    Cascade:");
       InputRoll = estXAngle;
       //Serial.println("    ZAK ");
       errorRoll = abs(SetpointRoll - estXAngle); //distance away from setpoint
@@ -1295,17 +1295,13 @@ void controlCascade()
       {
         Serial.print("I: ");
         Serial.print(InputRoll);
-        //Serial.print("  Er: ");
-        //Serial.print(errorRoll);
-        Serial.print("  OR: ");
+        Serial.print(" O: ");
         Serial.print(OutputRoll);
-        Serial.println();
-        Serial.print(SetpointWRoll);
-        Serial.print(" <-- Set ;  I: ");
+        Serial.print(" Iw: ");
         Serial.print(InputWRoll);
-        Serial.print(" Err: ");
+        Serial.print(" Ew: ");
         Serial.print(errorWRoll);
-        Serial.print("                   OW: ");
+        Serial.print(" O: ");
         Serial.print(OutputWRoll);
         Serial.println();
       }
