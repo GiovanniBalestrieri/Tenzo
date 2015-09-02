@@ -13,10 +13,11 @@ Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4)
 
 /*
  * deltaT : Control loop frequency (Verbose_motors /NonVerbose)
+ * 15: 50Hz
  * 8 : 75HZ/44Hz    
  * 7 : 110Hz/56Hz
  */
-float deltaT = 7;  
+float deltaT = 15;  
 
 char readAnswer, readChar, readCh;
 
@@ -94,7 +95,7 @@ int limitPidMax = 250;;
         // Angle Roll
         
         float aggKpRoll=1.0, aggKiRoll=0, aggKdRoll=0.00; //float aggKpRoll=3, aggKiRoll=1.2, aggKdRoll=0.00;
-        float consKpRoll=0, consKiRoll=0.5, consKdRoll=0.00;
+        float consKpRoll=1, consKiRoll=1, consKdRoll=0.00;
 //        float consKpRoll=3.00, consKiRoll=2, consKdRoll=0.03;
         float farKpRoll=0.5, farKiRoll=0.17, farKdRoll=0.00;
         
@@ -116,13 +117,13 @@ int limitPidMax = 250;;
         
         // W Roll
         float aggKpWRoll=0.02, aggKiWRoll=0.2, aggKdWRoll=0.00;
-        //float consKpWRoll=0.95, consKiWRoll=1.2, consKdWRoll=0.13;  500 HZ
-        float consKpWRoll=0.7, consKiWRoll=1.3, consKdWRoll=0.0;    
+        //float consKpWRoll=0.95, consKiWRoll=1.2, consKdWRoll=0.13;  50 HZ
+        float consKpWRoll=0.50, consKiWRoll=0.80, consKdWRoll=0.14;    
         float farKpWRoll=0.05, farKiWRoll=0.06, farKdWRoll=0.03;
         
         // W Pitch
         float aggKpWPitch=0.07, aggKiWPitch=0.06, aggKdWPitch=0.04;
-        float consKpWPitch=3, consKiWPitch=3, consKdWPitch=0.0;
+        float consKpWPitch=1, consKiWPitch=2, consKdWPitch=0.0;
         float farKpWPitch=0.02, farKiWPitch=0.09,  farKdWPitch=0.02;
         
         // W Yaw
@@ -706,8 +707,8 @@ void SerialRoutine()
       }
       
       //control();  
-      //\controlCascade();
-      controlW();
+      controlCascade();
+      //controlW();
       countCtrlAction++;
       //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
       tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
@@ -1261,12 +1262,12 @@ void controlCascade()
       //Serial.println("    ZAK ");
       errorRoll = abs(SetpointRoll - estXAngle); //distance away from setpoint
       
-      if (errorRoll<thresholdFarRoll)
+      //if (errorRoll<thresholdFarRoll)
         rollPid.SetTunings(consKpRoll, consKiRoll, consKdRoll);
-      if (errorRoll<=thresholdRoll)
-        rollPid.SetTunings(aggKpRoll, aggKiRoll, aggKdRoll);
-      if (errorRoll>thresholdFarRoll)
-        rollPid.SetTunings(farKpRoll, farKiRoll, farKdRoll);
+      //if (errorRoll<=thresholdRoll)
+        //rollPid.SetTunings(aggKpRoll, aggKiRoll, aggKdRoll);
+      //if (errorRoll>thresholdFarRoll)
+        //rollPid.SetTunings(farKpRoll, farKiRoll, farKdRoll);
       
         
       rollPid.Compute(); // Computes outputRoll
