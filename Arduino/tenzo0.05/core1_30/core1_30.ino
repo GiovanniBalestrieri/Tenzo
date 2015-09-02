@@ -12,10 +12,11 @@ Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4)
 
 
 /*
- * deltaT : Control loop frequency
- * 8 : 75HZ
+ * deltaT : Control loop frequency (Verbose_motors /NonVerbose)
+ * 8 : 75HZ/44Hz    
+ * 7 : 110Hz/56Hz
  */
-float deltaT = 8;  
+float deltaT = 7;  
 
 char readAnswer, readChar, readCh;
 
