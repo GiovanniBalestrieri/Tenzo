@@ -92,8 +92,14 @@ int limitPidMax = 250;;
 //double SetpointRoll = 0, InputRoll, errorRoll;
 // Define the aggressive and conservative Tuning Parameters
         
-        // Angle Roll
+        // Cascade 
+        // Angle Roll        
+        float cascAngKpRoll=2, cascAngKiRoll=3, cascAngKdRoll=0.00;
         
+        // W part
+        float cascKpWRoll=1.0, cascKiWRoll=1.60, cascKdWRoll=0.28;    
+        
+        // Angular position
         float aggKpRoll=1.0, aggKiRoll=0, aggKdRoll=0.00; //float aggKpRoll=3, aggKiRoll=1.2, aggKdRoll=0.00;
         float consKpRoll=1, consKiRoll=1, consKdRoll=0.00;
 //        float consKpRoll=3.00, consKiRoll=2, consKdRoll=0.03;
@@ -1263,7 +1269,7 @@ void controlCascade()
       errorRoll = abs(SetpointRoll - estXAngle); //distance away from setpoint
       
       //if (errorRoll<thresholdFarRoll)
-        rollPid.SetTunings(consKpRoll, consKiRoll, consKdRoll);
+        rollPid.SetTunings(consKpRoll, consKiRoll, consKdRoll); //cascAngKdRoll
       //if (errorRoll<=thresholdRoll)
         //rollPid.SetTunings(aggKpRoll, aggKiRoll, aggKdRoll);
       //if (errorRoll>thresholdFarRoll)
@@ -1276,12 +1282,12 @@ void controlCascade()
       SetpointWRoll = OutputRoll;
       errorWRoll = SetpointWRoll - x; 
 
-      if (errorWRoll<thresholdFarRoll)
+      //if (errorWRoll<thresholdFarRoll)
         wrollPid.SetTunings(consKpWRoll, consKiWRoll, consKdWRoll);
-      if (errorWRoll<=thresholdFarRoll)
-        wrollPid.SetTunings(aggKpWRoll, aggKiWRoll, aggKdWRoll);
-      if (errorWRoll>thresholdFarRoll)
-        wrollPid.SetTunings(farKpWRoll, farKiWRoll, farKdWRoll);
+      //if (errorWRoll<=thresholdFarRoll)
+        //wrollPid.SetTunings(aggKpWRoll, aggKiWRoll, aggKdWRoll);
+      //if (errorWRoll>thresholdFarRoll)
+        //wrollPid.SetTunings(farKpWRoll, farKiWRoll, farKdWRoll);
 
       wrollPid.Compute();     
      
@@ -1289,8 +1295,8 @@ void controlCascade()
       {
         Serial.print("I: ");
         Serial.print(InputRoll);
-        Serial.print("  Er: ");
-        Serial.print(errorRoll);
+        //Serial.print("  Er: ");
+        //Serial.print(errorRoll);
         Serial.print("  OR: ");
         Serial.print(OutputRoll);
         Serial.println();
