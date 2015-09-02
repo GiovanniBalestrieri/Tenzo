@@ -100,8 +100,8 @@ int limitPidMax = 250;;
         float cascKpWRoll=1.0, cascKiWRoll=1.60, cascKdWRoll=0.28;    
         
         // Angular position
-        float aggKpRoll=1.0, aggKiRoll=0, aggKdRoll=0.00; //float aggKpRoll=3, aggKiRoll=1.2, aggKdRoll=0.00;
-        float consKpRoll=2.5, consKiRoll=1.4, consKdRoll=0.4;
+        float aggKpRoll=1.0, aggKiRoll=0, aggKdRoll=0.00; 
+        float consKpRoll=2.0, consKiRoll=1.4, consKdRoll=0.4;
 //        float consKpRoll=3.00, consKiRoll=2, consKdRoll=0.03;
         float farKpRoll=0.5, farKiRoll=0.17, farKdRoll=0.00;
         
