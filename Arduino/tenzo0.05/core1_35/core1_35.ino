@@ -85,7 +85,7 @@ boolean enableWPitchPid = false;
 boolean enableWYawPid = false;
 boolean enableAltitudePid = false;
 
-int limitPidMax = 250;;
+int limitPidMax = 250;
  
 
 // Define IO and setpoint for control
@@ -94,11 +94,11 @@ int limitPidMax = 250;;
         
         // Cascade 
         // Angle Roll        
-        float cascKpARoll=3.2, cascKiARoll=0.0, cascKdARoll=0.00;
+        float cascKpARoll=6, cascKiARoll=0.00, cascKdARoll=1.0;
         
         // W part
         //float cascKpWRoll=1.0, cascKiWRoll=1.60, cascKdWRoll=0.28;    
-        float cascKpWRoll=0.60, cascKiWRoll=0.60, cascKdWRoll=0.30;   
+        float cascKpWRoll=0.60, cascKiWRoll=0.30, cascKdWRoll=0.10;   
         
         // Angular position
         float aggKpRoll=1.0, aggKiRoll=0, aggKdRoll=0.00; 
@@ -1299,7 +1299,7 @@ void controlCascade()
       rollPid.Compute(); // Computes outputRoll
       
       InputWRoll = x;
-      SetpointWRoll = OutputRoll;
+      SetpointWRoll = -OutputRoll;
       errorWRoll = SetpointWRoll - x; 
 
       //if (errorWRoll<thresholdFarRoll)
