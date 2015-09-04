@@ -49,14 +49,14 @@ float xAccel,yAccel,zAccel;
 //int zRawMax = 289;
 
 // 3.3 V con  carico Tenzo V2.2
-int xRawMin = 406;
-int xRawMax = 273;
+int xRawMin = 405;
+int xRawMax = 271;
 // 
-int yRawMin = 403;
+int yRawMin = 402;
 int yRawMax = 269;
 // 
-int zRawMin = 418;
-int zRawMax = 285;
+int zRawMin = 416;
+int zRawMax = 283;
 
 // angle estimated from kalman
 float angleXAcc;
