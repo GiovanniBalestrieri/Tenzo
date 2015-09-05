@@ -94,11 +94,11 @@ int limitPidMax = 250;
         
         // Cascade 
         // Angle Roll        
-        float cascKpARoll=6, cascKiARoll=0.00, cascKdARoll=1.0;
+        float cascKpARoll=5.0, cascKiARoll=0.0, cascKdARoll=1.0; //3.2 0.6 0.4
         
         // W part
         //float cascKpWRoll=1.0, cascKiWRoll=1.60, cascKdWRoll=0.28;    
-        float cascKpWRoll=0.60, cascKiWRoll=0.30, cascKdWRoll=0.10;   
+        float cascKpWRoll=0.7, cascKiWRoll=0.00, cascKdWRoll=0.35;   
         
         // Angular position
         float aggKpRoll=1.0, aggKiRoll=0, aggKdRoll=0.00; 
@@ -733,10 +733,9 @@ void SerialRoutine()
       //control();  
       controlCascade();
       //controlW();
-      countCtrlAction++;
-      
       tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
       
+      countCtrlAction++;
       printRoutine();
       
       // Updates counters
@@ -748,10 +747,10 @@ void SerialRoutine()
 
 void printRoutine()
 {
+  
   if (sakura.getPrintMotorValsUs())
   {
-    
-    Serial.print("                                                 ");
+    Serial.print("                                           ");
     Serial.print(tenzoProp.getwUs1());
     Serial.print(" | ");
     Serial.print(tenzoProp.getwUs2());
@@ -760,7 +759,7 @@ void printRoutine()
     Serial.print(" | ");
     Serial.println(tenzoProp.getwUs4());
   }
-  
+    
   if (sakura.getPrintAccs())
     printAcc();
   if (sakura.getPrintOmegas())

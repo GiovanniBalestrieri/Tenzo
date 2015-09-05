@@ -107,7 +107,6 @@ void Propulsion::setSpeeds(int throttle, float rollpid, float pitchpid, float ya
   if (wUs4<MIN_SIGNAL)
     wUs4 = MIN_SIGNAL;
   
-      
   // send input to motors
   servo1.writeMicroseconds(wUs1);
   servo2.writeMicroseconds(wUs2);
