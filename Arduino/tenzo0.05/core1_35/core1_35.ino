@@ -87,18 +87,20 @@ boolean enableAltitudePid = false;
 
 int limitPidMax = 250;
  
-
+boolean inCons = false;
 // Define IO and setpoint for control
 //double SetpointRoll = 0, InputRoll, errorRoll;
 // Define the aggressive and conservative Tuning Parameters
         
         // Cascade 
         // Angle Roll        
-        float cascKpARoll=5.0, cascKiARoll=0.0, cascKdARoll=1.0; //3.2 0.6 0.4
+        float cascAggKpARoll=7.0, cascAggKiARoll=0.5, cascAggKdARoll=1.0;
+        
+        float cascKpARoll=5.0, cascKiARoll=0.5, cascKdARoll=1.0; //3.2 0.6 0.4
         
         // W part
         //float cascKpWRoll=1.0, cascKiWRoll=1.60, cascKdWRoll=0.28;    
-        float cascKpWRoll=0.7, cascKiWRoll=0.00, cascKdWRoll=0.35;   
+        float cascKpWRoll=0.7, cascKiWRoll=0.30, cascKdWRoll=0.4;   
         
         // Angular position
         float aggKpRoll=1.0, aggKiRoll=0, aggKdRoll=0.00; 
@@ -163,7 +165,7 @@ int limitPidMax = 250;
 
 
 // Threshold
-volatile int thresholdRoll = 15;
+volatile int thresholdRoll = 10;
 volatile int thresholdFarRoll = 40;
 volatile int thresholdPitch = 7; 
 volatile int thresholdFarPitch = 25;
@@ -1287,10 +1289,32 @@ void controlCascade()
       //Serial.println("    ZAK ");
       errorRoll = abs(SetpointRoll - estXAngle); //distance away from setpoint
       
-      //if (errorRoll<thresholdFarRoll)
-        rollPid.SetTunings(cascKpARoll, cascKiARoll, cascKdARoll); //cascAngKdRoll
-      //if (errorRoll<=thresholdRoll)
-        //rollPid.SetTunings(aggKpRoll, aggKiRoll, aggKdRoll);
+      if (inCons)
+      {
+        if (errorRoll<=(thresholdRoll + 3))
+        {
+          rollPid.SetTunings(cascKpARoll, cascKpARoll, cascKpARoll);
+          inCons = true; 
+        }
+        else if (errorRoll>thresholdRoll)
+        {
+          rollPid.SetTunings(cascAggKpARoll, cascAggKiARoll, cascAggKdARoll); //cascAngKdRoll
+          inCons = false;
+        }
+      }
+      else
+      {
+        if (errorRoll<=(thresholdRoll))
+        {
+          rollPid.SetTunings(cascKpARoll, cascKpARoll, cascKpARoll);
+          inCons = true; 
+        }
+        else if (errorRoll>thresholdRoll)
+        {
+          rollPid.SetTunings(cascAggKpARoll, cascAggKiARoll, cascAggKdARoll); //cascAngKdRoll
+          inCons = false;
+        }
+      }
       //if (errorRoll>thresholdFarRoll)
         //rollPid.SetTunings(farKpRoll, farKiRoll, farKdRoll);
       
