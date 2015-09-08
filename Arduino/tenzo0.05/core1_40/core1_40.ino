@@ -139,10 +139,10 @@ boolean inCons = false;
         // Aggressive settings theta >= thre     
         float aggKpCascRoll=2.5, aggKiCascRoll=0.00, aggKdCascRoll=0.00;
         // Conservative settings theta < thre
-        float consKpCascRoll=2.5, consKiCascRoll=0.00, consKdCascRoll=0.00; //1.5 / 3.2 0.6 0.4
+        float consKpCascRoll=2.5, consKiCascRoll=1.00, consKdCascRoll=0.00; //1.5 / 3.2 0.6 0.4
         
         // W part   
-        float consKpCascRollW=0.6, consKiCascRollW=0.6, consKdCascRollW=0.14;   
+        float consKpCascRollW=0.5, consKiCascRollW=0.7, consKdCascRollW=0.28;   
         
         // Pitch
         
