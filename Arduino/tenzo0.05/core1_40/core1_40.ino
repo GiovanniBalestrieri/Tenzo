@@ -39,7 +39,7 @@ int warning = 0;
  * VTOL settings
  */
  // Take Off settings
-int rampTill = 830;
+int rampTill = 870;
 int idle = 1000;
 int motorRampDelayFast = 2;
 int motorRampDelayMedium = 5;
@@ -137,12 +137,12 @@ boolean inCons = false;
         // Roll
 
         // Aggressive settings theta >= thre     
-        float aggKpCascRoll=2.5, aggKiCascRoll=0.00, aggKdCascRoll=0.00;
+        float aggKpCascRoll=0, aggKiCascRoll=0.00, aggKdCascRoll=0.00;
         // Conservative settings theta < thre
-        float consKpCascRoll=2.5, consKiCascRoll=1.00, consKdCascRoll=0.00; //1.5 / 3.2 0.6 0.4
+        float consKpCascRoll=0, consKiCascRoll=0.00, consKdCascRoll=0.00; //1.5 / 3.2 0.6 0.4
         
         // W part   
-        float consKpCascRollW=0.5, consKiCascRollW=0.7, consKdCascRollW=0.28;   
+        float consKpCascRollW=0, consKiCascRollW=0.9, consKdCascRollW=0.00;   
         
         // Pitch
         
@@ -664,7 +664,7 @@ void SerialRoutine()
   if (Serial.available())
   {
       char t = Serial.read();
-      if (t == 's')
+      if (t == '1')
         tenzoProp.stopAll();
       else if (t == 'r')
         tenzoProp.resetMotors();
@@ -683,8 +683,7 @@ void SerialRoutine()
         }
       }
       else if (t == 'v')
-      {
-        
+      {        
         if (!sakura.getProcessing())
         {
           Serial.println(tenzoProp.getThrottle());
@@ -713,25 +712,25 @@ void SerialRoutine()
       {
          sakura.setPrintAccs(!sakura.getPrintAccs()); 
       }
-      else if (t == 'h')
+      else if (t == 'z')
       {
         sakura.setPrintPIDVals(!sakura.getPrintPIDVals());
       }
       else if (t == 'p')
       {
-        changePidState(true);
-        enablePid = true;
+        enablePid = !enablePid;
+        changePidState(enablePid);
       }
       else if (t == 'l')
       {
-        changePidState(false);
-        enablePid = false;
+        //changePidState(false);
+        //enablePid = false;
       }         
       else if (t == 'b')
       {
         sakura.setSendBlueAngle(!sakura.getSendBlueAngle());
       }         
-      else if (t == 'k')
+      else if (t == ',')
       {
         sakura.setPrintMotorValsUs(!sakura.getPrintMotorValsUs());
       }      
@@ -741,11 +740,96 @@ void SerialRoutine()
         Serial.print("Setpoint:  ");
         Serial.println(SetpointRoll);
       }         
-      else if (t == 'g')
+      else if (t == 'y')
       {
         SetpointRoll = SetpointRoll + 1;
         Serial.print("Setpoint:  ");
         Serial.println(SetpointRoll);
+      }    
+      else if (t == 'd')
+      {
+        consKpCascRoll = consKpCascRoll - 0.05;
+        if (consKpCascRollW<0)
+          consKpCascRollW = 0;
+        Serial.print("consKpCascRoll:  ");
+        Serial.println(consKpCascRoll);
+      }         
+      else if (t == 'D')
+      {
+        consKpCascRoll = consKpCascRoll + 0.05;
+        Serial.print("consKpCascRoll:  ");
+        Serial.println(consKpCascRoll);
+      }     
+      else if (t == 'f')
+      {
+        consKiCascRoll = consKiCascRoll - 0.05;
+        if (consKiCascRollW<0)
+          consKiCascRollW = 0;
+        Serial.print("consKICascRoll:  ");
+        Serial.println(consKiCascRoll);
+      }         
+      else if (t == 'F')
+      {
+        consKiCascRoll = consKiCascRoll + 0.05;
+        Serial.print("consKiCascRoll:  ");
+        Serial.println(consKiCascRoll);
+      }     
+      else if (t == 'g')
+      {
+        consKdCascRoll = consKdCascRoll - 0.05;
+        if (consKdCascRoll<0)
+          consKdCascRoll = 0;
+        Serial.print("consKDCascRoll:  ");
+        Serial.println(consKdCascRoll);
+      }         
+      else if (t == 'G')
+      {
+        consKdCascRoll = consKdCascRoll + 0.05;
+        Serial.print("consKDCascRoll:  ");
+        Serial.println(consKdCascRoll);
+      }
+    
+      else if (t == 'h')
+      {
+        consKpCascRollW = consKpCascRollW - 0.05;
+        if (consKpCascRollW<0)
+          consKpCascRollW = 0;
+        Serial.print("consKpCascRoll W:  ");
+        Serial.println(consKpCascRollW);
+      }         
+      else if (t == 'H')
+      {
+        consKpCascRollW = consKpCascRollW + 0.05;
+        Serial.print("consKpCascRoll  W:  ");
+        Serial.println(consKpCascRollW);
+      }     
+      else if (t == 'f')
+      {
+        consKiCascRollW = consKiCascRollW - 0.05;
+        if (consKiCascRollW<0)
+          consKiCascRollW = 0;
+        Serial.print("consKICascRoll W:  ");
+        Serial.println(consKiCascRollW);
+      }         
+      else if (t == 'F')
+      {
+        consKiCascRollW = consKiCascRollW + 0.05;
+        Serial.print("consKiCascRoll W :  ");
+        Serial.println(consKiCascRollW);
+      }     
+      else if (t == 'g')
+      {
+        consKdCascRollW = consKdCascRoll - 0.05;
+        if (consKdCascRollW<0)
+          consKdCascRollW = 0;
+        Serial.print("consKDCascRoll W:  ");
+        Serial.println(consKiCascRollW);
+      }         
+      else if (t == 'G')
+      {
+        consKdCascRollW = consKdCascRollW + 0.05;
+        Serial.print("consKDcascRoll W:  ");
+        Serial.println(consKdCascRollW);
       }       
   }
   timerSec = micros()-secRoutine;
