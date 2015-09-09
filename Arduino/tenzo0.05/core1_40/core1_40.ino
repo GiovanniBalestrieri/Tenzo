@@ -142,7 +142,7 @@ boolean inCons = false;
         float consKpCascRoll=0, consKiCascRoll=0.00, consKdCascRoll=0.00; //1.5 / 3.2 0.6 0.4
         
         // W part   
-        float consKpCascRollW=0, consKiCascRollW=0.9, consKdCascRollW=0.00;   
+        float consKpCascRollW=1.10, consKiCascRollW=1.65, consKdCascRollW=0.00;   
         
         // Pitch
         
@@ -684,10 +684,23 @@ void SerialRoutine()
       }
       else if (t == 'v')
       {        
-        if (!sakura.getProcessing())
-        {
-          Serial.println(tenzoProp.getThrottle());
-        }
+        //if (!sakura.getProcessing())
+        //{
+          //Serial.println(tenzoProp.getThrottle());
+          Serial.println();
+          Serial.print("W - P|I|D: ");
+          Serial.print(consKpCascRollW);
+          Serial.print(" | ");
+          Serial.print(consKiCascRollW);
+          Serial.print(" | ");
+          Serial.println(consKdCascRollW);
+          Serial.print(" A - P|I|D: ");
+          Serial.print(consKpCascRoll);
+          Serial.print(" | ");
+          Serial.print(consKiCascRoll);
+          Serial.print(" | ");
+          Serial.println(consKdCascRoll);
+        //}
       }      
       else if (t == 'x')
       {
@@ -749,8 +762,8 @@ void SerialRoutine()
       else if (t == 'd')
       {
         consKpCascRoll = consKpCascRoll - 0.05;
-        if (consKpCascRollW<0)
-          consKpCascRollW = 0;
+        if (consKpCascRoll<0)
+          consKpCascRoll = 0;
         Serial.print("consKpCascRoll:  ");
         Serial.println(consKpCascRoll);
       }         
@@ -763,8 +776,8 @@ void SerialRoutine()
       else if (t == 'f')
       {
         consKiCascRoll = consKiCascRoll - 0.05;
-        if (consKiCascRollW<0)
-          consKiCascRollW = 0;
+        if (consKiCascRoll<0)
+          consKiCascRoll = 0;
         Serial.print("consKICascRoll:  ");
         Serial.println(consKiCascRoll);
       }         
@@ -803,7 +816,7 @@ void SerialRoutine()
         Serial.print("consKpCascRoll  W:  ");
         Serial.println(consKpCascRollW);
       }     
-      else if (t == 'f')
+      else if (t == 'j')
       {
         consKiCascRollW = consKiCascRollW - 0.05;
         if (consKiCascRollW<0)
@@ -811,21 +824,21 @@ void SerialRoutine()
         Serial.print("consKICascRoll W:  ");
         Serial.println(consKiCascRollW);
       }         
-      else if (t == 'F')
+      else if (t == 'J')
       {
         consKiCascRollW = consKiCascRollW + 0.05;
         Serial.print("consKiCascRoll W :  ");
         Serial.println(consKiCascRollW);
       }     
-      else if (t == 'g')
+      else if (t == 'k')
       {
-        consKdCascRollW = consKdCascRoll - 0.05;
+        consKdCascRollW = consKdCascRollW - 0.05;
         if (consKdCascRollW<0)
           consKdCascRollW = 0;
         Serial.print("consKDCascRoll W:  ");
-        Serial.println(consKiCascRollW);
+        Serial.println(consKdCascRollW);
       }         
-      else if (t == 'G')
+      else if (t == 'K')
       {
         consKdCascRollW = consKdCascRollW + 0.05;
         Serial.print("consKDcascRoll W:  ");
