@@ -749,15 +749,15 @@ void SerialRoutine()
       }      
       else if (t == 't')
       {
-        SetpointRoll = SetpointRoll - 1;
-        Serial.print("Setpoint:  ");
-        Serial.println(SetpointRoll);
+        SetpointCascRoll = SetpointCascRoll - 1;
+        Serial.print("SetpointCascRoll:  ");
+        Serial.println(SetpointCascRoll);
       }         
       else if (t == 'y')
       {
-        SetpointRoll = SetpointRoll + 1;
-        Serial.print("Setpoint:  ");
-        Serial.println(SetpointRoll);
+        SetpointCascRoll = SetpointCascRoll + 1;
+        Serial.print("SetpointCascRoll:  ");
+        Serial.println(SetpointCascRoll);
       }    
       else if (t == 'd')
       {

@@ -15,12 +15,12 @@ boolean printAnglesEst = false;
 #endif
 
 MPU6050 mpu;
-
+#define OUTPUT_QUAT
 //#define OUTPUT_READABLE_EULER1
-//#define OUTPUT_READABLE_YAWPITCHROLL
+#define OUTPUT_READABLE_YAWPITCHROLL
 
-#define OUTPUT_REAL_ACC
-#define OUTPUT_READABLE_REALACCEL
+//#define OUTPUT_REAL_ACC
+//#define OUTPUT_READABLE_REALACCEL
 
 //#define OUTPUT_READABLE_WORLDACCEL
 
@@ -76,7 +76,7 @@ void setup()
     #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
         Wire.begin();
     #endif
-    Serial.begin(9600);
+    Serial.begin(115200);
     // initialize device
     if (!processing)
       Serial.println(F("Initializing I2C devices..."));
@@ -198,6 +198,10 @@ void serialRoutine()
       #ifdef OUTPUT_REAL_ACC
           printRealAcc();
       #endif
+      
+      #ifdef OUTPUT_QUAT
+          printQuat();
+      #endif
 }
 
 void mpuRoutine()
@@ -239,7 +243,7 @@ void printYPRSerial()
     mpu.dmpGetQuaternion(&q, fifoBuffer);
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-    Serial.print("ypr\t");
+    Serial.print("                           ypr\t");
     Serial.print(ypr[0] * 180/M_PI);
     Serial.print("\t");
     Serial.print(ypr[1] * 180/M_PI);
@@ -300,5 +304,17 @@ void printRealAcc()
   Serial.print("\t");
   Serial.println(aaReal.z);
 
+}
+
+void printQuat()
+{           
+  // display real acceleration, adjusted to remove gravity
+  mpu.dmpGetQuaternion(&q, fifoBuffer);
+  Serial.print("i\t");
+  Serial.print(q.x); Serial.print("\t");
+  Serial.print(q.y); Serial.print("\t");
+  Serial.print(q.z); Serial.print("\t");  
+  Serial.print(q.w);
+  Serial.print("\n");
 }
 
