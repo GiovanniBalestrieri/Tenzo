@@ -98,10 +98,10 @@ unsigned int sf_progetto3TenzoDecoupleV3_process_check_sum_call( int nlhs,
       return 0;
     }
   } else {
-    ((real_T *)mxGetPr((plhs[0])))[0] = (real_T)(1568842077U);
-    ((real_T *)mxGetPr((plhs[0])))[1] = (real_T)(3879973806U);
-    ((real_T *)mxGetPr((plhs[0])))[2] = (real_T)(1702865501U);
-    ((real_T *)mxGetPr((plhs[0])))[3] = (real_T)(697473175U);
+    ((real_T *)mxGetPr((plhs[0])))[0] = (real_T)(441959715U);
+    ((real_T *)mxGetPr((plhs[0])))[1] = (real_T)(1935761102U);
+    ((real_T *)mxGetPr((plhs[0])))[2] = (real_T)(1450722989U);
+    ((real_T *)mxGetPr((plhs[0])))[3] = (real_T)(3874434841U);
   }
 
   return 1;
@@ -139,7 +139,7 @@ unsigned int sf_progetto3TenzoDecoupleV3_autoinheritance_info( int nlhs, mxArray
     switch (chartFileNumber) {
      case 2:
       {
-        if (strcmp(aiChksum, "LDPtYorYpXt1Yoc3NjCVOE") == 0) {
+        if (strcmp(aiChksum, "ZDbvdeQY5o1GZgBwfh6qdG") == 0) {
           extern mxArray
             *sf_c2_progetto3TenzoDecoupleV3_get_autoinheritance_info(void);
           plhs[0] = sf_c2_progetto3TenzoDecoupleV3_get_autoinheritance_info();

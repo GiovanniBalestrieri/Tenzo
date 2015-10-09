@@ -904,7 +904,7 @@ Model {
   }
   System {
     Name		    "progetto3TenzoDecoupleV3"
-    Location		    [114, 214, 1130, 712]
+    Location		    [53, 79, 1366, 768]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -1015,7 +1015,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Disturbi Hard"
-	    Location		    [551, 368, 1276, 739]
+	    Location		    [205, 207, 930, 578]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -4367,6 +4367,8 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
+      YMin		      "-0.004"
+      YMax		      "0.004"
       SaveName		      "ScopeData21"
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
