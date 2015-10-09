@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.87"
+    ComputedModelVersion    "1.90"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Jul 17 01:19:37 2015"
-  RTWModifiedTimeStamp	  358996775
-  ModelVersionFormat	  "1.%<AutoIncrement:87>"
+  LastModifiedDate	  "Mon Sep 28 16:53:42 2015"
+  RTWModifiedTimeStamp	  365359079
+  ModelVersionFormat	  "1.%<AutoIncrement:90>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -78,7 +78,6 @@ Model {
     $ObjectID		    2
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "PhiThetaT"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -866,7 +865,7 @@ Model {
   }
   System {
     Name		    "PhiThetaT"
-    Location		    [53, 189, 1366, 606]
+    Location		    [53, 79, 1366, 768]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -933,7 +932,7 @@ Model {
       Position		      [780, 189, 810, 221]
       ZOrder		      -16
       Floating		      off
-      Location		      [239, 81, 895, 767]
+      Location		      [209, 81, 865, 767]
       Open		      off
       NumInputPorts	      "1"
       ZoomMode		      "xonly"
@@ -1093,8 +1092,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Yaw\n\n Dynamic"
-	Location		[153, 320, 1018, 753]
-	Open			on
+	Location		[125, 187, 990, 620]
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1156,8 +1155,8 @@ Model {
 	      Position		      [90, 27, 150, 63]
 	      ZOrder		      -9
 	      BackgroundColor	      "blue"
-	      Numerator		      "[440.513056398418 26779.6272064186 272303.182447317 584729.91630594]"
-	      Denominator	      "[1 325.437715018286 23852.1596168943 0]"
+	      Numerator		      "[451.115497462139 22813.3828594845 231057.140052495 382480.611718095]"
+	      Denominator	      "[1 350.601591904933 15602.0554903413 0]"
 	    }
 	    Block {
 	      BlockType		      Outport
@@ -1450,7 +1449,7 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Sin
-	      Name		      "0.2 sen(0.5 t)"
+	      Name		      "0.2 sen(50t)"
 	      SID		      "63"
 	      Ports		      [0, 1]
 	      Position		      [635, 250, 665, 280]
@@ -1542,7 +1541,7 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "0.2 sen(0.5 t)"
+	      SrcBlock		      "0.2 sen(50t)"
 	      SrcPort		      1
 	      Points		      [-60, 0]
 	      DstBlock		      "Sum3"
@@ -1587,7 +1586,7 @@ Model {
 	  Name			  "NonLin"
 	  SID			  "55"
 	  Ports			  [1, 1]
-	  Position		  [275, 184, 340, 226]
+	  Position		  [290, 184, 355, 226]
 	  BackgroundColor	  "red"
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
@@ -1735,7 +1734,7 @@ Model {
 	  System {
 	    Name		    "Plant"
 	    Location		    [703, 370, 923, 458]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -1761,7 +1760,7 @@ Model {
 	      Position		      [80, 27, 140, 63]
 	      ZOrder		      -9
 	      BackgroundColor	      "lightBlue"
-	      Numerator		      "44.25"
+	      Numerator		      "71.0517510045142"
 	      Denominator	      "[1 0 0]"
 	    }
 	    Block {
@@ -1793,7 +1792,7 @@ Model {
 	  Position		  [625, 309, 655, 341]
 	  ZOrder		  -16
 	  Floating		  off
-	  Location		  [54, 220, 662, 482]
+	  Location		  [64, 190, 672, 452]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  List {
@@ -2047,7 +2046,7 @@ Model {
 	Annotation {
 	  SID			  "15"
 	  Name			  "e(t)"
-	  Position		  [127, 195]
+	  Position		  [127, 220]
 	}
 	Annotation {
 	  SID			  "21"
@@ -2105,8 +2104,8 @@ MatData {
     "&          4    (               !          D         #@   #@    &    \"     8         !0    @    !     0    $     "
     "    \"0    @           #P/PX    P    !@    @    &          4    (               !          D         #@   #     & "
     "   \"     8         !0    @               $         \"0         .    .     8    (    !@         %    \"     $    !"
-    "     0         )    \"           E A #@   #@    &    \"     8         !0    @    !     0    $         \"0    @    "
-    "     ) !80 X    P    !@    @    &          4    (               !          D         "
+    "     0         )    \"          !T(% #@   #@    &    \"     8         !0    @    !     0    $         \"0    @    "
+    "      ?B!0 X    P    !@    @    &          4    (               !          D         "
   }
   DataRecord {
     Tag			    DataTag0
