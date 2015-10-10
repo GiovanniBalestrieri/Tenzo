@@ -125,18 +125,62 @@ B = [zeros(5,4);
 WTF = [     0   -lx*Kt  0  lx*Kt;
             ly*Kt  0  -ly*Kt  0;
             Ktm -Ktm Ktm -Ktm;
-            -Kt -Kt -Kt -Kt];   
+            -Kt -Kt -Kt -Kt];  
 
-WTFm1 = WTF^(-1);
-T= WTFm1*[taux; tauy; tauz; Thrust];
+        
+Bw = B*WTF;
+%WTFm1 = WTF^(-1);
+%T= WTFm1*[taux; tauy; tauz; Thrust];
 
 
+%% Modifiche
+% V - Include mixer in B 
+% V - Include motor's dynamic in A with state space canonical companion from 
 
-tfM1 = zpk([],[-10 -220],1000)
+ktfM1 = 2023;
+p1m1 = -10;
+p2m1 = -220;
+ktfM2 = 2023;
+p1m2 = -10;
+p2m2 = -220;
+ktfM3 = 2023;
+p1m3 = -10;
+p2m3 = -220;
+ktfM4 = 2023;
+p1m4 = -10;
+p2m4 = -220;
+
+% Motor 1
+tfM1 = zpk([],[p1m1 p2m1],ktfM1)
+canonMotor1 = canon(tfM1,'companion')
+
+% Motor 2
+tfM2 = zpk([],[p1m2 p2m2],ktfM2)
+canonMotor2 = canon(tfM2,'companion')
+
+% Motor 3
+tfM3 = zpk([],[p1m3 p2m3],ktfM3)
+canonMotor3 = canon(tfM3,'companion')
+
+% Motor 4
+tfM4 = zpk([],[p1m4 p2m4],ktfM4)
+canonMotor4 = canon(tfM4,'companion')
+
+%% Motors Analisis
 opt = stepDataOptions;
 opt.StepAmplitude = 1000;
+step(tfM1,opt);
+
+% Controllable
+%rank(ctrb(canonMotor.a,canonMotor.b));
+% Observable
+%rank(ctrb(canonMotor.a',canonMotor.c'));
+
+disp('Motors Tf created.');
+%% integrating Motors' dynamics in A
 
 
+%%
  
 outputsLocal = {'phi'; 'theta';'psi';'ze'};
 Clocal = [ 0 0 0 0 0 0 1 0 0 0 0 0; 
@@ -152,15 +196,16 @@ Cremote = [ 1 0 0 0 0 0 0 0 0 0 0 0;
        
 CFull = eye(size(A));       
 DFull = zeros(size(A),4);
-inputs = {'w1','w2','w3','w4'};
+inputs = {'w1^2','w2^2','w3^2','w4^2'};
 %inputs = {'TauPhi','TauTheta','TauPsi','Thrust'};
 D = zeros(4,4);
 
-tenzo=ss(A,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal)
-tenzoFull=ss(A,B,CFull,DFull);
+tenzo=ss(A,Bw,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal)
+tenzoFull=ss(A,Bw,CFull,DFull);
 
 %disp('Transfer matrix of the model')
 %modello_tf=tf(tenzo)
+%%
 
 disp('Assunzione: Esiste almeno una classe di segnali esogeni rispetto alla quale regolare/far inseguire asintoticamente y(t)Verifica preliminare, autovalori del processo [eig(A)]:')
 pause();
@@ -193,7 +238,7 @@ disp(eOp);
 % Analisi risposta a gradino
 disp('Press any for Step Response:');
 pause;
-tenzoRetro=ss(A,B,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal);
+tenzoRetro=ss(A,Bw,Clocal,D,'statename',states,'inputname',inputs,'outputname',outputsLocal);
 step(tenzoRetro);
 
 %% Proprietà strutturali:
@@ -203,12 +248,12 @@ disp('Press any key to check proprietà strutturali:');
 pause();
 
 disp('Verifica Raggiungibilità. Rango della matrice P:')
-if (rank(ctrb(A,B))==size(A,1))
+if (rank(ctrb(A,Bw))==size(A,1))
     disp('Sistema raggiungibile');
 else
     disp('Sistema Irraggiungibile');
 end
-disp(rank(ctrb(A,B)));
+disp(rank(ctrb(A,Bw)));
 
 
 disp('Verifica osservabilità. Rango della matrice Q:')
@@ -240,6 +285,8 @@ disp('Semplificazione del modello. Press X per mostrare il modello semplificato'
     1/Ixx 0 0 0;
     0 1/Iyy 0 0;
     0 0 1/Izz 0];
+
+BMinw = BMin*WTF;
  
 outputsLocal = {'phi'; 'theta';'psi';'ze'};
 ClocalMin = [  
@@ -250,9 +297,9 @@ ClocalMin = [
         
 statesMin = {'ze','vze','phi','theta','psi','wxb','wyb','wzb'};
 
-tenzoMin=ss(AMin,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoMin=ss(AMin,BMinw,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 
-tenzoRetro=ss(AMin,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoRetro=ss(AMin,BMinw,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 %step(tenzoRetro)
 
 
@@ -275,7 +322,7 @@ D_thrust = Ps(4,4).den{1};
 
 % invarianzZero
 disp('Invariant Zeros:');
-tzero(A,B,Clocal,D,eye(12))
+tzero(AMin,BMinw,ClocalMin,D,eye(8))
 
 disp('Transmission Zeros');
 tzero(Ps)
@@ -285,7 +332,7 @@ tzero(Ps)
 [sysr,U] = minreal(tenzo,0.1);
 
 KalmanA = U*A*U';
-KalmanB = U*B;
+KalmanB = U*BMinw;
 KalmanC = Clocal*U';
 
 pause();
@@ -300,9 +347,9 @@ sysr
 % Verifica Raggiungibilità e Osservabilità
 disp('Verifica raggiungibilà: rank([A-gI,B]) : per tutti g € spec(A)')
 pause();
-if (rank(ctrb(AMin,BMin))==size(AMin,1))
+if (rank(ctrb(AMin,BMinw))==size(AMin,1))
     disp('Sistema raggiungibile');
-    disp(rank(ctrb(AMin,BMin)));
+    disp(rank(ctrb(AMin,BMinw)));
 else
     disp('Sistema Irraggiungibile');
 end
@@ -315,9 +362,9 @@ else
 end
 disp(rank(obsv(AMin,ClocalMin)));
 
-if (rank(ctrb(AMin,BMin))==size(AMin,1))
-    disp('(a1) -> verificata, la coppia (AMin,BMin) Cb stabilizzabile'); 
-    disp(rank(ctrb(AMin,BMin))); 
+if (rank(ctrb(AMin,BMinw))==size(AMin,1))
+    disp('(a1) -> verificata, la coppia (AMin,BMinw) Cb stabilizzabile'); 
+    disp(rank(ctrb(AMin,BMinw))); 
 end
 
 pause();
@@ -338,9 +385,9 @@ V=lqr((AMin+alphaK*eye(size(AMin)))',ClocalMin',Q,R)';
 %disp('Dimensione attesa [nxq]');
 disp(size(V));
 Aoss=AMin-V*ClocalMin;
-Boss=[BMin-V*D V]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
+Bossw=[BMinw-V*D V]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
 Coss=eye(size(AMin));
-Doss=zeros(size(Boss));
+Doss=zeros(size(Bossw));
 
 disp('Autovalori A-V*C');
 disp(eig(AMin-V*ClocalMin));
@@ -358,15 +405,15 @@ QieCmp = blkdiag([0.00001 0 0; 0 0.00001 0; 0 0 0.00001],zeros(3),100*eye(3),eye
 Qie = blkdiag([0.01 0; 0 0.01],100000*eye(3),zeros(3,3));
 Q = eye(size(AMin));
 RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
-R = eye(size(BMin,2));
-K = lqr(AMin,BMin,Q,R);
+R = eye(size(BMinw,2));
+K = lqr(AMin,BMinw,Q,R);
 disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
-eig(AMin-BMin*K)
+eig(AMin-BMinw*K)
 
 disp('Premere un tasto per visualizzare la Step Response...');
 pause;
 
-tenzoLQR=ss(AMin-BMin*K,BMin,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoLQR=ss(AMin-BMinw*K,BMinw,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 step(tenzoLQR);
 
 %% Verifica condizioni Astatismo
@@ -374,7 +421,7 @@ step(tenzoLQR);
 disp('Condizioni Astatismo');
 pause;
 n=size(AMin,2);
-p=size(BMin,2);
+p=size(BMinw,2);
 q=size(ClocalMin,1);
 
 % Definizione segnali esogeni
@@ -387,20 +434,20 @@ disp('Definizione segnali esogeni');
 disp('gamma 1:='); disp(gamma1);
 disp('gamma 2:='); disp(gamma2);
 
-if (rank(ctrb(AMin+alpha*eye(n),BMin))==n)
+if (rank(ctrb(AMin+alpha*eye(n),BMinw))==n)
     disp('(a3) -> verificata, la coppia (AMin,BMin) raggiungibile, rank(P)'); 
-    disp(rank(ctrb(AMin,BMin))); 
+    disp(rank(ctrb(AMin,BMinw)));
 end
 if (rank(obsv(AMin+alpha*eye(n),ClocalMin))==n) 
     disp('(a3) -> verificata, la coppia (A,C) osservabile, rank(Q)');
     disp(rank(obsv(AMin,ClocalMin))); 
 end
 
-R1=[ AMin-gamma1*eye(size(AMin)) BMin ;
+R1=[ AMin-gamma1*eye(size(AMin)) BMinw ;
     ClocalMin D];
 
 if (rank(R1)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma1 �:'); disp(rank(R1)); end
-R2=[ AMin-gamma2*eye(size(AMin)) BMin ; ClocalMin D];
+R2=[ AMin-gamma2*eye(size(AMin)) BMinw ; ClocalMin D];
 if (rank(R2)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma2 �:'); disp(rank(R2)); end
 
 %% Calcolo del modello interno
@@ -432,19 +479,19 @@ disp('Bphi:');
 BPhi=[0;0;1];
 disp(BPhi);
 
-disp('La matrice dinamica AK1 del modello interno KM1:');
+disp('Creazione della matrice dinamica AK1 del modello interno KM1:');
 AK1=blkdiag(APhi,APhi,APhi,APhi);
-disp(AK1);
-disp('La matrice dinamica BK1 del modello interno KM1:');
+%disp(AK1);
+disp('Creazione della matrice dinamica BK1 del modello interno KM1:');
 BK1=blkdiag(BPhi,BPhi,BPhi,BPhi);
-disp(BK1);
+%disp(BK1);
 
 
 %% Calcolo delle matrici F1,F2 + V di Kalman 
 
 disp('Calcolo delle matrici F1,F2 per S1-S2 +  V per Kalman ');
-Asig =[ AMin-BMin*K zeros(n,size(AK1,2)); -BK1*ClocalMin AK1];
-Bsig = [ BMin; -BK1*D];
+Asig =[ AMin-BMinw*K zeros(n,size(AK1,2)); -BK1*ClocalMin AK1];
+Bsig = [ BMinw; -BK1*D];
 Q = eye(size(Asig));
 R = eye(size(Bsig,2));
 F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
@@ -458,7 +505,7 @@ disp('dimensioni [pxq*mu]:');
 disp(size(F1));
 
 Q = eye(size(AMin,2));
-R = eye(size(BMin,2));
+R = eye(size(BMinw,2));
 % disp('matrice per Kalman:');
 % V=lqr((AMin-BMin*K)',ClocalMin',Q,R)';
 disp('dimensione attesa [nxq]');
@@ -466,9 +513,9 @@ disp(size(V));
 
 disp('verifica spostamento autovalori:');
 disp('autovalori A+B*F2');
-disp(eig(AMin-BMin*K+BMin*F2));
+disp(eig(AMin-BMinw*K+BMin*F2));
 disp('autovalori A-V*C');
-disp(eig(AMin-BMin*K-V*ClocalMin));
+disp(eig(AMin-BMinw*K-V*ClocalMin));
 
 %% specifica 3 ) definizione matrici per simulink:
 
@@ -477,14 +524,14 @@ disp('specifica 3 ) definizione matrici per simulink:');
 M=[ 1 0 0.3 0.4 0.5 0.3 0.4 0.5]';
 N=[ 0;  0; 0; 0];
 %per disturbo sul processo definisco Bmod:
-Bmod=[M BMin]; %nota prima d e poi u scambio la somma per comodit�
+Bmod=[M BMinw]; %nota prima d e poi u scambio la somma per comodit�
 Dmod=[N D];
 
 %si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
 Aoss=AMin-V*ClocalMin;
-Boss=[BMin-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
+Bossw=[BMinw-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
 Coss=eye(n);
-Doss=zeros(size(Boss));
+Doss=zeros(size(Bossw));
 
 % Ricordando che delta xi1=AK1*xi+ Bk1*e
 AMI=AK1;

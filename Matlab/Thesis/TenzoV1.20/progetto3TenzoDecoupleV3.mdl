@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.175"
+    ComputedModelVersion    "1.176"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Sep 28 16:40:46 2015"
-  RTWModifiedTimeStamp	  365356988
-  ModelVersionFormat	  "1.%<AutoIncrement:175>"
+  LastModifiedDate	  "Sat Oct 10 16:40:14 2015"
+  RTWModifiedTimeStamp	  366396010
+  ModelVersionFormat	  "1.%<AutoIncrement:176>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -918,7 +918,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "742"
+    SIDHighWatermark	    "743"
     Block {
       BlockType		      Scope
       Name		      "Dist"
@@ -926,7 +926,7 @@ Model {
       Ports		      [1]
       Position		      [725, 84, 755, 116]
       Floating		      off
-      Location		      [54, 81, 1074, 617]
+      Location		      [64, 91, 1084, 627]
       Open		      off
       NumInputPorts	      "1"
       ZoomMode		      "yonly"
@@ -1874,7 +1874,7 @@ Model {
 	  Position		  [95, 48, 155, 82]
 	  BlockMirror		  on
 	  A			  "Aoss"
-	  B			  "Boss"
+	  B			  "Bossw"
 	  C			  "Coss"
 	  D			  "Doss"
 	}
@@ -5693,8 +5693,6 @@ Stateflow {
     firstJunction	    4
     viewObj		    2
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    11
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
