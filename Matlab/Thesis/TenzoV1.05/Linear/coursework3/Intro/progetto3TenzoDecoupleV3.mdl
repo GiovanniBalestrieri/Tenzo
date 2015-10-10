@@ -27,7 +27,7 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Sep 28 16:40:46 2015"
+  LastModifiedDate	  "Sat Oct 10 18:01:39 2015"
   RTWModifiedTimeStamp	  365356988
   ModelVersionFormat	  "1.%<AutoIncrement:175>"
   ConfigurationManager	  "None"
@@ -904,7 +904,7 @@ Model {
   }
   System {
     Name		    "progetto3TenzoDecoupleV3"
-    Location		    [114, 214, 1130, 712]
+    Location		    [95, 203, 1352, 709]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -1015,7 +1015,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Disturbi Hard"
-	    Location		    [551, 368, 1276, 739]
+	    Location		    [205, 207, 930, 578]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -4367,6 +4367,8 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
+      YMin		      "-0.004"
+      YMax		      "0.004"
       SaveName		      "ScopeData21"
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
@@ -5693,8 +5695,6 @@ Stateflow {
     firstJunction	    4
     viewObj		    2
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    11
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
