@@ -226,10 +226,6 @@ step(tenzo_nominale);
 %% Proprietà strutturali:
 % Verifica Raggiungibilità e Osservabilità
 
-disp('Press any key to check proprietà strutturali:');
-pause();
-
-disp('Verifica Raggiungibilità. Rango della matrice P:')
 if (rank(ctrb(tenzo_nominale.a,tenzo_nominale.b))==size(tenzo_nominale.a,1))
     disp('Sistema raggiungibile');
 else
@@ -237,8 +233,6 @@ else
 end
 disp(rank(ctrb(tenzo_nominale.a,tenzo_nominale.b)));
 
-
-disp('Verifica osservabilità. Rango della matrice Q:')
 if (rank(obsv(tenzo_nominale.a,tenzo_nominale.c))==size(tenzo_nominale.a,1))
     disp('Sistema osservabile');
 else    
@@ -246,7 +240,6 @@ else
 end
 disp(rank(obsv(tenzo_nominale.a,tenzo_nominale.c)));
 
-pause();
 clc
 %% Il sys non è osservabile. 
 % Definiamo il sottosistema osservabile e raggiungibile
@@ -294,7 +287,7 @@ tenzo_min_nominale=tenzo_min_unc.NominalValue
 % Check wether the solution is still valid with this subsys
 disp('Let us see if Matlab confirms our guess');
 disp('  Press X ');
-pause();
+
 [sysr,U] = minreal(tenzo_nominale,0.1);
 
 KalmanA = U*tenzo_nominale.a*U';
@@ -326,7 +319,7 @@ else
 end
 disp(rank(obsv(tenzo_min_nominale.a,tenzo_min_nominale.c)));
 
-
+disp('It is fine now');
 %% Invariant zeros 
 
 % Transfer function
@@ -358,7 +351,6 @@ deltaMin_sys{i} = (inv(tf(tenzo_min_nominale))) * deltaA_sys{i};
 deltaMout_sys{i} = deltaA_sys{i} * (inv(tf(tenzo_min_nominale)));
 end
 
-sys{2}.b
 
 %%
 
@@ -402,184 +394,286 @@ semilogx(omega,mag2db(top_unc),'b','LineWidth',5)
 semilogx(omega,mag2db(max_sig_nom),'k','LineWidth',5)
 title('Max sing values: Nominal model (black), perturbed models (red), bound (blue)')
 
-
-%% Ricostruzione dello stato con Kalman
-
-disp('Ricostruzione dello stato con Kalman');
-disp('Press any key to continue.');
-pause();
-
-%si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
-alphaK = 100;
-Q = eye(size(AMin));
-W = eye(size(AMin));
-R = eye(size(ClocalMin,1));
-%disp('matrice  V per Kalman:');
-V=lqr((AMin+alphaK*eye(size(AMin)))',ClocalMin',Q,R)';
-%disp('Dimensione attesa [nxq]');
-disp(size(V));
-Aoss=AMin-V*ClocalMin;
-Bossw=[BMinw-V*D V]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
-Coss=eye(size(AMin));
-Doss=zeros(size(Bossw));
-
-disp('Autovalori A-V*C');
-disp(eig(AMin-V*ClocalMin));
-pause();
-clc;
-
-%% Stabilizzazione LQR
-
-disp('Stabilizzazione mediante LQR dallo stato stimato');
-disp('Press any key to continue.');
-pause();
-
-alphaK = 2;
-QieCmp = blkdiag([0.00001 0; 0 0.00001],100*eye(3),eye(3));
-Qie = blkdiag([0.01 0; 0 0.01],100000*eye(3),zeros(3,3));
-Q = eye(size(AMin));
-RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
-R = eye(size(BMinw,2));
-K = lqr(AMin,BMinw,Q,R);
-disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
-eig(AMin-BMinw*K)
-
-disp('Premere un tasto per visualizzare la Step Response...');
-pause;
-
-tenzoLQR=ss(AMin-BMinw*K,BMinw,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
-step(tenzoLQR);
-
-%% Verifica condizioni Astatismo
-
-disp('Condizioni Astatismo');
-pause;
-n=size(AMin,2);
-p=size(BMinw,2);
-q=size(ClocalMin,1);
-
-% Definizione segnali esogeni
-disp('Definizione dei Disturbi da reiettare:');
-disp('d(t)=');
-alpha=3; omega=0.5; gamma1=0;
-k1=1; h1=1; h2=1; gamma2=complex(0,omega);
-
-disp('Definizione segnali esogeni');
-disp('gamma 1:='); disp(gamma1);
-disp('gamma 2:='); disp(gamma2);
-
-if (rank(ctrb(AMin+alpha*eye(n),BMinw))==n)
-    disp('(a3) -> verificata, la coppia (AMin,BMin) raggiungibile, rank(P)'); 
-    disp(rank(ctrb(AMin,BMinw))); 
+%%  Additive
+figure(2);
+semilogx(omega,mag2db(top_dA),'b','LineWidth',5)
+grid on;
+hold on;
+for i=1:1:N
+  semilogx(omega,mag2db(max_sig_dA(i,:)),'r:','LineWidth',2)
 end
-if (rank(obsv(AMin+alpha*eye(n),ClocalMin))==n) 
-    disp('(a3) -> verificata, la coppia (A,C) osservabile, rank(Q)');
-    disp(rank(obsv(AMin,ClocalMin))); 
+title('Max sing values: additive uncertainties (red), bound (blue)')
+
+
+%% Input Moltiplicative uncertainties
+
+figure(3);
+semilogx(omega,mag2db(top_dMin),'b','LineWidth',5)
+grid on;
+hold on;
+for i=1:1:N
+  semilogx(omega,mag2db(max_sig_dMin(i,:)),'r:','LineWidth',2)
 end
+title('Max sing values: input multiplicative uncertainties (red), bound (blue)')
 
-R1=[ AMin-gamma1*eye(size(AMin)) BMinw ;
-    ClocalMin D];
+%% output multiplicative uncertainties
 
-if (rank(R1)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma1 �:'); disp(rank(R1)); end
-R2=[ AMin-gamma2*eye(size(AMin)) BMinw ; ClocalMin D];
-if (rank(R2)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma2 �:'); disp(rank(R2)); end
+figure(4);
+semilogx(omega,mag2db(top_dMout),'b','LineWidth',5)
+grid on;
+hold on;
+for i=1:1:N
+  semilogx(omega,mag2db(max_sig_dMout(i,:)),'r:','LineWidth',2)
+end
+title('Max sing values: output multiplicative uncertainties (red), bound (blue)')
 
-%% Calcolo del modello interno
+%% Upper bound razionale stabile e fase minima
+pre_bound_dA = frd(top_dA,omega);
 
-disp('specifica 2) Calcolo modello interno KM1');
-k1_segnato=max(k1,h1);
-k2_segnato=h2;
-disp('max(k1,h1):'); 
-disp(k1_segnato); 
-disp('max(k2,h2):'); 
-disp(k2_segnato);
-syms s;
-disp('Definiamo il polinomio phi(lambda)');
-phi1=((s-gamma1)^k1_segnato)*((s-gamma2)^k2_segnato)*((s-conj(gamma2))^k2_segnato)
-disp('phi(lambda)=');
-disp((phi1));
-mu=3;
-disp('mu=');
-disp(mu);
+% fit razionale e min phase per ricavare il bound
+ord = 2; %Ordine della funzione di fitting 
+bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+bb_dA2 = sigma(bound_dA,omega);
+ord = 5; %Ordine della funzione di fitting 
+bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+bb_dA5 = sigma(bound_dA,omega);
+ord = 7; %Ordine della funzione di fitting 
+bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+bb_dA7 = sigma(bound_dA,omega);
 
-Aphi=compan(sym2poly(phi1));
-APhi=zeros(3);
-APhi(3,:)=Aphi(1,:);
-APhi(1,2)=Aphi(2,1);
-APhi(2,3)=Aphi(3,2);
-disp('matrice in forma compagna Aphi:');
-disp(APhi);
-disp('Bphi:');
-BPhi=[0;0;1];
-disp(BPhi);
+figure(5);
+semilogx(omega,mag2db(top_dA),'b','LineWidth',2)
+grid on;
+hold on;
+semilogx(omega,mag2db(bb_dA2(1,:)),'r','LineWidth',2)
+semilogx(omega,mag2db(bb_dA5(1,:)),'k','LineWidth',2)
+semilogx(omega,mag2db(bb_dA7(1,:)),'m','LineWidth',2)
+title('Bound on additive uncertainties');
+legend('strict bound', 'Rational stable min phase, order 2',...
+  'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
+  'Location','SouthWest');
 
-disp('La matrice dinamica AK1 del modello interno KM1:');
-AK1=blkdiag(APhi,APhi,APhi,APhi);
-disp(AK1);
-disp('La matrice dinamica BK1 del modello interno KM1:');
-BK1=blkdiag(BPhi,BPhi,BPhi,BPhi);
-disp(BK1);
+%% Upper bound razionale stabile e fase minima
+pre_bound_dMin = frd(top_dMin,omega);
 
-%% Calcolo delle matrici F1,F2 + V di Kalman 
-alpha = 0.5;
+% fit razionale e min phase per ricavare il bound
+ord = 2; %Ordine della funzione di fitting 
+bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
+bb_dMin2 = sigma(bound_dM,omega);
+ord = 5; %Ordine della funzione di fitting 
+bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
+bb_dMin5 = sigma(bound_dM,omega);
+ord = 7; %Ordine della funzione di fitting 
+bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
+bb_dMin7 = sigma(bound_dM,omega);
 
-disp('Calcolo delle matrici F1,F2 per S1-S2 +  V per Kalman');
-Asig =[ AMin-BMinw*K zeros(n,size(AK1,2)); -BK1*ClocalMin AK1];
-Bsig = [ BMinw; -BK1*D];
+figure(6);
+semilogx(omega,mag2db(top_dMin),'b','LineWidth',2)
+grid on;
+hold on;
+semilogx(omega,mag2db(bb_dMin2(1,:)),'r','LineWidth',2)
+semilogx(omega,mag2db(bb_dMin5(1,:)),'k','LineWidth',2)
+semilogx(omega,mag2db(bb_dMin7(1,:)),'m','LineWidth',2)
+title('Bound on multiplicative uncertainties');
+legend('strict bound', 'Rational stable min phase, order 2',...
+  'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
+  'Location','SouthWest');
 
-R = eye(size(Asig,2));
-%Q = blkdiag([1 0; 0 1],1*eye(3),eye(3),eye(12));
-%Q = 1000000*eye(20);
-R = eye(size(Bsig,2));
-F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
 
-F2=F(:,1:size(AMin,1));
-disp('dimensioni [pxn]:');
-disp(size(F2));
-F1=F(:,size(AMin,1)+1:size(F,2));
-disp('dimensioni [pxq*mu]:');
-disp(size(F1));
 
-% disp('matrice per Kalman:');
-% V=lqr((AMin-BMin*K)',ClocalMin',Q,R)';
-disp('dimensione attesa [nxq]');
-disp(size(V));
 
-disp('verifica spostamento autovalori:');
-disp('autovalori A+B*F2');
-disp(eig(AMin-BMinw*K+BMinw*F2));
-disp('autovalori A-V*C');
-disp(eig(AMin-BMinw*K-V*ClocalMin));
 
-% specifica 3 ) definizione matrici per simulink:
 
-disp('specifica 3 ) definizione matrici per simulink:');
 
-M=[ 1 0 0 0 1 1 1 1]';
-N=[ 0; 0; 0; 0];
-%per disturbo sul processo definisco Bmod:
-Bmodw = [M BMinw]; %nota prima d e poi u scambio la somma per comodit�
-Dmod  = [N D];
 
-%si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
-Aoss=AMin-V*ClocalMin;
-Bossw=[BMinw-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
-Coss=eye(n);
-Doss=zeros(size(Bossw));
 
-% Ricordando che delta xi1=AK1*xi+ Bk1*e
-AMI=AK1;
-BMI=BK1;
-CMI=eye(q*mu);
-DMI=zeros(q*mu,q);
 
-satW = 8000;
-saMenoW = -400;
 
-disp('avvio simulazione 1');
-%pause;
 
-open('progetto3Tenzo.mdl')
-sim('progetto3Tenzo.mdl')
 
-disp('End');
+
+
+
+
+
+
+% %% Ricostruzione dello stato con Kalman
+% 
+% disp('Ricostruzione dello stato con Kalman');
+% disp('Press any key to continue.');
+% pause();
+% 
+% %si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
+% alphaK = 100;
+% Q = eye(size(AMin));
+% W = eye(size(AMin));
+% R = eye(size(ClocalMin,1));
+% %disp('matrice  V per Kalman:');
+% V=lqr((AMin+alphaK*eye(size(AMin)))',ClocalMin',Q,R)';
+% %disp('Dimensione attesa [nxq]');
+% disp(size(V));
+% Aoss=AMin-V*ClocalMin;
+% Bossw=[BMinw-V*D V]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
+% Coss=eye(size(AMin));
+% Doss=zeros(size(Bossw));
+% 
+% disp('Autovalori A-V*C');
+% disp(eig(AMin-V*ClocalMin));
+% pause();
+% clc;
+% 
+% %% Stabilizzazione LQR
+% 
+% disp('Stabilizzazione mediante LQR dallo stato stimato');
+% disp('Press any key to continue.');
+% pause();
+% 
+% alphaK = 2;
+% QieCmp = blkdiag([0.00001 0; 0 0.00001],100*eye(3),eye(3));
+% Qie = blkdiag([0.01 0; 0 0.01],100000*eye(3),zeros(3,3));
+% Q = eye(size(AMin));
+% RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
+% R = eye(size(BMinw,2));
+% K = lqr(AMin,BMinw,Q,R);
+% disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
+% eig(AMin-BMinw*K)
+% 
+% disp('Premere un tasto per visualizzare la Step Response...');
+% pause;
+% 
+% tenzoLQR=ss(AMin-BMinw*K,BMinw,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+% step(tenzoLQR);
+% 
+% %% Verifica condizioni Astatismo
+% 
+% disp('Condizioni Astatismo');
+% pause;
+% n=size(AMin,2);
+% p=size(BMinw,2);
+% q=size(ClocalMin,1);
+% 
+% % Definizione segnali esogeni
+% disp('Definizione dei Disturbi da reiettare:');
+% disp('d(t)=');
+% alpha=3; omega=0.5; gamma1=0;
+% k1=1; h1=1; h2=1; gamma2=complex(0,omega);
+% 
+% disp('Definizione segnali esogeni');
+% disp('gamma 1:='); disp(gamma1);
+% disp('gamma 2:='); disp(gamma2);
+% 
+% if (rank(ctrb(AMin+alpha*eye(n),BMinw))==n)
+%     disp('(a3) -> verificata, la coppia (AMin,BMin) raggiungibile, rank(P)'); 
+%     disp(rank(ctrb(AMin,BMinw))); 
+% end
+% if (rank(obsv(AMin+alpha*eye(n),ClocalMin))==n) 
+%     disp('(a3) -> verificata, la coppia (A,C) osservabile, rank(Q)');
+%     disp(rank(obsv(AMin,ClocalMin))); 
+% end
+% 
+% R1=[ AMin-gamma1*eye(size(AMin)) BMinw ;
+%     ClocalMin D];
+% 
+% if (rank(R1)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma1 �:'); disp(rank(R1)); end
+% R2=[ AMin-gamma2*eye(size(AMin)) BMinw ; ClocalMin D];
+% if (rank(R2)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma2 �:'); disp(rank(R2)); end
+% 
+% %% Calcolo del modello interno
+% 
+% disp('specifica 2) Calcolo modello interno KM1');
+% k1_segnato=max(k1,h1);
+% k2_segnato=h2;
+% disp('max(k1,h1):'); 
+% disp(k1_segnato); 
+% disp('max(k2,h2):'); 
+% disp(k2_segnato);
+% syms s;
+% disp('Definiamo il polinomio phi(lambda)');
+% phi1=((s-gamma1)^k1_segnato)*((s-gamma2)^k2_segnato)*((s-conj(gamma2))^k2_segnato)
+% disp('phi(lambda)=');
+% disp((phi1));
+% mu=3;
+% disp('mu=');
+% disp(mu);
+% 
+% Aphi=compan(sym2poly(phi1));
+% APhi=zeros(3);
+% APhi(3,:)=Aphi(1,:);
+% APhi(1,2)=Aphi(2,1);
+% APhi(2,3)=Aphi(3,2);
+% disp('matrice in forma compagna Aphi:');
+% disp(APhi);
+% disp('Bphi:');
+% BPhi=[0;0;1];
+% disp(BPhi);
+% 
+% disp('La matrice dinamica AK1 del modello interno KM1:');
+% AK1=blkdiag(APhi,APhi,APhi,APhi);
+% disp(AK1);
+% disp('La matrice dinamica BK1 del modello interno KM1:');
+% BK1=blkdiag(BPhi,BPhi,BPhi,BPhi);
+% disp(BK1);
+% 
+% %% Calcolo delle matrici F1,F2 + V di Kalman 
+% alpha = 0.5;
+% 
+% disp('Calcolo delle matrici F1,F2 per S1-S2 +  V per Kalman');
+% Asig =[ AMin-BMinw*K zeros(n,size(AK1,2)); -BK1*ClocalMin AK1];
+% Bsig = [ BMinw; -BK1*D];
+% 
+% R = eye(size(Asig,2));
+% %Q = blkdiag([1 0; 0 1],1*eye(3),eye(3),eye(12));
+% %Q = 1000000*eye(20);
+% R = eye(size(Bsig,2));
+% F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
+% 
+% F2=F(:,1:size(AMin,1));
+% disp('dimensioni [pxn]:');
+% disp(size(F2));
+% F1=F(:,size(AMin,1)+1:size(F,2));
+% disp('dimensioni [pxq*mu]:');
+% disp(size(F1));
+% 
+% % disp('matrice per Kalman:');
+% % V=lqr((AMin-BMin*K)',ClocalMin',Q,R)';
+% disp('dimensione attesa [nxq]');
+% disp(size(V));
+% 
+% disp('verifica spostamento autovalori:');
+% disp('autovalori A+B*F2');
+% disp(eig(AMin-BMinw*K+BMinw*F2));
+% disp('autovalori A-V*C');
+% disp(eig(AMin-BMinw*K-V*ClocalMin));
+% 
+% % specifica 3 ) definizione matrici per simulink:
+% 
+% disp('specifica 3 ) definizione matrici per simulink:');
+% 
+% M=[ 1 0 0 0 1 1 1 1]';
+% N=[ 0; 0; 0; 0];
+% %per disturbo sul processo definisco Bmod:
+% Bmodw = [M BMinw]; %nota prima d e poi u scambio la somma per comodit�
+% Dmod  = [N D];
+% 
+% %si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
+% Aoss=AMin-V*ClocalMin;
+% Bossw=[BMinw-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
+% Coss=eye(n);
+% Doss=zeros(size(Bossw));
+% 
+% % Ricordando che delta xi1=AK1*xi+ Bk1*e
+% AMI=AK1;
+% BMI=BK1;
+% CMI=eye(q*mu);
+% DMI=zeros(q*mu,q);
+% 
+% satW = 8000;
+% saMenoW = -400;
+% 
+% disp('avvio simulazione 1');
+% %pause;
+% 
+% open('progetto3Tenzo.mdl')
+% sim('progetto3Tenzo.mdl')
+% 
+% disp('End');
