@@ -379,7 +379,7 @@ disp('Press any key to continue.');
 pause();
 
 alphaK = 2;
-QieCmp = blkdiag([0.00001 0 0; 0 0.00001 0; 0 0 0.00001],zeros(3),100*eye(3),eye(3));
+QieCmp = blkdiag([0.00001 0; 0 0.00001],100*eye(3),eye(3));
 Qie = blkdiag([0.01 0; 0 0.01],100000*eye(3),zeros(3,3));
 Q = eye(size(AMin));
 RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
@@ -464,26 +464,26 @@ disp('La matrice dinamica BK1 del modello interno KM1:');
 BK1=blkdiag(BPhi,BPhi,BPhi,BPhi);
 disp(BK1);
 
-
 %% Calcolo delle matrici F1,F2 + V di Kalman 
+alpha = 0.5;
 
-disp('Calcolo delle matrici F1,F2 per S1-S2 +  V per Kalman ');
+disp('Calcolo delle matrici F1,F2 per S1-S2 +  V per Kalman');
 Asig =[ AMin-BMinw*K zeros(n,size(AK1,2)); -BK1*ClocalMin AK1];
 Bsig = [ BMinw; -BK1*D];
-Q = eye(size(Asig));
+
+R = eye(size(Asig,2));
+%Q = blkdiag([1 0; 0 1],1*eye(3),eye(3),eye(12));
+%Q = 1000000*eye(20);
 R = eye(size(Bsig,2));
 F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
 
-%disp('matrici stablizzanti:');
 F2=F(:,1:size(AMin,1));
-disp('dimensioni [pxn]:'); 
+disp('dimensioni [pxn]:');
 disp(size(F2));
-F1=F(:,size(AMin,1)+1:size(F,2))
-disp('dimensioni [pxq*mu]:'); 
+F1=F(:,size(AMin,1)+1:size(F,2));
+disp('dimensioni [pxq*mu]:');
 disp(size(F1));
 
-Q = eye(size(AMin,2));
-R = eye(size(BMinw,2));
 % disp('matrice per Kalman:');
 % V=lqr((AMin-BMin*K)',ClocalMin',Q,R)';
 disp('dimensione attesa [nxq]');
@@ -495,15 +495,15 @@ disp(eig(AMin-BMinw*K+BMinw*F2));
 disp('autovalori A-V*C');
 disp(eig(AMin-BMinw*K-V*ClocalMin));
 
-%% specifica 3 ) definizione matrici per simulink:
+% specifica 3 ) definizione matrici per simulink:
 
 disp('specifica 3 ) definizione matrici per simulink:');
 
 M=[ 1 0 0 0 1 1 1 1]';
-N=[ 0;  0; 0; 0];
+N=[ 0; 0; 0; 0];
 %per disturbo sul processo definisco Bmod:
-Bmodw=[M BMinw]; %nota prima d e poi u scambio la somma per comodit�
-Dmod=[N D];
+Bmodw = [M BMinw]; %nota prima d e poi u scambio la somma per comodit�
+Dmod  = [N D];
 
 %si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
 Aoss=AMin-V*ClocalMin;
@@ -517,31 +517,13 @@ BMI=BK1;
 CMI=eye(q*mu);
 DMI=zeros(q*mu,q);
 
+satW = 8000;
+saMenoW = -400;
+
 disp('avvio simulazione 1');
-pause;
+%pause;
 
 open('progetto3Tenzo.mdl')
 sim('progetto3Tenzo.mdl')
-
-
-N_psi = [59260.0621820611 3429565.45270113 ...
-         27702908.9364068 53625940.9126871];
-D_psi = [1 378.139322580724 35127.9961825618 0];
-
-N_theta = [440.513056398418 26779.6272064186 ...
-        272303.182447317 584729.91630594];
-D_theta = [1 325.437715018286 23852.1596168943 0];
-
-N_phi = [440.513056398418 26779.6272064186 ...
-        272303.182447317 584729.91630594];
-D_phi = [1 325.437715018286 23852.1596168943 0];
-
-N_thrust = [682900.887332905 4668183.15145263];
-D_thrust = [1 963.786798861645 190423.384445206 0];
-
-disp('Premere un tasto per continuare...');
-pause;
-
-%% Simulazione
 
 disp('End');
