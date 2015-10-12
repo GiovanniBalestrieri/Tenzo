@@ -16,13 +16,13 @@ rho = ureal('rho',1.2250,'Range',[1.1455 1.4224]);
 mq = ureal('mq',1.150,'Range',[0.820 1.4224]);
 
 % Mass of a motor (kg). All motors have equal mass.
-mm=0.068; 
+mm = ureal('mm',0.068,'Range',[0.012 0.125]);
 % Motor length along x-axis (m). All motors have equal sizes.
-lx=28.8e-3;
+lx = ureal('lx',28.8e-3,'Range',[0.012 0.35]);
 % Motor length along y-axis (m)
-ly=28.8e-3;
+ly = ureal('ly',28.8e-3,'Range',[0.012 0.35]);
 % Motor length along z-axis (m)
-lz=26e-3;
+lz = ureal('lz',0.003,'Range',[0.0001 0.006]);
 
 % Distance from the center of gravity to the center of a motor (m).
 % The quadrotor is symmetric regarding the XZ and YZ planes, so
@@ -69,7 +69,7 @@ cp = ureal('cp',0.0314,'Range',[0.0311 0.0465]);
 ct = ureal('ct',0.0726,'Range',[0.0548 0.0980]);
 
 % Propeller radius (m)
-rp=25.4e-2; 
+rp = ureal('rp',25.4e-2,'Range',[0.06 0.30]);
 % Constant value to calculate the moment provided
 % by a propeller given its angular speed (kg.m^2.rad^-1)
 Km=cp*4*rho*rp^5/pi()^3; 

@@ -195,10 +195,10 @@ legend('T0','1/W3')
 
 %% plot step nominale
 figure
-step(T0,'ro-')
+step(T0,'r-')
 grid on 
 hold on
-step(S0,'go-')
+step(S0,'g-')
 legend('step(T0)','step(S0)')
 
 %% introduzione delle perturbazioni
