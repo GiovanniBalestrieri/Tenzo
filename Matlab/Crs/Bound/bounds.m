@@ -88,6 +88,7 @@ end
 
 semilogx(w,SV_max,'k--','LineWidth',2)
 grid on;
+hold on
 
 lm = 1.5*tf([1000 1],[1])*tf([1],[750 1])*tf([1],[5 1])*tf([1 1],[1])*tf([1 1],[1])*tf([1],[0.001 1])
 [lm_value,lm_w] = sigma(lm);
@@ -107,4 +108,3 @@ semilogx(lm_w,lm_module,'r','LineWidth',2)
 % 
 % plot(w,difference,'k','LineWidth',2)
 % grid on;
-5
