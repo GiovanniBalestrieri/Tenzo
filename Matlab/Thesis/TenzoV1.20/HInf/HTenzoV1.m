@@ -196,6 +196,16 @@ step(tfM1,opt);
 
 disp('Motors Tf created.');
 
+mot= zpk([],[-10 -220],1273);
+
+m = canon(mot,'modal');
+mot1= m^2;
+
+m1 = canon(mot1,'modal');
+
+open('testMotors');
+sim('testMotors');
+
 %% Eigenvalues of the system
 
 stab=1;
@@ -351,11 +361,10 @@ deltaMin_sys{i} = (inv(tf(tenzo_min_nominale))) * deltaA_sys{i};
 deltaMout_sys{i} = deltaA_sys{i} * (inv(tf(tenzo_min_nominale)));
 end
 
-
 %%
 
 % generates 200 points between decades 10^( -2 ) and 10^( 2 ).
-omega = logspace(-2,2,250);
+omega = logspace(-3,3,250);
 
 % Plots the singular values of the frequency response of a model nominale
 % specifies the frequency range or frequency points to be used for the plot
@@ -437,17 +446,17 @@ bb_dA2 = sigma(bound_dA,omega);
 ord = 5; %Ordine della funzione di fitting 
 bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
 bb_dA5 = sigma(bound_dA,omega);
-ord = 7; %Ordine della funzione di fitting 
+ord = 7; %Ordine della funzione di fitting
 bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
 bb_dA7 = sigma(bound_dA,omega);
 
 figure(5);
-semilogx(omega,mag2db(top_dA),'b','LineWidth',2)
+semilogx(omega,mag2db(top_dA),'b','LineWidth',2);
 grid on;
 hold on;
-semilogx(omega,mag2db(bb_dA2(1,:)),'r','LineWidth',2)
-semilogx(omega,mag2db(bb_dA5(1,:)),'k','LineWidth',2)
-semilogx(omega,mag2db(bb_dA7(1,:)),'m','LineWidth',2)
+semilogx(omega,mag2db(bb_dA2(1,:)),'r','LineWidth',2);
+semilogx(omega,mag2db(bb_dA5(1,:)),'k','LineWidth',2);
+semilogx(omega,mag2db(bb_dA7(1,:)),'m','LineWidth',2);
 title('Bound on additive uncertainties');
 legend('strict bound', 'Rational stable min phase, order 2',...
   'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
@@ -478,14 +487,6 @@ title('Bound on multiplicative uncertainties');
 legend('strict bound', 'Rational stable min phase, order 2',...
   'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
   'Location','SouthWest');
-
-
-
-
-
-
-
-
 
 
 

@@ -16,7 +16,12 @@ rho = ureal('rho',1.2250,'Range',[1.1455 1.4224]);
 mq = ureal('mq',1.150,'Range',[0.820 1.4224]);
 
 % Mass of a motor (kg). All motors have equal mass.
-mm = ureal('mm',0.068,'Range',[0.012 0.125]);
+
+
+%mm = ureal('mm',0.068,'Range',[0.012 0.125]);
+mm = ureal('mm',0.068,'Range',[0.060 0.080]);
+
+
 % Motor length along x-axis (m). All motors have equal sizes.
 lx = ureal('lx',28.8e-3,'Range',[0.012 0.35]);
 % Motor length along y-axis (m)
@@ -69,7 +74,7 @@ cp = ureal('cp',0.0314,'Range',[0.0311 0.0465]);
 ct = ureal('ct',0.0726,'Range',[0.0548 0.0980]);
 
 % Propeller radius (m)
-rp = ureal('rp',25.4e-2,'Range',[0.06 0.30]);
+rp = ureal('rp',25.4e-2,'Range',[0.24 0.30]);
 % Constant value to calculate the moment provided
 % by a propeller given its angular speed (kg.m^2.rad^-1)
 Km=cp*4*rho*rp^5/pi()^3; 
@@ -195,6 +200,16 @@ step(tfM1,opt);
 %rank(ctrb(canonMotor.a',canonMotor.c'));
 
 disp('Motors Tf created.');
+
+mot= zpk([],[-10 -220],1273);
+
+m = canon(mot,'modal');
+mot1= m^2;
+
+m1 = canon(mot1,'modal');
+
+open('testMotors');
+sim('testMotors');
 
 %% Eigenvalues of the system
 
@@ -351,11 +366,9 @@ deltaMin_sys{i} = (inv(tf(tenzo_min_nominale))) * deltaA_sys{i};
 deltaMout_sys{i} = deltaA_sys{i} * (inv(tf(tenzo_min_nominale)));
 end
 
-
-%%
-
+%
 % generates 200 points between decades 10^( -2 ) and 10^( 2 ).
-omega = logspace(-2,2,250);
+omega = logspace(-5,5,250);
 
 % Plots the singular values of the frequency response of a model nominale
 % specifies the frequency range or frequency points to be used for the plot
@@ -437,17 +450,17 @@ bb_dA2 = sigma(bound_dA,omega);
 ord = 5; %Ordine della funzione di fitting 
 bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
 bb_dA5 = sigma(bound_dA,omega);
-ord = 7; %Ordine della funzione di fitting 
+ord = 7; %Ordine della funzione di fitting
 bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
 bb_dA7 = sigma(bound_dA,omega);
 
 figure(5);
-semilogx(omega,mag2db(top_dA),'b','LineWidth',2)
+semilogx(omega,mag2db(top_dA),'b','LineWidth',2);
 grid on;
 hold on;
-semilogx(omega,mag2db(bb_dA2(1,:)),'r','LineWidth',2)
-semilogx(omega,mag2db(bb_dA5(1,:)),'k','LineWidth',2)
-semilogx(omega,mag2db(bb_dA7(1,:)),'m','LineWidth',2)
+semilogx(omega,mag2db(bb_dA2(1,:)),'r','LineWidth',2);
+semilogx(omega,mag2db(bb_dA5(1,:)),'k','LineWidth',2);
+semilogx(omega,mag2db(bb_dA7(1,:)),'m','LineWidth',2);
 title('Bound on additive uncertainties');
 legend('strict bound', 'Rational stable min phase, order 2',...
   'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
@@ -479,71 +492,175 @@ legend('strict bound', 'Rational stable min phase, order 2',...
   'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
   'Location','SouthWest');
 
+%% definizione dei bounds
+
+gamma1 = 1;
+gamma2 = 1;
+%gamma3 = 1;  
+gamma3 = 1/1.3;
+
+ps = gamma1*tf(1,[1 1]);
+la = top_dA;
+lm = top_dMin;
+
+%%
+figure
+grid on
+hold on
+sigma(la,'go-')
+sigma(ps,'bo-')
+%sigma(lm,'ro-')
+legend('la','ps')
+
+%%
+
+
+%%
 
 
 
+%% Ricostruzione dello stato con Kalman
 
+disp('Ricostruzione dello stato con Kalman');
+disp('Press any key to continue.');
+pause();
 
+%si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
+alphaK = 100;
 
+rho = 10;
 
+Q = tenzo_min_nominale.c'*tenzo_min_nominale.c;
+R = rho*eye(size(ClocalMin,1));
+W = eye(size(AMin));
+%R = eye(size(ClocalMin,1));
+%disp('matrice  V per Kalman:');
+V=lqr((tenzo_min_nominale.a+alphaK*eye(size(tenzo_min_nominale.a)))',tenzo_min_nominale.c',Q,R)';
+%disp('Dimensione attesa [nxq]');
+disp(size(V));
+Aoss=tenzo_min_nominale.a-V*tenzo_min_nominale.c;
+Bossw=[tenzo_min_nominale.b-V*D V]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
+Coss=eye(size(tenzo_min_nominale.a));
+Doss=zeros(size(tenzo_min_nominale.b));
 
+disp('Autovalori A-V*C');
+disp(eig(tenzo_min_nominale.a-V*tenzo_min_nominale.c));
 
+%% Stabilizzazione LQR
 
+disp('Stabilizzazione mediante LQR dallo stato stimato');
+disp('Press any key to continue.');
+pause();
 
-
-
-
-
-
-
-
-% %% Ricostruzione dello stato con Kalman
-% 
-% disp('Ricostruzione dello stato con Kalman');
-% disp('Press any key to continue.');
-% pause();
-% 
-% %si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
-% alphaK = 100;
-% Q = eye(size(AMin));
-% W = eye(size(AMin));
-% R = eye(size(ClocalMin,1));
-% %disp('matrice  V per Kalman:');
-% V=lqr((AMin+alphaK*eye(size(AMin)))',ClocalMin',Q,R)';
-% %disp('Dimensione attesa [nxq]');
-% disp(size(V));
-% Aoss=AMin-V*ClocalMin;
-% Bossw=[BMinw-V*D V]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
-% Coss=eye(size(AMin));
-% Doss=zeros(size(Bossw));
-% 
-% disp('Autovalori A-V*C');
-% disp(eig(AMin-V*ClocalMin));
-% pause();
-% clc;
-% 
-% %% Stabilizzazione LQR
-% 
-% disp('Stabilizzazione mediante LQR dallo stato stimato');
-% disp('Press any key to continue.');
-% pause();
-% 
 % alphaK = 2;
 % QieCmp = blkdiag([0.00001 0; 0 0.00001],100*eye(3),eye(3));
 % Qie = blkdiag([0.01 0; 0 0.01],100000*eye(3),zeros(3,3));
 % Q = eye(size(AMin));
-% RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
-% R = eye(size(BMinw,2));
-% K = lqr(AMin,BMinw,Q,R);
-% disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
-% eig(AMin-BMinw*K)
-% 
-% disp('Premere un tasto per visualizzare la Step Response...');
-% pause;
-% 
-% tenzoLQR=ss(AMin-BMinw*K,BMinw,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
-% step(tenzoLQR);
-% 
+
+Q = tenzo_min_nominale.c'*tenzo_min_nominale.c;
+%RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
+%R = eye(size(tenzo_min_nominale.b,2));
+R = rho*eye(size(tenzo_min_nominale.c,1));
+K = lqr(tenzo_min_nominale.a,tenzo_min_nominale.b,Q,R);
+disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
+eig(tenzo_min_nominale.a-tenzo_min_nominale.b*K)
+
+disp('Premere un tasto per visualizzare la Step Response...');
+pause;
+
+%tenzoLQR=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*K,tenzo_min_nominale.b,tenzo_min_nominale.c,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoLQR=ss(tenzo_min_nominale.a,tenzo_min_nominale.b,K,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+
+%step(tenzoLQR);
+
+CL = feedback(tenzoLQR,eye(4));
+w=logspace(-2,2,100);
+lm = tf([1 1], 1.1)
+%%
+
+figure
+hold on
+sigma(tenzoLQR,'b')
+sigma(lm,'r--')
+sigma(CL,'k')
+sigma(1/lm,'r')
+grid on
+legend('Anello aperto','Bound l_m','U0','1/lm')
+
+%%
+for i=1:N
+    tenzoLQRPert{i}=ss(sys{i}.a,sys{i}.b,K,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+    CLpert{i} = feedback(tenzoLQRPert{i},eye(4));
+    step(CLpert{i})
+    hold on
+end
+%open('tenzoLqrPert.mdl');
+%% Loop Transfer Recovery
+
+disp('LTR');
+sigma1=0.1;
+
+sigmas1=0.1;           
+W1=sigmas1*tenzo_min_nominale.b*tenzo_min_nominale.b';
+sigmas2=1000;           
+W2=sigmas2*tenzo_min_nominale.b*tenzo_min_nominale.b';
+
+V=eye(4);
+L1= lqr(tenzo_min_nominale.a',tenzo_min_nominale.c',W1,V)';
+L2= lqr(tenzo_min_nominale.a',tenzo_min_nominale.c',W2,V)';
+
+Ac1 = tenzo_min_nominale.a-tenzo_min_nominale.b*K-L1*tenzo_min_nominale.c;
+Ac2 = tenzo_min_nominale.a-tenzo_min_nominale.b*K-L2*tenzo_min_nominale.c;
+
+Bc1 = L1;
+Bc2 = L2;
+
+Cc = K;
+Dc = zeros(4,4);
+
+controllore1 = ss(Ac1,Bc1,Cc,Dc);
+controllore2 = ss(Ac2,Bc2,Cc,Dc);
+
+H_recovery1 = series(tenzo_min_nominale,controllore1);
+H_recovery2 = series(tenzo_min_nominale,controllore2);
+
+figure(10)
+sigma(H_recovery1,'b')
+hold on;
+grid on;
+sigma(H_recovery2,'k')
+sigma(tenzoLQR,'r');
+legend('LTR: sigma = 0.1','LTR: sigma = 1000','LQR')
+
+%%
+close all;
+disp('LTR recovery: robustness, sigma=0.1;')
+
+nominaleLTR=feedback(H_recovery1,eye(4));
+
+for i=1:N
+    perturbato{i} = feedback(series(sys{i},controllore2),eye(4));
+    H_recovery1Pert{i} = series(tenzo_min_nominale,controllore1);
+    H_recovery2Pert{i} = series(tenzo_min_nominale,controllore2);
+end
+
+%perturbato1=feedback(H_recovery1,eye(2)+example(1,1)*eye(2));
+%perturbato2=feedback(H_recovery1,eye(2)+example(2,1)*eye(2));
+%perturbato3=feedback(H_recovery1,eye(2)+example(3,1)*eye(2));
+
+figure
+step(CL,'r--');
+grid on;
+hold on
+step(nominaleLTR,'r');
+for i = 1:N
+    step(perturbato{i},'k');
+end
+legend('LQR Nominale','LTR nominale: sigma = 0.1','LTR perturbato: sigma = 0.1')
+
+
+
+%%
 % %% Verifica condizioni Astatismo
 % 
 % disp('Condizioni Astatismo');
