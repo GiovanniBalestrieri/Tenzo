@@ -293,19 +293,18 @@ Doss=zeros(size(Boss));
 
 disp('Autovalori A-L*C');
 disp(eig(AMin-L*ClocalMin));
-clc;
 
 %% LQR
 
 disp('Stabilizzazione mediante LQR dallo stato stimato');
 
 alphaK = 2;
-Qie = blkdiag([0.1 0 ;0 1],0.0000001*eye(3),eye(3));
+Qie = blkdiag([0.1 0 ;0 1],0.01*eye(3),eye(3));
 Q = eye(size(AMin));
 % [T,tx,ty,tz]
-Rie = [1000000 0 0 0; 0 10000000 0 0; 0 0 100000000 0; 0 0 0 10000000];
+Rie = [10 0 0 0; 0 10 0 0; 0 0 10 0; 0 0 0 0.0000001];
 R = eye(size(BMin,2));
-K = lqr(AMin,BMin,Q,R);
+K = lqr(AMin,BMin,Q,Rie);
 disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
 eig(AMin-BMin*K)
 
