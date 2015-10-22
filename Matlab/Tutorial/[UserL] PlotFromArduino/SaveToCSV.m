@@ -68,7 +68,7 @@ disp(str);
 
 %% Initializinig rolling plot
 
-buf_len = rate;
+buf_len = 2*rate;
 index = 1:buf_len;
 
 % create variables for the Xaxis
@@ -151,7 +151,7 @@ while (abs(Wz) < 2500 && ~finished)
                     dat.x = gxdata;
                     dat.y = gydata;
                     dat.z = gzdata;
-                    save('GyroSamples.mat','-struct','dat');
+                    save('GyroSamples1.mat','-struct','dat');
                     disp('Saved.');
 
                     finished = true;
