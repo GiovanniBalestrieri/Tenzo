@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.90"
+    ComputedModelVersion    "1.91"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -38,9 +38,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Oct 21 19:37:57 2015"
+  LastModifiedDate	  "Wed Oct 21 21:23:58 2015"
   RTWModifiedTimeStamp	  367356687
-  ModelVersionFormat	  "1.%<AutoIncrement:90>"
+  ModelVersionFormat	  "1.%<AutoIncrement:91>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1186,8 +1186,8 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "-1.29247e-26~-9e-10~-3.5e-08~-4.2"
-	  YMax			  "6e-10~-5.16988e-26~-6.61744e-24~-3.8"
+	  YMin			  "-1.75~0~-30~-2.25"
+	  YMax			  "0~1.75~0~1"
 	  DataFormat		  "StructureWithTime"
 	  LimitDataPoints	  off
 	  SampleTime		  "0"
@@ -1446,7 +1446,7 @@ Model {
       ZOrder		      -20
       CopyFcn		      "sigbuilder_block('copy');"
       DeleteFcn		      "sigbuilder_block('delete');"
-      LoadFcn		      "sigbuilder_block('load',[42.4 0 1050.4 528.8 ]);"
+      LoadFcn		      "sigbuilder_block('load');"
       ModelCloseFcn	      "sigbuilder_block('modelClose');"
       PreSaveFcn	      "sigbuilder_block('preSave');"
       StartFcn		      "sigbuilder_block('start');"
