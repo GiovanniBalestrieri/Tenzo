@@ -22,7 +22,7 @@ lx = ureal('lx',28.8e-3,'Range',[0.012 0.35]);
 % Motor length along y-axis (m)
 ly = ureal('ly',28.8e-3,'Range',[0.012 0.35]);
 % Motor length along z-axis (m)
-lz = ureal('lz',0.003,'Range',[0.0001 0.006]);
+lz = ureal('lz',0.03,'Range',[0.01 0.010]);
 
 % Distance from the center of gravity to the center of a motor (m).
 % The quadrotor is symmetric regarding the XZ and YZ planes, so
