@@ -6,14 +6,25 @@
 #define CTRL_REG3 0x22
 #define CTRL_REG4 0x23
 #define CTRL_REG5 0x24
+#define STATUS_REG 0x27
+#define ZOR_REG 0b10000000
+#define ZDA_REG 0b00001000
+
+
+int scale2000 = 70;
+
+float bx= 0,by=0,bz=0;
+long bxS,byS,bzS;
+boolean initializedGyroCalib = false;
+const int maxSpikeAmpl = 150;
 
 // Declare L3G4200D address
 // use address 104 if CS is not connected
 int L3G4200D_Address = 105; 
 
-int x;
-int y;
-int z;
+int x=0,xm1=0;
+int y=0,ym1=0;
+int z=0,zm1=0;
 
 int deltaT = 2;
 float timerLoop = 0, timerReading = 0, count = 0;
@@ -27,6 +38,7 @@ void setup()
   Serial.println("starting up L3G4200D");
   // Configure L3G4200  - 250, 500 or 2000 deg/sec
   setupL3G4200D(2000); 
+  calcBias();
   delay(1500); //wait for the sensor to be ready   
   k = millis();
 }
@@ -34,10 +46,58 @@ void setup()
 void loop()
 {
   // This will update x, y, and z with new values
+  
   getGyroValues(); 
   serialRoutine();
 }
 
+
+void removeBiasAndScale()
+{
+  x = (x - bx)*scale2000/1000;
+  y = (y - by)*scale2000/1000;
+  z = (z - bz)*scale2000/1000;
+} 
+
+void calcBias()
+{
+  
+    Serial.println("Decting Bias ...");
+  int c = 500;
+  for (int i = 0; i<c; i++)
+  {
+    delay(5);
+    getGyroValues(); 
+    bxS = bxS + x;
+    byS = byS + y;
+    bzS = bzS + z;
+    //Serial.println(i);
+  }
+
+  bx = bxS / c;
+  by = byS / c;
+  bz = bzS / c;
+
+  Serial.println(bx);
+  Serial.println(by);
+  Serial.println(bz);
+  
+  initializedGyroCalib = true;
+}
+
+void gyroWaitAndRead()
+{
+  //wait until new z data available and no overrun
+  byte statusflag = readRegister(L3G4200D_Address, STATUS_REG);
+  
+  while(!(statusflag & ZDA_REG) && (statusflag & ZOR_REG)) 
+  {
+    statusflag = readRegister(L3G4200D_Address, STATUS_REG);
+  }
+  
+  //read values
+  getGyroValues();
+}
 void serialRoutine()
 {
   if(Serial.available()>0)
@@ -72,15 +132,36 @@ void getGyroValues()
   
   byte xMSB = readRegister(L3G4200D_Address, 0x29);
   byte xLSB = readRegister(L3G4200D_Address, 0x28);
-  x = ((xMSB << 8) | xLSB);
+  
+  int xC = ((xMSB << 8) | xLSB);
+  int deltaX = abs(xC-xm1);
+  if ( deltaX < maxSpikeAmpl)
+  {  
+    x = xC;
+  }  
+  xm1 = xC;
 
   byte yMSB = readRegister(L3G4200D_Address, 0x2B);
   byte yLSB = readRegister(L3G4200D_Address, 0x2A);
-  y = ((yMSB << 8) | yLSB);
+  int yC = ((yMSB << 8) | yLSB);
+  int deltaY = abs(yC-ym1);
+  if ( deltaY < maxSpikeAmpl)
+  {  
+    y = yC;
+  }  
+  ym1 = yC;
 
   byte zMSB = readRegister(L3G4200D_Address, 0x2D);
   byte zLSB = readRegister(L3G4200D_Address, 0x2C);
-  z = ((zMSB << 8) | zLSB);
+  int zC = ((zMSB << 8) | zLSB);
+  int deltaZ = abs(zC-zm1);
+  if ( deltaZ < maxSpikeAmpl)
+  {  
+    z = zC;
+  }  
+  zm1 = zC;
+    
+  removeBiasAndScale();
   
   dt = micros();
 }

@@ -290,7 +290,7 @@ int L3G4200D_Address = 105;
 int zOld, xOld, yOld, xCand, yCand, zCand;
 int threshold = 200;
 
-float scale2000 = 70;
+int scale2000 = 70;
 
 float bx= 0,by=0,bz=0;
 long bxS,byS,bzS;

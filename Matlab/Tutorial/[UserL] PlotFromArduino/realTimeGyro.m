@@ -77,7 +77,7 @@ gydata = zeros(buf_len,1);
 gzdata = zeros(buf_len,1);
 
 %% Data collection and Plotting
-while (abs(Wz) < 2500)
+while (abs(Wz) < 110)
     % Polling 
     pause(delay);
     fprintf(xbee,'M') ; 
@@ -95,7 +95,9 @@ while (abs(Wz) < 2500)
                 Wz = C{4};
                 
                 %% Plotting angles
-
+                if Wx > 250
+                    print(Wx);
+                end
                 %[gx, gy, gz] = [Xacc, Yacc, Zacc];
                 % Update the rolling plot. Append the new reading to the end of the
                 % rolling plot data
