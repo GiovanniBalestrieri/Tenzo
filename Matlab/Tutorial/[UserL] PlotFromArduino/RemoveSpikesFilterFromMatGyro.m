@@ -6,7 +6,7 @@ gzFdata = 0;
 
 
 % Loads samples from file
-dat = load('GyroSamples1.mat');
+dat = load('GyroSamples.mat');
 %dat = load('samples.mat');
 %datX100 = dat.x(1:100)
 %plot(datX100)
