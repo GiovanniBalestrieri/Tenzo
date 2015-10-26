@@ -872,7 +872,7 @@ void SerialRoutine()
   if (timerSec >= 1000000)
   {
     secRoutine = micros();
-    if (!sakura.getPrintTimers())
+    if (sakura.getPrintTimers())
     {
       //Serial.print(cont);
       Serial.print("Samples rate: [sample/sec] ");
@@ -1200,26 +1200,25 @@ void printOmega()
   }
   else
   {
-    Serial.print("      wx:");
+    Serial.print("G,");
     Serial.print(x);
-  
-    Serial.print("       wy:");
+    Serial.print(",");
     Serial.print(y);
-  
-    Serial.print("       Wz:");
-    Serial.println(z);
+    Serial.print(",");
+    Serial.print(z);
+    Serial.println(",Z");
   }
 }
 
 void printAcc()
 {
-  Serial.println();
+  Serial.print("A,");
   Serial.print(aax);
   Serial.print(",");
   Serial.print(aay);
   Serial.print(",");
   Serial.print(aaz);
-  Serial.println();
+  Serial.println(",Z");
   
   /*
   Serial.print("est: ");

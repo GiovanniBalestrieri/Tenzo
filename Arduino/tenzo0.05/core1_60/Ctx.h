@@ -7,7 +7,7 @@
 #ifndef Ctx_h
   #define Ctx_h
   
-  #define VERSION 0.09
+  #define VERSION 0.10
   
   #define MOTOR_1 3
   #define MOTOR_2 5
@@ -18,13 +18,13 @@
   boolean printBlue = false;
   boolean printMotorsVals = false;
   boolean printMotorsValsUs = false;
-  boolean printPIDVals = true;
-  boolean printSerialInfo = true;
+  boolean printPIDVals = false;
+  boolean printSerialInfo = false;
   boolean printSerial = true;
   boolean printTimers = false; 
-  boolean printAccs = true;
-  boolean printMotorsPid = true;
-  boolean printOmegas = false;
+  boolean printAccs = false;
+  boolean printMotorsPid = false;
+  boolean printOmegas = true;
   boolean sendBlueAngle = false;
   boolean serialByteProtocol = false;
   boolean printVerboseSerial = true;
