@@ -76,6 +76,8 @@ gxdata = zeros(buf_len,1);
 gydata = zeros(buf_len,1);
 gzdata = zeros(buf_len,1);
 
+setup = false;
+
 %% Data collection and Plotting
 while (abs(Wz) < 110)
     % Polling 
@@ -86,7 +88,9 @@ while (abs(Wz) < 110)
         while (get(xbee, 'BytesAvailable')~=0 && ~notArrived)
             % read until terminator
             sentence = fscanf( xbee, '%s'); % this reads in as a string (until a terminater is reached)
-            if (strcmp(sentence(1,1),'A'))
+            disp(sentence);
+            
+            if (strcmp(sentence(1,1),'G') || strcmp(sentence(1,1),'A'))
                 notArrived = true;
                 %decodes "sentence" seperated (delimted) by commaseck Unit')
                 C = textscan(sentence,'%c %d %d %d %c','delimiter',',');
@@ -95,9 +99,6 @@ while (abs(Wz) < 110)
                 Wz = C{4};
                 
                 %% Plotting angles
-                if Wx > 250
-                    print(Wx);
-                end
                 %[gx, gy, gz] = [Xacc, Yacc, Zacc];
                 % Update the rolling plot. Append the new reading to the end of the
                 % rolling plot data

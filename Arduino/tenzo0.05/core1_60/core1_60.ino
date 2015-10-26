@@ -541,6 +541,7 @@ void setup() {
   sakura.welcome();
   tenzoProp.calibrateOnce();
   tenzoProp.init();
+  //Serial.println("K");
 }
 
 void loop() {  
@@ -671,6 +672,7 @@ void SerialRoutine()
   if (Serial.available())
   {
       char t = Serial.read();
+      
       if (t == '1')
         tenzoProp.stopAll();      
       if (t == 'c')

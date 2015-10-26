@@ -28,8 +28,11 @@ Ux::Ux()
 
 void Ux::welcome()
 {  
-  Serial.print("Welcome To Tenzo ");
-  Serial.println(VERSION);
+  if (!processing)
+  {
+    Serial.print("Welcome To Tenzo ");
+    Serial.println(VERSION);
+  }
 }
 
 void Ux::warning()

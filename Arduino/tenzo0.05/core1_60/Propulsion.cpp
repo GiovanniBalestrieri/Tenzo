@@ -43,14 +43,14 @@ void Propulsion::setThrottle(int t)
 void Propulsion::init()
 {
         this->throttle = MIN_SIGNAL;
-        Serial.println("Propulsion initialized.");
+        //Serial.println("Propulsion initialized.");
 }
 
 void Propulsion::calibrateOnce()
 {        
   	Propulsion::detachAll();
         delay(1000);
-  	Serial.println("This program will Arm and Calibrate the ESC. Max...");
+  	//Serial.println("This program will Arm and Calibrate the ESC. Max...");
     
   	servo1.attach(_pinM1);
   	servo2.attach(_pinM2);
@@ -62,7 +62,7 @@ void Propulsion::calibrateOnce()
   	servo3.writeMicroseconds(MAX_SIGNAL);
   	servo4.writeMicroseconds(MAX_SIGNAL);
 
-  	Serial.println("Minimum...");
+  	//Serial.println("Minimum...");
   
   	delay(MAX_SIGNAL);
   	servo1.writeMicroseconds(MIN_SIGNAL);
@@ -70,7 +70,7 @@ void Propulsion::calibrateOnce()
 	servo3.writeMicroseconds(MIN_SIGNAL);
  	servo4.writeMicroseconds(MIN_SIGNAL);
   
-  	Serial.println("Done!");
+  	//Serial.println("Done!");
   	throttle = 790;
 }
 
@@ -214,7 +214,7 @@ void Propulsion::detachAll()
   servo3.detach();
   servo4.detach();
   
-  Serial.println("Disarmed");
+  //Serial.println("Disarmed");
 }
 
 int Propulsion::getwUs1() {

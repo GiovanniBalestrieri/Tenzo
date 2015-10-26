@@ -207,7 +207,7 @@ void serialRoutine()
     if (count >= 3)
     {
       count = 0;
-      //printSerialAngle();
+      printSerialAngle();
       printAcc();
       //printT();
     }
