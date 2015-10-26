@@ -78,7 +78,7 @@ boolean enablePid = false;
 
 // theta
 boolean enableRollPid = true;
-boolean enablePitchPid = true;
+boolean enablePitchPid = false;
 boolean enableYawPid = false;
 // w
 boolean enableWRollPid = true;
@@ -144,7 +144,7 @@ boolean inConsPitch = false;
         float consKpCascRoll=1.1, consKiCascRoll=0.00, consKdCascRoll=0.00; //1.5 / 3.2 0.6 0.4
         
         // W part   
-        float consKpCascRollW=1.00, consKiCascRollW=1.65, consKdCascRollW=0.30;   
+        float consKpCascRollW=0.90, consKiCascRollW=1.65, consKdCascRollW=0.20;   
         
         // Pitch
         
@@ -331,8 +331,8 @@ const int zaxis = 2;
 
 
 // 3.3 Fully loaded Tenzo V2.2
-int xRawMin = 405;
-int xRawMax = 271;
+int xRawMin = 402;
+int xRawMax = 277;
 // 
 int yRawMin = 402;
 int yRawMax = 269;
@@ -408,6 +408,8 @@ volatile float bearing1;
 
 volatile float angleXAcc;
 volatile float angleYAcc;
+volatile float angleXAccF;
+volatile float angleYAccF;
 
 volatile float aax,aay,aaz;
 volatile float axm1,aym1,azm1;
@@ -572,7 +574,7 @@ void getAcc() //ISR
   aaz = zScaled / 1000.0;
    
    if (filterAcc)
-   {      
+   {
       aF[0] = aax;
       aF[1] = aay;
       aF[2] = aaz;
@@ -609,10 +611,10 @@ void calcAngle() //ISR
   
   if (filterAcc)
   {
-    angleXAcc = -(atan2(-aF[0],-aF[2])) * RAD_TO_DEG;
+    angleXAcc = (atan2(-aF[0],-aF[2])) * RAD_TO_DEG;
     angleYAcc = (atan2(-aF[1],-aF[2])) * RAD_TO_DEG;
   }
-  else
+  else 
   {
     // From Acc
     angleXAcc = (atan2(-aax,-aaz)) * RAD_TO_DEG;
@@ -638,13 +640,13 @@ void wFilter(volatile float val[])
 
 void aFilter(volatile float val[])
 {
-  val[0] = (1-alphaA)*aax + alphaA*axm1;
-  val[1] = (1-alphaA)*aay + alphaA*aym1;
-  val[2] = (1-alphaA)*aaz + alphaA*azm1;
+  val[0] = (1-alphaA)*val[0] + alphaA*axm1;
+  val[1] = (1-alphaA)*val[1] + alphaA*aym1;
+  val[2] = (1-alphaA)*val[2] + alphaA*azm1;
   
-  axm1 = aax;
-  aym1 = aay;
-  azm1 = aaz;
+  axm1 = val[0];
+  aym1 = val[1];
+  azm1 = val[2];
 }
 
 
@@ -1214,21 +1216,26 @@ void printOmega()
 
 void printAcc()
 {
+  /*
   Serial.print("A,");
   Serial.print(aax);
   Serial.print(",");
   Serial.print(aay);
   Serial.print(",");
   Serial.print(aaz);
-  Serial.println(",Z");
+  Serial.println(",Z     ");
+  */
   
-  /*
-  Serial.print("est: ");
+  Serial.print("A,");
   Serial.print(angleXAcc);
   Serial.print(",");
   Serial.print(angleYAcc);
+  Serial.print(",");
+  Serial.print(estXAngle);
+  Serial.print(",");
+  Serial.print(estYAngle);
   Serial.println("E");
-  */
+  
 }
 
 void printSerialAngle()
@@ -1504,7 +1511,9 @@ void controlCascade()
       cascadeRollPid.Compute(); 
       
       InputCascRollW = x;
-      SetpointCascRollW = - OutputCascRoll;
+      SetpointCascRollW = -OutputCascRoll;
+      //////////////////////////////////////77
+      SetpointCascRollW = 0;
       errorCascRollW = SetpointCascRollW - x; 
 
       cascadeRollPidW.SetTunings(consKpCascRollW, consKiCascRollW, consKdCascRollW);
@@ -1568,7 +1577,8 @@ void controlCascade()
       cascadePitchPid.Compute(); 
       
       InputCascPitchW = y;
-      SetpointCascPitchW = - OutputCascPitch;
+      //SetpointCascPitchW = - OutputCascPitch;
+      SetpointCascPitchW = 0;
       errorCascPitchW = SetpointCascPitchW - y; 
 
       cascadePitchPidW.SetTunings(consKpCascPitchW, consKiCascPitchW, consKdCascPitchW);
