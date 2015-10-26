@@ -31,6 +31,9 @@ float timerLoop = 0, timerReading = 0, count = 0;
 long k=0, kM1=0;
 double dt=0;
 
+boolean removeSpikesNumerically = false;
+boolean removeSpikesMedian = true;
+
 void setup()
 {
   Wire.begin();

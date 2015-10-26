@@ -6,7 +6,7 @@ gzFdata = 0;
 
 
 % Loads samples from file
-dat = load('GyroSamples.mat');
+dat = load('GyroSamples1.mat');
 %dat = load('samples.mat');
 %datX100 = dat.x(1:100)
 %plot(datX100)
@@ -54,14 +54,21 @@ plot(0:1/(num_bins/2 -1):1,X_magsNorm(1:num_bins/2),'g')
 % design
 datX = dat.x';
 x_filtered = filter(b,a,dat.x);
-
+dt = 0.01;
+x_moving = smooth(dat.x,dt,'rloess')
+n=3;
+x_median = medfilt1(dat.x,n)
 % Plots the filtered signal
 figure(5)
 plot(x_filtered,'r')
 hold on
 plot(dat.x,'b')
+hold on
+plot(x_moving,'k');
+hold on
+plot(x_median,'g-');
 title('Filtered Signal - Second Order Butterworth');
-legend('Filtered','real');
+legend('Filtered','real','moving','median');
 grid on;
 xlabel('Samples');
 ylabel('Amplitude');
