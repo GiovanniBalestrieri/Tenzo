@@ -111,6 +111,7 @@ while (abs(Wz) < 110)
                 plot(index,gxdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                 xlabel('Sample');
                 ylabel('Wx (deg/sec)');
+                grid on
                 %axis([1 buf_len -100 100]);
                 %hold on;
                 subplot(3,1,2);
@@ -118,6 +119,7 @@ while (abs(Wz) < 110)
                 plot(index,gydata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                 xlabel('Sample');
                 ylabel('Wy');
+                grid on
                 %axis([1 buf_len -100 100]);
                 subplot(3,1,3);
                 title('Z  Axis Omega in deg/s');
