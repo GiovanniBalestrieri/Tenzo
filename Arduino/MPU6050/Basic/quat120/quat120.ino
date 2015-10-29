@@ -15,7 +15,9 @@ boolean printAnglesEst = false;
 #endif
 
 MPU6050 mpu;
-#define OUTPUT_READABLE_EULER
+//#define OUTPUT_READABLE_EULER
+
+#define OUTPUT_QUAT
 
 //#define OUTPUT_READABLE_YAWPITCHROLL
 
@@ -181,13 +183,18 @@ void loop()
 
 void serialRoutine()
 {
-      printSerialAngle();
+      //printSerialAngle();
+      
       #ifdef OUTPUT_READABLE_EULER
           printEulerSerial();
       #endif
   
       #ifdef OUTPUT_READABLE_YAWPITCHROLL
           printYPRSerial();
+      #endif 
+      
+      #ifdef OUTPUT_QUAT
+          printQuaternions();
       #endif 
 }
 
@@ -277,3 +284,18 @@ void printSerialAngle()
   }
 }
 
+void printQuaternions()
+{
+  // display quaternion values in easy matrix form: w x y z
+      
+      Serial.print("i");
+      mpu.dmpGetQuaternion(&q, fifoBuffer);
+      
+      Serial.print("\t");
+      Serial.print(q.x); Serial.print("\t");
+      Serial.print(q.y); Serial.print("\t");
+      Serial.print(q.z); Serial.print("\t");
+      Serial.print(q.w);
+      Serial.print("\n");
+
+}
