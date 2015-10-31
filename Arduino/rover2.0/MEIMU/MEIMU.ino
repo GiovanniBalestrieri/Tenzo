@@ -180,9 +180,9 @@ void UpdateTime()
   if (printTime)
   {
     Serial.print("t");
-    Serial.print("\t");
+    Serial.print(",");
     Serial.print(LastUpdateMicrosecs);
-    Serial.print("\t");
+    Serial.print(",");
     Serial.print(SecondsSinceLastUpdate);
     Serial.print("\n");
   }
@@ -279,9 +279,9 @@ void updateEncoders()
   if (printEnc)
   {
     Serial.print("e");
-    Serial.print("\t");
+    Serial.print(",");
     Serial.print(SX_Enc_Ticks);
-    Serial.print("\t");
+    Serial.print(",");
     Serial.println(DX_Enc_Ticks);
   }
 }
@@ -521,9 +521,9 @@ void motorsRoutine()
   if (rosSerial && printMotors)
   {
     Serial.print("s");
-    Serial.print("\t");
+    Serial.print(",");
     Serial.print(speed1);
-    Serial.print("\t");
+    Serial.print(",");
     Serial.print(speed2);  
     Serial.print("\n");
   }
