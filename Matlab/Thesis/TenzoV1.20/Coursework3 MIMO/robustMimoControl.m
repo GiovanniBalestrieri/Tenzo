@@ -200,10 +200,25 @@ grid on;
 close all;
 disp('Design a LQR controller')
 
+%% Calcolo di un compensatore stabilizzante (1/3)
+clc;
 rho = .10;
-Q = C'*C;
-R = rho*eye(2);
-Kopt = lqr(A,B,Q,R);
-H = ss(A,B,Kopt,zeros(2,2));
-CL = feedback(H,eye(2));
+
+disp('Let us compute the optimal gain Kinf u=(Kinf)x');
+
+Q = tenzo_min_nominale.c'*tenzo_min_nominale.c;
+R = rho*eye(size(tenzo_min_nominale.d));
+
+Kopt = lqr(tenzo_min_nominale.a,tenzo_min_nominale.b,Q,R);
+
+disp('Matrice di guadagno K: [comando K = lqr(A,B,Q,R)]');
+H = ss(tenzo_min_nominale.a,tenzo_min_nominale.b,Kopt,zeros(size(tenzo_min_nominale.d)));
+CL = feedback(H,eye(size(tenzo_min_nominale.d)));
 step(CL);
+
+disp('Eigenvalues closed loop sys: eig(A-B*Kinf)');
+eK = eig(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt);
+disp(eK);
+
+disp('Premere un tasto per continuare...')
+pause;
