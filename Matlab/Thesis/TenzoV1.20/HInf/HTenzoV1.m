@@ -4,6 +4,7 @@
 clear all;
 clc;
 
+
 % Physical properties of the quadrotor
 
 g=9.81; %Acceleration of gravity (m)
@@ -16,13 +17,13 @@ rho = ureal('rho',1.2250,'Range',[1.1455 1.4224]);
 mq = ureal('mq',1.150,'Range',[0.820 1.4224]);
 
 % Mass of a motor (kg). All motors have equal mass.
-mm = ureal('mm',0.068,'Range',[0.012 0.125]);
+mm = ureal('mm',0.068,'Range',[0.020 0.075]);
 % Motor length along x-axis (m). All motors have equal sizes.
-lx = ureal('lx',28.8e-3,'Range',[0.012 0.35]);
+lx = ureal('lx',28.8e-3,'Range',[0.020 0.035]);
 % Motor length along y-axis (m)
-ly = ureal('ly',28.8e-3,'Range',[0.012 0.35]);
+ly = ureal('ly',28.8e-3,'Range',[0.020 0.035]);
 % Motor length along z-axis (m)
-lz = ureal('lz',0.03,'Range',[0.01 0.010]);
+lz = ureal('lz',0.08,'Range',[0.05 0.1]);
 
 % Distance from the center of gravity to the center of a motor (m).
 % The quadrotor is symmetric regarding the XZ and YZ planes, so
@@ -31,7 +32,7 @@ dcg=0.288;
 
 dcgX = ureal('dcgX',0.288,'Range',[0.25 0.30]);
 dcgY = ureal('dcgY',0.288,'Range',[0.25 0.30]);
-dcgZ = ureal('dcgZ',0.288,'Range',[0.25 0.30]);
+dcgZ = ureal('dcgZ',0.03,'Range',[0.02 0.1]);
 
 % Moment of inertia (x-axis) for motors 1 and 3
 % (kg.m^2).
@@ -69,7 +70,7 @@ cp = ureal('cp',0.0314,'Range',[0.0311 0.0465]);
 ct = ureal('ct',0.0726,'Range',[0.0548 0.0980]);
 
 % Propeller radius (m)
-rp = ureal('rp',25.4e-2,'Range',[0.06 0.30]);
+rp = ureal('rp',13.4e-2,'Range',[0.10 0.19]);
 % Constant value to calculate the moment provided
 % by a propeller given its angular speed (kg.m^2.rad^-1)
 Km=cp*4*rho*rp^5/pi()^3; 
@@ -203,8 +204,8 @@ mot1= m^2;
 
 m1 = canon(mot1,'modal');
 
-open('testMotors');
-sim('testMotors');
+% open('testMotors');
+% sim('testMotors');
 
 %% Eigenvalues of the system
 
@@ -250,7 +251,6 @@ else
 end
 disp(rank(obsv(tenzo_nominale.a,tenzo_nominale.c)));
 
-clc
 %% Il sys non è osservabile. 
 % Definiamo il sottosistema osservabile e raggiungibile
 disp('Let us remove the unobservable modes/components from the state.');
@@ -347,6 +347,7 @@ figure(2)
 sigma(modello_tf,[],'o-')
 grid on
 
+
 %% Prende alcuni campioni del sistema incerto e calcola bound su incertezze
 
 N=10
@@ -401,7 +402,7 @@ for i=1:1:N
 end
 semilogx(omega,mag2db(top_unc),'b','LineWidth',5)
 semilogx(omega,mag2db(max_sig_nom),'k','LineWidth',5)
-title('Max sing values: Nominal model (black), perturbed models (red), bound (blue)')
+title('Max sing values: Nominal (bk), Pert models (R), bound (blue)')
 
 %%  Additive
 figure(2);
