@@ -195,14 +195,28 @@ figure(2)
 sigma(modello_tf,[],'o-')
 grid on;
 
-%% 2)
+%% 2.1) LQR
 
 close all;
 disp('Design a LQR controller')
 
-%% Calcolo di un compensatore stabilizzante (1/3)
 clc;
-rho = .10;
+rho = 0.08;
+
+% Check (A,Cq) Rilevabile
+if (rank(obsv(tenzo_min_nominale.a,tenzo_min_nominale.c)) == n)
+    disp('Checking (A,Cq) ... Rilevabile');
+elseif (rank(obsv(tenzo_min_nominale.a,tenzo_min_nominale.c)) < n)
+    disp('Checking (A,Cq) ...  NON Rilevabile');
+end
+
+
+% Check Cq(sI-A)B Squared
+if (size(tf(tenzo_min_nominale)) == size(tenzo_min_nominale.d))
+    disp('Checking tf ... Squared TF');
+else
+    disp('Checking tf ... Non squared tf');
+end
 
 disp('Let us compute the optimal gain Kinf u=(Kinf)x');
 
@@ -220,5 +234,40 @@ disp('Eigenvalues closed loop sys: eig(A-B*Kinf)');
 eK = eig(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt);
 disp(eK);
 
+disp('Kopt');
+Kopt
+
 disp('Premere un tasto per continuare...')
 pause;
+
+%% 2.1) LQR
+
+close all;
+disp('Design a LQR controller')
+
+clc;
+rho = 0.08;
+
+disp('Let us compute the optimal gain Kinf u=(Kinf)x');
+
+Q = tenzo_min_nominale.c'*tenzo_min_nominale.c;
+R = rho*eye(size(tenzo_min_nominale.d));
+
+Kopt = lqr(tenzo_min_nominale.a,tenzo_min_nominale.b,Q,R);
+
+disp('Matrice di guadagno K: [comando K = lqr(A,B,Q,R)]');
+H = ss(tenzo_min_nominale.a,tenzo_min_nominale.b,Kopt,zeros(size(tenzo_min_nominale.d)));
+CL = feedback(H,eye(size(tenzo_min_nominale.d)));
+step(CL);
+
+disp('Eigenvalues closed loop sys: eig(A-B*Kinf)');
+eK = eig(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt);
+disp(eK);
+
+disp('Kopt');
+Kopt
+
+disp('Premere un tasto per continuare...')
+pause;
+
+
