@@ -1,10 +1,12 @@
 %% Tenzo Control System
 %  oct-22-2015 UserK
+%  www.userk.co.uk
 %  info: userk@protonmail.ch
+
 clear all;
 clc;
 
-% Physical properties of the quadrotor
+%% I) Physical properties of the quadcopter
 
 g=9.81; %Acceleration of gravity (m)
 
@@ -82,7 +84,7 @@ Ktm=Km/Kt;
 
 Ft0=mq*g;
 
-%% % Definiamo il sottosistema osservabile e raggiungibile
+%% II) Definiamo il sottosistema osservabile e raggiungibile
 disp('Let us remove the unobservable modes/components from the state.');
   
   AMin = [
@@ -158,7 +160,7 @@ KalmanC = tenzo_min_nominale.c*U';
 
 disp('Yeah confirmed! Correct observable and reachable subsystem');
 
-%% Verifiche preliminari proprietà strutturali 
+%% 1) Verifiche preliminari proprietà strutturali 
 % #Osservabilità #Controllabilità #Invariant zeros 
 
  n=size(tenzo_min_nominale.a,1);
@@ -193,7 +195,7 @@ figure(2)
 sigma(modello_tf,[],'o-')
 grid on;
 
-%% LQR
+%% 2)
 
 close all;
 disp('Design a LQR controller')
