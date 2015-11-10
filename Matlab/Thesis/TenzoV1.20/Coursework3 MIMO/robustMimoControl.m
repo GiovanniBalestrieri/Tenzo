@@ -270,4 +270,29 @@ Kopt
 disp('Premere un tasto per continuare...')
 pause;
 
+%% 2.2) U0 largest singular values
+
+w=logspace(-2,2,100);
+lm = tf([1 100], 100);
+
+figure(3)
+hold on
+sigma(H,'b')
+sigma(lm,'r--')
+sigma(CL,'k')
+sigma(1/lm,'r')
+grid on
+legend('Anello aperto','Bound l_m','U0','1/lm')
+
+%% 2.3) LTR
+
+% a) verify TF is nS, without Transmission zeros and squared
+if (size(tf(tenzo_min_nominale)) == size(tenzo_min_nominale.d))
+    disp('Squared TF');
+else
+    disp('Nein');
+end
+%%%%% manca il check sul rank della tf
+
+
 
