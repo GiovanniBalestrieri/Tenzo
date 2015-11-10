@@ -158,7 +158,25 @@ KalmanC = tenzo_min_nominale.c*U';
 
 disp('Yeah confirmed! Correct observable and reachable subsystem');
 
-%% Invariant zeros 
+%% Verifiche preliminari proprietà strutturali 
+% #Osservabilità #Controllabilità #Invariant zeros 
+
+ n=size(tenzo_min_nominale.a,1);
+
+% Verifica Raggiungibilità e Osservabilità
+if (rank(ctrb(tenzo_min_nominale.a,tenzo_min_nominale.b))==size(tenzo_min_nominale.a,1))
+    disp('Sistema raggiungibile');
+    disp(rank(ctrb(tenzo_min_nominale.a,tenzo_min_nominale.b)));
+else
+    disp('Sistema Irraggiungibile');
+end
+
+if (rank(obsv(tenzo_min_nominale.a,tenzo_min_nominale.c))==size(tenzo_min_nominale.a,1))
+    disp('Sistema osservabile');
+else    
+    disp('Sistema Non osservabile');
+end
+disp(rank(obsv(tenzo_min_nominale.a,tenzo_min_nominale.c)));
 
 % Transfer function
 modello_tf = tf(tenzo_min_nominale);
@@ -175,3 +193,15 @@ figure(2)
 sigma(modello_tf,[],'o-')
 grid on;
 
+%% LQR
+
+close all;
+disp('Design a LQR controller')
+
+rho = .10;
+Q = C'*C;
+R = rho*eye(2);
+Kopt = lqr(A,B,Q,R);
+H = ss(A,B,Kopt,zeros(2,2));
+CL = feedback(H,eye(2));
+step(CL);
