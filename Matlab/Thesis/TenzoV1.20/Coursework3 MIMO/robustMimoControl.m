@@ -362,14 +362,11 @@ set(uuu,'FontSize',13)
 %Inizio il recovery
 Xi = eye(n);
 Th = eye(size(tenzo_min_nominale.c,1));
-rho = [0 1000 1000000]; % LTR recovery gains
+rho = [0 10 1000 100000]; % LTR recovery gains
 [Kltr,SVL,W1] = ltrsyn(tenzo_min_nominale,Kopt,Xi,Th,rho,omega);
 
 disp('Premere un tasto per continuare...')
 pause;
-
-
-
 
 %% Comparison LQG standard
 
