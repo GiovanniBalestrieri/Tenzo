@@ -248,6 +248,31 @@ Kopt
 disp('Premere un tasto per continuare...')
 pause;
 
+% This LQR is crap. Let's BOOST it!
+alfa = 3;
+disp('Design a LQR controller')
+rho = 0.08;
+
+disp('Let us compute the optimal gain Kinf u=(Kinf)x');
+
+Q = tenzo_min_nominale.c'*tenzo_min_nominale.c;
+R = rho*eye(size(tenzo_min_nominale.d));
+
+Kopt = lqr(tenzo_min_nominale.a+alfa*eye(size(tenzo_min_nominale.a)),tenzo_min_nominale.b,Q,R);
+
+disp('Matrice di guadagno K: [comando K = lqr(A,B,Q,R)]');
+H = ss(tenzo_min_nominale.a,tenzo_min_nominale.b,Kopt,zeros(size(tenzo_min_nominale.d)));
+CL = feedback(H,eye(size(tenzo_min_nominale.d)));
+step(CL);
+
+disp('Eigenvalues closed loop sys: eig(A-B*Kinf)');
+eK = eig(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt);
+disp(eK);
+
+disp('Kopt');
+Kopt
+
+
 %% 2.2) U0 largest singular values
 
 w=logspace(-2,2,100);
@@ -352,13 +377,13 @@ close all;
 disp('Confronto con LQG standard');
 
 Klqg = lqg(tenzo_min_nominale,blkdiag(Q,R),blkdiag(Xi,Th));
-
-CL_LQG = feedback(series(Klqg,modello_ss),eye(q),+1);
-CL_LTR = feedback(series(Kltr,modello_ss),eye(q),+1);
+q=size(tenzo_min_nominale.c,1);
+CL_LQG = feedback(series(Klqg,tenzo_min_nominale),eye(q),+1);
+CL_LTR = feedback(series(Kltr,tenzo_min_nominale),eye(q),+1);
 CL_LQR = CL;
 
 figure
-sigma(lm_til,'r--',1/lm_til,'r',CL_LQG,'b:',CL_LTR,'g:',CL_LQR,'k:',omega);
+sigma(lm_til,'r--',1/lm_til,'r',CL_LQG,'b',CL_LTR,'g',CL_LQR,'k',omega);
 grid on
 legend('Bound lm','1/lm','U0 LQG','U0 LTR','U0 LQR','Location','SouthWest');
 
