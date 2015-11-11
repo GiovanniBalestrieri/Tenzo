@@ -198,10 +198,10 @@ grid on;
 %% 2.1) LQR
 
 close all;
-disp('Design a LQR controller')
-
 clc;
-rho = 0.08;
+
+disp('Design a LQR controller')
+rho = 0.08
 
 % Check (A,Cq) Rilevabile
 if (rank(obsv(tenzo_min_nominale.a,tenzo_min_nominale.c)) == n)
@@ -218,34 +218,12 @@ else
     disp('Checking tf ... Non squared tf');
 end
 
-disp('Let us compute the optimal gain Kinf u=(Kinf)x');
-
-Q = tenzo_min_nominale.c'*tenzo_min_nominale.c;
-R = rho*eye(size(tenzo_min_nominale.d));
-
-Kopt = lqr(tenzo_min_nominale.a,tenzo_min_nominale.b,Q,R);
-
-disp('Matrice di guadagno K: [comando K = lqr(A,B,Q,R)]');
-H = ss(tenzo_min_nominale.a,tenzo_min_nominale.b,Kopt,zeros(size(tenzo_min_nominale.d)));
-CL = feedback(H,eye(size(tenzo_min_nominale.d)));
-step(CL);
-
-disp('Eigenvalues closed loop sys: eig(A-B*Kinf)');
-eK = eig(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt);
-disp(eK);
-
-disp('Kopt');
-Kopt
-
 disp('Premere un tasto per continuare...')
 pause;
 
-%% 2.1) LQR
-
-close all;
-disp('Design a LQR controller')
-
+%%
 clc;
+disp('Design a LQR controller')
 rho = 0.08;
 
 disp('Let us compute the optimal gain Kinf u=(Kinf)x');
@@ -284,6 +262,50 @@ sigma(1/lm,'r')
 grid on
 legend('Anello aperto','Bound l_m','U0','1/lm')
 
+disp('Press X to continue');
+pause()
+%% lm bounds for the designed LQR controller
+close all;
+disp('Derive lm bounds for the designed LQR controller')
+omega = logspace(-4,4); 
+pp = sigma(CL,omega); %compute sing values at each freq
+sysg = pp(1,:);   %pick the max sing value at each freq
+
+pre_lm = frd(sysg.^-1,omega);
+
+% fit razionale e min phase per ricavare il bound
+ord = 1; %Ordine della funzione di fitting 
+lm1 = fitmagfrd(pre_lm,ord,[],[],-1); 
+lmg1 = frd(lm1,omega); 
+
+ord = 2; %Ordine della funzione di fitting 
+lm2 = fitmagfrd(pre_lm,ord,[],[],-1); 
+lmg2 = frd(lm2,omega); 
+
+bodemag(pre_lm,'r',lmg1,'k:',lmg2,'b--');
+legend('\sigma(U_0)^{-1}','lmtilde, order 1','lmtilde, order 2','Location','NorthWest');
+
+%ridimensiono scritte linee etc
+h = findobj(gcf,'type','line');
+set(h,'linewidth',2);
+uuu = gca;
+set(uuu,'FontSize',14)
+
+%%
+close all;
+disp('confronto fra anello chiuso e aperto, e vari bound')
+figure
+sigma(H,'k',lm2,'r--',lm1,'g--',CL,'b-o',1/lm2,'r',1/lm1,'g',omega);
+grid on
+legend('Anello aperto','Bound lm_2','Bound lm_1','U0','1/lm_2','1/lm_1','Location','SouthWest');
+lm_til = lm2;
+
+%ridimensiono scritte linee etc
+h = findobj(gcf,'type','line');
+set(h,'linewidth',2);
+uuu = gca;
+set(uuu,'FontSize',14)
+
 %% 2.3) LTR
 
 % a) verify TF is nS, without Transmission zeros and squared
@@ -293,6 +315,59 @@ else
     disp('Nein');
 end
 %%%%% manca il check sul rank della tf
+
+% b) LQG
+clc;
+
+disp('LTR Recovery')
+
+omega = logspace(-4,4); 
+
+%Funzione d'anello originale
+sigma(H,'k',omega);
+grid on;
+hold on;
+
+% graphic adjustments
+h = findobj(gcf,'type','line');
+set(h,'linewidth',2);
+uuu = gca;
+set(uuu,'FontSize',13)
+
+%Inizio il recovery
+Xi = eye(n);
+Th = eye(size(tenzo_min_nominale.c,1));
+rho = [0 1000 1000000]; % LTR recovery gains
+[Kltr,SVL,W1] = ltrsyn(tenzo_min_nominale,Kopt,Xi,Th,rho,omega);
+
+disp('Premere un tasto per continuare...')
+pause;
+
+
+
+
+%% Comparison LQG standard
+
+close all;
+disp('Confronto con LQG standard');
+
+Klqg = lqg(tenzo_min_nominale,blkdiag(Q,R),blkdiag(Xi,Th));
+
+CL_LQG = feedback(series(Klqg,modello_ss),eye(q),+1);
+CL_LTR = feedback(series(Kltr,modello_ss),eye(q),+1);
+CL_LQR = CL;
+
+figure
+sigma(lm_til,'r--',1/lm_til,'r',CL_LQG,'b:',CL_LTR,'g:',CL_LQR,'k:',omega);
+grid on
+legend('Bound lm','1/lm','U0 LQG','U0 LTR','U0 LQR','Location','SouthWest');
+
+%ridimensiono scritte linee etc
+h = findobj(gcf,'type','line');
+set(h,'linewidth',2);
+uuu = gca;
+set(uuu,'FontSize',20)
+
 
 
 
