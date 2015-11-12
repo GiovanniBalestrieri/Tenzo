@@ -3,6 +3,7 @@ function ControlBoard()
 clear all;
 clc;
 
+
 global xbee;
 global portWin;
 global portUnix;
@@ -46,6 +47,7 @@ global rAPPID;
 global rAYPID;
 global rAAPID;
 global tenzoStateID;
+global connID;
 
 global bufferSend;
 global landingSpeed;
@@ -62,6 +64,7 @@ global gyroReceived;
 global magnReceived;
 global estReceived;
 global cmdtype;
+global conAck;
 
 % Sensors vars
 global Roll;
@@ -134,10 +137,66 @@ global aggYawKi;
 global consYawKp;
 global consYawKd;
 global consYawKi;
+global rt;
+global firing;
+global recording;
+global plotting;
+global asked;
+global axdata;
+global aydata;
+global azdata;
+global axdataDa;
+global aydataDa;
+global azdataDa;
+global AccXDa;
+global AccYDa;
+global AccZDa;
+global time;
+global serialFlag;
+global samplesNumMax;
+global timerArduino;
+global timerConnect;
+global requestPending;
+
+%% Version
+
+version = 1.90;
+
+%% Data Acquisition vars
+
+samplesNumMax = 1000;
+acceleration.s = 0;
+ax=0;
+ay=0;
+az=0;
+t=0;
+serialFlag=0;
+prevTimer = 0;
+deltaT = 0;
+contSamples = 0;
+
+
+buffLenDa = 500;
+longBuffLen = 1000;
+indexDa=1:buffLenDa;
+asked = false;
+rt = false;
+plotting = false;
+receiving = false;
+requestPending = false;
+firing = false;
+
+AccX = zeros(buffLenDa,1);
+AccY = zeros(buffLenDa,1);
+AccZ = zeros(buffLenDa,1);
+axdataDa = zeros(buffLenDa,1);
+aydataDa = zeros(buffLenDa,1);
+azdataDa = zeros(buffLenDa,1);
+time  = zeros(buffLenDa,1);
 
 %% Serial protocol
 
-versionProtocol = 2;
+versionProtocol = 5;
 % command Map
 motorsID = 1;
 accID = 2;
@@ -158,6 +217,7 @@ altitudeAggID = 16;
 takeOffID = 17;
 iHoverID = 18;
 landID = 19;
+enableMotorsID = 20;
 rCRPID = 21;
 rCPPID = 22;
 rCYPID = 23;
@@ -167,6 +227,8 @@ rAPPID = 26;
 rAYPID = 27;
 rAAPID = 28;
 tenzoStateID = 30;
+connID = 31;
+accValuesID = 32;
 
 cmdLength = 17;
 headerLength = 13;
@@ -194,7 +256,6 @@ global KalmanRoll;
 global kr;
 global KalmanPitch;
 global kp;
-version = 1.65;
 landingSpeed = 2;
 
 % Serial Sensors Acks initialization
@@ -203,7 +264,22 @@ gyroReceived = false;
 magnReceived = false;
 estReceived = false;
 
+% Data aquisiton boolean vars
+rt = false;
+recording = false;
+firing = false;
+plotting = false;
+asked = false;
+
 doubleAnglePlot = false;
+
+%% Data acquisition variables
+
+contSamples = 0;
+ax = 0;
+ay = 0;
+az = 0;
+time = 0;
 
 %% Vocal settings
 
@@ -261,6 +337,7 @@ filterEst = false;
 filterMagn = false;
 filterAcc = false;
 filterGyro = false;
+rt = false;
 
 pidStrategy ='U';
 pidModeStrategy = 'U';
@@ -282,14 +359,16 @@ disp('Welcome to the CPanel');
 delete(instrfindall)
 
     %% create tabbed GUI
-    hFig = figure('Menubar','none');
+    handles.hFig = figure('Menubar','none');
     s = warning('off', 'MATLAB:uitabgroup:OldVersion');
-    hTabGroup = uitabgroup('Parent',hFig);
+    
+    hTabGroup = uitabgroup('Parent',handles.hFig);
     warning(s);
     hTabs(1) = uitab('Parent',hTabGroup, 'Title','Home');
     hTabs(2) = uitab('Parent',hTabGroup, 'Title','Motors');
     hTabs(3) = uitab('Parent',hTabGroup, 'Title','Sensors');
     hTabs(4) = uitab('Parent',hTabGroup, 'Title','Control');
+    hTabs(5) = uitab('Parent',hTabGroup, 'Title','Acquisition');
     set(hTabGroup, 'SelectedTab',hTabs(1));
     Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     
@@ -302,9 +381,7 @@ delete(instrfindall)
 %     if get(hTabGroup,'SelectedTab') == hTabs(3)
 %         disp('Tab1 selected');
 %     end
-%     if get(hTabGroup,'SelectedTab') == hTabs(4)
-%         disp('Tab1 selected');
-%     end
+
 
     function tabGroupCallBack(~,~)
         %# Set visibility's slider to OFF
@@ -322,9 +399,39 @@ delete(instrfindall)
         set(pidKpSlider,'Visible','on');
         set(pidKdSlider,'Visible','on');
         end
+        if val == hTabs(5)
+        disp('Usb cable required!');
+        warndlg('Usb Cable required to acquire data','Attention');
+        end
+    end
+
+    %% Data Acquisition panel
+
+    if (~exist('handles.plot','var'))
+        handles.record = uicontrol('Style','togglebutton', 'String','Record', ...
+            'Position', [110 90 120 30],...
+            'Parent',hTabs(5),'Callback',@recordCallback);
     end
     
-    %# Home UI components
+    if (~exist('handles.plot','var'))
+        handles.realTime = uicontrol('Style','togglebutton', 'String','Real time', ...
+            'Position', [310 90 120 30],...
+            'Parent',hTabs(5),'Callback',@rtCallback);
+    end
+    
+    if (~exist('handles.start','var'))
+        handles.start = uicontrol('Style','pushbutton', 'String','Start', ...
+            'Position', [110 20 120 30],...
+            'Parent',hTabs(5), 'Callback',@startCallback);
+    end
+    
+    if (~exist('handles.stop','var'))
+        handles.stop = uicontrol('Style','pushbutton', 'String','Stop', ...
+            'Position', [310 20 120 30],...
+            'Parent',hTabs(5), 'Callback',@stopCallback);
+    end
+    
+    %% Home UI components
     uicontrol('Style','text', 'String','Tenzo Control Panel', ...
         'Position', [55 310 420 50],...
         'Parent',hTabs(1), 'FontSize',20,'FontWeight','bold');
@@ -345,11 +452,11 @@ delete(instrfindall)
         'Position', [350 210 120 30],...
         'Parent',hTabs(1), 'Callback',@landCallback);
     
-    conTxt = uicontrol('Style','text', 'String','Offline','ForegroundColor',[.99 .183 0.09], ...
+    handles.conTxt = uicontrol('Style','text', 'String','Offline','ForegroundColor',[.99 .183 0.09], ...
         'Position', [70 20 100 30],...
         'Parent',hTabs(1), 'FontSize',13,'FontWeight','bold');
     
-    connect = uicontrol('Style','togglebutton', 'String','Connect', ...
+    handles.connect = uicontrol('Style','togglebutton', 'String','Connect', ...
         'Position', [400 20 120 30],'BackgroundColor',[.21 .96 .07],...
         'Parent',hTabs(1), 'Callback',@connection);        
     
@@ -499,6 +606,13 @@ delete(instrfindall)
         'Parent',hTabs(2),'BackgroundColor',[.21 .96 .07],...
         'Callback',@up1Callback);
     
+     %% Deprecated 
+%     connectMotors = uicontrol('Style','togglebutton', 'String','Communicate', ...
+%         'Position', [400 20 120 30],'BackgroundColor',[.21 .96 .07],...
+%         'Parent',hTabs(2), 'Callback',@connectionMotors);   
+    
+    %%
+    
     down1Btn = uicontrol('Style','pushbutton', 'String','DW1', ...
         'Position', [480 20 70 30],'Visible','off', ...
         'Parent',hTabs(2),'BackgroundColor',[.21 .96 .07],...
@@ -537,28 +651,28 @@ delete(instrfindall)
         'Parent',hTabs(2), 'Position',[ 305 310 50 50 ]);
     
     m1Txt = uicontrol('Style','text', 'String','0', ...
-        'Position', [315 313 30 35],...
+        'Position', [316 311 30 35],...
         'Parent',hTabs(2), 'FontSize',13,'FontWeight','normal');
     
     uicontrol('Style','frame', ...
         'Parent',hTabs(2), 'Position',[ 140 175 50 50 ]);
     
     m2Txt = uicontrol('Style','text', 'String','0', ...
-        'Position', [154 178 20 35],...
+        'Position', [154 178 30 35],...
         'Parent',hTabs(2), 'FontSize',13,'FontWeight','normal');
     
     uicontrol('Style','frame', ...
         'Parent',hTabs(2), 'Position',[ 305 30 50 50 ]);
     
     m3Txt = uicontrol('Style','text', 'String','0', ...
-        'Position', [318 34 20 35],...
+        'Position', [316 34 30 35],...
         'Parent',hTabs(2), 'FontSize',13,'FontWeight','normal');
     
     uicontrol('Style','frame', ...
         'Parent',hTabs(2), 'Position',[ 480 175 50 50 ]);
     
     m4Txt = uicontrol('Style','text', 'String','0', ...
-        'Position', [493 178 20 35],...
+        'Position', [493 178 30 35],...
         'Parent',hTabs(2), 'FontSize',13,'FontWeight','normal');
     
     % Sensors UI Components
@@ -567,13 +681,348 @@ delete(instrfindall)
         'String','Select|Gyro|Accelerometer|Angles (est)', ...
         'Parent',hTabs(3), 'Callback',@popupCallback);
     
+    %% Data acquisition panel Callback
+    function startCallback(obj,event,h)
+        disp('start pressed');
+        asked = ~asked;
+        delete(timerfindall);
+        if asked == true
+            if serialFlag == 0 
+                [acceleration.s] = setupSerial();
+            end
+        else 
+            if serialFlag == 1 
+                receiving = false;
+                recording = false;
+                set(handles.start,'String','Start');
+                serialFlag = 0;
+            end
+        end
+        %disp(abs(az));
+        serialFlag;
+    end
     
-    %hAx = axes('Parent',hTabs(3));
-    %hLine = plot(NaN, NaN, 'Parent',hAx, 'Color','r','LineWidth',2);
+    function [s] = setupSerial()
+        %comPortLinux = '/dev/ttyACM0';
+        comPortWin = 'COM4';
+        oldSerial = instrfind('Port', comPortWin); 
+        % if the set of such objects is not(~) empty
+        if (~isempty(oldSerial))  
+            disp('WARNING:  COM4 in use.  Closing.')
+            delete(oldSerial)
+        end
+        s = serial(comPortWin);
 
-    %# Control UI Components
+        % Max wait time
+        set(s, 'TimeOut', 5); 
+        set(s,'terminator','CR');
+        set(s,'BaudRate',9600);
+        fopen(s);
+
+        disp('Sending Request.');
+        acceleration.s = s;
+        timerArduino = timer('ExecutionMode','fixedRate','Period',0.1,'TimerFcn',{@storeSerial});    
+
+        timerConnect = timer('ExecutionMode','fixedRate','Period',5,'TimerFcn',{@connectSerial});%,'StopFcn',{@stoppedCon});    
+        start(timerConnect);
+    end
+
+
+    function connectSerial(obj,event,h)
+        if serialFlag == 0 && requestPending == false
+            if isvalid(acceleration.s) == 1
+                fwrite(acceleration.s,16); 
+            end
+            if (strcmp(get(timerArduino,'Running'),'off'))
+                start(timerArduino);    
+            end
+        end
+    end
+
+    function stoppedCon(obj,event,h)       
+        serialFlag = 1;
+        requestPending = false;
+        stop(timerArduino);   
+        stop(timerConnect);      
+        set(handles.start,'String','Stop');
+        disp('Connection established');
+    end
+
+    function storeSerial(obj,event,handles)
+        while (get(acceleration.s, 'BytesAvailable')==1)
+            [mess,cont] = fread(acceleration.s);
+            %disp('Received bytes:');
+            %disp(cont);
+            %disp(mess);
+            if (mess == 17)             
+                %display(['Collecting data']);
+                fwrite(acceleration.s,18); 
+                requestPending = true;   
+            elseif (mess == 19)  
+                stoppedCon();
+            end
+        end
+    end
+
+    function stopCallback(obj,event,handles)
+        if (~exist('serialFlag','var')) 
+            %[acceleration.arduino,serialFlag] = setupSerial1_00();
+            disp('disconnect');
+        end 
+    end 
+
+function recordCallback(obj,event,handles)
+        disp('Record Pressed');
+        plotting = ~plotting
+        if plotting
+            while (serialFlag == 1 && abs(az) >= -0.5)               
+                % Request High Res data  
+                if isvalid(acceleration.s) == 1
+                    fwrite(acceleration.s,84);
+                end
+                [ax ay az t,receiving] = readAcc1_05(acceleration);
+                %
+                if (receiving)
+                    figure(4);
+
+                    cla;
+
+                    axdataDa = [ axdataDa(2:end) ; ax ];
+                    aydataDa = [ aydataDa(2:end) ; ay ];
+                    azdataDa = [ azdataDa(2:end) ; az ];    
+                    time   = [time(2:end) ; t/1000];
+
+                    deltaT = t - prevTimer;
+                    prevTimer = t;
+                    h11 = subplot(3,1,1);
+
+                    title('Acc X');    
+                    axis([1 buffLenDa -0.5 0.5]);
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of X acc [m*s^-2]'); 
+                    plot(h11,indexDa,axdataDa,'r');
+                    grid on;
+
+                    h12 = subplot(3,1,2);
+
+                    title('Acc Y');      
+                    axis([1 buffLenDa -0.5 0.5]);          
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Y acc [m*s^-2]');
+                    plot(h12,indexDa,aydataDa,'r');
+                    grid on;         
+
+                    h13 = subplot(3,1,3);
+
+                    title('Acc Z');
+                    axis([1 buffLenDa -1.5 1.5]);                
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Z acc [m*s^-2]');
+                    plot(h13,indexDa,azdataDa,'r');
+                    grid on; 
+                    
+                    if ((time(1) >= 0) && (time(end)>0))
+                        figure(6);       
+                        title('Acc X');
+                        axis([time(1) time(end) -1.5 1.5]);                
+                        xlabel('time [ms]')
+                        ylabel('Magnitude of X acc [m*s^-2]');
+                        plot(time(1:end),axdataDa(1:end),'b');
+                        grid on;        
+                    end
+                    drawnow;
+                    if ~plotting                        
+                        disp('saving samples to file');
+                        accDataToWrite = [axdataDa,time];
+                        csvwrite('accx.txt',accDataToWrite);
+                        disp('saving file to structure');
+                        dat.x = axdataDa;
+                        dat.y = aydataDa;
+                        dat.z = azdataDa;
+                        dat.time = time;
+                        save('AccSamples.mat','-struct','dat');
+                        disp(deltaT);
+                        
+                        % Reset Arrays
+                        AccX = zeros(buffLenDa,1);
+                        AccY = zeros(buffLenDa,1);
+                        AccZ = zeros(buffLenDa,1);
+                        axdataDa = zeros(buffLenDa,1);
+                        aydataDa = zeros(buffLenDa,1);
+                        azdataDa = zeros(buffLenDa,1);
+                        time  = zeros(buffLenDa,1);
+                        break;
+                    end
+                end
+            end
+        end
+    end
     
-    %% button callbacks
+    function recordCallback1(obj,event,handles)
+        disp('Record Pressed');
+        plotting = ~plotting
+        serialFlag;
+        if plotting == 1
+            % waiting for the connection to be established
+            %disp(abs(az));
+            %disp(asked);     
+            while (serialFlag == 1 && abs(az) >= -0.5)               
+                % Request High Res data 
+                fwrite(acceleration.s,84);
+                
+                [ax ay az t,receiving] = readAcc1_05(acceleration)
+                receiving
+                if (receiving)
+                    figure(2);
+
+                    cla;
+
+                    axdata = [ axdata(2:end) ; ax ];
+                    aydata = [ aydata(2:end) ; ay ];
+                    azdata = [ azdata(2:end) ; az ];    
+                    time   = [time(2:end) ; t/1000];
+
+                    deltaT = t - prevTimer
+                    prevTimer = t;
+                    h11 = subplot(3,1,1);
+
+                    title('Acc X');    
+                    axis([1 buffLen -0.5 0.5]);
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of X acc [m*s^-2]'); 
+                    plot(h11,index,axdata(901:1000),'r');
+                    grid on;
+
+                    h12 = subplot(3,1,2);
+
+                    title('Acc Y');      
+                    axis([1 buffLen -0.5 0.5]);          
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Y acc [m*s^-2]');
+                    plot(h12,index,aydata(901:1000),'r');
+                    grid on;         
+
+                    h13 = subplot(3,1,3);
+
+                    title('Acc Z');
+                    axis([1 buffLen -1.5 1.5]);                
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Z acc [m*s^-2]');
+                    plot(h13,index,azdata(901:1000),'r');
+                    grid on;         
+
+                    if ((time(900) >= 0) && (time(1000)>0))
+                        figure(3);       
+                        title('Acc X');
+                        axis([time(950) time(1000) -1.5 1.5]);                
+                        xlabel('time [ms]')
+                        ylabel('Magnitude of X acc [m*s^-2]');
+                        plot (time(901:1000),axdata(901:1000),'b');
+                        grid on;        
+                    end
+                    drawnow;
+                end
+            end
+        end
+    end
+    
+    function rtCallback(obj,event,h)
+        %disp('RT pressed');
+        rt = ~rt;
+    
+        % waiting for the connection to be established
+        disp('RT pressed');
+        rt = ~rt
+        disp(serialFlag);
+        while (serialFlag == 1 && abs(az) >= -0.5)               
+            % Request High Res data             
+            if rt
+                if isvalid(acceleration.s) == 1
+                    fwrite(acceleration.s,82);
+                end
+                [ax ay az t,firing] = readAcc1_05(acceleration);
+                firing
+                while (firing && ax+ay+az ~= 0 && rt)
+                    
+                    figure(4);
+                    cla;
+
+                    axdataDa = [ axdataDa(2:end) ; ax ];
+                    aydataDa = [ aydataDa(2:end) ; ay ];
+                    azdataDa = [ azdataDa(2:end) ; az ];    
+                    time   = [time(2:end) ; t/1000];
+
+                    deltaT = t - prevTimer;
+                    prevTimer = t;
+                    h11 = subplot(3,1,1);
+
+                    title('Acc X');    
+                    axis([1 buffLenDa -0.5 0.5]);
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of X acc [m*s^-2]'); 
+                    plot(h11,indexDa,axdataDa,'r');
+                    grid on;
+
+                    h12 = subplot(3,1,2);
+
+                    title('Acc Y');      
+                    axis([1 buffLenDa -0.5 0.5]);          
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Y acc [m*s^-2]');
+                    plot(h12,indexDa,aydataDa,'r');
+                    grid on;         
+
+                    h13 = subplot(3,1,3);
+
+                    title('Acc Z');
+                    axis([1 buffLenDa -1.5 1.5]);                
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Z acc [m*s^-2]');
+                    plot(h13,indexDa,azdataDa,'r');
+                    grid on;         
+
+                    if ((time(1) >= 0) && (time(end)>0))
+                        figure(6);       
+                        title('Acc X');
+                        axis([time(1) time(end) -1.5 1.5]);                
+                        xlabel('time [ms]')
+                        ylabel('Magnitude of X acc [m*s^-2]');
+                        plot(time(1:end),axdataDa(1:end),'b');
+                        grid on;        
+                    end
+                    drawnow;                    
+                    [ax ay az t,rt,contSamples] = readAcc1_10(acceleration,contSamples);
+                    contSamples
+                end
+            end
+            if ~rt
+                disp('saving samples to file');
+                accDataToWrite = [axdataDa,time];
+                csvwrite('accx.txt',accDataToWrite);
+                disp('saving file to structure');
+                dat.x = axdataDa;
+                dat.y = aydataDa;
+                dat.z = azdataDa;
+                dat.time = time;
+                save('AccSamples.mat','-struct','dat');
+                disp('Sample time:');
+                disp(deltaT); 
+                
+                % Reset Arrays
+                AccX = zeros(buffLenDa,1);
+                AccY = zeros(buffLenDa,1);
+                AccZ = zeros(buffLenDa,1);
+                axdataDa = zeros(buffLenDa,1);
+                aydataDa = zeros(buffLenDa,1);
+                azdataDa = zeros(buffLenDa,1);
+                time  = zeros(buffLenDa,1);
+                break;
+            end
+        end
+    end
+    
+    
+    %% Motors Up btn callbacks
     function upCallback(src,eventData)
        %fprintf(xbee,'w');
        if tenzo == true
@@ -587,13 +1036,41 @@ delete(instrfindall)
        end
     end
 
+%% Deprecated 
+
+    function connectionMotors(src,eventData) 
+       %fprintf(xbee,'w');
+       if tenzo == true           
+            if get(connectMotors,'Value') == 1
+                 % Initialize the cmd array
+                 cmd = zeros(8,4,'uint8');
+                 cmd(1,1) = uint8(enableMotorsID);
+                 % Sends 1 to activate PID
+                 bits = reshape(bitget(1,32:-1:1),8,[]);
+                 cmd(2,:) = weights2*bits;
+                 sendMess(cmd);
+            elseif get(connectMotors,'Value') == 0
+                % Initialize the cmd array
+                 cmd = zeros(8,4,'uint8');
+                 cmd(1,1) = uint8(enableMotorsID);
+                 % Sends 1 to activate PID
+                 bits = reshape(bitget(0,32:-1:1),8,[]);
+                 cmd(2,:) = weights2*bits;
+                 sendMess(cmd);
+            end
+       else
+           warndlg('Connection Required. Establish serial communication first and retry','!! Warning !!');
+       end
+    end
+
+%%
+ 
     function up1Callback(src,eventData)
        %fprintf(xbee,'E');
        if tenzo == true
          % Initialize the cmd array
          cmd = zeros(8,4,'uint8');
          cmd(1,1) = uint8(motorsID);
-         % Sends 1 to activate PID
          bits = reshape(bitget((100 + 2),32:-1:1),8,[]);
          cmd(2,:) = weights2*bits;
          sendMess(cmd);
@@ -606,7 +1083,6 @@ delete(instrfindall)
          % Initialize the cmd array
          cmd = zeros(8,4,'uint8');
          cmd(1,1) = uint8(motorsID);
-         % Sends 1 to activate PID
          bits = reshape(bitget((100 - 5),32:-1:1),8,[]);
          cmd(2,:) = weights2*bits;
          sendMess(cmd);
@@ -619,7 +1095,6 @@ delete(instrfindall)
          % Initialize the cmd array
          cmd = zeros(8,4,'uint8');
          cmd(1,1) = uint8(motorsID);
-         % Sends 1 to activate PID
          bits = reshape(bitget((100 - 2),32:-1:1),8,[]);
          cmd(2,:) = weights2*bits;
          sendMess(cmd);
@@ -748,7 +1223,7 @@ delete(instrfindall)
                         %tts('Attenzione. Disabilitazione controllore pid.',voice);
                         tts('Warning. Disabling PID.',voice);
                 end
-                   warndlg('Desactivating PID','!! Warning !!') 
+                   %warndlg('Desactivating PID','!! Warning !!') 
                    % Initialize the cmd array
                    cmd = zeros(8,4,'uint8');
                    cmd(1,1) = uint8(iHoverID);
@@ -1082,8 +1557,9 @@ delete(instrfindall)
         end
     end
     
-    function connection(~,~)        
-        if get(connect,'Value') == 1
+    function connection(obj,event,handles) 
+        handles = guidata(gcf);
+        if get(handles.connect,'Value') == 1
             disp('Connecting...');
             
             delete(instrfindall);
@@ -1114,67 +1590,37 @@ delete(instrfindall)
 
             %% Testing Wireless communication
             timerXbee = timer('ExecutionMode','FixedRate','Period',0.1,'TimerFcn',{@storeDataFromSerial});
-            disp ('sending 16 to Arduino');
-            fwrite(xbee,16); 
-            disp('Ack Requested.');
-            ack = fread(xbee);
-            disp('Receiving: ');
-            disp(ack);
-            if (ack == 17)
-                disp ('sending 18 to Arduino');  
-                fwrite(xbee,18);     
-                tenzo = true; 
-                set(connect,'BackgroundColor',[.99 .183 0.09],'String','Disconnect');
-                set(conTxt,'ForegroundColor', [.21 .96 .07],'String','Online');    
-                disp ('Connection established. Rock & Roll!'); 
-                start(timerXbee);  
-                if speakCmd && vocalVerb>=1 
-                        %tts('Connessione eseguita',voice);
-                        tts('Connection Established',voice);
-                end
-                disp ('Connection established. Rock & Roll!');
-            else
-                disp ('Sending 19 to Arduino.');
-                % Received something else
-                disp ('sending 19 to Arduino'); 
-                fwrite(xbee,19);
-                tenzo = false;
-                set(connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
-                set(conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
-                if speakCmd && vocalVerb>=1 
-                    %    tts('Problema di connessione',voice);
-                        tts('Connection problem',voice);
-                end
-                disp ('Communication problem. Check Hardware and retry.');
-                warndlg('Communication busy. Press OK and reconnect','!! Warning !!')
-                set(connect,'Value',1);
-            end
+            start(timerXbee);  
+            % Initialize the cmd array
+            cmd = zeros(8,4,'uint8');
+            cmd(1,1) = uint8(connID);
+            %cmd(2,4) = uint8(defaultAlt);
+            bits = reshape(bitget(1,32:-1:1),8,[]);
+            cmd(2,:) = weights2*bits;
+            sendMess(cmd);
+            
+%             fwrite(xbee,16); 
+%             disp('Ack Requested.');
+%             ack = fread(xbee);
+%             disp('Receiving: ');
+%             disp(ack);
+            
         end
 
-        if get(connect,'Value') == 0
-            disp ('sending 20 to Arduino');  
-            fwrite(xbee,20);
+        if get(handles.connect,'Value') == 0
+            disp ('Disconnecting...');             
+            
+            % Initialize the cmd array
+            cmd = zeros(8,4,'uint8');
+            cmd(1,1) = uint8(connID);
+            bits = reshape(bitget(0,32:-1:1),8,[]);
+            cmd(2,:) = weights2*bits;
+            sendMess(cmd);
+            %fwrite(xbee,20);
             % Waiting for ack
-            ack = fread(xbee);
-            disp('Receiving: ');
-            disp(ack);
-            if (ack == 21)
-                tenzo = false;
-                stop(timerXbee);
-                %delete(timerXbee);
-                set(connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
-                set(conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
-                disp('Connection closed...');
-                if speakCmd && vocalVerb>=1 
-                        %tts('Connessione chiusa',voice);
-                        tts('Connection closed',voice);
-                end
-%                 fclose(xbee);
-%                 delete(xbee);
-%                 clear xbee;
-            else
-                
-            end
+            %ack = fread(xbee);
+            %disp('Receiving: ');
+            %disp(ack);
         end 
     end
 
@@ -1357,7 +1803,7 @@ delete(instrfindall)
     function readPidCallback(obj,event)
         if tenzo == true
             if takeOffAck == 1
-                if hoverAck == 1
+                %if hoverAck == 1
                    if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
                        pidRead = true;
                        if strcmp(pidStrategy,'0') && strcmp(pidModeStrategy,'0')
@@ -1400,9 +1846,9 @@ delete(instrfindall)
                    else
                        warndlg('Please select correct mode from Popo menus','!! Warning !!')
                    end  
-                else
-                    warndlg('Pid not active, Activate iHover function','!! Warning !!')
-                end
+                %else
+                 %   warndlg('Pid not active, Activate iHover function','!! Warning !!')
+                %end
             else
                 warndlg('Tenzo is not flying. First Take Off then try again. ','!! Warning !!')
             end
@@ -1451,9 +1897,21 @@ delete(instrfindall)
         end
     end
 
+    function sendStates()
+        cmd = zeros(8,4,'uint8');
+        cmd(1,1) = uint8(tenzoStateID);
+        bits = reshape(bitget(double(takeOffAck),32:-1:1),8,[]);
+        cmd(2,:) = weights2*bits;
+        bits = reshape(bitget(double(hoverAck),32:-1:1),8,[]);
+        cmd(3,:) = weights2*bits;
+        bits = reshape(bitget(double(landAck),32:-1:1),8,[]);
+        cmd(4,:) = weights2*bits;
+        sendMess(cmd); 
+    end
+
     function storeDataFromSerial(obj,event,handles)
-       
-       while (get(xbee, 'BytesAvailable')~=0 && tenzo == true)
+        handles = guidata(gcf);
+       while (get(xbee, 'BytesAvailable')~=0)
             % read until terminator
             [mess,count] = fread(xbee);
             disp('Reading incoming buffer. Dimensions:');
@@ -1473,8 +1931,8 @@ delete(instrfindall)
                 numCmd = mess(7)
                 %Arduino  tells the receiver where commands start
                 readFrom = mess(8);
-%                     disp('ReadFrom');
-%                     disp(readFrom);
+%               disp('ReadFrom');
+%               disp(readFrom);
                 sizeOfEachCmd = mess(9);
                 totMessLength = typecast([uint8(mess(10)), uint8(mess(11))], 'int16');
                 disp('Total message length (header value):');
@@ -1490,600 +1948,668 @@ delete(instrfindall)
                     type = mess(typei) 
                     disp('Message #:');
                     disp(i+1);
-
-                    if type == 0 
-                        % empty cmd
-                        disp('Unset');
-                        break;
-                    end
-                    if type == 1 
-                        % Motors
-                        disp('Motors');
-                        speed1 = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('speed:');
-                        disp(speed1);
-                        m1Txt.set(String,speed1);
-                        m2Txt.set(String,speed1);
-                        m3Txt.set(String,speed1);
-                        m4Txt.set(String,speed1);
-                    end
-                    if type == accID 
-                        disp('Accelerations');
-                        % Acc
-                        accXr = typecast([int8(mess(typei + 1)), int8(mess(typei + 2)),int8(mess(typei + 3)), int8(mess(typei + 4))], 'int32');
-                        disp('accX:');
-                        disp(double(accXr)/100);
-
-                        accYr = typecast([int8(mess(typei + 5)), int8(mess(typei + 6)),int8(mess(typei + 7)), int8(mess(typei + 8))], 'int32');
-                        disp('accY:');
-                        disp(double(accYr)/100);                            
-
-                        accZr = typecast([int8(mess(typei + 9)), int8(mess(typei + 10)),int8(mess(typei + 11)), int8(mess(typei + 12))], 'int32');
-                        disp('accZ:');
-                        disp(double(accZr)/100);
-                        
-                        if accelero == true
-                            % Gets Accelerometer data
-                            axdata = [ axdata(2:end) ; double(accXr)/100 ];
-                            aydata = [ aydata(2:end) ; double(accYr)/100 ];
-                            azdata = [ azdata(2:end) ; double(accZr)/100 ];  
-                        end               
-                        %Plot the X magnitude
-                        h1 = subplot(3,1,1,'Parent',hTabs(3));
-                        %set(hAx,'title','X angular velocity in deg/s');
-                        if filterAcc
-                            plot(h1,index,axdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                        else
-                            plot(h1,index,axdata,'r','LineWidth',2);
-                        end
-                        %xlabel('Time');
-                        %ylabel('Wx');
-                        %axis([1 buf_len -80 80]);
-                        %hold on;
-                        h2 = subplot(3,1,2,'Parent',hTabs(3));
-                        %title('Y angular velocity in deg/s');
-                        if filterAcc
-                            plot(h2,index,aydata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                        else
-                            plot(h2,index,aydata,'b','LineWidth',2);
-                        end
-                        %xlabel('Time');
-                        %ylabel('Wy Acc');
-                        %axis([1 buf_len -80 80]);
-                        h3 = subplot(3,1,3,'Parent',hTabs(3));
-                        %title('Z angular velocity in deg/s');
-                        %hold on;
-                        if filterAcc
-                            plot(h3,index,azdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                        else
-                            plot(h3,index,azdata,'g','LineWidth',2);
-                        end
-                        %axis([1 buf_len -80 80]);
-                        %xlabel('Time');
-                        %ylabel('Wz Acc');
-                        
-                        % Toggle ack 
-                        accReceived = true;
-                    end
-                    if type == gyroID
-                        % Gyro
-                        disp('Gyro');
-                        wXr = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('wX:');
-                        disp(wXr/100);
-
-                        wYr = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('wY:');
-                        disp(wYr/100);                             
-
-                        wZr = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('wZ:');
-                        disp(wZr/100);
-                        
-                        if gyrosco == true
-                            if filterGyro
-                                % Filters gyro data and stores them
-                                gxFilt = (1 - alpha)*gxFilt + alpha*wXr/100;
-                                gyFilt = (1 - alpha)*gyFilt + alpha*wYr/100;
-                                gzFilt = (1 - alpha)*gzFilt + alpha*wZr/100;
-                            else
-                                gxFilt = wXr/100;
-                                gyFilt = wYr/100;
-                                gzFilt = wZr/100;
-                            end
-                                gxFdata = [ gxFdata(2:end) ; gxFilt ];
-                                gyFdata = [ gyFdata(2:end) ; gyFilt ];
-                                gzFdata = [ gzFdata(2:end) ; gzFilt ];                            
-                        end
-                        
-                        %Plot the X magnitude
-                        h1 = subplot(3,1,1,'Parent',hTabs(3));
-                        %set(hAx,'title','X angular velocity in deg/s');
-                        plot(h1,index,gxFdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                        %xlabel('Time');
-                        %ylabel('Wx');
-                        %axis([1 buf_len -80 80]);
-                        %hold on;
-                        h2 = subplot(3,1,2,'Parent',hTabs(3));
-                        %title('Y angular velocity in deg/s');
-                        plot(h2,index,gyFdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                        %xlabel('Time');
-                        %ylabel('Wy Acc');
-                        %axis([1 buf_len -80 80]);
-                        h3 = subplot(3,1,3,'Parent',hTabs(3));
-                        %title('Z angular velocity in deg/s');
-                        %hold on;
-                        plot(h3,index,gzFdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                        %axis([1 buf_len -80 80]);
-                        %xlabel('Time');
-                        %ylabel('Wz Acc');    
-                        
-                        % Toggle ack 
-                        gyroReceived = true;
-                    end
-                    if type == magnID 
-                        % Magn
-                        disp('Magn');;
-                        rollM = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('rollMagn:');
-                        disp(rollM);
-
-                        pitchM = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('pitchMagn:');
-                        disp(pitchM);                             
-
-                        bearingM = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('yawMagn:');
-                        disp(bearingM);
-                        
-                        if magneto == true
-                            % Gets Magnetometer and Estimated angles
-                            if (rollM>90)
-                                rollM = rollM - 360;
-                            end
-                            if (pitchM > 90)
-                                pitchM =  pitchM - 360;
-                            end 
+                    
+                    if type == connID 
+                        % Connection Channel
+                        disp('Connection channel'); 
+                        conAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32')
+                        if (conAck == 2)
+                            tenzo = true;
                             
-                            if filterMagn
-                                % Apply noise filtering
-                                TFilt = (1 - alpha)*TFilt + alpha*rollM;
-                                PFilt = (1 - alpha)*PFilt + alpha*pitchM;
-                                YFilt = (1 - alpha)*YFilt + alpha*bearingM/100;
-
-                                Rdata = [ Rdata(2:end) ; TFilt ];
-                                Pdata = [ Pdata(2:end) ; PFilt ];
-                                Ydata = [ Ydata(2:end) ; YFilt ]; 
-                            else
-                                Rdata = [ Rdata(2:end) ; rollM ];
-                                Pdata = [ Pdata(2:end) ; pitchM ];
-                                Ydata = [ Ydata(2:end) ; bearingM/100 ]; 
-                            end
-                        else
-                            disp('Warning! Received magneto data but not requested');
-                        end
-                        
-                        % Toggle ack 
-                        magnReceived = true;
-                    end
-                    if type == estID
-                        % Est
-                        disp(' Kalman Est');
-                        disp('Magn');;
-                        rollE = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('roll K:');
-                        disp(rollE);
-
-                        pitchE = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('pitch K:');
-                        disp(pitchE);                             
-
-                        bearingE = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('yaw K:');
-                        disp(single(bearingE/100));
-                        
+                            %set(connect,'BackgroundColor',[.99 .183 0.09],'String','Disconnect');
                             
-                        if filterEst
-                            REstFilt = (1 - alpha)*REstFilt + alpha*rollE;
-                            PEstFilt = (1 - alpha)*PEstFilt + alpha*pitchE;
-                            YEstFilt = (1 - alpha)*YEstFilt + alpha*bearingE/100;
-                        else
-                            REstFilt = rollE;
-                            PEstFilt = pitchE;
-                            YEstFilt = bearingE/100;
-                        end
-                        EKXdata = [ EKXdata(2:end) ; REstFilt ];
-                        EKYdata = [ EKYdata(2:end) ; PEstFilt ];
-                        EKZdata= [ EKYdata(2:end) ; YEstFilt ];
-                        
-                        %% Plot Angles
-
-                        
-                        %Plot the X magnitude
-                        h1 = subplot(3,1,1,'Parent',hTabs(3));
-                        %set(hAx,'title','X angular velocity in deg/s');
-                        plot(h1,index,EKXdata,'b-','LineWidth',2);
-                        if doubleAnglePlot
-                            hold on;
-                            plot(h1,index,Rdata,'r','LineWidth',1);
-                            hold off;
-                        end
-                        %xlabel('Time')
-                        %ylabel('Wx');
-                        %axis([1 buf_len -80 80]);
-                        %hold on;
-                        h2 = subplot(3,1,2,'Parent',hTabs(3));
-                        %title('Y angular velocity in deg/s');
-                        plot(h2,index,EKYdata,'b-','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                        if doubleAnglePlot
-                            hold on;
-                            plot(h2,index,Pdata,'r','LineWidth',1);
-                            hold off;
-                        end
-                        %xlabel('Time');
-                        %ylabel('Wy Acc');
-                        %axis([1 buf_len -80 80]);
-                        h3 = subplot(3,1,3,'Parent',hTabs(3));
-                        %title('Z angular velocity in deg/s');
-                        %hold on;
-                        plot(h3,index,EKZdata,'b-','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                        %axis([1 buf_len -80 80]);
-                        if doubleAnglePlot
-                            hold on;
-                            plot(h3,index,Ydata,'r','LineWidth',2); 
-                            hold off;
-                        end
-                        %xlabel('Time');
-                        %ylabel('Wz Acc'); 
-                        
-                        % Toggle ack 
-                        estReceived = true;
-                    end
-                    if type == 6
-                        % Sonic
-                        disp('Sonic');                        
-                    end
-                    if type == 7 
-                        % Gps
-                        disp('Gps');
-                    end
-                    if type == 8 
-                        % Barometer
-                        disp('Barometer');
-                    end                    
-                    if type == 9 
-                        % Pid Roll CONS
-                        disp('Pid Roll Cons');
-                        consRollKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('consRollKp:');
-                        %disp(consRollKpTemp);
-                        consRollKp = double(consRollKpTemp)/1000;
-                        disp(consRollKp);
-
-                        consRollKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('consRollKd:');
-                        consRollKd = double(consRollKdTemp)/1000;
-                        disp(consRollKd);                             
-
-                        consRollKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('consRollKi:');
-                        consRollKi = double(consRollKiTemp)/1000;
-                        disp(consRollKi);    
-
-                        setpointRollTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('setpointRollTemp:');
-                        disp(setpointRollTemp);   
-                        
-                        if strcmp(pidModeStrategy,'0')
-                            set(pidKpSlider,'Value',consRollKp);
-                            set(pidKdSlider,'Value',consRollKd);
-                            set(pidKiSlider,'Value',consRollKi);
-                            set(referencePIDVal,'String',setpointRollTemp);
-                        end
-                    end                   
-                    if type == 13 
-                        % Pid Roll AGG
-                        disp('Pid Roll AGG');
-                        aggRollKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('aggRollKp:');
-                        aggRollKp = double(aggRollKpTemp)/1000;
-                        disp(aggRollKp);
-
-                        aggRollKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('aggRollKd:');
-                        aggRollKd = double(aggRollKdTemp)/1000;
-                        disp(aggRollKd);                             
-
-                        aggRollKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('aggRollKi:');
-                        aggRollKi = double(aggRollKiTemp)/1000;
-                        disp(aggRollKi);    
-
-                        setpointRollTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('setpointRollTemp:');
-                        disp(setpointRollTemp);   
-                       
-                        if strcmp(pidModeStrategy,'1') 
-                            set(pidKpSlider,'Value',aggRollKp);
-                            set(pidKdSlider,'Value',aggRollKd);
-                            set(pidKiSlider,'Value',aggRollKi);
-                            set(referencePIDVal,'String',setpointRollTemp);
-                        end
-                    end
-                    if type == 10 
-                        % Pid Pitch CONS
-                        disp('Pid Pitch Cons');
-                        consPitchKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
-                        consPitchKp = double(consPitchKpTemp)/1000;
-                        disp(consPitchKp);
-
-                        consPitchKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('val2:');
-                        consPitchKd = double(consPitchKdTemp)/1000;
-                        disp(consPitchKd);                             
-
-                        consPitchKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('val3:');
-                        consPitchKi = double(consPitchKiTemp)/1000;
-                        disp(consPitchKi);    
-
-                        setpointPitchTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('threshold:');
-                        disp(setpointPitchTemp); 
-                        
-                        if strcmp(pidModeStrategy,'0')
-                            set(pidKpSlider,'Value',consPitchKp);
-                            set(pidKdSlider,'Value',consPitchKd);
-                            set(pidKiSlider,'Value',consPitchKi);
-                            set(referencePIDVal,'String',setpointPitchTemp);
-                        end
-                    end                   
-                    if type == 14 
-                        % Pid Pitch AGG
-                        disp('Pid Pitch Agg');
-                        aggPitchKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
-                        aggPitchKp = double(aggPitchKpTemp)/1000;
-                        disp(aggPitchKp);
-
-                        aggPitchKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('val2:');
-                        aggPitchKd = double(aggPitchKdTemp)/1000;
-                        disp(aggPitchKd);                             
-
-                        aggPitchKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('val3:');
-                        aggPitchKi = double(aggPitchKiTemp)/1000;
-                        disp(aggPitchKi);    
-
-                        setpointPitchTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('threshold:');
-                        disp(setpointPitchTemp);   
-                        
-                        if strcmp(pidModeStrategy,'1') 
-                            set(pidKpSlider,'Value',aggPitchKp);
-                            set(pidKdSlider,'Value',aggPitchKd);
-                            set(pidKiSlider,'Value',aggPitchKi);
-                            set(referencePIDVal,'String',setpointPitchTemp);
-                        end
-                    end
-                    if type == 11 
-                        % Pid Yaw CONS
-                        disp('Pid Yaw Cons');
-                        consYawKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
-                        consYawKp = double(consYawKpTemp)/1000;
-                        disp(consYawKp);
-
-                        consYawKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('val2:');
-                        consYawKd = double(consYawKdTemp)/1000;
-                        disp(consYawKd);                             
-
-                        consYawKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('val3:');
-                        consYawKi = double(consYawKiTemp)/1000;
-                        disp(consYawKi);    
-
-                        setpointYawTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('threshold:');
-                        disp(setpointYawTemp);  
-                        
-                        if strcmp(pidModeStrategy,'0')
-                            set(pidKpSlider,'Value',consYawKp);
-                            set(pidKdSlider,'Value',consYawKd);
-                            set(pidKiSlider,'Value',consYawKi);
-                            set(referencePIDVal,'String',setpointYawTemp);
-                        end
-                    end                   
-                    if type == 15 
-                        % Pid Yaw AGG
-                        disp('Pid Yaw AGG');
-                        aggYawKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
-                        aggYawKp = double(aggYawKpTemp)/1000;
-                        disp(aggYawKp);
-
-                        aggYawKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('val2:');
-                        aggYawKd = double(aggYawKdTemp)/1000;
-                        disp(aggYawKd);                             
-
-                        aggYawKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('val3:');
-                        aggYawKi = double(aggYawKiTemp)/1000;
-                        disp(aggYawKiTemp/100);    
-
-                        setpointYawTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('val4:');
-                        disp(setpointYawTemp);   
-                        
-                        if strcmp(pidModeStrategy,'1') 
-                            set(pidKpSlider,'Value',aggYawKp);
-                            set(pidKdSlider,'Value',aggYawKd);
-                            set(pidKiSlider,'Value',aggYawKi);
-                            set(referencePIDVal,'String',setpointYawTemp);
-                        end
-                    end
-                    if type == 12
-                        % Pid Alt CONS
-                        disp('Pid Alt Cons');
-                        consAltKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
-                        consAltKp = double(consAltKpTemp)/1000;
-                        disp(consAltKp);
-
-                        consAltKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('val2:');
-                        consAltKd = double(consAltKdTemp)/1000;
-                        disp(consAltKd);                             
-
-                        consAltKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('val3:');
-                        consAltKi = double(consAltKiTemp)/1000;
-                        disp(consAltKi);    
-
-                        setpointAltTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('val4:');
-                        disp(setpointAltTemp);   
-                        
-                        if strcmp(pidModeStrategy,'0')
-                            set(pidKpSlider,'Value',consAltKp);
-                            set(pidKdSlider,'Value',consAltKd);
-                            set(pidKiSlider,'Value',consAltKi);
-                            set(referencePIDVal,'String',setpointAltTemp);
-                        end
-                    end                   
-                    if type == 16 
-                        % Pid Alt AGG
-                        disp('Pid Alt AGG');
-                        aggAltKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('val1:');
-                        aggAltKp =double(aggAltKpTemp)/1000;
-                        disp(aggAltKp);
-
-                        aggAltKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        disp('val2:');
-                        aggAltKd = double(aggAltKdTemp)/1000;
-                        disp(aggAltKd);                             
-
-                        aggAltKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        disp('val3:');
-                        aggAltKi = double(aggAltKiTemp)/1000;
-                        disp(aggAltKi);    
-
-                        setpointAltTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
-                        disp('val4:');
-                        disp(setpointAltTemp); 
-                        
-                        if strcmp(pidModeStrategy,'1') 
-                            set(pidKpSlider,'Value',aggAltKp);
-                            set(pidKdSlider,'Value',aggAltKd);
-                            set(pidKiSlider,'Value',aggAltKi);
-                            set(referencePIDVal,'String',setpointAltTemp);
-                        end
-                    end
-                    if type == takeOffID
-                        % Take Off Ack
-                        takeOffAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('Take Off Ack');
-                        disp(takeOffAck);
-                        if takeOffAck == 1
+                            set(handles.connect,'String','Disconnect');
+                            set(handles.conTxt,'ForegroundColor', [.21 .96 .07],'String','Online');    
+                            disp ('Connection established. Rock & Roll!'); 
                             if speakCmd && vocalVerb>=1 
-                                    %tts('Decollato',voice);
-                                    tts('Tenzo is flying',voice);
+                                    %tts('Connessione eseguita',voice);
+                                    tts('Connection Established',voice);
                             end
-                            set(takeOffBtn,'String','Flying');
-                            landAck = 0;
-                            disp('Changed landAck:');
+                        elseif (conAck == 10)
+                            tenzo = false;
+                            %delete(timerXbee);
+                            %set(connect,'String','Connect');
+                            set(handles.connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
+                            set(handles.conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
+                            disp('Connection closed...');
+                            if speakCmd && vocalVerb>=1 
+                                    %tts('Connessione chiusa',voice);
+                                    tts('Connection closed',voice);
+                            end
+                            stop(timerXbee);
+                            fclose(xbee);
+%                             delete(xbee);
+                            %clear xbee;
+                        else
+                            disp ('Bogh!');
+                            % Received something else 
+                            sendStates();
+                            
+                            if speakCmd && vocalVerb>=1 
+                                %    tts('Problema di connessione',voice);
+                                    tts('Third condition detected. Warning. ',voice);
+                            end
+                            disp ('Communication problem. Third condition detected..');
+                            %warndlg('Communication busy. Press OK and reconnect','!! Warning !!')
+                            %set(connect,'Value',1);
+                        end                        
+                    elseif (tenzo == false)
+                        % Connection problem, Received something else 
+                        disp('Problema cond!!');
+                        cmd = zeros(8,4,'uint8');
+                        cmd(1,1) = uint8(connID);
+                        bits = reshape(bitget(3,32:-1:1),8,[]);
+                        cmd(2,:) = weights2*bits;
+                        sendMess(cmd);
+
+                        tenzo = false;
+                        set(handles.connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
+                        set(handles.conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
+                        if speakCmd && vocalVerb>=1 
+                            %    tts('Problema di connessione',voice);
+                                tts('Connection problem',voice);
+                        end
+                        disp ('Communication problem. Check Hardware and retry.');
+                        %warndlg('Communication busy. Press OK and reconnect','!! Warning !!')
+                        %set(connect,'Value',1);
+                    end
+                    if  tenzo == true
+                        if type == 0 
+                            % empty cmd
+                            disp('Unset');
+                            break;
+                        end
+                        if type == enableMotorsID 
+                            % Motors Throttle
+                            disp('Motors');
+                            speed1 = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('speed:');
+                            disp(speed1);
+                            set(m1Txt,'String',speed1);
+                            set(m2Txt,'String',speed1);
+                            set(m3Txt,'String',speed1);
+                            set(m4Txt,'String',speed1);
+                        end
+                        if type == accID 
+                            disp('Accelerations');
+                            % Acc
+                            accXr = typecast([int8(mess(typei + 1)), int8(mess(typei + 2)),int8(mess(typei + 3)), int8(mess(typei + 4))], 'int32');
+                            disp('accX:');
+                            disp(double(accXr)/100);
+
+                            accYr = typecast([int8(mess(typei + 5)), int8(mess(typei + 6)),int8(mess(typei + 7)), int8(mess(typei + 8))], 'int32');
+                            disp('accY:');
+                            disp(double(accYr)/100);                            
+
+                            accZr = typecast([int8(mess(typei + 9)), int8(mess(typei + 10)),int8(mess(typei + 11)), int8(mess(typei + 12))], 'int32');
+                            disp('accZ:');
+                            disp(double(accZr)/100);
+
+                            if accelero == true
+                                % Gets Accelerometer data
+                                axdata = [ axdata(2:end) ; double(accXr)/100 ];
+                                aydata = [ aydata(2:end) ; double(accYr)/100 ];
+                                azdata = [ azdata(2:end) ; double(accZr)/100 ];  
+                            end               
+                            %Plot the X magnitude
+                            h1 = subplot(3,1,1,'Parent',hTabs(3));
+                            %set(hAx,'title','X angular velocity in deg/s');
+                            if filterAcc
+                                plot(h1,index,axdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                            else
+                                plot(h1,index,axdata,'r','LineWidth',2);
+                            end
+                            %xlabel('Time');
+                            %ylabel('Wx');
+                            %axis([1 buf_len -80 80]);
+                            %hold on;
+                            h2 = subplot(3,1,2,'Parent',hTabs(3));
+                            %title('Y angular velocity in deg/s');
+                            if filterAcc
+                                plot(h2,index,aydata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                            else
+                                plot(h2,index,aydata,'b','LineWidth',2);
+                            end
+                            %xlabel('Time');
+                            %ylabel('Wy Acc');
+                            %axis([1 buf_len -80 80]);
+                            h3 = subplot(3,1,3,'Parent',hTabs(3));
+                            %title('Z angular velocity in deg/s');
+                            %hold on;
+                            if filterAcc
+                                plot(h3,index,azdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                            else
+                                plot(h3,index,azdata,'g','LineWidth',2);
+                            end
+                            %axis([1 buf_len -80 80]);
+                            %xlabel('Time');
+                            %ylabel('Wz Acc');
+
+                            % Toggle ack 
+                            accReceived = true;
+                        end
+                        if type == gyroID
+                            % Gyro
+                            disp('Gyro');
+                            wXr = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('wX:');
+                            disp(wXr/100);
+
+                            wYr = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                            disp('wY:');
+                            disp(wYr/100);                             
+
+                            wZr = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                            disp('wZ:');
+                            disp(wZr/100);
+
+                            if gyrosco == true
+                                if filterGyro
+                                    % Filters gyro data and stores them
+                                    gxFilt = (1 - alpha)*gxFilt + alpha*wXr/100;
+                                    gyFilt = (1 - alpha)*gyFilt + alpha*wYr/100;
+                                    gzFilt = (1 - alpha)*gzFilt + alpha*wZr/100;
+                                else
+                                    gxFilt = wXr/100;
+                                    gyFilt = wYr/100;
+                                    gzFilt = wZr/100;
+                                end
+                                    gxFdata = [ gxFdata(2:end) ; gxFilt ];
+                                    gyFdata = [ gyFdata(2:end) ; gyFilt ];
+                                    gzFdata = [ gzFdata(2:end) ; gzFilt ];                            
+                            end
+
+                            %Plot the X magnitude
+                            h1 = subplot(3,1,1,'Parent',hTabs(3));
+                            %set(hAx,'title','X angular velocity in deg/s');
+                            plot(h1,index,gxFdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                            %xlabel('Time');
+                            %ylabel('Wx');
+                            %axis([1 buf_len -80 80]);
+                            %hold on;
+                            h2 = subplot(3,1,2,'Parent',hTabs(3));
+                            %title('Y angular velocity in deg/s');
+                            plot(h2,index,gyFdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                            %xlabel('Time');
+                            %ylabel('Wy Acc');
+                            %axis([1 buf_len -80 80]);
+                            h3 = subplot(3,1,3,'Parent',hTabs(3));
+                            %title('Z angular velocity in deg/s');
+                            %hold on;
+                            plot(h3,index,gzFdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                            %axis([1 buf_len -80 80]);
+                            %xlabel('Time');
+                            %ylabel('Wz Acc');    
+
+                            % Toggle ack 
+                            gyroReceived = true;
+                        end
+                        if type == magnID 
+                            % Magn
+                            disp('Magn');;
+                            rollM = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('rollMagn:');
+                            disp(rollM);
+
+                            pitchM = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                            disp('pitchMagn:');
+                            disp(pitchM);                             
+
+                            bearingM = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                            disp('yawMagn:');
+                            disp(bearingM);
+
+                            if magneto == true
+                                % Gets Magnetometer and Estimated angles
+                                if (rollM>90)
+                                    rollM = rollM - 360;
+                                end
+                                if (pitchM > 90)
+                                    pitchM =  pitchM - 360;
+                                end 
+
+                                if filterMagn
+                                    % Apply noise filtering
+                                    TFilt = (1 - alpha)*TFilt + alpha*rollM;
+                                    PFilt = (1 - alpha)*PFilt + alpha*pitchM;
+                                    YFilt = (1 - alpha)*YFilt + alpha*bearingM/100;
+
+                                    Rdata = [ Rdata(2:end) ; TFilt ];
+                                    Pdata = [ Pdata(2:end) ; PFilt ];
+                                    Ydata = [ Ydata(2:end) ; YFilt ]; 
+                                else
+                                    Rdata = [ Rdata(2:end) ; rollM ];
+                                    Pdata = [ Pdata(2:end) ; pitchM ];
+                                    Ydata = [ Ydata(2:end) ; bearingM/100 ]; 
+                                end
+                            else
+                                disp('Warning! Received magneto data but not requested');
+                            end
+
+                            % Toggle ack 
+                            magnReceived = true;
+                        end
+                        if type == estID
+                            % Est
+                            disp(' Kalman Est');
+                            disp('Magn');;
+                            rollE = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('roll K:');
+                            disp(rollE);
+
+                            pitchE = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                            disp('pitch K:');
+                            disp(pitchE);                             
+
+                            bearingE = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                            disp('yaw K:');
+                            disp(single(bearingE/100));
+
+
+                            if filterEst
+                                REstFilt = (1 - alpha)*REstFilt + alpha*rollE;
+                                PEstFilt = (1 - alpha)*PEstFilt + alpha*pitchE;
+                                YEstFilt = (1 - alpha)*YEstFilt + alpha*bearingE/100;
+                            else
+                                REstFilt = rollE;
+                                PEstFilt = pitchE;
+                                YEstFilt = bearingE/100;
+                            end
+                            EKXdata = [ EKXdata(2:end) ; REstFilt ];
+                            EKYdata = [ EKYdata(2:end) ; PEstFilt ];
+                            EKZdata= [ EKYdata(2:end) ; YEstFilt ];
+
+                            %% Plot Angles
+
+
+                            %Plot the X magnitude
+                            h1 = subplot(3,1,1,'Parent',hTabs(3));
+                            %set(hAx,'title','X angular velocity in deg/s');
+                            plot(h1,index,EKXdata,'b-','LineWidth',2);
+                            if doubleAnglePlot
+                                hold on;
+                                plot(h1,index,Rdata,'r','LineWidth',1);
+                                hold off;
+                            end
+                            %xlabel('Time')
+                            %ylabel('Wx');
+                            %axis([1 buf_len -80 80]);
+                            %hold on;
+                            h2 = subplot(3,1,2,'Parent',hTabs(3));
+                            %title('Y angular velocity in deg/s');
+                            plot(h2,index,EKYdata,'b-','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                            if doubleAnglePlot
+                                hold on;
+                                plot(h2,index,Pdata,'r','LineWidth',1);
+                                hold off;
+                            end
+                            %xlabel('Time');
+                            %ylabel('Wy Acc');
+                            %axis([1 buf_len -80 80]);
+                            h3 = subplot(3,1,3,'Parent',hTabs(3));
+                            %title('Z angular velocity in deg/s');
+                            %hold on;
+                            plot(h3,index,EKZdata,'b-','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                            %axis([1 buf_len -80 80]);
+                            if doubleAnglePlot
+                                hold on;
+                                plot(h3,index,Ydata,'r','LineWidth',2); 
+                                hold off;
+                            end
+                            %xlabel('Time');
+                            %ylabel('Wz Acc'); 
+
+                            % Toggle ack 
+                            estReceived = true;
+                        end
+                        if type == 6
+                            % Sonic
+                            disp('Sonic');                        
+                        end
+                        if type == 7 
+                            % Gps
+                            disp('Gps');
+                        end
+                        if type == 8 
+                            % Barometer
+                            disp('Barometer');
+                        end                    
+                        if type == 9 
+                            % Pid Roll CONS
+                            disp('Pid Roll Cons');
+                            consRollKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('consRollKp:');
+                            %disp(consRollKpTemp);
+                            consRollKp = double(consRollKpTemp)/1000;
+                            disp(consRollKp);
+
+                            consRollKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                            disp('consRollKd:');
+                            consRollKd = double(consRollKdTemp)/1000;
+                            disp(consRollKd);                             
+
+                            consRollKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                            disp('consRollKi:');
+                            consRollKi = double(consRollKiTemp)/1000;
+                            disp(consRollKi);    
+
+                            setpointRollTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
+                            disp('setpointRollTemp:');
+                            disp(setpointRollTemp);   
+
+                            if strcmp(pidModeStrategy,'0')
+                                set(pidKpSlider,'Value',consRollKp);
+                                set(pidKdSlider,'Value',consRollKd);
+                                set(pidKiSlider,'Value',consRollKi);
+                                set(referencePIDVal,'String',setpointRollTemp);
+                            end
+                        end                   
+                        if type == 13 
+                            % Pid Roll AGG
+                            disp('Pid Roll AGG');
+                            aggRollKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('aggRollKp:');
+                            aggRollKp = double(aggRollKpTemp)/1000;
+                            disp(aggRollKp);
+
+                            aggRollKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                            disp('aggRollKd:');
+                            aggRollKd = double(aggRollKdTemp)/1000;
+                            disp(aggRollKd);                             
+
+                            aggRollKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                            disp('aggRollKi:');
+                            aggRollKi = double(aggRollKiTemp)/1000;
+                            disp(aggRollKi);    
+
+                            setpointRollTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
+                            disp('setpointRollTemp:');
+                            disp(setpointRollTemp);   
+
+                            if strcmp(pidModeStrategy,'1') 
+                                set(pidKpSlider,'Value',aggRollKp);
+                                set(pidKdSlider,'Value',aggRollKd);
+                                set(pidKiSlider,'Value',aggRollKi);
+                                set(referencePIDVal,'String',setpointRollTemp);
+                            end
+                        end
+                        if type == 10 
+                            % Pid Pitch CONS
+                            disp('Pid Pitch Cons');
+                            consPitchKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('val1:');
+                            consPitchKp = double(consPitchKpTemp)/1000;
+                            disp(consPitchKp);
+
+                            consPitchKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                            disp('val2:');
+                            consPitchKd = double(consPitchKdTemp)/1000;
+                            disp(consPitchKd);                             
+
+                            consPitchKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                            disp('val3:');
+                            consPitchKi = double(consPitchKiTemp)/1000;
+                            disp(consPitchKi);    
+
+                            setpointPitchTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
+                            disp('threshold:');
+                            disp(setpointPitchTemp); 
+
+                            if strcmp(pidModeStrategy,'0')
+                                set(pidKpSlider,'Value',consPitchKp);
+                                set(pidKdSlider,'Value',consPitchKd);
+                                set(pidKiSlider,'Value',consPitchKi);
+                                set(referencePIDVal,'String',setpointPitchTemp);
+                            end
+                        end                   
+                        if type == 14 
+                            % Pid Pitch AGG
+                            disp('Pid Pitch Agg');
+                            aggPitchKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('val1:');
+                            aggPitchKp = double(aggPitchKpTemp)/1000;
+                            disp(aggPitchKp);
+
+                            aggPitchKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                            disp('val2:');
+                            aggPitchKd = double(aggPitchKdTemp)/1000;
+                            disp(aggPitchKd);                             
+
+                            aggPitchKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                            disp('val3:');
+                            aggPitchKi = double(aggPitchKiTemp)/1000;
+                            disp(aggPitchKi);    
+
+                            setpointPitchTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
+                            disp('threshold:');
+                            disp(setpointPitchTemp);   
+
+                            if strcmp(pidModeStrategy,'1') 
+                                set(pidKpSlider,'Value',aggPitchKp);
+                                set(pidKdSlider,'Value',aggPitchKd);
+                                set(pidKiSlider,'Value',aggPitchKi);
+                                set(referencePIDVal,'String',setpointPitchTemp);
+                            end
+                        end
+                        if type == 11 
+                            % Pid Yaw CONS
+                            disp('Pid Yaw Cons');
+                            consYawKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('val1:');
+                            consYawKp = double(consYawKpTemp)/1000;
+                            disp(consYawKp);
+
+                            consYawKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                            disp('val2:');
+                            consYawKd = double(consYawKdTemp)/1000;
+                            disp(consYawKd);                             
+
+                            consYawKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                            disp('val3:');
+                            consYawKi = double(consYawKiTemp)/1000;
+                            disp(consYawKi);    
+
+                            setpointYawTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
+                            disp('threshold:');
+                            disp(setpointYawTemp);  
+
+                            if strcmp(pidModeStrategy,'0')
+                                set(pidKpSlider,'Value',consYawKp);
+                                set(pidKdSlider,'Value',consYawKd);
+                                set(pidKiSlider,'Value',consYawKi);
+                                set(referencePIDVal,'String',setpointYawTemp);
+                            end
+                        end                   
+                        if type == 15 
+                            % Pid Yaw AGG
+                            disp('Pid Yaw AGG');
+                            aggYawKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('val1:');
+                            aggYawKp = double(aggYawKpTemp)/1000;
+                            disp(aggYawKp);
+
+                            aggYawKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                            disp('val2:');
+                            aggYawKd = double(aggYawKdTemp)/1000;
+                            disp(aggYawKd);                             
+
+                            aggYawKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                            disp('val3:');
+                            aggYawKi = double(aggYawKiTemp)/1000;
+                            disp(aggYawKiTemp/100);    
+
+                            setpointYawTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
+                            disp('val4:');
+                            disp(setpointYawTemp);   
+
+                            if strcmp(pidModeStrategy,'1') 
+                                set(pidKpSlider,'Value',aggYawKp);
+                                set(pidKdSlider,'Value',aggYawKd);
+                                set(pidKiSlider,'Value',aggYawKi);
+                                set(referencePIDVal,'String',setpointYawTemp);
+                            end
+                        end
+                        if type == 12
+                            % Pid Alt CONS
+                            disp('Pid Alt Cons');
+                            consAltKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('val1:');
+                            consAltKp = double(consAltKpTemp)/1000;
+                            disp(consAltKp);
+
+                            consAltKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                            disp('val2:');
+                            consAltKd = double(consAltKdTemp)/1000;
+                            disp(consAltKd);                             
+
+                            consAltKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                            disp('val3:');
+                            consAltKi = double(consAltKiTemp)/1000;
+                            disp(consAltKi);    
+
+                            setpointAltTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
+                            disp('val4:');
+                            disp(setpointAltTemp);   
+
+                            if strcmp(pidModeStrategy,'0')
+                                set(pidKpSlider,'Value',consAltKp);
+                                set(pidKdSlider,'Value',consAltKd);
+                                set(pidKiSlider,'Value',consAltKi);
+                                set(referencePIDVal,'String',setpointAltTemp);
+                            end
+                        end                   
+                        if type == 16 
+                            % Pid Alt AGG
+                            disp('Pid Alt AGG');
+                            aggAltKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('val1:');
+                            aggAltKp =double(aggAltKpTemp)/1000;
+                            disp(aggAltKp);
+
+                            aggAltKdTemp = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                            disp('val2:');
+                            aggAltKd = double(aggAltKdTemp)/1000;
+                            disp(aggAltKd);                             
+
+                            aggAltKiTemp = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                            disp('val3:');
+                            aggAltKi = double(aggAltKiTemp)/1000;
+                            disp(aggAltKi);    
+
+                            setpointAltTemp = typecast([uint8(mess(typei + 13)), uint8(mess(typei + 14)),uint8(mess(typei + 15)), uint8(mess(typei + 16))], 'int32');
+                            disp('val4:');
+                            disp(setpointAltTemp); 
+
+                            if strcmp(pidModeStrategy,'1') 
+                                set(pidKpSlider,'Value',aggAltKp);
+                                set(pidKdSlider,'Value',aggAltKd);
+                                set(pidKiSlider,'Value',aggAltKi);
+                                set(referencePIDVal,'String',setpointAltTemp);
+                            end
+                        end
+                        if type == takeOffID
+                            % Take Off Ack
+                            takeOffAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('Take Off Ack');
+                            disp(takeOffAck);
+                            if takeOffAck == 1
+                                if speakCmd && vocalVerb>=1 
+                                        %tts('Decollato',voice);
+                                        tts('Tenzo is flying',voice);
+                                end
+                                set(takeOffBtn,'String','Flying');
+                                landAck = 0;
+                                disp('Changed landAck:');
+                                disp(landAck);
+                                set(landBtn,'String','Land');
+                            else                            
+                                set(takeOffBtn,'String','Take Off');
+                            end
+                        end                    
+                        if type == iHoverID
+                            % Hovering Ack
+                            hoverAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('Hovering Ack');
+                            disp(hoverAck);
+                            if hoverAck == 1
+                                if speakCmd && vocalVerb>=2 
+                                        %tts('Pid abilitato',voice);
+                                        tts('PID enabled.',voice);
+                                end
+                                set(hoverBtn,'String','NoPid');
+                                disp('Pid enabled');
+                            else    
+                                if speakCmd && vocalVerb>=2 
+                                        %tts('pid disabilitato',voice);
+                                        tts('PID disabled',voice);
+                                end                        
+                                set(hoverBtn,'String','iHoverPid');
+                                disp('Unsafe hovering OR Landed');
+                            end
+                        end                    
+                        if type == landID
+                            % Landed Ack
+                            landAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            disp('Landed Ack');
                             disp(landAck);
-                            set(landBtn,'String','Land');
-                        else                            
-                            set(takeOffBtn,'String','Take Off');
-                        end
-                    end                    
-                    if type == iHoverID
-                        % Hovering Ack
-                        hoverAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('Hovering Ack');
-                        disp(hoverAck);
-                        if hoverAck == 1
-                            if speakCmd && vocalVerb>=2 
-                                    %tts('Pid abilitato',voice);
-                                    tts('PID enabled.',voice);
+                            if landAck == 1    
+                                if speakCmd && vocalVerb>=1 
+                                        %tts('Atterrato',voice);
+                                        tts('Landed.',voice);
+                                end                       
+                                set(landBtn,'String','Landed'); 
+                                set(takeOffBtn,'String','Take Off');
+                                takeOffAck = 0;
                             end
-                            set(hoverBtn,'String','NoPid');
-                            disp('Pid enabled');
-                        else    
-                            if speakCmd && vocalVerb>=2 
-                                    %tts('pid disabilitato',voice);
-                                    tts('PID disabled',voice);
-                            end                        
-                            set(hoverBtn,'String','iHoverPid');
-                            disp('Unsafe hovering OR Landed');
+                            break;
                         end
-                    end                    
-                    if type == landID
-                        % Landed Ack
-                        landAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        disp('Landed Ack');
-                        disp(landAck);
-                        if landAck == 1    
-                            if speakCmd && vocalVerb>=1 
-                                    %tts('Atterrato',voice);
-                                    tts('Landed.',voice);
-                            end                       
-                            set(landBtn,'String','Landed'); 
-                            set(takeOffBtn,'String','Take Off');
-                            takeOffAck = 0;
-                        end
-                        break;
+                        if type == tenzoStateID 
+                            % Setting Tenzo State
+                            disp('Reading state'); 
+                            takeOffAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
+                            hoverAck = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
+                            landAck = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
+                            if takeOffAck == 1
+                                if speakCmd && vocalVerb>=1 
+                                        %tts('Decollato',voice);
+                                        tts('Tenzo is flying',voice);
+                                end
+                                set(takeOffBtn,'String','Flying');
+                                set(landBtn,'String','Land');
+                            else                            
+                                set(takeOffBtn,'String','Take Off');
+                            end                      
+
+                            if landAck == 1    
+                                if speakCmd && vocalVerb>=1 
+                                        %tts('Atterrato',voice);
+                                        tts('Landed.',voice);
+                                end                       
+                                set(landBtn,'String','Landed'); 
+                                set(takeOffBtn,'String','Take Off');
+                                takeOffAck = 0;
+                            end
+                            if hoverAck == 1
+                                if speakCmd && vocalVerb>=2 
+                                        %tts('Pid abilitato',voice);
+                                        tts('PID enabled.',voice);
+                                end
+                                set(hoverBtn,'String','NoPid');
+                                disp('Pid enabled');
+                            else    
+                                if speakCmd && vocalVerb>=2 
+                                        %tts('pid disabilitato',voice);
+                                        tts('PID disabled',voice);
+                                end                        
+                                set(hoverBtn,'String','iHoverPid');
+                                disp('Unsafe hovering OR Landed');
+                            end
+                            sendStates();
+                        end 
                     end
-                    if type == tenzoStateID 
-                        % Tenzo State
-                        disp('Reading state'); 
-                        takeOffAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        hoverAck = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        landAck = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        if takeOffAck == 1
-                            if speakCmd && vocalVerb>=1 
-                                    %tts('Decollato',voice);
-                                    tts('Tenzo is flying',voice);
-                            end
-                            set(takeOffBtn,'String','Flying');
-                            set(landBtn,'String','Land');
-                        else                            
-                            set(takeOffBtn,'String','Take Off');
-                        end                      
-                        
-                        if landAck == 1    
-                            if speakCmd && vocalVerb>=1 
-                                    %tts('Atterrato',voice);
-                                    tts('Landed.',voice);
-                            end                       
-                            set(landBtn,'String','Landed'); 
-                            set(takeOffBtn,'String','Take Off');
-                            takeOffAck = 0;
-                        end
-                        if hoverAck == 1
-                            if speakCmd && vocalVerb>=2 
-                                    %tts('Pid abilitato',voice);
-                                    tts('PID enabled.',voice);
-                            end
-                            set(hoverBtn,'String','NoPid');
-                            disp('Pid enabled');
-                        else    
-                            if speakCmd && vocalVerb>=2 
-                                    %tts('pid disabilitato',voice);
-                                    tts('PID disabled',voice);
-                            end                        
-                            set(hoverBtn,'String','iHoverPid');
-                            disp('Unsafe hovering OR Landed');
-                        end
-                    end  
                 end
             end %Message delivered from Arduino
        end
-    end  
+    end 
+guidata(handles.hFig,handles);
 end

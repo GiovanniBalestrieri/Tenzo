@@ -1,13 +1,11 @@
 function ControlBoard()
-
 clear all;
 clc;
-
 
 global xbee;
 global portWin;
 global portUnix;
-global baudrate;
+global xbeeBR;
 global terminator;
 global inputBuffSize;
 global outputBuffSize;
@@ -138,6 +136,10 @@ global consYawKp;
 global consYawKd;
 global consYawKi;
 global rt;
+global firing;
+global recording;
+global plotting;
+global asked;
 global axdata;
 global aydata;
 global azdata;
@@ -156,7 +158,7 @@ global requestPending;
 
 %% Version
 
-version = 1.90;
+version = 2.00;
 
 %% Data Acquisition vars
 
@@ -231,8 +233,8 @@ headerLength = 13;
 arduinoAdd = 1;
 matlabAdd = 2;
 portWin = 'Com3';
-portUnix = '\dev\ttyS0';
-baudrate = 19200;
+portUnix = '\dev\rfcomm0';
+xbeeBR = 9600;
 % buffer size should be the same as the one specified on the Arduino side
 inputBuffSize = 47+1;
 outputBuffSize = 31;
@@ -260,7 +262,22 @@ gyroReceived = false;
 magnReceived = false;
 estReceived = false;
 
+% Data aquisiton boolean vars
+rt = false;
+recording = false;
+firing = false;
+plotting = false;
+asked = false;
+
 doubleAnglePlot = false;
+
+%% Data acquisition variables
+
+contSamples = 0;
+ax = 0;
+ay = 0;
+az = 0;
+time = 0;
 
 %% Vocal settings
 
@@ -369,16 +386,16 @@ delete(instrfindall)
         val = get(hTabGroup,'SelectedTab');
         if val ~= hTabs(4)
         %disp('Tab1 selected');
-        set(pidKiSlider,'Visible','off');
-        set(pidKpSlider,'Visible','off');
-        set(pidKdSlider,'Visible','off');
+        set(handles.pidKiSlider,'Visible','off');
+        set(handles.pidKpSlider,'Visible','off');
+        set(handles.pidKdSlider,'Visible','off');
         disp(pidStrategy);
         end
         if val == hTabs(4) && get(pidRad,'Value') == 1
         %disp('Tab1 selected');
-        set(pidKiSlider,'Visible','on');
-        set(pidKpSlider,'Visible','on');
-        set(pidKdSlider,'Visible','on');
+        set(handles.pidKiSlider,'Visible','on');
+        set(handles.pidKpSlider,'Visible','on');
+        set(handles.pidKdSlider,'Visible','on');
         end
         if val == hTabs(5)
         disp('Usb cable required!');
@@ -421,15 +438,15 @@ delete(instrfindall)
         'Position', [55 268 420 50],...
         'Parent',hTabs(1), 'FontSize',10,'FontWeight','normal');
     
-    takeOffBtn = uicontrol('Style','pushbutton', 'String','Take Off', ...
+    handles.takeOffBtn = uicontrol('Style','pushbutton', 'String','Take Off', ...
         'Position', [70 210 120 30],...
         'Parent',hTabs(1), 'Callback',@takeOffCallback);
     
-    hoverBtn = uicontrol('Style','pushbutton', 'String','iHover', ...
+    handles.hoverBtn = uicontrol('Style','pushbutton', 'String','iHover', ...
         'Position', [210 210 120 30],...
         'Parent',hTabs(1), 'Callback',@hoverCallback);
     
-    landBtn = uicontrol('Style','pushbutton', 'String','Land', ...
+    handles.landBtn = uicontrol('Style','pushbutton', 'String','Land', ...
         'Position', [350 210 120 30],...
         'Parent',hTabs(1), 'Callback',@landCallback);
     
@@ -483,7 +500,7 @@ delete(instrfindall)
     frameThreshold = uicontrol('Style','frame','Visible','off', ...
         'Parent',hTabs(4), 'Position',[ 222 323 50 50 ]);
     
-    referencePIDVal = uicontrol('Style','edit', 'String','0', ...
+    handles.referencePIDVal = uicontrol('Style','edit', 'String','0', ...
         'Position', [226 325 40 40],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',13,'FontWeight','normal');
     
@@ -504,48 +521,48 @@ delete(instrfindall)
     framePidKpVal = uicontrol('Style','frame','Visible','off', ...
         'Parent',hTabs(4), 'Position',[ 480 215 50 30 ]);
     
-    pidKpVal = uicontrol('Style','text', 'String','AS', ...
+    handles.pidKpVal = uicontrol('Style','text', 'String','AS', ...
         'Position', [484 218 40 25],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',13,'FontWeight','normal');
     
     framePidKdVal = uicontrol('Style','frame','Visible','off', ...
         'Parent',hTabs(4), 'Position',[ 480 140 50 30 ]);
     
-    pidKdVal = uicontrol('Style','text', 'String','AS', ...
+    handles.pidKdVal = uicontrol('Style','text', 'String','AS', ...
         'Position', [484 143 40 25],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',13,'FontWeight','normal');
     
     framePidKiVal = uicontrol('Style','frame','Visible','off', ...
         'Parent',hTabs(4), 'Position',[ 480 53 50 30 ]);
     
-    pidKiVal = uicontrol('Style','text', 'String','AS', ...
+    handles.pidKiVal = uicontrol('Style','text', 'String','AS', ...
         'Position', [484 56 40 25],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',13,'FontWeight','normal');
     
-    pidKpSlider = uicontrol('Style','slider','Visible','off',...
-    'min',0,'max',2,'Callback',@(s,e) disp('KpSlider'),...
-    'SliderStep',[0.01 0.10],'Position', [140 185 350 20]);
-    KpListener = addlistener(pidKpSlider,'Value','PostSet',@pidKpSliderCallBack);
+    handles.pidKpSlider = uicontrol('Style','slider','Visible','off',...
+    'min',0,'max',1,'Callback',@(s,e) disp('KpSlider'),...
+    'SliderStep',[0.01 0.05],'Position', [140 185 350 20]);
+    KpListener = addlistener(handles.pidKpSlider,'Value','PostSet',@pidKpSliderCallBack);
     
-    pidKdSlider = uicontrol('Style','slider','Visible','off',...
-    'min',0,'max',2,'Callback',@(s,e) disp('KdSlider'),...
-    'SliderStep',[0.01 0.10],'Position', [140 110 350 20]);
-    KdListener = addlistener(pidKdSlider,'Value','PostSet',@pidKdSliderCallBack);
+    handles.pidKdSlider = uicontrol('Style','slider','Visible','off',...
+    'min',0,'max',0.5,'Callback',@(s,e) disp('KdSlider'),...
+    'SliderStep',[0.01 0.05],'Position', [140 110 350 20]);
+    KdListener = addlistener(handles.pidKdSlider,'Value','PostSet',@pidKdSliderCallBack);
     
-    pidKiSlider = uicontrol('Style','slider','Visible','off',...
-    'min',0,'max',2,'Callback',@(s,e) disp('KiSlider'),...
-    'SliderStep',[0.01 0.10],'Position',[140 30 350 20]);
-    KiListener = addlistener(pidKiSlider,'Value','PostSet',@pidKiSliderCallBack);
+    handles.pidKiSlider = uicontrol('Style','slider','Visible','off',...
+    'min',0,'max',0.5,'Callback',@(s,e) disp('KiSlider'),...
+    'SliderStep',[0.01 0.05],'Position',[140 30 350 20]);
+    KiListener = addlistener(handles.pidKiSlider,'Value','PostSet',@pidKiSliderCallBack);
     
-    pidKpTxt = uicontrol('Style','text','Visible','off',...
+    handles.pidKpTxt = uicontrol('Style','text','Visible','off',...
         'String','Proportional: Kp','Position', [140 190 150 50],...
         'Parent', hTabs(4), 'FontSize',11);
     
-    pidKdTxt = uicontrol('Style','text','Visible','off',...
+    handles.pidKdTxt = uicontrol('Style','text','Visible','off',...
         'String','Derivative: Kd','Position', [140 115 150 50],...
         'Parent', hTabs(4), 'FontSize',11);
     
-    pidKiTxt = uicontrol('Style','text','Visible','off',...
+    handles.pidKiTxt = uicontrol('Style','text','Visible','off',...
         'String','Integral: Ki','Position', [140 37 150 50],...
         'Parent', hTabs(4), 'FontSize',11);    
     
@@ -662,6 +679,8 @@ delete(instrfindall)
         'String','Select|Gyro|Accelerometer|Angles (est)', ...
         'Parent',hTabs(3), 'Callback',@popupCallback);
     
+    guidata(handles.hFig,handles);
+    
     %% Data acquisition panel Callback
     function startCallback(obj,event,h)
         disp('start pressed');
@@ -684,20 +703,20 @@ delete(instrfindall)
     end
     
     function [s] = setupSerial()
-        %comPortLinux = '/dev/ttyACM0';
-        comPortWin = 'COM4';
-        oldSerial = instrfind('Port', comPortWin); 
+        %comPortWin = 'COM4';
+        comPort = portUnix;
+        oldSerial = instrfind('Port', comPort); 
         % if the set of such objects is not(~) empty
         if (~isempty(oldSerial))  
-            disp('WARNING:  COM4 in use.  Closing.')
+            disp('WARNING:  Port in use.  Closing.')
             delete(oldSerial)
         end
-        s = serial(comPortWin);
+        s = serial(comPort);
 
         % Max wait time
         set(s, 'TimeOut', 5); 
         set(s,'terminator','CR');
-        set(s,'BaudRate',9600);
+        set(s,'BaudRate',xbeeBR);
         fopen(s);
 
         disp('Sending Request.');
@@ -752,7 +771,7 @@ delete(instrfindall)
         end 
     end 
 
-function recordCallback(obj,event,handles)
+    function recordCallback(obj,event,handles)
         disp('Record Pressed');
         plotting = ~plotting
         if plotting
@@ -839,7 +858,79 @@ function recordCallback(obj,event,handles)
         end
     end
     
+    function recordCallback1(obj,event,handles)
+        disp('Record Pressed');
+        plotting = ~plotting
+        serialFlag;
+        if plotting == 1
+            % waiting for the connection to be established
+            %disp(abs(az));
+            %disp(asked);     
+            while (serialFlag == 1 && abs(az) >= -0.5)               
+                % Request High Res data 
+                fwrite(acceleration.s,84);
+                
+                [ax ay az t,receiving] = readAcc1_05(acceleration)
+                receiving
+                if (receiving)
+                    figure(2);
+
+                    cla;
+
+                    axdata = [ axdata(2:end) ; ax ];
+                    aydata = [ aydata(2:end) ; ay ];
+                    azdata = [ azdata(2:end) ; az ];    
+                    time   = [time(2:end) ; t/1000];
+
+                    deltaT = t - prevTimer
+                    prevTimer = t;
+                    h11 = subplot(3,1,1);
+
+                    title('Acc X');    
+                    axis([1 buffLen -0.5 0.5]);
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of X acc [m*s^-2]'); 
+                    plot(h11,index,axdata(901:1000),'r');
+                    grid on;
+
+                    h12 = subplot(3,1,2);
+
+                    title('Acc Y');      
+                    axis([1 buffLen -0.5 0.5]);          
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Y acc [m*s^-2]');
+                    plot(h12,index,aydata(901:1000),'r');
+                    grid on;         
+
+                    h13 = subplot(3,1,3);
+
+                    title('Acc Z');
+                    axis([1 buffLen -1.5 1.5]);                
+                    xlabel('time [ms]')
+                    ylabel('Magnitude of Z acc [m*s^-2]');
+                    plot(h13,index,azdata(901:1000),'r');
+                    grid on;         
+
+                    if ((time(900) >= 0) && (time(1000)>0))
+                        figure(3);       
+                        title('Acc X');
+                        axis([time(950) time(1000) -1.5 1.5]);                
+                        xlabel('time [ms]')
+                        ylabel('Magnitude of X acc [m*s^-2]');
+                        plot (time(901:1000),axdata(901:1000),'b');
+                        grid on;        
+                    end
+                    drawnow;
+                end
+            end
+        end
+    end
+    
     function rtCallback(obj,event,h)
+        %disp('RT pressed');
+        rt = ~rt;
+    
+        % waiting for the connection to be established
         disp('RT pressed');
         rt = ~rt
         disp(serialFlag);
@@ -1205,54 +1296,54 @@ function recordCallback(obj,event,handles)
     end
 
     function pidKpSliderCallBack(src,eventData)
-       set(pidKpVal,'String',get(pidKpSlider,'Value')); 
+       set(handles.pidKpVal,'String',get(handles.pidKpSlider,'Value')); 
        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
            
        end
     end
 
     function pidKdSliderCallBack(src,eventData)
-       set(pidKdVal,'String',get(pidKdSlider,'Value'));
+       set(handles.pidKdVal,'String',get(handles.pidKdSlider,'Value'));
 %        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
 %        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',1,', ...
-%            num2str(get(pidKpSlider,'Value')),',X']
+%            num2str(get(handles.pidKpSlider,'Value')),',X']
 %        fprintf(xbee,'%s',strindToSend,'sync'); 
 %       end
     end
 
     function pidKiSliderCallBack(src,eventData)
-       set(pidKiVal,'String',get(pidKiSlider,'Value'));
+       set(handles.pidKiVal,'String',get(handles.pidKiSlider,'Value'));
 %        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
 %        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',2,', ...
-%            num2str(get(pidKpSlider,'Value')),',X']
+%            num2str(get(handles.pidKpSlider,'Value')),',X']
 %        fprintf(xbee,'%s',strindToSend,'sync'); 
 %        end
     end
 
 %    function pidKpSliderCallBack(src,eventData)
-%        set(pidKpVal,'String',get(pidKpSlider,'Value')); 
+%        set(handles.pidKpVal,'String',get(handles.pidKpSlider,'Value')); 
 %        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
 %            % Send 'X,opt1,opt2,opt3,val,X'
 %        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',0,',...
-%            num2str(get(pidKpSlider,'Value')),',X']
+%            num2str(get(handles.pidKpSlider,'Value')),',X']
 %        fprintf(xbee,'%s',strindToSend,'sync'); 
 %        end
 %     end
 % 
 %     function pidKdSliderCallBack(src,eventData)
-%        set(pidKdVal,'String',get(pidKdSlider,'Value'));
+%        set(handles.pidKdVal,'String',get(handles.pidKdSlider,'Value'));
 %        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
 %        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',1,', ...
-%            num2str(get(pidKpSlider,'Value')),',X']
+%            num2str(get(handles.pidKpSlider,'Value')),',X']
 %        fprintf(xbee,'%s',strindToSend,'sync'); 
 %        end
 %     end
 % 
 %     function pidKiSliderCallBack(src,eventData)
-%        set(pidKiVal,'String',get(pidKiSlider,'Value'));
+%        set(handles.pidKiVal,'String',get(handles.pidKiSlider,'Value'));
 %        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
 %        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',2,', ...
-%            num2str(get(pidKpSlider,'Value')),',X']
+%            num2str(get(handles.pidKpSlider,'Value')),',X']
 %        fprintf(xbee,'%s',strindToSend,'sync'); 
 %        end
 %     end
@@ -1299,45 +1390,45 @@ function recordCallback(obj,event,handles)
             set(welcomeControl,'Visible','off');
             set(workInProgress,'Visible','off');
             set(frameThreshold,'Visible','on');
-            set(referencePIDVal,'Visible','on');
+            set(handles.referencePIDVal,'Visible','on');
             set(referencePIDTxt,'Visible','on');
             set(sendPidValsBtn,'Visible','on'); 
             set(readPidValsBtn,'Visible','on'); 
             set(pidModePopup,'Visible','on');
             set(framePidKpVal,'Visible','on');
-            set(pidKpVal,'Visible','on');
-            set(pidKpTxt,'Visible','on');
-            set(pidKpSlider,'Visible','on');
+            set(handles.pidKpVal,'Visible','on');
+            set(handles.pidKpTxt,'Visible','on');
+            set(handles.pidKpSlider,'Visible','on');
             set(framePidKdVal,'Visible','on');
-            set(pidKdVal,'Visible','on');
-            set(pidKdTxt,'Visible','on');
-            set(pidKdSlider,'Visible','on');
+            set(handles.pidKdVal,'Visible','on');
+            set(handles.pidKdTxt,'Visible','on');
+            set(handles.pidKdSlider,'Visible','on');
             set(framePidKiVal,'Visible','on');
-            set(pidKiVal,'Visible','on');
-            set(pidKiTxt,'Visible','on');
-            set(pidKiSlider,'Visible','on');
+            set(handles.pidKiVal,'Visible','on');
+            set(handles.pidKiTxt,'Visible','on');
+            set(handles.pidKiSlider,'Visible','on');
             set(pidPopup,'Visible','on');             
         else                        
             set(frameThreshold,'Visible','off');
             set(referencePIDTxt,'Visible','off');
-            set(referencePIDVal,'Visible','off');
+            set(handles.referencePIDVal,'Visible','off');
             set(sendPidValsBtn,'Visible','off');
             set(readPidValsBtn,'Visible','off');
             set(welcomeControl,'Visible','off');
             set(workInProgress,'Visible','off'); 
             set(pidModePopup,'Visible','off');
             set(framePidKpVal,'Visible','off');
-            set(pidKpVal,'Visible','off');
-            set(pidKpTxt,'Visible','off');
-            set(pidKpSlider,'Visible','off');
+            set(handles.pidKpVal,'Visible','off');
+            set(handles.pidKpTxt,'Visible','off');
+            set(handles.pidKpSlider,'Visible','off');
             set(framePidKdVal,'Visible','off');
-            set(pidKdVal,'Visible','off');
-            set(pidKdTxt,'Visible','off');
-            set(pidKdSlider,'Visible','off');
+            set(handles.pidKdVal,'Visible','off');
+            set(handles.pidKdTxt,'Visible','off');
+            set(handles.pidKdSlider,'Visible','off');
             set(framePidKiVal,'Visible','off');
-            set(pidKiVal,'Visible','off');
-            set(pidKiTxt,'Visible','off');
-            set(pidKiSlider,'Visible','off');
+            set(handles.pidKiVal,'Visible','off');
+            set(handles.pidKiTxt,'Visible','off');
+            set(handles.pidKiSlider,'Visible','off');
             set(pidPopup,'Visible','off');        
         end
         
@@ -1345,7 +1436,7 @@ function recordCallback(obj,event,handles)
         if get(lqrRad,'Value') == 1            
             set(workInProgress,'Visible','on');
             set(frameThreshold,'Visible','off');
-            set(referencePIDVal,'Visible','off');
+            set(handles.referencePIDVal,'Visible','off');
             set(referencePIDTxt,'Visible','off');
             set(sendPidValsBtn,'Visible','off');
         else
@@ -1354,7 +1445,7 @@ function recordCallback(obj,event,handles)
         if get(HInfRad,'Value') == 1            
             set(workInProgress,'Visible','on');
             set(frameThreshold,'Visible','off');
-            set(referencePIDVal,'Visible','off');
+            set(handles.referencePIDVal,'Visible','off');
             set(referencePIDTxt,'Visible','off');
             set(sendPidValsBtn,'Visible','off');
         else
@@ -1466,16 +1557,17 @@ function recordCallback(obj,event,handles)
         end
     end
     
+    %% Handles bluetooth connection
     function connection(obj,event,handles) 
         handles = guidata(gcf);
         if get(handles.connect,'Value') == 1
             disp('Connecting...');
             
             delete(instrfindall);
-            %% Check to see if there are existing serial objects 
+            % Check to see if there are existing serial objects 
             % (instrfind) whos 'Port' property is set to 'COM3'
 
-            oldSerial = instrfind('Port', portWin); 
+            oldSerial = instrfind('Port', portUnix); 
             % can also use instrfind() with no input arguments to find 
             % ALL existing serial objects
 
@@ -1488,7 +1580,8 @@ function recordCallback(obj,event,handles)
             %%  Setting up serial communication
             % XBee expects the end of commands to be delineated by a carriage return.
 
-            xbee = serial(portWin,'baudrate',baudrate,'terminator',terminator,'tag',tag);
+            xbee = serial(portUnix,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
+            %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
 
             % Max wait time
             set(xbee, 'TimeOut', 10);  
@@ -1533,13 +1626,14 @@ function recordCallback(obj,event,handles)
         end 
     end
 
+    %% Send topics
     function sendMess(obj)
         % Build the message Header + Command (only one command at the time)
 
         %Initialize header as an array full of 'f'
         %hr = repmat('f',8,4);
         hr = zeros(8,4,'uint8');
-        %% Build Header
+        % Build Header
 
         % source address
         hr(1,1) = matlabAdd;
@@ -1582,17 +1676,17 @@ function recordCallback(obj,event,handles)
         bufferSend(16) = obj(2,2);
         bufferSend(17) = obj(2,3);
         bufferSend(18) = obj(2,4);
-        % cmd 1
+        % cmd 2
         bufferSend(19) = obj(3,1);
         bufferSend(20) = obj(3,2);
         bufferSend(21) = obj(3,3);
         bufferSend(22) = obj(3,4);
-        % cmd 1
+        % cmd 3
         bufferSend(23) = obj(4,1);
         bufferSend(24) = obj(4,2);
         bufferSend(25) = obj(4,3);
         bufferSend(26) = obj(4,4);
-        % cmd 1
+        % cmd 4
         bufferSend(27) = obj(5,1);
         bufferSend(28) = obj(5,2);
         bufferSend(29) = obj(5,3);
@@ -1600,19 +1694,21 @@ function recordCallback(obj,event,handles)
 
         disp(bufferSend);
         fwrite(xbee,bufferSend,'uint8');    
-        %xbee.ValuesSent
+        disp('Tot bytes sent');
+        xbee.ValuesSent
         
-        %% Command
+        % Command
 
         %s = struct('H',value1,'C1',valueN)
     end
 
+    %% Plot Theta phi psi
     function graphAngles(obj,event,handles)
         % To debug uncomment the following line
         %disp('Angles');
         anglesRequested = true;
         
-        %% Requests data only if previous ones have been received and plotted
+        % Requests data only if previous ones have been received and plotted
         
         if estReceived || anglesRequested
             %Initialize the cmd array
@@ -1629,6 +1725,7 @@ function recordCallback(obj,event,handles)
         end
     end
 
+    %% Handles pid output topics
     function sendPidCallback(obj,event)
         if tenzo == true
             if takeOffAck == 1
@@ -1662,7 +1759,7 @@ function recordCallback(obj,event,handles)
                            end
                            % Send 'X,opt1,opt2,opt3,val,X'
 %                            strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',0,',...
-%                            num2str(get(pidKpSlider,'Value')),',X']
+%                            num2str(get(handles.pidKpSlider,'Value')),',X']
 %                            fprintf(xbee,'%s',strindToSend,'sync');  
 
                             %Initialize the cmd array
@@ -1672,22 +1769,36 @@ function recordCallback(obj,event,handles)
                             cmd(1,1) = uint8(cmdtype);
                             % Sends 1 to activate PID
                             disp('ref value:');
-                            disp(get(referencePIDVal,'String'));
+                            disp(get(handles.referencePIDVal,'String'));
                             disp('Kp val');
-                            disp(get(pidKpSlider,'Value'));
+                            disp(get(handles.pidKpSlider,'Value'));
                             disp('Rounded Kp val');
-                            disp(double(round(get(pidKpSlider,'Value')*1000)));
+                            disp(double(round(get(handles.pidKpSlider,'Value')*1000)));
                             disp('Rounded Kd val');
-                            disp(double(round(get(pidKdSlider,'Value')*1000)));
+                            disp(double(round(get(handles.pidKdSlider,'Value')*1000)));
                             disp('Rounded Ki val');
-                            disp(double(round(get(pidKiSlider,'Value')*1000)));
-                            bits = reshape(bitget(double(round(get(pidKpSlider,'Value')*1000)),32:-1:1),8,[]);
+                            disp(double(round(get(handles.pidKiSlider,'Value')*1000)));
+                            if get(handles.pidKpSlider,'Value')<=0.5
+                                bits = reshape(bitget(double(round(get(handles.pidKpSlider,'Value')*1000)),32:-1:1),8,[]);
+                            else
+                                bits = reshape(bitget(double(round(0.5*1000)),32:-1:1),8,[]);
+                            end
                             cmd(2,:) = weights2*bits;
-                            bits = reshape(bitget(double(round(get(pidKdSlider,'Value')*1000)),32:-1:1,'int32'),8,[]);
+                            if get(handles.pidKdSlider,'Value')<=0.5
+                                bits = reshape(bitget(double(round(get(handles.pidKdSlider,'Value')*1000)),32:-1:1),8,[]);
+                            else
+                                bits = reshape(bitget(double(round(0.5*1000)),32:-1:1),8,[]);
+                            end
+                            %bits = reshape(bitget(double(round(get(handles.pidKdSlider,'Value')*1000)),32:-1:1,'int32'),8,[]);
                             cmd(3,:) = weights2*bits;
-                            bits = reshape(bitget(double(round(get(pidKiSlider,'Value')*1000)),32:-1:1,'int32'),8,[]);
+                            if get(handles.pidKiSlider,'Value')<=0.5
+                                bits = reshape(bitget(double(round(get(handles.pidKiSlider,'Value')*1000)),32:-1:1),8,[]);
+                            else
+                                bits = reshape(bitget(double(round(0.5*1000)),32:-1:1),8,[]);
+                            end
+                            %bits = reshape(bitget(double(round(get(handles.pidKiSlider,'Value')*1000)),32:-1:1,'int32'),8,[]);
                             cmd(4,:) = weights2*bits;
-                            bits = reshape(bitget(str2double(get(referencePIDVal,'String')),32:-1:1,'int32'),8,[]);
+                            bits = reshape(bitget(str2double(get(handles.referencePIDVal,'String')),32:-1:1,'int32'),8,[]);
                             cmd(5,:) = weights2*bits;
                             disp('sending');
                             sendMess(cmd);
@@ -1709,6 +1820,7 @@ function recordCallback(obj,event,handles)
     end
 
 
+    %% Handles Pid input topics
     function readPidCallback(obj,event)
         if tenzo == true
             if takeOffAck == 1
@@ -1743,7 +1855,7 @@ function recordCallback(obj,event,handles)
                        end
                        % Send 'X,opt1,opt2,opt3,val,X'
 %                            strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',0,',...
-%                            num2str(get(pidKpSlider,'Value')),',X']
+%                            num2str(get(handles.pidKpSlider,'Value')),',X']
 %                            fprintf(xbee,'%s',strindToSend,'sync');  
                         disp('cmdtype');
                         disp(cmdtype);
@@ -1766,11 +1878,12 @@ function recordCallback(obj,event,handles)
         end
     end
 
+    %% Plot angular velocities
     function graphGyro(obj,event,handles)
         % To debug uncomment the following line
         %disp('Gyro');
         gyroRequested = true;
-        %% Requests data only if previous ones have been received and plotted
+        % Requests data only if previous ones have been received and plotted
         
         if gyroReceived || gyroRequested
             % Initialize the cmd array
@@ -1786,11 +1899,12 @@ function recordCallback(obj,event,handles)
             
     end
 
+    %% Plot accelerations
     function graphAcc(obj,event,handles)
         % To debug uncomment the following line
         %disp('Acc');
         accRequested = true;
-        %% Requests data only if previous ones have been received and plotted
+        % Requests data only if previous ones have been received and plotted
         
         if accReceived || accRequested
             % Initialize the cmd array
@@ -1851,7 +1965,7 @@ function recordCallback(obj,event,handles)
                 %disp('CRC value');
                 %disp(crcvalue);
 
-                %% Read Commands
+                % Read Commands
                 for i = 0:(numCmd-1)
                     typei = (readFrom+1)+i*sizeOfEachCmd;
                     type = mess(typei) 
@@ -2207,10 +2321,10 @@ function recordCallback(obj,event,handles)
                             disp(setpointRollTemp);   
 
                             if strcmp(pidModeStrategy,'0')
-                                set(pidKpSlider,'Value',consRollKp);
-                                set(pidKdSlider,'Value',consRollKd);
-                                set(pidKiSlider,'Value',consRollKi);
-                                set(referencePIDVal,'String',setpointRollTemp);
+                                set(handles.pidKpSlider,'Value',consRollKp);
+                                set(handles.pidKdSlider,'Value',consRollKd);
+                                set(handles.pidKiSlider,'Value',consRollKi);
+                                set(handles.referencePIDVal,'String',setpointRollTemp);
                             end
                         end                   
                         if type == 13 
@@ -2236,10 +2350,10 @@ function recordCallback(obj,event,handles)
                             disp(setpointRollTemp);   
 
                             if strcmp(pidModeStrategy,'1') 
-                                set(pidKpSlider,'Value',aggRollKp);
-                                set(pidKdSlider,'Value',aggRollKd);
-                                set(pidKiSlider,'Value',aggRollKi);
-                                set(referencePIDVal,'String',setpointRollTemp);
+                                set(handles.pidKpSlider,'Value',aggRollKp);
+                                set(handles.pidKdSlider,'Value',aggRollKd);
+                                set(handles.pidKiSlider,'Value',aggRollKi);
+                                set(handles.referencePIDVal,'String',setpointRollTemp);
                             end
                         end
                         if type == 10 
@@ -2265,10 +2379,10 @@ function recordCallback(obj,event,handles)
                             disp(setpointPitchTemp); 
 
                             if strcmp(pidModeStrategy,'0')
-                                set(pidKpSlider,'Value',consPitchKp);
-                                set(pidKdSlider,'Value',consPitchKd);
-                                set(pidKiSlider,'Value',consPitchKi);
-                                set(referencePIDVal,'String',setpointPitchTemp);
+                                set(handles.pidKpSlider,'Value',consPitchKp);
+                                set(handles.pidKdSlider,'Value',consPitchKd);
+                                set(handles.pidKiSlider,'Value',consPitchKi);
+                                set(handles.referencePIDVal,'String',setpointPitchTemp);
                             end
                         end                   
                         if type == 14 
@@ -2294,10 +2408,10 @@ function recordCallback(obj,event,handles)
                             disp(setpointPitchTemp);   
 
                             if strcmp(pidModeStrategy,'1') 
-                                set(pidKpSlider,'Value',aggPitchKp);
-                                set(pidKdSlider,'Value',aggPitchKd);
-                                set(pidKiSlider,'Value',aggPitchKi);
-                                set(referencePIDVal,'String',setpointPitchTemp);
+                                set(handles.pidKpSlider,'Value',aggPitchKp);
+                                set(handles.pidKdSlider,'Value',aggPitchKd);
+                                set(handles.pidKiSlider,'Value',aggPitchKi);
+                                set(handles.referencePIDVal,'String',setpointPitchTemp);
                             end
                         end
                         if type == 11 
@@ -2323,10 +2437,10 @@ function recordCallback(obj,event,handles)
                             disp(setpointYawTemp);  
 
                             if strcmp(pidModeStrategy,'0')
-                                set(pidKpSlider,'Value',consYawKp);
-                                set(pidKdSlider,'Value',consYawKd);
-                                set(pidKiSlider,'Value',consYawKi);
-                                set(referencePIDVal,'String',setpointYawTemp);
+                                set(handles.pidKpSlider,'Value',consYawKp);
+                                set(handles.pidKdSlider,'Value',consYawKd);
+                                set(handles.pidKiSlider,'Value',consYawKi);
+                                set(handles.referencePIDVal,'String',setpointYawTemp);
                             end
                         end                   
                         if type == 15 
@@ -2352,10 +2466,10 @@ function recordCallback(obj,event,handles)
                             disp(setpointYawTemp);   
 
                             if strcmp(pidModeStrategy,'1') 
-                                set(pidKpSlider,'Value',aggYawKp);
-                                set(pidKdSlider,'Value',aggYawKd);
-                                set(pidKiSlider,'Value',aggYawKi);
-                                set(referencePIDVal,'String',setpointYawTemp);
+                                set(handles.pidKpSlider,'Value',aggYawKp);
+                                set(handles.pidKdSlider,'Value',aggYawKd);
+                                set(handles.pidKiSlider,'Value',aggYawKi);
+                                set(handles.referencePIDVal,'String',setpointYawTemp);
                             end
                         end
                         if type == 12
@@ -2381,10 +2495,10 @@ function recordCallback(obj,event,handles)
                             disp(setpointAltTemp);   
 
                             if strcmp(pidModeStrategy,'0')
-                                set(pidKpSlider,'Value',consAltKp);
-                                set(pidKdSlider,'Value',consAltKd);
-                                set(pidKiSlider,'Value',consAltKi);
-                                set(referencePIDVal,'String',setpointAltTemp);
+                                set(handles.pidKpSlider,'Value',consAltKp);
+                                set(handles.pidKdSlider,'Value',consAltKd);
+                                set(handles.pidKiSlider,'Value',consAltKi);
+                                set(handles.referencePIDVal,'String',setpointAltTemp);
                             end
                         end                   
                         if type == 16 
@@ -2410,10 +2524,10 @@ function recordCallback(obj,event,handles)
                             disp(setpointAltTemp); 
 
                             if strcmp(pidModeStrategy,'1') 
-                                set(pidKpSlider,'Value',aggAltKp);
-                                set(pidKdSlider,'Value',aggAltKd);
-                                set(pidKiSlider,'Value',aggAltKi);
-                                set(referencePIDVal,'String',setpointAltTemp);
+                                set(handles.pidKpSlider,'Value',aggAltKp);
+                                set(handles.pidKdSlider,'Value',aggAltKd);
+                                set(handles.pidKiSlider,'Value',aggAltKi);
+                                set(handles.referencePIDVal,'String',setpointAltTemp);
                             end
                         end
                         if type == takeOffID
@@ -2426,13 +2540,13 @@ function recordCallback(obj,event,handles)
                                         %tts('Decollato',voice);
                                         tts('Tenzo is flying',voice);
                                 end
-                                set(takeOffBtn,'String','Flying');
+                                set(handles.takeOffBtn,'String','Flying');
                                 landAck = 0;
                                 disp('Changed landAck:');
                                 disp(landAck);
-                                set(landBtn,'String','Land');
+                                set(handles.landBtn,'String','Land');
                             else                            
-                                set(takeOffBtn,'String','Take Off');
+                                set(handles.takeOffBtn,'String','Take Off');
                             end
                         end                    
                         if type == iHoverID
@@ -2445,14 +2559,14 @@ function recordCallback(obj,event,handles)
                                         %tts('Pid abilitato',voice);
                                         tts('PID enabled.',voice);
                                 end
-                                set(hoverBtn,'String','NoPid');
+                                set(handles.hoverBtn,'String','NoPid');
                                 disp('Pid enabled');
                             else    
                                 if speakCmd && vocalVerb>=2 
                                         %tts('pid disabilitato',voice);
                                         tts('PID disabled',voice);
                                 end                        
-                                set(hoverBtn,'String','iHoverPid');
+                                set(handles.hoverBtn,'String','iHoverPid');
                                 disp('Unsafe hovering OR Landed');
                             end
                         end                    
@@ -2466,8 +2580,8 @@ function recordCallback(obj,event,handles)
                                         %tts('Atterrato',voice);
                                         tts('Landed.',voice);
                                 end                       
-                                set(landBtn,'String','Landed'); 
-                                set(takeOffBtn,'String','Take Off');
+                                set(handles.landBtn,'String','Landed'); 
+                                set(handles.takeOffBtn,'String','Take Off');
                                 takeOffAck = 0;
                             end
                             break;
@@ -2483,10 +2597,10 @@ function recordCallback(obj,event,handles)
                                         %tts('Decollato',voice);
                                         tts('Tenzo is flying',voice);
                                 end
-                                set(takeOffBtn,'String','Flying');
-                                set(landBtn,'String','Land');
+                                set(handles.takeOffBtn,'String','Flying');
+                                set(handles.landBtn,'String','Land');
                             else                            
-                                set(takeOffBtn,'String','Take Off');
+                                set(handles.takeOffBtn,'String','Take Off');
                             end                      
 
                             if landAck == 1    
@@ -2494,8 +2608,8 @@ function recordCallback(obj,event,handles)
                                         %tts('Atterrato',voice);
                                         tts('Landed.',voice);
                                 end                       
-                                set(landBtn,'String','Landed'); 
-                                set(takeOffBtn,'String','Take Off');
+                                set(handles.landBtn,'String','Landed'); 
+                                set(handles.takeOffBtn,'String','Take Off');
                                 takeOffAck = 0;
                             end
                             if hoverAck == 1
@@ -2503,14 +2617,14 @@ function recordCallback(obj,event,handles)
                                         %tts('Pid abilitato',voice);
                                         tts('PID enabled.',voice);
                                 end
-                                set(hoverBtn,'String','NoPid');
+                                set(handles.hoverBtn,'String','NoPid');
                                 disp('Pid enabled');
                             else    
                                 if speakCmd && vocalVerb>=2 
                                         %tts('pid disabilitato',voice);
                                         tts('PID disabled',voice);
                                 end                        
-                                set(hoverBtn,'String','iHoverPid');
+                                set(handles.hoverBtn,'String','iHoverPid');
                                 disp('Unsafe hovering OR Landed');
                             end
                             sendStates();
@@ -2520,5 +2634,4 @@ function recordCallback(obj,event,handles)
             end %Message delivered from Arduino
        end
     end 
-guidata(handles.hFig,handles);
 end
