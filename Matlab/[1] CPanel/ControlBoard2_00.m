@@ -233,8 +233,8 @@ headerLength = 13;
 arduinoAdd = 1;
 matlabAdd = 2;
 portWin = 'Com3';
-portUnix = '\dev\rfcomm0';
-xbeeBR = 9600;
+portUnix = '/dev/rfcomm0';
+xbeeBR = 115200;
 % buffer size should be the same as the one specified on the Arduino side
 inputBuffSize = 47+1;
 outputBuffSize = 31;
@@ -715,7 +715,7 @@ delete(instrfindall)
 
         % Max wait time
         set(s, 'TimeOut', 5); 
-        set(s,'terminator','CR');
+        % set(s,'terminator','CR');
         set(s,'BaudRate',xbeeBR);
         fopen(s);
 
@@ -1558,6 +1558,7 @@ delete(instrfindall)
     end
     
     %% Handles bluetooth connection
+    % #connection #connect
     function connection(obj,event,handles) 
         handles = guidata(gcf);
         if get(handles.connect,'Value') == 1
@@ -1580,7 +1581,7 @@ delete(instrfindall)
             %%  Setting up serial communication
             % XBee expects the end of commands to be delineated by a carriage return.
 
-            xbee = serial(portUnix,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
+            xbee = serial(portUnix,'baudrate',xbeeBR,'tag',tag);
             %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
 
             % Max wait time
