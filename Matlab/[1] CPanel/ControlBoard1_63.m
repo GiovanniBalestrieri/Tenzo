@@ -45,7 +45,6 @@ global rARPID;
 global rAPPID;
 global rAYPID;
 global rAAPID;
-global tenzoStateID;
 
 global bufferSend;
 global landingSpeed;
@@ -137,7 +136,7 @@ global consYawKi;
 
 %% Serial protocol
 
-versionProtocol = 2;
+versionProtocol = 1;
 % command Map
 motorsID = 1;
 accID = 2;
@@ -166,7 +165,6 @@ rARPID = 25;
 rAPPID = 26;
 rAYPID = 27;
 rAAPID = 28;
-tenzoStateID = 30;
 
 cmdLength = 17;
 headerLength = 13;
@@ -293,17 +291,11 @@ delete(instrfindall)
     set(hTabGroup, 'SelectedTab',hTabs(1));
     Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     
-%     if get(hTabGroup,'SelectedTab') == hTabs(1)
-%         disp('Tab1 selected');
-%     end
-%     if get(hTabGroup,'SelectedTab') == hTabs(2)
-%         disp('Motors selected');
-%     end
+    if get(hTabGroup,'SelectedTab') == hTabs(1)
+        disp('Tab1 selected');
+    end
 %     if get(hTabGroup,'SelectedTab') == hTabs(3)
-%         disp('Tab1 selected');
-%     end
-%     if get(hTabGroup,'SelectedTab') == hTabs(4)
-%         disp('Tab1 selected');
+%         disp('Tab3 selected');
 %     end
 
     function tabGroupCallBack(~,~)
@@ -537,28 +529,28 @@ delete(instrfindall)
         'Parent',hTabs(2), 'Position',[ 305 310 50 50 ]);
     
     m1Txt = uicontrol('Style','text', 'String','0', ...
-        'Position', [315 313 30 35],...
+        'Position', [320 327 20 25],...
         'Parent',hTabs(2), 'FontSize',13,'FontWeight','normal');
     
     uicontrol('Style','frame', ...
         'Parent',hTabs(2), 'Position',[ 140 175 50 50 ]);
     
     m2Txt = uicontrol('Style','text', 'String','0', ...
-        'Position', [154 178 20 35],...
+        'Position', [155 192 20 25],...
         'Parent',hTabs(2), 'FontSize',13,'FontWeight','normal');
     
     uicontrol('Style','frame', ...
         'Parent',hTabs(2), 'Position',[ 305 30 50 50 ]);
     
     m3Txt = uicontrol('Style','text', 'String','0', ...
-        'Position', [318 34 20 35],...
+        'Position', [320 47 20 25],...
         'Parent',hTabs(2), 'FontSize',13,'FontWeight','normal');
     
     uicontrol('Style','frame', ...
         'Parent',hTabs(2), 'Position',[ 480 175 50 50 ]);
     
     m4Txt = uicontrol('Style','text', 'String','0', ...
-        'Position', [493 178 20 35],...
+        'Position', [495 192 20 25],...
         'Parent',hTabs(2), 'FontSize',13,'FontWeight','normal');
     
     % Sensors UI Components
@@ -575,106 +567,27 @@ delete(instrfindall)
     
     %% button callbacks
     function upCallback(src,eventData)
-       %fprintf(xbee,'w');
-       if tenzo == true
-         % Initialize the cmd array
-         cmd = zeros(8,4,'uint8');
-         cmd(1,1) = uint8(motorsID);
-         % Sends 1 to activate PID
-         bits = reshape(bitget(5 + 100,32:-1:1),8,[]);
-         cmd(2,:) = weights2*bits;
-         sendMess(cmd);
-       end
+       fprintf(xbee,'w');
     end
 
     function up1Callback(src,eventData)
-       %fprintf(xbee,'E');
-       if tenzo == true
-         % Initialize the cmd array
-         cmd = zeros(8,4,'uint8');
-         cmd(1,1) = uint8(motorsID);
-         % Sends 1 to activate PID
-         bits = reshape(bitget((100 + 2),32:-1:1),8,[]);
-         cmd(2,:) = weights2*bits;
-         sendMess(cmd);
-       end
+           fprintf(xbee,'E');
     end
 
     function downCallback(src,eventData)
-       %fprintf(xbee,'s');
-       if tenzo == true
-         % Initialize the cmd array
-         cmd = zeros(8,4,'uint8');
-         cmd(1,1) = uint8(motorsID);
-         % Sends 1 to activate PID
-         bits = reshape(bitget((100 - 5),32:-1:1),8,[]);
-         cmd(2,:) = weights2*bits;
-         sendMess(cmd);
-       end
+       fprintf(xbee,'s');
     end
 
     function down1Callback(src,eventData)
-       %fprintf(xbee,'D');
-       if tenzo == true
-         % Initialize the cmd array
-         cmd = zeros(8,4,'uint8');
-         cmd(1,1) = uint8(motorsID);
-         % Sends 1 to activate PID
-         bits = reshape(bitget((100 - 2),32:-1:1),8,[]);
-         cmd(2,:) = weights2*bits;
-         sendMess(cmd);
-       end
+       fprintf(xbee,'D');
     end
 
     function initializeCallback(src,eventData)
-       %fprintf(xbee,'i');
-       if tenzo == true
-            if takeOffAck == 0
-                % Initialize the cmd array
-                cmd = zeros(8,4,'uint8');
-                cmd(1,1) = uint8(takeOffID);
-                %cmd(2,4) = uint8(defaultAlt);
-                bits = reshape(bitget(defaultAlt,32:-1:1),8,[]);
-                cmd(2,:) = weights2*bits;
-                sendMess(cmd);
-                if speakCmd && vocalVerb>=1 
-                        %tts('Decollo programmato',voice);
-                        tts('Starting take off protocol.',voice);
-                end
-            else
-               warndlg('Tenzo already out in space. Connection blocked. Protocol 1','!! DANGER !!') 
-               % you can start take off protocol automatically
-            end  
-        else
-            warndlg('Connection Required. Establish serial communication first and retry','!! Warning !!') 
-            % you can start the connection automatically
-        end
+       fprintf(xbee,'i');
     end
 
     function resetCallback(src,eventData)
-       %fprintf(xbee,'r');
-       if tenzo == true
-            if takeOffAck == 1
-                % Initialize the cmd array
-                cmd = zeros(8,4,'uint8');
-                cmd(1,1) = uint8(landID);
-                %cmd(2,4) = uint8(defaultAlt);
-                bits = reshape(bitget(landingSpeed,32:-1:1),8,[]);
-                cmd(2,:) = weights2*bits;
-                sendMess(cmd);
-                % wait for feedback from Tenzo and change state of btn
-                if speakCmd && vocalVerb>=1 
-                        %tts('atterraggio programmato',voice);
-                        tts('Starting land protocol.',voice);
-                end
-            else
-               warndlg('Tenzo is not in hovering mode. First Take Off then try again. ','!! Warning !!') 
-               % you can start take off protocol automatically
-            end  
-        else
-            warndlg('Connection Required. Establish serial communication first and retry','!! Warning !!') 
-            % you can start the connection automatically
-        end
+       fprintf(xbee,'r');
     end
 
     function landCallback(src,eventData)
@@ -769,55 +682,19 @@ delete(instrfindall)
     end
 
     function testM1Callback(src,eventData)
-       if tenzo == true
-        % fprintf(xbee,'1');
-         % Initialize the cmd array
-        cmd = zeros(8,4,'uint8');
-        cmd(1,1) = uint8(motorsID);
-        % Sends 1 to activate PID
-        bits = reshape(bitget(10 + 100,32:-1:1),8,[]);
-        cmd(2,:) = weights2*bits;
-        sendMess(cmd);
-       end
+       fprintf(xbee,'1');
     end
     
     function testM2Callback(src,eventData)
-       if tenzo == true
-        % fprintf(xbee,'2');
-         % Initialize the cmd array
-        cmd = zeros(8,4,'uint8');
-        cmd(1,1) = uint8(motorsID);
-        % Sends 1 to activate PID
-        bits = reshape(bitget(10 + 100,32:-1:1),8,[]);
-        cmd(3,:) = weights2*bits;
-        sendMess(cmd);
-       end
+       fprintf(xbee,'2'); 
     end
 
     function testM3Callback(src,eventData)
-       if tenzo == true
-        % fprintf(xbee,'3');
-         % Initialize the cmd array
-        cmd = zeros(8,4,'uint8');
-        cmd(1,1) = uint8(motorsID);
-        % Sends 1 to activate PID
-        bits = reshape(bitget(10 + 100,32:-1:1),8,[]);
-        cmd(4,:) = weights2*bits;
-        sendMess(cmd);
-       end
+       fprintf(xbee,'3'); 
     end
 
     function testM4Callback(src,eventData)
-       if tenzo == true
-        % fprintf(xbee,'4');
-         % Initialize the cmd array
-        cmd = zeros(8,4,'uint8');
-        cmd(1,1) = uint8(motorsID);
-        % Sends 1 to activate PID
-        bits = reshape(bitget(10 +100,32:-1:1),8,[]);
-        cmd(5,:) = weights2*bits;
-        sendMess(cmd);
-       end 
+       fprintf(xbee,'4'); 
     end
 
     function pidKpSliderCallBack(src,eventData)
@@ -1136,7 +1013,7 @@ delete(instrfindall)
             else
                 disp ('Sending 19 to Arduino.');
                 % Received something else
-                disp ('sending 19 to Arduino'); 
+                disp ('sending 19 to Arduino');  
                 fwrite(xbee,19);
                 tenzo = false;
                 set(connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
@@ -1147,7 +1024,6 @@ delete(instrfindall)
                 end
                 disp ('Communication problem. Check Hardware and retry.');
                 warndlg('Communication busy. Press OK and reconnect','!! Warning !!')
-                set(connect,'Value',1);
             end
         end
 
@@ -1492,7 +1368,7 @@ delete(instrfindall)
                     disp(i+1);
 
                     if type == 0 
-                        % empty cmd
+                        % Motors
                         disp('Unset');
                         break;
                     end
@@ -1501,11 +1377,7 @@ delete(instrfindall)
                         disp('Motors');
                         speed1 = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
                         disp('speed:');
-                        disp(speed1);
-                        m1Txt.set(String,speed1);
-                        m2Txt.set(String,speed1);
-                        m3Txt.set(String,speed1);
-                        m4Txt.set(String,speed1);
+                        disp(speed1);                       
                     end
                     if type == accID 
                         disp('Accelerations');
@@ -2011,7 +1883,7 @@ delete(instrfindall)
                         if hoverAck == 1
                             if speakCmd && vocalVerb>=2 
                                     %tts('Pid abilitato',voice);
-                                    tts('PID enabled.',voice);
+                                    tts('PID enabled. Safe flight',voice);
                             end
                             set(hoverBtn,'String','NoPid');
                             disp('Pid enabled');
@@ -2040,49 +1912,75 @@ delete(instrfindall)
                         end
                         break;
                     end
-                    if type == tenzoStateID 
-                        % Tenzo State
-                        disp('Reading state'); 
-                        takeOffAck = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');
-                        hoverAck = typecast([uint8(mess(typei + 5)), uint8(mess(typei + 6)),uint8(mess(typei + 7)), uint8(mess(typei + 8))], 'int32');
-                        landAck = typecast([uint8(mess(typei + 9)), uint8(mess(typei + 10)),uint8(mess(typei + 11)), uint8(mess(typei + 12))], 'int32');
-                        if takeOffAck == 1
-                            if speakCmd && vocalVerb>=1 
-                                    %tts('Decollato',voice);
-                                    tts('Tenzo is flying',voice);
-                            end
-                            set(takeOffBtn,'String','Flying');
-                            set(landBtn,'String','Land');
-                        else                            
-                            set(takeOffBtn,'String','Take Off');
-                        end                      
-                        
-                        if landAck == 1    
-                            if speakCmd && vocalVerb>=1 
-                                    %tts('Atterrato',voice);
-                                    tts('Landed.',voice);
-                            end                       
-                            set(landBtn,'String','Landed'); 
-                            set(takeOffBtn,'String','Take Off');
-                            takeOffAck = 0;
-                        end
-                        if hoverAck == 1
-                            if speakCmd && vocalVerb>=2 
-                                    %tts('Pid abilitato',voice);
-                                    tts('PID enabled.',voice);
-                            end
-                            set(hoverBtn,'String','NoPid');
-                            disp('Pid enabled');
-                        else    
-                            if speakCmd && vocalVerb>=2 
-                                    %tts('pid disabilitato',voice);
-                                    tts('PID disabled',voice);
-                            end                        
-                            set(hoverBtn,'String','iHoverPid');
-                            disp('Unsafe hovering OR Landed');
-                        end
-                    end  
-                end
+            end
+%             while (get(xbee, 'BytesAvailable')~=0 && tenzo == true)
+%                 % read until terminator
+%                 sentence = fscanf( xbee, '%s') % this reads in as a string (until a terminater is reached)
+%                 if (strcmp(sentence(1,1),'R'))
+%                     %decodes "sentence" seperated (delimted) by commaseck Unit')
+%                     [Roll, theta, Pitch, pitch, Yaw, yaw, KalmanRoll, kr, KalmanPitch, kp, OmegaX, wx, OmegaY, wy, OmegaZ, wz, AccX, ax, AccY, ay, AccZ, az, Motor, omegaR] = strread(sentence,'%s%f%s%f%s%f%s%f%s%f%s%f%s%f%s%f%s%f%s%f%s%f%s%f',1,'delimiter',',');
+% 
+%                     % get motors speed value
+%                     omega = omegaR;
+%                     set(m1Txt,'String',omega); 
+%                     set(m2Txt,'String',omega); 
+%                     set(m3Txt,'String',omega); 
+%                     set(m4Txt,'String',omega); 
+%                     
+% %                     % Gets gyro data                    
+% %                     gxdata = [ gxdata(2:end) ; wx ];
+% %                     gydata = [ gydata(2:end) ; wy ];
+% %                     gzdata = [ gzdata(2:end) ; wz ];
+%                     
+%                     if gyrosco == true
+%                         % Filters gyro data and stores them
+%                         gxFilt = (1 - alpha)*gxFilt + alpha*wx;
+%                         gyFilt = (1 - alpha)*gyFilt + alpha*wy;
+%                         gzFilt = (1 - alpha)*gzFilt + alpha*wz;
+% 
+%                         gxFdata = [ gxFdata(2:end) ; gxFilt ];
+%                         gyFdata = [ gyFdata(2:end) ; gyFilt ];
+%                         gzFdata = [ gzFdata(2:end) ; gzFilt ];
+%                     end
+%                     
+%                     if magneto == true
+%                         % Gets Magnetometer and Estimated angles
+%                         if (theta>90)
+%                             theta = theta - 360;
+%                         end
+%                         if (pitch > 90)
+%                             pitch =  pitch - 360;
+%                         end 
+% 
+%                         % Apply noise filtering
+%                         % Uncomment for noise filtering
+%     %                     TFilt = (1 - alpha)*TFilt + alpha*theta;
+%     %                     PFilt = (1 - alpha)*PFilt + alpha*pitch;
+%     %                     YFilt = (1 - alpha)*YFilt + alpha*yaw;
+% 
+%     %                     Rdata = [ Rdata(2:end) ; TFilt ];
+%     %                     Pdata = [ Pdata(2:end) ; PFilt ];
+%     %                     Ydata = [ Ydata(2:end) ; YFilt ]; 
+% 
+%                         Rdata = [ Rdata(2:end) ; theta ];
+%                         Pdata = [ Pdata(2:end) ; pitch ];
+%                         Ydata = [ Ydata(2:end) ; yaw ]; 
+% 
+%                         TFilt = (1 - alpha)*TFilt + alpha*kr;
+%                         PFilt = (1 - alpha)*PFilt + alpha*kp;
+% 
+%                         EKXdata = [ EKXdata(2:end) ; TFilt ];
+%                         EKYdata = [ EKYdata(2:end) ; PFilt ];
+%                     end
+%                     
+%                     if accelero == true
+%                         % Gets Accelerometer data
+%                         axdata = [ axdata(2:end) ; ax ];
+%                         aydata = [ aydata(2:end) ; ay ];
+%                         azdata = [ azdata(2:end) ; az ];  
+%                     end
+%                 end
+%             end
             end %Message delivered from Arduino
        end
     end  

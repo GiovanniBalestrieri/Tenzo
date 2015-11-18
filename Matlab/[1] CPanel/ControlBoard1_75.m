@@ -138,10 +138,6 @@ global consYawKp;
 global consYawKd;
 global consYawKi;
 global rt;
-global firing;
-global recording;
-global plotting;
-global asked;
 global axdata;
 global aydata;
 global azdata;
@@ -264,22 +260,7 @@ gyroReceived = false;
 magnReceived = false;
 estReceived = false;
 
-% Data aquisiton boolean vars
-rt = false;
-recording = false;
-firing = false;
-plotting = false;
-asked = false;
-
 doubleAnglePlot = false;
-
-%% Data acquisition variables
-
-contSamples = 0;
-ax = 0;
-ay = 0;
-az = 0;
-time = 0;
 
 %% Vocal settings
 
@@ -858,79 +839,7 @@ function recordCallback(obj,event,handles)
         end
     end
     
-    function recordCallback1(obj,event,handles)
-        disp('Record Pressed');
-        plotting = ~plotting
-        serialFlag;
-        if plotting == 1
-            % waiting for the connection to be established
-            %disp(abs(az));
-            %disp(asked);     
-            while (serialFlag == 1 && abs(az) >= -0.5)               
-                % Request High Res data 
-                fwrite(acceleration.s,84);
-                
-                [ax ay az t,receiving] = readAcc1_05(acceleration)
-                receiving
-                if (receiving)
-                    figure(2);
-
-                    cla;
-
-                    axdata = [ axdata(2:end) ; ax ];
-                    aydata = [ aydata(2:end) ; ay ];
-                    azdata = [ azdata(2:end) ; az ];    
-                    time   = [time(2:end) ; t/1000];
-
-                    deltaT = t - prevTimer
-                    prevTimer = t;
-                    h11 = subplot(3,1,1);
-
-                    title('Acc X');    
-                    axis([1 buffLen -0.5 0.5]);
-                    xlabel('time [ms]')
-                    ylabel('Magnitude of X acc [m*s^-2]'); 
-                    plot(h11,index,axdata(901:1000),'r');
-                    grid on;
-
-                    h12 = subplot(3,1,2);
-
-                    title('Acc Y');      
-                    axis([1 buffLen -0.5 0.5]);          
-                    xlabel('time [ms]')
-                    ylabel('Magnitude of Y acc [m*s^-2]');
-                    plot(h12,index,aydata(901:1000),'r');
-                    grid on;         
-
-                    h13 = subplot(3,1,3);
-
-                    title('Acc Z');
-                    axis([1 buffLen -1.5 1.5]);                
-                    xlabel('time [ms]')
-                    ylabel('Magnitude of Z acc [m*s^-2]');
-                    plot(h13,index,azdata(901:1000),'r');
-                    grid on;         
-
-                    if ((time(900) >= 0) && (time(1000)>0))
-                        figure(3);       
-                        title('Acc X');
-                        axis([time(950) time(1000) -1.5 1.5]);                
-                        xlabel('time [ms]')
-                        ylabel('Magnitude of X acc [m*s^-2]');
-                        plot (time(901:1000),axdata(901:1000),'b');
-                        grid on;        
-                    end
-                    drawnow;
-                end
-            end
-        end
-    end
-    
     function rtCallback(obj,event,h)
-        %disp('RT pressed');
-        rt = ~rt;
-    
-        % waiting for the connection to be established
         disp('RT pressed');
         rt = ~rt
         disp(serialFlag);
