@@ -155,6 +155,9 @@ global samplesNumMax;
 global timerArduino;
 global timerConnect;
 global requestPending;
+global serial1;
+global serial0;
+global serial2;
 
 % Version
 
@@ -193,6 +196,9 @@ azdataDa = zeros(buffLenDa,1);
 time  = zeros(buffLenDa,1);
 
 % Serial protocol
+serial1 = false;
+serial0 = false;
+serial2 = true;
 
 versionProtocol = 5;
 % command Map
@@ -1595,17 +1601,19 @@ delete(instrfindall)
             timerXbee = timer('ExecutionMode','FixedRate','Period',0.1,'TimerFcn',{@storeDataFromSerial});
             start(timerXbee);  
             
-            cmd = 'c';
-            sendNMess(cmd);
-            
-            % BYTE-WISE Comm
-            % Initialize the cmd array
-            %cmd = zeros(8,4,'uint8');
-            %cmd(1,1) = uint8(connID);
-            % %cmd(2,4) = uint8(defaultAlt);
-            %bits = reshape(bitget(1,32:-1:1),8,[]);
-            %cmd(2,:) = weights2*bits;
-            %sendMess(cmd);
+            if (serial2)
+                cmd = 'c';
+                sendNMess(cmd);
+            elseif (serial1 || serial0)
+                %BYTE-WISE Comm
+                % Initialize the cmd array
+                cmd = zeros(8,4,'uint8');
+                cmd(1,1) = uint8(connID);
+                % %cmd(2,4) = uint8(defaultAlt);
+                bits = reshape(bitget(1,32:-1:1),8,[]);
+                cmd(2,:) = weights2*bits;
+                sendMess(cmd);
+            end
             
 %             fwrite(xbee,16); 
 %             disp('Ack Requested.');
@@ -1955,6 +1963,8 @@ delete(instrfindall)
     function storeDataFromSerial(obj,event,handles)
         handles = guidata(gcf);
         while (get(xbee, 'BytesAvailable')~=0)
+            if (serial2)
+                serialProtocol2();
             if (serial1)
                 serialProtocol1();
             elseif (serial0)
@@ -1962,6 +1972,15 @@ delete(instrfindall)
             end
         end
     end 
+    
+        function serialProtocol2()
+            [mess,count] = fread(xbee);
+            disp('Reading incoming buffer. Dimensions:');
+            % Debug stuff
+
+                disp(count);
+            disp(mess);            
+        end
 
     function serialProtocol0()        
             [mess,count] = fread(xbee);
