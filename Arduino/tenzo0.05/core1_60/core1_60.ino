@@ -543,7 +543,6 @@ void setup() {
   sakura.welcome();
   tenzoProp.calibrateOnce();
   tenzoProp.init();
-  //Serial.println("K");
 }
 
 void loop() {  

@@ -110,7 +110,7 @@ global pidRead;
 global timerXbee;
 global gyroTimer;
 
-%% Pid Tuning
+% Pid Tuning
 global aggAltKp;
 global aggAltKd;
 global aggAltKi;
@@ -156,11 +156,11 @@ global timerArduino;
 global timerConnect;
 global requestPending;
 
-%% Version
+% Version
 
 version = 2.00;
 
-%% Data Acquisition vars
+% Data Acquisition vars
 
 samplesNumMax = 1000;
 acceleration.s = 0;
@@ -192,7 +192,7 @@ aydataDa = zeros(buffLenDa,1);
 azdataDa = zeros(buffLenDa,1);
 time  = zeros(buffLenDa,1);
 
-%% Serial protocol
+% Serial protocol
 
 versionProtocol = 5;
 % command Map
@@ -271,7 +271,7 @@ asked = false;
 
 doubleAnglePlot = false;
 
-%% Data acquisition variables
+% Data acquisition variables
 
 contSamples = 0;
 ax = 0;
@@ -290,7 +290,7 @@ it = 'Microsoft Elsa Desktop - Italian (Italy)';
 us = 'Microsoft Zira Desktop - English (United States)';
 voice = uk;
 vocalVerb = 2;
-%% Plot variables
+% Plot variables
 
 buf_len = 100;
 index = 1:buf_len;
@@ -341,7 +341,7 @@ pidStrategy ='U';
 pidModeStrategy = 'U';
 pidRead = 0;
 
-%% variables declaration
+% variables declaration
 
 takeOffAck = 0;
 hoverAck = -7;
@@ -403,7 +403,7 @@ delete(instrfindall)
         end
     end
 
-    %% Data Acquisition panel
+    % Data Acquisition panel
 
     if (~exist('handles.plot','var'))
         handles.record = uicontrol('Style','togglebutton', 'String','Record', ...
@@ -1594,13 +1594,18 @@ delete(instrfindall)
             %% Testing Wireless communication
             timerXbee = timer('ExecutionMode','FixedRate','Period',0.1,'TimerFcn',{@storeDataFromSerial});
             start(timerXbee);  
+            
+            cmd = 'c';
+            sendNMess(cmd);
+            
+            % BYTE-WISE Comm
             % Initialize the cmd array
-            cmd = zeros(8,4,'uint8');
-            cmd(1,1) = uint8(connID);
-            %cmd(2,4) = uint8(defaultAlt);
-            bits = reshape(bitget(1,32:-1:1),8,[]);
-            cmd(2,:) = weights2*bits;
-            sendMess(cmd);
+            %cmd = zeros(8,4,'uint8');
+            %cmd(1,1) = uint8(connID);
+            % %cmd(2,4) = uint8(defaultAlt);
+            %bits = reshape(bitget(1,32:-1:1),8,[]);
+            %cmd(2,:) = weights2*bits;
+            %sendMess(cmd);
             
 %             fwrite(xbee,16); 
 %             disp('Ack Requested.');
@@ -1625,6 +1630,20 @@ delete(instrfindall)
             %disp('Receiving: ');
             %disp(ack);
         end 
+    end
+
+    %% Send topics
+    function sendNMess(obj)
+        disp(obj);
+        
+        fprintf(xbee,obj);    
+        
+        disp('Tot bytes sent');
+        xbee.ValuesSent
+        
+        % Command
+
+        %s = struct('H',value1,'C1',valueN)
     end
 
     %% Send topics
@@ -1704,7 +1723,7 @@ delete(instrfindall)
     end
 
     %% Plot Theta phi psi
-    function graphAngles(obj,event,handles)
+    function graphAngles(obj,event,~)
         % To debug uncomment the following line
         %disp('Angles');
         anglesRequested = true;

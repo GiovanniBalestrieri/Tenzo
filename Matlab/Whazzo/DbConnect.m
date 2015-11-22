@@ -1,10 +1,24 @@
- conn = database('whazzo','userk','whazzart','com.mysql.jdbc.Driver','jdbc:mysql://localhost:3306/whazzo')
+ conn = database('whazzo','userk','noisecontrol','com.mysql.jdbc.Driver','jdbc:mysql://localhost:3306/whazzo')
+ 
+   sqlquery = ['show columns FROM user_interest;'];
+   curs = exec(conn, sqlquery);
+   curs = fetch(curs);
+   generi = curs.data;
+   generi(4,1)
  
    sqlquery = ['SELECT name FROM generi;'];
    curs = exec(conn, sqlquery);
    curs = fetch(curs);
-   generi = curs.data
-   generi(4,1);
+   generi = curs.data;
+   generi(4,1)
+   
+   sqlquery = ['SELECT name FROM user_interest;'];
+   curs = exec(conn, sqlquery);
+   curs = fetch(curs);
+   generi = curs.data;
+   generi(4,1)
+   
+   
    
 %%
 conn = database('matlab','root','',['/Library/Java/Extensions/'...
