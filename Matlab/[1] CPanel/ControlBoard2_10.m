@@ -159,10 +159,18 @@ global serial1;
 global serial0;
 global serial2;
 global tenzoConnectionRequested;
+global accTag;
+global timerTag;
+global gyroTag;
 % Version
 
 version = 2.10;
 
+% Serial Protocol 2 - Bluetooth
+
+accTag = 'a';
+gyroTag = 'o';
+timerTag = 't';
 % Data Acquisition vars
 
 samplesNumMax = 1000;
@@ -1919,6 +1927,7 @@ delete(instrfindall)
     end
 
     %% Plot angular velocities
+    % #Gyro
     function graphGyro(obj,event,handles)
         % To debug uncomment the following line
         %disp('Gyro');
@@ -1944,6 +1953,7 @@ delete(instrfindall)
     end
 
     %% Plot accelerations
+    % #Acceleration
     function graphAcc(obj,event,handles)
         % To debug uncomment the following line
         %disp('Acc');
