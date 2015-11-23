@@ -30,7 +30,7 @@ function wav = tts(txt,voice,pace,fs)
 
 % Written by Siyi Deng; 12-21-2007;
 
-if ~ispc, error('Microsoft Win32 SAPI is required.'); end
+%if ~ispc, error('Microsoft Win32 SAPI is required.'); end
 if ~ischar(txt), error('First input must be string.'); end
 
 SV = actxserver('SAPI.SpVoice');

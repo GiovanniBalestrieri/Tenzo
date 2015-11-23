@@ -158,7 +158,7 @@ global requestPending;
 global serial1;
 global serial0;
 global serial2;
-
+global tenzoConnectionRequested;
 % Version
 
 version = 2.00;
@@ -290,7 +290,7 @@ time = 0;
 % Disable vocal acks: speakCmd = false
 % Set default voice: voice = it
 % Set verbosity level: vocalVerb: 1 = max -> n = min;
-speakCmd = true;
+speakCmd = false;
 uk = 'Microsoft Hazel Desktop - English (Great Britain)';
 it = 'Microsoft Elsa Desktop - Italian (Italy)';
 us = 'Microsoft Zira Desktop - English (United States)';
@@ -772,7 +772,6 @@ delete(instrfindall)
 
     function stopCallback(obj,event,handles)
         if (~exist('serialFlag','var')) 
-            %[acceleration.arduino,serialFlag] = setupSerial1_00();
             disp('disconnect');
         end 
     end 
@@ -1601,9 +1600,13 @@ delete(instrfindall)
             timerXbee = timer('ExecutionMode','FixedRate','Period',0.1,'TimerFcn',{@storeDataFromSerial});
             start(timerXbee);  
             
+            % variable tenzo defines the connection status
+            tenzo = false;
+            
             if (serial2)
                 cmd = 'c';
                 sendNMess(cmd);
+                tenzoConnectionRequested = true;
             elseif (serial1 || serial0)
                 %BYTE-WISE Comm
                 % Initialize the cmd array
@@ -1625,13 +1628,22 @@ delete(instrfindall)
 
         if get(handles.connect,'Value') == 0
             disp ('Disconnecting...');             
+            tenzo = false;
             
-            % Initialize the cmd array
-            cmd = zeros(8,4,'uint8');
-            cmd(1,1) = uint8(connID);
-            bits = reshape(bitget(0,32:-1:1),8,[]);
-            cmd(2,:) = weights2*bits;
-            sendMess(cmd);
+            
+            if (serial1 || serial0)
+                % Initialize the cmd array
+                cmd = zeros(8,4,'uint8');
+                cmd(1,1) = uint8(connID);
+                bits = reshape(bitget(0,32:-1:1),8,[]);
+                cmd(2,:) = weights2*bits;
+                sendMess(cmd);
+            elseif (serial2)
+                cmd = 'X';
+                sendNMess(cmd);
+            end
+            
+            set(handles.connect,'String','Connect');
             %fwrite(xbee,20);
             % Waiting for ack
             %ack = fread(xbee);
@@ -1973,14 +1985,53 @@ delete(instrfindall)
         end
     end 
     
-        function serialProtocol2()
-            [mess,count] = fread(xbee);
-            disp('Reading incoming buffer. Dimensions:');
-            % Debug stuff
-
-                disp(count);
-            disp(mess);            
+    function serialProtocol2()
+        [mess,count] = fscanf(xbee);
+        disp('Reading incoming buffer. Dimensions:');
+        % Debug stuff
+tenzoConnectionRequested
+        disp(count);
+        disp(mess);    
+        strcmp(deblank(mess),'K')
+        if (tenzo == false)
+            if (strcmp(deblank(mess),'K') && tenzoConnectionRequested)
+                tenzo = true;
+                set(handles.connect,'String','Disconnect');
+                set(handles.conTxt,'ForegroundColor', [.21 .96 .07],'String','Online');    
+                disp ('Connection established. Rock & Roll!'); 
+                if speakCmd && vocalVerb>=1 
+                        %tts('Connessione eseguita',voice);
+                        tts('Connection Established',voice);
+                end
+                tenzoConnectionRequested = false;
+            elseif (~strcmp(mess,'K') &&  tenzoConnectionRequested)
+                tenzo = false;
+                set(handles.connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
+                set(handles.conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
+                if speakCmd && vocalVerb>=1 
+                    %    tts('Problema di connessione',voice);
+                        tts('Connection problem',voice);
+                end
+                disp ('Communication problem. Check Hardware and retry.');            
+            elseif (strcmp(mess,'X'))
+                tenzo = false;
+                %delete(timerXbee);
+                %set(connect,'String','Connect');
+                set(handles.connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
+                set(handles.conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
+                disp('Connection closed...');
+                if speakCmd && vocalVerb>=1 
+                    tts('Connection closed',voice);
+                end
+                stop(timerXbee);
+                fclose(xbee);
+            end
+        elseif (tenzo)
+            % Communication established
+            
         end
+        
+    end
 
     function serialProtocol0()        
             [mess,count] = fread(xbee);
