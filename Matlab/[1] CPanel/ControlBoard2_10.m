@@ -163,6 +163,7 @@ global accTag;
 global timerTag;
 global gyroTag;
 global footerTag;
+global estTag;
 % Version
 
 version = 2.10;
@@ -173,7 +174,7 @@ accTag = 'a';
 gyroTag = 'o';
 timerTag = 't';
 footerTag = 'z';
-
+estTag = 'e';
 % Data Acquisition vars
 
 samplesNumMax = 1000;
@@ -2073,36 +2074,36 @@ delete(instrfindall)
                     %Plot the X magnitude
                     h1 = subplot(3,1,1,'Parent',hTabs(3));
                     %set(hAx,'title','X angular velocity in deg/s');
-                    grid on;
                     if filterAcc
                         plot(h1,index,axdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                     else
                         plot(h1,index,axdata,'r','LineWidth',2);
                     end
+                    grid on;
                     %xlabel('Time');
                     %ylabel('Wx');
                     %axis([1 buf_len -80 80]);
                     %hold on;
                     h2 = subplot(3,1,2,'Parent',hTabs(3));
                     %title('Y angular velocity in deg/s');
-                    grid on;
                     if filterAcc
                         plot(h2,index,aydata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                     else
                         plot(h2,index,aydata,'b','LineWidth',2);
                     end
+                    grid on;
                     %xlabel('Time');
                     %ylabel('Wy Acc');
                     %axis([1 buf_len -80 80]);
                     h3 = subplot(3,1,3,'Parent',hTabs(3));
                     %title('Z angular velocity in deg/s');
                     %hold on;
-                    grid on;
                     if filterAcc
                         plot(h3,index,azdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                     else
                         plot(h3,index,azdata,'g','LineWidth',2);
                     end
+                    grid on;
                     %axis([1 buf_len -80 80]);
                     %xlabel('Time');
                     %ylabel('Wz Acc');
@@ -2132,7 +2133,6 @@ delete(instrfindall)
                     %Plot the X magnitude
                     h1 = subplot(3,1,1,'Parent',hTabs(3));
                     %set(hAx,'title','X angular velocity in deg/s');
-                    grid on;
                     plot(h1,index,gxFdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                     %xlabel('Time');
                     %ylabel('Wx');
@@ -2150,6 +2150,8 @@ delete(instrfindall)
                     %title('Z angular velocity in deg/s');
                     %hold on;
                     plot(h3,index,gzFdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                    
+                    grid on;
                     %axis([1 buf_len -80 80]);
                     %xlabel('Time');
                     %ylabel('Wz Acc');    
