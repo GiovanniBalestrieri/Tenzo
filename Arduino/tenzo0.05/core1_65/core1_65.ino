@@ -751,6 +751,11 @@ void SerialRoutine()
          //sakura.setPrintOmegas(!sakura.getPrintOmegas()); 
          printOmega();
       }
+      else if (t == 'e')
+      {
+         //sakura.setPrintOmegas(!sakura.getPrintOmegas()); 
+         printSerialAngleFus();
+      }
       else if (t == 'z')
       {
         sakura.setPrintPIDVals(!sakura.getPrintPIDVals());
@@ -1311,7 +1316,7 @@ void printSerialAngleNew()
 
 void printSerialAngleFus()
 {
-  Serial.print("o");
+  Serial.print("f");
   Serial.print(",");
   Serial.print(estXAngle);
   Serial.print(",");

@@ -162,6 +162,7 @@ global tenzoConnectionRequested;
 global accTag;
 global timerTag;
 global gyroTag;
+global footerTag;
 % Version
 
 version = 2.10;
@@ -171,6 +172,8 @@ version = 2.10;
 accTag = 'a';
 gyroTag = 'o';
 timerTag = 't';
+footerTag = 'z';
+
 % Data Acquisition vars
 
 samplesNumMax = 1000;
@@ -255,13 +258,13 @@ outputBuffSize = 31;
 terminator = 'CR';
 tag = 'Quad';
 
-gyroTimer = timer('ExecutionMode','FixedRate','Period',1.5,'TimerFcn',{@graphGyro});
+gyroTimer = timer('ExecutionMode','FixedRate','Period',0.01,'TimerFcn',{@graphGyro});
 
 global angleTimer;
-angleTimer = timer('ExecutionMode','FixedRate','Period',1.5,'TimerFcn',{@graphAngles});
+angleTimer = timer('ExecutionMode','FixedRate','Period',0.02,'TimerFcn',{@graphAngles});
                           
 global accTimer;
-accTimer = timer('ExecutionMode','FixedRate','Period',1.5,'TimerFcn',{@graphAcc});
+accTimer = timer('ExecutionMode','FixedRate','Period',0.01,'TimerFcn',{@graphAcc});
           
 % Complementary and Kalman Filert values
 global KalmanRoll;
@@ -1662,12 +1665,12 @@ delete(instrfindall)
 
     %% Send topics
     function sendNMess(obj)
-        disp(obj);
+        %disp(obj);
         
         fprintf(xbee,obj);    
         
-        disp('Tot bytes sent');
-        xbee.ValuesSent
+        %disp('Tot bytes sent');
+        %xbee.ValuesSent
         
         % Command
 
@@ -1759,15 +1762,20 @@ delete(instrfindall)
         % Requests data only if previous ones have been received and plotted
         
         if estReceived || anglesRequested
-            %Initialize the cmd array
-            cmd = zeros(8,4,'uint8');
-            % You can send 
-            % cmd(1,1) = uint8(magnID); OR
-            cmd(1,1) = uint8(estID);
-            % Sends 1 to activate PID
-            bits = reshape(bitget(0,32:-1:1),8,[]);
-            cmd(2,:) = weights2*bits;
-            sendMess(cmd);
+            if (serial1 || serial0)
+                %Initialize the cmd array
+                cmd = zeros(8,4,'uint8');
+                % You can send 
+                % cmd(1,1) = uint8(magnID); OR
+                cmd(1,1) = uint8(estID);
+                % Sends 1 to activate PID
+                bits = reshape(bitget(0,32:-1:1),8,[]);
+                cmd(2,:) = weights2*bits;
+                sendMess(cmd);
+            elseif (serial2)
+               cmd = 'e';
+               sendNMess(cmd);
+            end
         else
             disp('Not received yet Gyro');
         end
@@ -2003,14 +2011,16 @@ delete(instrfindall)
         end
     end 
     
+    %% Serial Protocol 2.0 Bluetooth
+    % #bluetooth
     function serialProtocol2()
         [mess,count] = fscanf(xbee);
-        disp('Reading incoming buffer. Dimensions:');
+        %disp('Reading incoming buffer. Dimensions:');
         % Debug stuff
-        disp(count);
-        disp(mess);    
-        mess = deblank(mess)
-        strcmp(deblank(mess),'K')
+        %disp(count);
+        %disp(mess);    
+        mess = deblank(mess);
+        
         if (tenzo == false)
             if (strcmp(mess,'K') && tenzoConnectionRequested)
                 tenzo = true;
@@ -2047,9 +2057,165 @@ delete(instrfindall)
         elseif (tenzo)
             % Communication established
             tag = mess(1);
-            footer = mess(size(mess,2))
+            footer = mess(size(mess,2));
+            % if message is correct
             if footer == footerTag
-               disp('porcoZio'); 
+                if tag == accTag
+                    %disp('Accelerations');
+                    % Acc
+                    [R,accXr,accYr,accZr,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                     if accelero == true
+                        % Gets Accelerometer data
+                        axdata = [ axdata(2:end) ; double(accXr) ];
+                        aydata = [ aydata(2:end) ; double(accYr) ];
+                        azdata = [ azdata(2:end) ; double(accZr) ];  
+                    end               
+                    %Plot the X magnitude
+                    h1 = subplot(3,1,1,'Parent',hTabs(3));
+                    %set(hAx,'title','X angular velocity in deg/s');
+                    grid on;
+                    if filterAcc
+                        plot(h1,index,axdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                    else
+                        plot(h1,index,axdata,'r','LineWidth',2);
+                    end
+                    %xlabel('Time');
+                    %ylabel('Wx');
+                    %axis([1 buf_len -80 80]);
+                    %hold on;
+                    h2 = subplot(3,1,2,'Parent',hTabs(3));
+                    %title('Y angular velocity in deg/s');
+                    grid on;
+                    if filterAcc
+                        plot(h2,index,aydata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                    else
+                        plot(h2,index,aydata,'b','LineWidth',2);
+                    end
+                    %xlabel('Time');
+                    %ylabel('Wy Acc');
+                    %axis([1 buf_len -80 80]);
+                    h3 = subplot(3,1,3,'Parent',hTabs(3));
+                    %title('Z angular velocity in deg/s');
+                    %hold on;
+                    grid on;
+                    if filterAcc
+                        plot(h3,index,azdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                    else
+                        plot(h3,index,azdata,'g','LineWidth',2);
+                    end
+                    %axis([1 buf_len -80 80]);
+                    %xlabel('Time');
+                    %ylabel('Wz Acc');
+
+                    % Toggle ack 
+                    accReceived = true;
+                elseif tag == gyroTag
+                    % Gyro
+                    disp('Gyro');
+                    [R,wXr,wYr,wZr,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    if gyrosco == true
+                        if filterGyro
+                            % Filters gyro data and stores them
+                            gxFilt = (1 - alpha)*gxFilt + alpha*wXr;
+                            gyFilt = (1 - alpha)*gyFilt + alpha*wYr;
+                            gzFilt = (1 - alpha)*gzFilt + alpha*wZr;
+                        else
+                            gxFilt = wXr;
+                            gyFilt = wYr;
+                            gzFilt = wZr;
+                        end
+                            gxFdata = [ gxFdata(2:end) ; gxFilt ];
+                            gyFdata = [ gyFdata(2:end) ; gyFilt ];
+                            gzFdata = [ gzFdata(2:end) ; gzFilt ];                            
+                    end
+
+                    %Plot the X magnitude
+                    h1 = subplot(3,1,1,'Parent',hTabs(3));
+                    %set(hAx,'title','X angular velocity in deg/s');
+                    grid on;
+                    plot(h1,index,gxFdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                    %xlabel('Time');
+                    %ylabel('Wx');
+                    %axis([1 buf_len -80 80]);
+                    %hold on;
+                    grid on;
+                    h2 = subplot(3,1,2,'Parent',hTabs(3));
+                    %title('Y angular velocity in deg/s');
+                    plot(h2,index,gyFdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                    %xlabel('Time');
+                    %ylabel('Wy Acc');
+                    %axis([1 buf_len -80 80]);
+                    grid on;
+                    h3 = subplot(3,1,3,'Parent',hTabs(3));
+                    %title('Z angular velocity in deg/s');
+                    %hold on;
+                    plot(h3,index,gzFdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                    %axis([1 buf_len -80 80]);
+                    %xlabel('Time');
+                    %ylabel('Wz Acc');    
+
+                    % Toggle ack 
+                    gyroReceived = true;
+                elseif tag == estTag
+                     % Magn
+                    %disp('Est');
+                    [R,rollM,pitchM,bearingM,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    
+                    if magneto == true
+                        % Gets Magnetometer and Estimated angles
+                        if (rollM>90)
+                            rollM = rollM - 360;
+                        end
+                        if (pitchM > 90)
+                            pitchM =  pitchM - 360;
+                        end 
+
+                        if filterMagn
+                            % Apply noise filtering
+                            TFilt = (1 - alpha)*TFilt + alpha*rollM;
+                            PFilt = (1 - alpha)*PFilt + alpha*pitchM;
+                            YFilt = (1 - alpha)*YFilt + alpha*bearingM;
+
+                            Rdata = [ Rdata(2:end) ; TFilt ];
+                            Pdata = [ Pdata(2:end) ; PFilt ];
+                            Ydata = [ Ydata(2:end) ; YFilt ]; 
+                        else
+                            Rdata = [ Rdata(2:end) ; rollM ];
+                            Pdata = [ Pdata(2:end) ; pitchM ];
+                            Ydata = [ Ydata(2:end) ; bearingM]; 
+                        end
+                    else
+                        disp('Warning! Received magneto data but not requested');
+                    end
+
+                    %Plot the X magnitude
+                    h1 = subplot(3,1,1,'Parent',hTabs(3));
+                    %set(hAx,'title','X angular velocity in deg/s');
+                    plot(h1,index,Rdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                    %xlabel('Time');
+                    %ylabel('Wx');
+                    %axis([1 buf_len -80 80]);
+                    %hold on;
+                    grid on;
+                    h2 = subplot(3,1,2,'Parent',hTabs(3));
+                    %title('Y angular velocity in deg/s');
+                    plot(h2,index,Pdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                    %xlabel('Time');
+                    %ylabel('Wy Acc');
+                    %axis([1 buf_len -80 80]);
+                    grid on;
+                    h3 = subplot(3,1,3,'Parent',hTabs(3));
+                    %title('Z angular velocity in deg/s');
+                    %hold on;
+                    grid on;
+                    plot(h3,index,Ydata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                    %axis([1 buf_len -80 80]);
+                    %xlabel('Time');
+                    %ylabel('Wz Acc');    
+                    % Toggle ack 
+                    magnReceived = true;
+                
+                end
             end
             
         end
