@@ -2046,7 +2046,11 @@ delete(instrfindall)
             end
         elseif (tenzo)
             % Communication established
-            
+            tag = mess(1);
+            footer = mess(size(mess,2))
+            if footer == footerTag
+               disp('porcoZio'); 
+            end
             
         end
         

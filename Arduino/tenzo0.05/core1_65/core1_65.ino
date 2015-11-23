@@ -766,8 +766,7 @@ void SerialRoutine()
       }
       else if (t == 'l')
       {
-        //changePidState(false);
-        //enablePid = false;
+        printAcc();
       }         
       else if (t == 'b')
       {
