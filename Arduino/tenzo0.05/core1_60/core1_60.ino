@@ -880,18 +880,7 @@ void SerialRoutine()
   if (timerSec >= 1000000)
   {
     secRoutine = micros();
-    if (sakura.getPrintTimers())
-    {
-      //Serial.print(cont);
-      Serial.print("Samples rate: [sample/sec] ");
-      Serial.print(contSamples);
-      Serial.print("    ControlInput: ");
-      Serial.println(countCtrlAction);
-      Serial.print("    timeservo: ");
-      Serial.println(servoTime);
-      Serial.println();
-    }
-    
+    printTimers();
     cont=0;      
     contSamples=0;      
     contCalc=0; 
@@ -923,6 +912,24 @@ void SerialRoutine()
       servoTime = micros() - servoTime;
     }
   }
+}
+
+void printTimers()
+{
+    if (sakura.getPrintTimers())
+    {
+      // Print Samples rate: [sample/sec] 
+      Serial.print("t,");
+      Serial.print(contSamples);
+      // Print     ControlInput: 
+      Serial.print(",");
+      Serial.println(countCtrlAction);
+      // Print    timeservo: 
+      Serial.print(",");
+      Serial.print(servoTime);
+      Serial.println(",");
+      Serial.println();
+    }
 }
 
 void printRoutine()
