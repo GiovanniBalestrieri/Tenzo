@@ -680,6 +680,11 @@ void SerialRoutine()
       {
         // Serial communication        
         Serial.println("K");
+      }      
+      if (t == 'X')
+      {
+        // Serial communication        
+        Serial.println("X");
       } 
       else if (t == 'r')
         tenzoProp.resetMotors();

@@ -20,7 +20,7 @@
   boolean printPIDVals = false;
   boolean printSerialInfo = false;
   boolean printSerial = true;
-  boolean printTimers = true; 
+  boolean printTimers = false; 
   boolean printAccs = false;
   boolean printMotorsPid = false;
   boolean printOmegas = false;

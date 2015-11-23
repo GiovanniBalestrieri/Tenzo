@@ -1989,12 +1989,12 @@ delete(instrfindall)
         [mess,count] = fscanf(xbee);
         disp('Reading incoming buffer. Dimensions:');
         % Debug stuff
-tenzoConnectionRequested
         disp(count);
         disp(mess);    
+        mess = deblank(mess)
         strcmp(deblank(mess),'K')
         if (tenzo == false)
-            if (strcmp(deblank(mess),'K') && tenzoConnectionRequested)
+            if (strcmp(mess,'K') && tenzoConnectionRequested)
                 tenzo = true;
                 set(handles.connect,'String','Disconnect');
                 set(handles.conTxt,'ForegroundColor', [.21 .96 .07],'String','Online');    
