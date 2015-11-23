@@ -1965,7 +1965,7 @@ delete(instrfindall)
         while (get(xbee, 'BytesAvailable')~=0)
             if (serial2)
                 serialProtocol2();
-            if (serial1)
+            elseif (serial1)
                 serialProtocol1();
             elseif (serial0)
                 serialProtocol0();
