@@ -14,7 +14,7 @@ addpath('Reference/export/');
 
 %% Random Radial Basis functions in space 
 disp('3D case with random path - 10 rbf:');
-N = 20 % number of random functions
+N = 12 % number of random functions
 stepMesh = 0.1;
 Z = zeros((XMax-XMin)/stepMesh+1,(XMax-XMin)/stepMesh+1);
 [X,Y] = meshgrid(XMin:stepMesh:XMax);
@@ -45,19 +45,11 @@ start = surf(X,Y,Z,'LineStyle','none','FaceLighting','phong');
 
 %% Analyze data -  Post elaboration 
 % Contour[Required]
-% 
-% figure(2)
-% grid on
-% axis equal
-% % axis tight
-% % contour(X,Y,Z);
+
 figure(2)
  cl = contour(X,Y,Z,100);
 [x1,y1,z1] = C2xyz(cl);
-% 
-% % countours at 0.8
-% h=[0.8,0.8]
-% contour(X,Y,Z,h)
+
 %% isaolate regions of interest
 % Same ad the commented code above + more options
 figure(3)

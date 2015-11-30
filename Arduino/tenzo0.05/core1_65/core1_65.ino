@@ -1316,7 +1316,7 @@ void printSerialAngleNew()
 
 void printSerialAngleFus()
 {
-  Serial.print("f");
+  Serial.print("e");
   Serial.print(",");
   Serial.print(estXAngle);
   Serial.print(",");

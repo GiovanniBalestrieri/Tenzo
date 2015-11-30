@@ -1628,14 +1628,7 @@ delete(instrfindall)
                 bits = reshape(bitget(1,32:-1:1),8,[]);
                 cmd(2,:) = weights2*bits;
                 sendMess(cmd);
-            end
-            
-%             fwrite(xbee,16); 
-%             disp('Ack Requested.');
-%             ack = fread(xbee);
-%             disp('Receiving: ');
-%             disp(ack);
-            
+            end            
         end
 
         if get(handles.connect,'Value') == 0
@@ -1656,26 +1649,14 @@ delete(instrfindall)
             end
             
             set(handles.connect,'String','Connect');
-            %fwrite(xbee,20);
-            % Waiting for ack
-            %ack = fread(xbee);
-            %disp('Receiving: ');
-            %disp(ack);
         end 
     end
 
     %% Send topics
     function sendNMess(obj)
-        %disp(obj);
-        
-        fprintf(xbee,obj);    
-        
+        fprintf(xbee,obj);        
         %disp('Tot bytes sent');
         %xbee.ValuesSent
-        
-        % Command
-
-        %s = struct('H',value1,'C1',valueN)
     end
 
     %% Send topics
@@ -2112,7 +2093,7 @@ delete(instrfindall)
                     accReceived = true;
                 elseif tag == gyroTag
                     % Gyro
-                    disp('Gyro');
+                    %disp('Gyro');
                     [R,wXr,wYr,wZr,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
                     if gyrosco == true
                         if filterGyro
