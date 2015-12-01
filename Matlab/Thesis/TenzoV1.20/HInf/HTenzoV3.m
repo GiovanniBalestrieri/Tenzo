@@ -661,8 +661,169 @@ lma = frd(m_U_LTR_3_vs.^-1,omega);
 
 %% Quarto Task - Robustezza
 
+% Number of perturbations
+N=10
+
+% Prende alcuni campioni del sistema incerto e calcola bound su incertezze
+for i=1:1:N
+sys{i} = usample(tenzo_min_unc);
+% Additive
+deltaA_sys{i} = tf(sys{i}) - tf(tenzo_min_nominale);
+% Moltiplicative riportate sull'Ingresso
+deltaMin_sys{i} = (inv(tf(tenzo_min_nominale))) * deltaA_sys{i};
+% Moltiplicative riportate sull'Usicta
+deltaMout_sys{i} = deltaA_sys{i} * (inv(tf(tenzo_min_nominale)));
+end
+
+% generates 250 points between decades 10^( -2 ) and 10^( 3 ).
+omega = logspace(-2,3,250);
+
+% Plots the singular values of the frequency response of a model nominale
+% specifies the frequency range or frequency points to be used for the plot
+temp = sigma(tenzo_nominale,omega);
+% Select only max sing values
+max_sig_nom = temp(1,:);
+
+for i=1:1:N
+  temp = sigma(sys{i},omega);
+  max_sig_unc(i,:) = temp(1,:);
+  temp = sigma(deltaA_sys{i},omega);
+  max_sig_dA(i,:) = temp(1,:);
+  temp = sigma(deltaMin_sys{i},omega);
+  max_sig_dMin(i,:) = temp(1,:);
+  temp = sigma(deltaMout_sys{i},omega);
+  max_sig_dMout(i,:) = temp(1,:);
+end
+
+max_sig_dMout(1,:);
+% Returns a row vector containing the maximum element from each column.
+top_unc = max(max_sig_unc);
+top_dA = max(max_sig_dA);
+top_dMin = max(max_sig_dMin);
+top_dMout = max(max_sig_dMout);
+
+%% 
+% 
+% figure(1);
+% semilogx(omega,mag2db(max_sig_nom),'k--','LineWidth',2)
+% grid on;
+% hold on;
+% for i=1:1:N
+%   semilogx(omega,mag2db(max_sig_unc(i,:)),'r:','LineWidth',2)
+% end
+% semilogx(omega,mag2db(top_unc),'b','LineWidth',5)
+% semilogx(omega,mag2db(max_sig_nom),'k','LineWidth',5)
+% title('Max sing values: Nominal (bk), Pert models (R), bound (blue)')
+
+%%  Additive
+% figure(2);
+% semilogx(omega,mag2db(top_dA),'b','LineWidth',5)
+% grid on;
+% hold on;
+% for i=1:1:N
+%   semilogx(omega,mag2db(max_sig_dA(i,:)),'r:','LineWidth',2)
+% end
+% title('Max sing values: additive uncertainties (red), bound (blue)')
 
 
+%% Input Moltiplicative uncertainties
+% 
+% figure(3);
+% semilogx(omega,mag2db(top_dMin),'b','LineWidth',5)
+% grid on;
+% hold on;
+% for i=1:1:N
+%   semilogx(omega,mag2db(max_sig_dMin(i,:)),'r:','LineWidth',2)
+% end
+% title('Max sing values: input multiplicative uncertainties (red), bound (blue)')
+
+%% output multiplicative Out uncertainties
+
+figure(4);
+semilogx(omega,mag2db(top_dMout),'b','LineWidth',5)
+grid on;
+hold on;
+for i=1:1:N
+  semilogx(omega,mag2db(max_sig_dMout(i,:)),'r:','LineWidth',2)
+end
+title('Max sing values: output multiplicative uncertainties (red), bound (blue)')
+
+%% Upper bound razionale stabile e fase minima
+pre_bound_dA = frd(top_dA,omega);
+
+% fit razionale e min phase per ricavare il bound
+ord = 2; %Ordine della funzione di fitting 
+bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+bb_dA2 = sigma(bound_dA,omega);
+ord = 5; %Ordine della funzione di fitting 
+bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+bb_dA5 = sigma(bound_dA,omega);
+ord = 7; %Ordine della funzione di fitting
+bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+bb_dA7 = sigma(bound_dA,omega);
+
+figure(5);
+semilogx(omega,mag2db(top_dA),'b','LineWidth',2);
+grid on;
+hold on;
+semilogx(omega,mag2db(bb_dA2(1,:)),'r','LineWidth',2);
+semilogx(omega,mag2db(bb_dA5(1,:)),'k','LineWidth',2);
+semilogx(omega,mag2db(bb_dA7(1,:)),'m','LineWidth',2);
+title('Bound on additive uncertainties');
+legend('strict bound', 'Rational stable min phase, order 2',...
+  'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
+  'Location','SouthWest');
+
+%% Upper bound razionale stabile e fase minima
+pre_bound_dMin = frd(top_dMin,omega);
+
+% fit razionale e min phase per ricavare il bound
+%ord = 2; %Ordine della funzione di fitting 
+%bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
+%bb_dMin2 = sigma(bound_dM,omega);
+ord = 5; %Ordine della funzione di fitting 
+bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
+bb_dMin5 = sigma(bound_dM,omega);
+%ord = 7; %Ordine della funzione di fitting 
+%bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
+%bb_dMin7 = sigma(bound_dM,omega);
+
+figure(6);
+semilogx(omega,mag2db(top_dMin),'b','LineWidth',2)
+grid on;
+hold on;
+%semilogx(omega,mag2db(bb_dMin2(1,:)),'r','LineWidth',2)
+semilogx(omega,mag2db(bb_dMin5(1,:)),'k','LineWidth',2)
+%semilogx(omega,mag2db(bb_dMin7(1,:)),'m','LineWidth',2)
+title('Bound on multiplicative uncertainties');
+legend('strict bound', 'Rational stable min phase, order 2',...
+  'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
+  'Location','SouthWest');
+
+%% Definizione dei bounds
+
+ps = gamma1*tf(1,[1 1])
+la{i} = deltaA_sys{i}
+lmD{i} = deltaMin_sys{i}
+lm{i} = deltaMout_sys{i}
+
+la = bb_dA5;
+lm = bb_dMin5;
+
+lm = tf([1 1], 1.1);
+lmD = lm
+
+figure
+sigma(lm,'r--')
+hold on
+grid on
+semilogx(omega,mag2db(lm),'b','LineWidth',2)
+semilogx(omega,mag2db(la),'b','LineWidth',2)
+
+bode(mag2db(lm))
+
+
+% disp('End');
 
 
 %% Verifica condizioni Astatismo
@@ -797,168 +958,3 @@ lma = frd(m_U_LTR_3_vs.^-1,omega);
 % open('progetto3Tenzo.mdl')
 % sim('progetto3Tenzo.mdl')
 
-%% Prende alcuni campioni del sistema incerto e calcola bound su incertezze
-
-N=10
-
-for i=1:1:N
-sys{i} = usample(tenzo_min_unc);
-% Additive
-deltaA_sys{i} = tf(sys{i}) - tf(tenzo_min_nominale);
-% Moltiplicative riportate sull'Ingresso
-deltaMin_sys{i} = (inv(tf(tenzo_min_nominale))) * deltaA_sys{i};
-% Moltiplicative riportate sull'Usicta
-deltaMout_sys{i} = deltaA_sys{i} * (inv(tf(tenzo_min_nominale)));
-end
-
-%%
-
-% generates 200 points between decades 10^( -2 ) and 10^( 2 ).
-omega = logspace(-3,3,250);
-
-% Plots the singular values of the frequency response of a model nominale
-% specifies the frequency range or frequency points to be used for the plot
-temp = sigma(tenzo_nominale,omega);
-% Select only max sing values
-max_sig_nom = temp(1,:);
-
-for i=1:1:N
-  temp = sigma(sys{i},omega);
-  max_sig_unc(i,:) = temp(1,:);
-  temp = sigma(deltaA_sys{i},omega);
-  max_sig_dA(i,:) = temp(1,:);
-  temp = sigma(deltaMin_sys{i},omega);
-  max_sig_dMin(i,:) = temp(1,:);
-  temp = sigma(deltaMout_sys{i},omega);
-  max_sig_dMout(i,:) = temp(1,:);
-end
-
-max_sig_unc
-% Returns a row vector containing the maximum element from each column.
-top_unc = max(max_sig_unc);
-top_dA = max(max_sig_dA);
-top_dMin = max(max_sig_dMin);
-top_dMout = max(max_sig_dMout);
-
-%% 
-
-figure(1);
-semilogx(omega,mag2db(max_sig_nom),'k--','LineWidth',2)
-grid on;
-hold on;
-for i=1:1:N
-  semilogx(omega,mag2db(max_sig_unc(i,:)),'r:','LineWidth',2)
-end
-semilogx(omega,mag2db(top_unc),'b','LineWidth',5)
-semilogx(omega,mag2db(max_sig_nom),'k','LineWidth',5)
-title('Max sing values: Nominal (bk), Pert models (R), bound (blue)')
-
-%%  Additive
-figure(2);
-semilogx(omega,mag2db(top_dA),'b','LineWidth',5)
-grid on;
-hold on;
-for i=1:1:N
-  semilogx(omega,mag2db(max_sig_dA(i,:)),'r:','LineWidth',2)
-end
-title('Max sing values: additive uncertainties (red), bound (blue)')
-
-
-%% Input Moltiplicative uncertainties
-
-figure(3);
-semilogx(omega,mag2db(top_dMin),'b','LineWidth',5)
-grid on;
-hold on;
-for i=1:1:N
-  semilogx(omega,mag2db(max_sig_dMin(i,:)),'r:','LineWidth',2)
-end
-title('Max sing values: input multiplicative uncertainties (red), bound (blue)')
-
-%% output multiplicative uncertainties
-
-figure(4);
-semilogx(omega,mag2db(top_dMout),'b','LineWidth',5)
-grid on;
-hold on;
-for i=1:1:N
-  semilogx(omega,mag2db(max_sig_dMout(i,:)),'r:','LineWidth',2)
-end
-title('Max sing values: output multiplicative uncertainties (red), bound (blue)')
-
-%% Upper bound razionale stabile e fase minima
-pre_bound_dA = frd(top_dA,omega);
-
-% fit razionale e min phase per ricavare il bound
-ord = 2; %Ordine della funzione di fitting 
-bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
-bb_dA2 = sigma(bound_dA,omega);
-ord = 5; %Ordine della funzione di fitting 
-bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
-bb_dA5 = sigma(bound_dA,omega);
-ord = 7; %Ordine della funzione di fitting
-bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
-bb_dA7 = sigma(bound_dA,omega);
-
-figure(5);
-semilogx(omega,mag2db(top_dA),'b','LineWidth',2);
-grid on;
-hold on;
-semilogx(omega,mag2db(bb_dA2(1,:)),'r','LineWidth',2);
-semilogx(omega,mag2db(bb_dA5(1,:)),'k','LineWidth',2);
-semilogx(omega,mag2db(bb_dA7(1,:)),'m','LineWidth',2);
-title('Bound on additive uncertainties');
-legend('strict bound', 'Rational stable min phase, order 2',...
-  'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
-  'Location','SouthWest');
-
-%% Upper bound razionale stabile e fase minima
-pre_bound_dMin = frd(top_dMin,omega);
-
-% fit razionale e min phase per ricavare il bound
-%ord = 2; %Ordine della funzione di fitting 
-%bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
-%bb_dMin2 = sigma(bound_dM,omega);
-ord = 5; %Ordine della funzione di fitting 
-bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
-bb_dMin5 = sigma(bound_dM,omega);
-%ord = 7; %Ordine della funzione di fitting 
-%bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
-%bb_dMin7 = sigma(bound_dM,omega);
-
-figure(6);
-semilogx(omega,mag2db(top_dMin),'b','LineWidth',2)
-grid on;
-hold on;
-%semilogx(omega,mag2db(bb_dMin2(1,:)),'r','LineWidth',2)
-semilogx(omega,mag2db(bb_dMin5(1,:)),'k','LineWidth',2)
-%semilogx(omega,mag2db(bb_dMin7(1,:)),'m','LineWidth',2)
-title('Bound on multiplicative uncertainties');
-legend('strict bound', 'Rational stable min phase, order 2',...
-  'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
-  'Location','SouthWest');
-
-%% Definizione dei bounds
-
-ps = gamma1*tf(1,[1 1])
-la{i} = deltaA_sys{i}
-lmD{i} = deltaMin_sys{i}
-lm{i} = deltaMout_sys{i}
-
-la = bb_dA5;
-lm = bb_dMin5;
-
-lm = tf([1 1], 1.1);
-lmD = lm
-
-figure
-sigma(lm,'r--')
-hold on
-grid on
-semilogx(omega,mag2db(lm),'b','LineWidth',2)
-semilogx(omega,mag2db(la),'b','LineWidth',2)
-
-bode(mag2db(lm))
-
-
-% disp('End');
