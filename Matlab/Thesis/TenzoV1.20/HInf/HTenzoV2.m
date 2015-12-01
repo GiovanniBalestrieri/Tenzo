@@ -98,7 +98,7 @@ PWM_max=2200; %Upper limit of the PWM signal provided to
 Ft0=mq*g;
 %% Linearized Model
 disp('Welcome to Tenzo!');
-disp('Linearized Model:');
+disp('Using Linearized Model: press tenzo_nominale for infos');
 
 states = {'xe','ye','ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb'};
 
@@ -196,6 +196,7 @@ canonMotor4 = canon(tfM4,'companion');
 % Analyze motors dynamics
 opt = stepDataOptions;
 opt.StepAmplitude = 1000;
+title('Step response for motors');
 step(tfM1,opt);
 
 % Controllable
@@ -269,7 +270,7 @@ disp(rank(obsv(tenzo_nominale.a,tenzo_nominale.c)));
 if raggiungibile == false
     stab_flag=0;
     for i=1:length(eOp)
-        if(real(eOp(i))>=-alfa)
+        if(real(eOp(i))>=-alpha)
             pbh_matrix_reach = [(tenzo_nominale.a - eOp(i)*eye(n)) tenzo_nominale.b];
             if(rank(pbh_matrix_reach)<n)
                 disp('PBH VIOLATO');
@@ -287,7 +288,7 @@ end
 %PBH test of observability
 if osservabile == false
     for i=1:length(eOp)
-        if(real(eOp(i))>=-alfa)
+        if(real(eOp(i))>=-alpha)
             pbh_matrix_obsv = [(tenzo_nominale.a - eOp(i)*eye(n)); tenzo_nominale.c];
             if(rank(pbh_matrix_obsv)<n)
                 disp('PBH VIOLATO');
@@ -398,6 +399,392 @@ figure(2)
 sigma(modello_tf,[],'o-')
 grid on
 
+
+% Controllo che P(s) non sia singolare nel calmpo razionale
+syms s
+if (det(tenzo_min_nominale.c *(s*eye(n)-tenzo_min_nominale.a)^(-1)*tenzo_min_nominale.b) ~= 0)
+    disp('P(s) Non singular nel campo Razionale');
+else
+    disp('P(s) singolare nel campo razionale');
+end
+
+%% Passo B:
+
+%          Scegliere R=rho*I con rho>0 e calcolare la matrice dei guadagni 
+%          ottimi per tali Q e R. 
+%          Scelgo rho tenendo conto che:
+%          1. il controllo non deve dar luogo ad una risposta troppo lenta.
+%          2. l'andamento della curva del massimo valor singolare della 
+%              matrice U0 del sistema a ciclo chiuso non deve essere troppo
+%              alto ad alte frequenze 
+
+
+
+%% Ricostruzione dello stato con Kalman
+
+disp('Ricostruzione dello stato con Kalman');
+disp('Press any key to continue.');
+pause();
+
+%si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
+alphaK = 10;
+Q = eye(size(tenzo_min_nominale.a));
+W = eye(size(tenzo_min_nominale.a));
+R = eye(size(tenzo_min_nominale.c,1));
+%disp('matrice  V per Kalman:');
+V=lqr((tenzo_min_nominale.a+alphaK*eye(n))',tenzo_min_nominale.c',Q,R)';
+%disp('Dimensione attesa [nxq]');
+disp(size(V));
+Aoss=tenzo_min_nominale.a-V*tenzo_min_nominale.c;
+Bossw=[tenzo_min_nominale.b-V*D V]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
+Coss=eye(q);
+Doss=zeros(q,p);
+
+disp('Autovalori A-V*C');
+disp(eig(tenzo_min_nominale.a-V*tenzo_min_nominale.c));
+
+%% Stabilizzazione LQR
+
+disp('Stabilizzazione mediante LQR dallo stato stimato');
+disp('Press any key to continue.');
+pause();
+
+rho1 = 0.001;
+rho2 = 1;
+rho3 = 10;
+alphaK = 2;
+QieCmp = blkdiag([0.00001 0; 0 0.00001],100*eye(3),eye(3));
+Qie = blkdiag([0.01 0; 0 0.01],100000*eye(3),zeros(3,3));
+Q = eye(size(AMin));
+
+Q = tenzo_min_nominale.c'*tenzo_min_nominale.c;
+
+RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
+R = eye(size(BMinw,2));
+
+R1 = rho1*eye(p);
+R2 = rho2*eye(p);
+R3 = rho3*eye(p);
+
+Kopt_1 = lqr(tenzo_min_nominale.a+alphaK*eye(n) , tenzo_min_nominale.b, Q, R1);
+Kopt_2 = lqr(tenzo_min_nominale.a+alphaK*eye(n) , tenzo_min_nominale.b, Q, R2);
+Kopt_3 = lqr(tenzo_min_nominale.a+alphaK*eye(n) , tenzo_min_nominale.b, Q, R3);
+
+disp('');
+
+disp('Eig sys 1 CC retroazione dallo stato:');
+eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_1)
+
+disp('');
+
+disp('Eig sys 2 CC retroazione dallo stato:');
+eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_2)
+
+disp('');
+
+disp('Eig sys 3 CC retroazione dallo stato:');
+eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_3)
+
+disp('Premere un tasto per visualizzare la Step Response...');
+pause;
+
+tenzoLQR1=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_1,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoLQR2=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_2,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoLQR3=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_3,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+
+disp('Displaying LQG 1');
+pause();
+figure(3);
+step(tenzoLQR1);
+
+disp('Displaying LQG 2');
+pause();
+figure(4)
+step(tenzoLQR2);
+
+disp('Displaying LQG 3');
+pause();
+figure(5)
+step(tenzoLQR3);
+
+
+%% Passo 2
+
+F1_ss = ss(tenzo_min_nominale.a,tenzo_min_nominale.b,Kopt_1,zeros(q,q)); 
+F2_ss = ss(tenzo_min_nominale.a,tenzo_min_nominale.b,Kopt_2,zeros(q,q));
+F3_ss = ss(tenzo_min_nominale.a,tenzo_min_nominale.b,Kopt_3,zeros(q,q));
+
+% Retroazione del sistema Fi_ss per ottenere la U0i utile nel seguito
+
+U0_1 = feedback(F1_ss,eye(q));
+U0_2 = feedback(F2_ss,eye(q));
+U0_3 = feedback(F3_ss,eye(q));
+
+% Verifica velocità della risposta nei 3 diversi casi 
+
+figure(6)
+step(U0_1,'b',U0_2,'r',U0_3,'g')
+legend('rho1 = 0.1','rho2 = 1','rho3 = 10')
+title('Verifica velocità della risposta a ciclo chiuso per tutti i Kopt');
+
+% Verifico che l'andamento della curva del massimo valor singolare della
+% matrice U0 del sistema a ciclo chiuso non sia troppo alto 
+
+
+U0_1_vs = sigma(U0_1,omega); % Vettore con i valori singolari (su tutte le
+                             % frequenze di interesse di U0_1)
+U0_2_vs = sigma(U0_2,omega); % Vettore con i valori singolari (su tutte le
+                             % frequenze di interesse di U0_2)
+U0_3_vs = sigma(U0_3,omega); % Vettore con i valori singolari (su tutte le
+                             % frequenze di interesse di U0_3)
+m_U0_1_vs = U0_1_vs(1,:);
+m_U0_2_vs = U0_2_vs(1,:);
+m_U0_3_vs = U0_3_vs(1,:);
+
+% Grafici dei massimi valori singolari delle funzioni U0_i, i = 1,2,3
+
+figure(7)
+semilogx(omega,20*log10(m_U0_1_vs),'r'); 
+hold on
+semilogx(omega,20*log10(m_U0_2_vs),'b');
+semilogx(omega,20*log10(m_U0_3_vs),'g');
+grid on
+legend('U01 MVS','U02 MVS','U03 MVS')
+title('Verifica andamento massimo valor singolare di U0');
+
+%% Scelta di Kopt3
+
+R    = R3;
+U0   = U0_3;
+Kopt = Kopt_3;
+
+%% Passo 3 - Loop Transfer Recovery
+
+% TASK:    sostituire la retroazione dallo stato con quella da una stima 
+%          data da un filtro di Kalman, scegliendo V=sigma^2*B0*B0'. 
+%          Adottiamo scelte via via crescenti di sigma in modo che il max
+%          valor singolare della matrice U0(j*omega) del sistema a ciclo chiuso 
+%          in una banda [0,omega] di larghezza molto ampia, sia pari all'incirca 
+%          al max valor singolare della matrice U0(j*omeaga) corrispondente 
+%          al sistema di controllo con retroazione dallo stato (calcolato al 
+%          secondo passo)
+
+% 1st Attempt 
+
+sigma_1 = 0.5;
+V_1 = sigma_1^2*tenzo_min_nominale.b*tenzo_min_nominale.b'; % matrice di intensità
+W_1 = eye(p);
+L_1 = lqr(tenzo_min_nominale.a',tenzo_min_nominale.c',V_1,W_1)';
+
+% Definisco le matrici (Ac_i,Bc_i,Cc_i,Dc_i) di un sistema che, in serie
+% all'impianto nominale, darà luogo ad una matrice di trasferimento ad
+% anello aperto che è pari a quella ottenuta con l'utilizzo di un filtro di
+% kalman con guadagno ottimo L_i
+
+Ac_1 = tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt-L_1*tenzo_min_nominale.c-L_1*tenzo_min_nominale.d*Kopt;
+Bc_1 = L_1;
+Cc_1 = Kopt;
+Dc_1 = zeros(q,q);
+G_1  = ss(Ac_1,Bc_1,Cc_1,Dc_1);     % Kalman Filter + Optimal K
+H_LTR_1 = series(tenzo_min_nominale,G_1);   
+%CC_H_LTR_1 = feedback(H_LTR_1,eye(q));
+%step(CC_H_LTR_1);
+U_LTR_1 = feedback(H_LTR_1,eye(q)); % Nuova matrice U_1 dopo LTR
+
+% Second attempt 
+
+sigma_2 = 1000;
+V_2 = sigma_2^2*tenzo_min_nominale.b*tenzo_min_nominale.b'; % matrice di intensità
+W_2 = eye(p);
+L_2 = lqr(tenzo_min_nominale.a',tenzo_min_nominale.c',V_2,W_2)';
+
+Ac_2 = tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt-L_2*tenzo_min_nominale.c-L_2*tenzo_min_nominale.d*Kopt;
+Bc_2 = L_2;
+Cc_2 = Kopt;
+Dc_2 = zeros(q,q);
+
+G_2  = ss(Ac_2,Bc_2,Cc_2,Dc_2);       % Kalman Filter + Optimal K
+H_LTR_2 = series(tenzo_min_nominale,G_2);  
+U_LTR_2 = feedback(H_LTR_2,eye(q)); 
+
+
+% Third attempt
+
+sigma_3 = 10^12;
+V_3 = sigma_3^2*tenzo_min_nominale.b*tenzo_min_nominale.b';
+W_3 = eye(p);
+L_3=  lqr(tenzo_min_nominale.a',tenzo_min_nominale.c',V_3,W_3)';
+
+Ac_3 = tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt-L_3*tenzo_min_nominale.c-L_3*tenzo_min_nominale.d*Kopt;
+Bc_3 = L_3;
+Cc_3 = Kopt;
+Dc_3 = zeros(q,q);
+
+G_3 = ss(Ac_3,Bc_3,Cc_3,Dc_3);      % Sistema filtro di kalman + guadagno k ottimo
+H_LTR_3 = series(tenzo_min_nominale,G_3);   % Connessione in serie all'impianto nominale
+U_LTR_3 = feedback(H_LTR_3,eye(q)); % Nuova matrice U_3 dopo LTR
+
+% Valutiamo graficamente il risultato migliore
+
+U_LTR_1_vs = sigma(U_LTR_1,omega);  % Vettore con i valori singolari (su tutte le
+                                    % frequenze di interesse di U_LTR_1)
+U_LTR_2_vs = sigma(U_LTR_2,omega);  % Vettore con i valori singolari (su tutte le
+                                    % frequenze di interesse di U_LTR_2)
+U_LTR_3_vs = sigma(U_LTR_3,omega);  % Vettore con i valori singolari (su tutte le
+                                    % frequenze di interesse di U_LTR_3)
+m_U_LTR_1_vs = U_LTR_1_vs(1,:);
+m_U_LTR_2_vs = U_LTR_2_vs(1,:);
+m_U_LTR_3_vs = U_LTR_3_vs(1,:);
+m_U0_vs = m_U0_3_vs;
+
+% Grafici dei massimi valori singolari delle funzioni U0 e U_LTR_i , i = 1,2,3
+
+figure(8)
+semilogx(omega,20*log10(m_U0_vs),'bo');
+hold on
+semilogx(omega,20*log10(m_U_LTR_1_vs),'r'); 
+semilogx(omega,20*log10(m_U_LTR_2_vs),'m');
+semilogx(omega,20*log10(m_U_LTR_3_vs),'g');
+grid on
+legend('U0 MVS','U01 LTR MVS','U02 LTR MVS','U03 LTR MVS')
+title('Max val sing of U0');
+
+% Scelgo la terza sigma
+
+G  = G_3; % Sistema filtro di kalman + guadagno k ottimo scelto per LTR
+lma = frd(m_U_LTR_3_vs.^-1,omega);
+
+%% Verifica condizioni Astatismo
+
+% disp('Condizioni Astatismo');
+% pause;
+% n=size(AMin,2);
+% p=size(BMinw,2);
+% q=size(ClocalMin,1);
+% 
+% % Definizione segnali esogeni
+% disp('Definizione dei Disturbi da reiettare:');
+% disp('d(t)=');
+% alpha=3; omega=0.5; gamma1=0;
+% k1=1; h1=1; h2=1; gamma2=complex(0,omega);
+% 
+% disp('Definizione segnali esogeni');
+% disp('gamma 1:='); disp(gamma1);
+% disp('gamma 2:='); disp(gamma2);
+% 
+% if (rank(ctrb(AMin+alpha*eye(n),BMinw))==n)
+%     disp('(a3) -> verificata, la coppia (AMin,BMin) raggiungibile, rank(P)'); 
+%     disp(rank(ctrb(AMin,BMinw))); 
+% end
+% if (rank(obsv(AMin+alpha*eye(n),ClocalMin))==n) 
+%     disp('(a3) -> verificata, la coppia (A,C) osservabile, rank(Q)');
+%     disp(rank(obsv(AMin,ClocalMin))); 
+% end
+% 
+% R1=[ AMin-gamma1*eye(size(AMin)) BMinw ;
+%     ClocalMin D];
+% 
+% if (rank(R1)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma1 �:'); disp(rank(R1)); end
+% R2=[ AMin-gamma2*eye(size(AMin)) BMinw ; ClocalMin D];
+% if (rank(R2)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma2 �:'); disp(rank(R2)); end
+
+%% Calcolo del modello interno
+% 
+% disp('specifica 2) Calcolo modello interno KM1');
+% k1_segnato=max(k1,h1);
+% k2_segnato=h2;
+% disp('max(k1,h1):'); 
+% disp(k1_segnato); 
+% disp('max(k2,h2):'); 
+% disp(k2_segnato);
+% syms s;
+% disp('Definiamo il polinomio phi(lambda)');
+% phi1=((s-gamma1)^k1_segnato)*((s-gamma2)^k2_segnato)*((s-conj(gamma2))^k2_segnato)
+% disp('phi(lambda)=');
+% disp((phi1));
+% mu=3;
+% disp('mu=');
+% disp(mu);
+% 
+% Aphi=compan(sym2poly(phi1));
+% APhi=zeros(3);
+% APhi(3,:)=Aphi(1,:);
+% APhi(1,2)=Aphi(2,1);
+% APhi(2,3)=Aphi(3,2);
+% disp('matrice in forma compagna Aphi:');
+% disp(APhi);
+% disp('Bphi:');
+% BPhi=[0;0;1];
+% disp(BPhi);
+% 
+% disp('La matrice dinamica AK1 del modello interno KM1:');
+% AK1=blkdiag(APhi,APhi,APhi,APhi);
+% disp(AK1);
+% disp('La matrice dinamica BK1 del modello interno KM1:');
+% BK1=blkdiag(BPhi,BPhi,BPhi,BPhi);
+% disp(BK1);
+% 
+% %% Calcolo delle matrici F1,F2 + V di Kalman 
+% alpha = 0.5;
+% 
+% disp('Calcolo delle matrici F1,F2 per S1-S2 +  V per Kalman');
+% Asig =[ AMin-BMinw*K zeros(n,size(AK1,2)); -BK1*ClocalMin AK1];
+% Bsig = [ BMinw; -BK1*D];
+% 
+% R = eye(size(Asig,2));
+% %Q = blkdiag([1 0; 0 1],1*eye(3),eye(3),eye(12));
+% %Q = 1000000*eye(20);
+% R = eye(size(Bsig,2));
+% F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
+% 
+% F2=F(:,1:size(AMin,1));
+% disp('dimensioni [pxn]:');
+% disp(size(F2));
+% F1=F(:,size(AMin,1)+1:size(F,2));
+% disp('dimensioni [pxq*mu]:');
+% disp(size(F1));
+% 
+% % disp('matrice per Kalman:');
+% % V=lqr((AMin-BMin*K)',ClocalMin',Q,R)';
+% disp('dimensione attesa [nxq]');
+% disp(size(V));
+% 
+% disp('verifica spostamento autovalori:');
+% disp('autovalori A+B*F2');
+% disp(eig(AMin-BMinw*K+BMinw*F2));
+% disp('autovalori A-V*C');
+% disp(eig(AMin-BMinw*K-V*ClocalMin));
+% 
+% % specifica 3 ) definizione matrici per simulink:
+% 
+% disp('specifica 3 ) definizione matrici per simulink:');
+% 
+% M=[ 1 0 0 0 1 1 1 1]';
+% N=[ 0; 0; 0; 0];
+% %per disturbo sul processo definisco Bmod:
+% Bmodw = [M BMinw]; %nota prima d e poi u scambio la somma per comodit�
+% Dmod  = [N D];
+% 
+% %si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
+% Aoss=AMin-V*ClocalMin;
+% Bossw=[BMinw-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
+% Coss=eye(n);
+% Doss=zeros(size(Bossw));
+% 
+% % Ricordando che delta xi1=AK1*xi+ Bk1*e
+% AMI=AK1;
+% BMI=BK1;
+% CMI=eye(q*mu);
+% DMI=zeros(q*mu,q);
+% 
+% satW = 8000;
+% saMenoW = -400;
+% 
+% disp('avvio simulazione 1');
+% %pause;
+% 
+% open('progetto3Tenzo.mdl')
+% sim('progetto3Tenzo.mdl')
 
 %% Prende alcuni campioni del sistema incerto e calcola bound su incertezze
 
@@ -562,183 +949,5 @@ semilogx(omega,mag2db(la),'b','LineWidth',2)
 
 bode(mag2db(lm))
 
-% %% Ricostruzione dello stato con Kalman
-% 
-% disp('Ricostruzione dello stato con Kalman');
-% disp('Press any key to continue.');
-% pause();
-% 
-% %si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
-% alphaK = 100;
-% Q = eye(size(AMin));
-% W = eye(size(AMin));
-% R = eye(size(ClocalMin,1));
-% %disp('matrice  V per Kalman:');
-% V=lqr((AMin+alphaK*eye(size(AMin)))',ClocalMin',Q,R)';
-% %disp('Dimensione attesa [nxq]');
-% disp(size(V));
-% Aoss=AMin-V*ClocalMin;
-% Bossw=[BMinw-V*D V]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
-% Coss=eye(size(AMin));
-% Doss=zeros(size(Bossw));
-% 
-% disp('Autovalori A-V*C');
-% disp(eig(AMin-V*ClocalMin));
-% pause();
-% clc;
-% 
-% %% Stabilizzazione LQR
-% 
-% disp('Stabilizzazione mediante LQR dallo stato stimato');
-% disp('Press any key to continue.');
-% pause();
-% 
-% alphaK = 2;
-% QieCmp = blkdiag([0.00001 0; 0 0.00001],100*eye(3),eye(3));
-% Qie = blkdiag([0.01 0; 0 0.01],100000*eye(3),zeros(3,3));
-% Q = eye(size(AMin));
-% RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
-% R = eye(size(BMinw,2));
-% K = lqr(AMin,BMinw,Q,R);
-% disp('Autovalori del sys a ciclo chiuso ottenuto per retroazione dallo stato:');
-% eig(AMin-BMinw*K)
-% 
-% disp('Premere un tasto per visualizzare la Step Response...');
-% pause;
-% 
-% tenzoLQR=ss(AMin-BMinw*K,BMinw,ClocalMin,D,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
-% step(tenzoLQR);
-% 
-% %% Verifica condizioni Astatismo
-% 
-% disp('Condizioni Astatismo');
-% pause;
-% n=size(AMin,2);
-% p=size(BMinw,2);
-% q=size(ClocalMin,1);
-% 
-% % Definizione segnali esogeni
-% disp('Definizione dei Disturbi da reiettare:');
-% disp('d(t)=');
-% alpha=3; omega=0.5; gamma1=0;
-% k1=1; h1=1; h2=1; gamma2=complex(0,omega);
-% 
-% disp('Definizione segnali esogeni');
-% disp('gamma 1:='); disp(gamma1);
-% disp('gamma 2:='); disp(gamma2);
-% 
-% if (rank(ctrb(AMin+alpha*eye(n),BMinw))==n)
-%     disp('(a3) -> verificata, la coppia (AMin,BMin) raggiungibile, rank(P)'); 
-%     disp(rank(ctrb(AMin,BMinw))); 
-% end
-% if (rank(obsv(AMin+alpha*eye(n),ClocalMin))==n) 
-%     disp('(a3) -> verificata, la coppia (A,C) osservabile, rank(Q)');
-%     disp(rank(obsv(AMin,ClocalMin))); 
-% end
-% 
-% R1=[ AMin-gamma1*eye(size(AMin)) BMinw ;
-%     ClocalMin D];
-% 
-% if (rank(R1)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma1 �:'); disp(rank(R1)); end
-% R2=[ AMin-gamma2*eye(size(AMin)) BMinw ; ClocalMin D];
-% if (rank(R2)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma2 �:'); disp(rank(R2)); end
-% 
-% %% Calcolo del modello interno
-% 
-% disp('specifica 2) Calcolo modello interno KM1');
-% k1_segnato=max(k1,h1);
-% k2_segnato=h2;
-% disp('max(k1,h1):'); 
-% disp(k1_segnato); 
-% disp('max(k2,h2):'); 
-% disp(k2_segnato);
-% syms s;
-% disp('Definiamo il polinomio phi(lambda)');
-% phi1=((s-gamma1)^k1_segnato)*((s-gamma2)^k2_segnato)*((s-conj(gamma2))^k2_segnato)
-% disp('phi(lambda)=');
-% disp((phi1));
-% mu=3;
-% disp('mu=');
-% disp(mu);
-% 
-% Aphi=compan(sym2poly(phi1));
-% APhi=zeros(3);
-% APhi(3,:)=Aphi(1,:);
-% APhi(1,2)=Aphi(2,1);
-% APhi(2,3)=Aphi(3,2);
-% disp('matrice in forma compagna Aphi:');
-% disp(APhi);
-% disp('Bphi:');
-% BPhi=[0;0;1];
-% disp(BPhi);
-% 
-% disp('La matrice dinamica AK1 del modello interno KM1:');
-% AK1=blkdiag(APhi,APhi,APhi,APhi);
-% disp(AK1);
-% disp('La matrice dinamica BK1 del modello interno KM1:');
-% BK1=blkdiag(BPhi,BPhi,BPhi,BPhi);
-% disp(BK1);
-% 
-% %% Calcolo delle matrici F1,F2 + V di Kalman 
-% alpha = 0.5;
-% 
-% disp('Calcolo delle matrici F1,F2 per S1-S2 +  V per Kalman');
-% Asig =[ AMin-BMinw*K zeros(n,size(AK1,2)); -BK1*ClocalMin AK1];
-% Bsig = [ BMinw; -BK1*D];
-% 
-% R = eye(size(Asig,2));
-% %Q = blkdiag([1 0; 0 1],1*eye(3),eye(3),eye(12));
-% %Q = 1000000*eye(20);
-% R = eye(size(Bsig,2));
-% F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
-% 
-% F2=F(:,1:size(AMin,1));
-% disp('dimensioni [pxn]:');
-% disp(size(F2));
-% F1=F(:,size(AMin,1)+1:size(F,2));
-% disp('dimensioni [pxq*mu]:');
-% disp(size(F1));
-% 
-% % disp('matrice per Kalman:');
-% % V=lqr((AMin-BMin*K)',ClocalMin',Q,R)';
-% disp('dimensione attesa [nxq]');
-% disp(size(V));
-% 
-% disp('verifica spostamento autovalori:');
-% disp('autovalori A+B*F2');
-% disp(eig(AMin-BMinw*K+BMinw*F2));
-% disp('autovalori A-V*C');
-% disp(eig(AMin-BMinw*K-V*ClocalMin));
-% 
-% % specifica 3 ) definizione matrici per simulink:
-% 
-% disp('specifica 3 ) definizione matrici per simulink:');
-% 
-% M=[ 1 0 0 0 1 1 1 1]';
-% N=[ 0; 0; 0; 0];
-% %per disturbo sul processo definisco Bmod:
-% Bmodw = [M BMinw]; %nota prima d e poi u scambio la somma per comodit�
-% Dmod  = [N D];
-% 
-% %si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
-% Aoss=AMin-V*ClocalMin;
-% Bossw=[BMinw-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
-% Coss=eye(n);
-% Doss=zeros(size(Bossw));
-% 
-% % Ricordando che delta xi1=AK1*xi+ Bk1*e
-% AMI=AK1;
-% BMI=BK1;
-% CMI=eye(q*mu);
-% DMI=zeros(q*mu,q);
-% 
-% satW = 8000;
-% saMenoW = -400;
-% 
-% disp('avvio simulazione 1');
-% %pause;
-% 
-% open('progetto3Tenzo.mdl')
-% sim('progetto3Tenzo.mdl')
-% 
+
 % disp('End');
