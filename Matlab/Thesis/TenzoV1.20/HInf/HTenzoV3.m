@@ -14,10 +14,10 @@ g=9.81; %Acceleration of gravity (m)
 rho = ureal('rho',1.2250,'Range',[1.1455 1.4224]);
 
 % Total mass of the quadrotor [Kg]
-mq = ureal('mq',1.150,'Range',[0.820 1.4224]);
+mq = ureal('mq',1.30,'Range',[0.620 2.0]);
 
 % Mass of a motor (kg). All motors have equal mass.
-mm = ureal('mm',0.068,'Range',[0.020 0.075]);
+mm = ureal('mm',0.068,'Range',[0.020 0.105]);
 % Motor length along x-axis (m). All motors have equal sizes.
 lx = ureal('lx',28.8e-3,'Range',[0.020 0.035]);
 % Motor length along y-axis (m)
@@ -30,8 +30,8 @@ lz = ureal('lz',0.08,'Range',[0.05 0.1]);
 % dcg is the same for all motors.
 dcg=0.288; 
 
-dcgX = ureal('dcgX',0.288,'Range',[0.25 0.30]);
-dcgY = ureal('dcgY',0.288,'Range',[0.25 0.30]);
+dcgX = ureal('dcgX',0.288,'Range',[0.12 0.37]);
+dcgY = ureal('dcgY',0.288,'Range',[0.12 0.37]);
 dcgZ = ureal('dcgZ',0.03,'Range',[0.02 0.1]);
 
 % Moment of inertia (x-axis) for motors 1 and 3
@@ -65,12 +65,12 @@ II=diag([Ixx Iyy Izz]);
 If = ureal('If',-0.3559,'Range',[-0.4000 -0.1559]);
 
 % Thrust coefficient of the propeller and Power coefficient
-cp = ureal('cp',0.0314,'Range',[0.0311 0.0465]);
+cp = ureal('cp',0.0314,'Range',[0.0111 0.0465]);
 
-ct = ureal('ct',0.0726,'Range',[0.0548 0.0980]);
+ct = ureal('ct',0.0726,'Range',[0.0348 0.0980]);
 
 % Propeller radius (m)
-rp = ureal('rp',13.4e-2,'Range',[0.10 0.19]);
+rp = ureal('rp',13.4e-2,'Range',[0.10 0.15]);
 % Constant value to calculate the moment provided
 % by a propeller given its angular speed (kg.m^2.rad^-1)
 Km=cp*4*rho*rp^5/pi()^3; 
@@ -826,14 +826,30 @@ legend('strict bound', 'Rational stable min phase, order 2',...
   'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
   'Location','SouthWest');
 
+figure(11)
+% Compute Closed Loop transfer functions
+for i=1:N
+    Ac_3 = sys{i}.a-sys{i}.b*Kopt_3-L_3*sys{i}.c;
+    Bc_3 = L_3;
+    Cc_3 = Kopt;
+    Dc_3 = zeros(q,q);
+
+    G_3 = ss(Ac_3,Bc_3,Cc_3,Dc_3);      % Sistema filtro di kalman + guadagno k ottimo
+    H_LTR_3 = series(sys{i},G_3);   % Connessione in serie all'impianto nominale
+    Closed_Loop_LTR{i} = feedback(H_LTR_3,eye(q)); % Nuova matrice U_3 dopo LTR
+    step(Closed_Loop_LTR{i});
+    hold on
+    grid on
+end
+
 %% %%%%%%%%%%% STAMPA AUTOVALORI %%%%%%%%%%%%%%%%%%
- 
+
 clc
 
 %  disp('Autovalori del sistema nominale')
 %  eig(U_LTR_3)               % Autovalori del sistema di controllo nominale
 
- disp('Autovalori del sistema con pert. ammissibile')
+ disp('Autovalori del sistema')
  eig(W_LTR_3_PERT_am)     % Autovalori del sistema di controllo perturbato 1
 
  
