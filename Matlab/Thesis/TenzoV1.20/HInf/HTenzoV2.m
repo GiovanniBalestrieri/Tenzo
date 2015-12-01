@@ -96,6 +96,7 @@ PWM_max=2200; %Upper limit of the PWM signal provided to
 %w0c=sqrt(g*mq/Kt);
 %X0c=w0c;
 Ft0=mq*g;
+
 %% Linearized Model
 disp('Welcome to Tenzo!');
 disp('Using Linearized Model: press tenzo_nominale for infos');
@@ -156,9 +157,9 @@ tenzo_nominale=tenzo_unc.NominalValue;
 disp('Verifica preliminare, autovalori del processo [eig(A)]:');
 
 %Definizione intervallo delle frequenze di interesse
-omega = logspace(-2,3);
+omega = logspace(-2,3,250);
 
-%% Motors
+% Motors
 
 % V - Include mixer in B 
 % V - Include motor's dynamic in A with state space canonical companion from 
@@ -216,7 +217,7 @@ m1 = canon(mot1,'modal');
 % open('testMotors');
 % sim('testMotors');
 
-%% Eigenvalues of the system
+% Eigenvalues of the system
 alpha = 0;
 stab=1;
 eOp = eig(tenzo_nominale.a);
@@ -266,6 +267,8 @@ end
 disp('Rank Obsv matrix:');
 disp(rank(obsv(tenzo_nominale.a,tenzo_nominale.c)));
 
+
+    stab_flag=0;
 % PBH test of reachability
 if raggiungibile == false
     stab_flag=0;
@@ -303,7 +306,7 @@ if osservabile == false
     end
 end
 
-%% Il sys non è osservabile. 
+% Il sys non è osservabile. 
 % Definiamo il sottosistema osservabile e raggiungibile
 disp('Let us remove the unobservable modes/components from the state.');
   
@@ -360,7 +363,7 @@ KalmanC = tenzo_nominale.c*U';
 
 disp('Yeah confirmed! Correct observable and reachable subsystem');
 
-%% Proprietà strutturali:
+% Proprietà strutturali:
 
 % Sistema Ben Connessi: Somma dei singoli stati che compongono i sistemi 
 % sia pari alla dimensione dello stato del sistema complessivo
@@ -382,7 +385,8 @@ end
 disp(rank(obsv(tenzo_min_nominale.a,tenzo_min_nominale.c)));
 
 disp('It is fine now');
-%% Invariant zeros 
+
+% Invariant zeros 
 
 % Transfer function
 modello_tf = tf(tenzo_min_nominale);
@@ -420,7 +424,7 @@ end
 
 
 
-%% Ricostruzione dello stato con Kalman
+% Ricostruzione dello stato con Kalman
 
 disp('Ricostruzione dello stato con Kalman');
 disp('Press any key to continue.');
@@ -443,7 +447,7 @@ Doss=zeros(q,p);
 disp('Autovalori A-V*C');
 disp(eig(tenzo_min_nominale.a-V*tenzo_min_nominale.c));
 
-%% Stabilizzazione LQR
+% Stabilizzazione LQR
 
 disp('Stabilizzazione mediante LQR dallo stato stimato');
 disp('Press any key to continue.');
@@ -552,7 +556,7 @@ grid on
 legend('U01 MVS','U02 MVS','U03 MVS')
 title('Verifica andamento massimo valor singolare di U0');
 
-%% Scelta di Kopt3
+% Scelta di Kopt3
 
 R    = R3;
 U0   = U0_3;
@@ -645,6 +649,7 @@ hold on
 semilogx(omega,20*log10(m_U_LTR_1_vs),'r'); 
 semilogx(omega,20*log10(m_U_LTR_2_vs),'m');
 semilogx(omega,20*log10(m_U_LTR_3_vs),'g');
+
 grid on
 legend('U0 MVS','U01 LTR MVS','U02 LTR MVS','U03 LTR MVS')
 title('Max val sing of U0');
