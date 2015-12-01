@@ -739,7 +739,7 @@ top_dMout = max(max_sig_dMout);
 
 %% output multiplicative Out uncertainties
 
-figure(4);
+figure(9);
 semilogx(omega,mag2db(top_dMout),'b','LineWidth',5)
 grid on;
 hold on;
@@ -749,56 +749,102 @@ end
 title('Max sing values: output multiplicative uncertainties (red), bound (blue)')
 
 %% Upper bound razionale stabile e fase minima
-pre_bound_dA = frd(top_dA,omega);
+% pre_bound_dA = frd(top_dA,omega);
+% 
+% % fit razionale e min phase per ricavare il bound
+% ord = 2; %Ordine della funzione di fitting 
+% bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+% bb_dA2 = sigma(bound_dA,omega);
+% ord = 5; %Ordine della funzione di fitting 
+% bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+% bb_dA5 = sigma(bound_dA,omega);
+% ord = 7; %Ordine della funzione di fitting
+% bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+% bb_dA7 = sigma(bound_dA,omega);
+% 
+% figure(5);
+% semilogx(omega,mag2db(top_dA),'b','LineWidth',2);
+% grid on;
+% hold on;
+% semilogx(omega,mag2db(bb_dA2(1,:)),'r','LineWidth',2);
+% semilogx(omega,mag2db(bb_dA5(1,:)),'k','LineWidth',2);
+% semilogx(omega,mag2db(bb_dA7(1,:)),'m','LineWidth',2);
+% title('Bound on additive uncertainties');
+% legend('strict bound', 'Rational stable min phase, order 2',...
+%   'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
+%   'Location','SouthWest');
+
+%% Upper bound MOLT IN lm(w) razionale stabile e fase minima
+% pre_bound_dMin = frd(top_dMin,omega);
+% 
+% % fit razionale e min phase per ricavare il bound
+% %ord = 2; %Ordine della funzione di fitting 
+% %bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
+% %bb_dMin2 = sigma(bound_dM,omega);
+% ord = 5; %Ordine della funzione di fitting 
+% bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
+% bb_dMin5 = sigma(bound_dM,omega);
+% %ord = 7; %Ordine della funzione di fitting 
+% %bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
+% %bb_dMin7 = sigma(bound_dM,omega);
+% 
+% figure(6);
+% semilogx(omega,mag2db(top_dMin),'b','LineWidth',2)
+% grid on;
+% hold on;
+% %semilogx(omega,mag2db(bb_dMin2(1,:)),'r','LineWidth',2)
+% semilogx(omega,mag2db(bb_dMin5(1,:)),'k','LineWidth',2)
+% %semilogx(omega,mag2db(bb_dMin7(1,:)),'m','LineWidth',2)
+% title('Bound on multiplicative uncertainties');
+% legend('strict bound', 'Rational stable min phase, order 2',...
+%   'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
+%   'Location','SouthWest');
+
+%% Upper bound Molt OUT lm~(w) razionale stabile e fase minima
+pre_bound_dMout = frd(top_dMout,omega);
 
 % fit razionale e min phase per ricavare il bound
 ord = 2; %Ordine della funzione di fitting 
-bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
-bb_dA2 = sigma(bound_dA,omega);
+bound_dMout = fitmagfrd(pre_bound_dMout,ord,[],[],1); 
+bb_dMout2 = sigma(bound_dMout,omega);
 ord = 5; %Ordine della funzione di fitting 
-bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
-bb_dA5 = sigma(bound_dA,omega);
-ord = 7; %Ordine della funzione di fitting
-bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
-bb_dA7 = sigma(bound_dA,omega);
+bound_dMout = fitmagfrd(pre_bound_dMout,ord,[],[],1); 
+bb_dMout5 = sigma(bound_dMout,omega);
+ord = 7; %Ordine della funzione di fitting 
+bound_dMout = fitmagfrd(pre_bound_dMout,ord,[],[],1); 
+bb_dMout7 = sigma(bound_dMout,omega);
 
-figure(5);
-semilogx(omega,mag2db(top_dA),'b','LineWidth',2);
+figure(10);
+semilogx(omega,mag2db(top_dMout),'b','LineWidth',2)
 grid on;
 hold on;
-semilogx(omega,mag2db(bb_dA2(1,:)),'r','LineWidth',2);
-semilogx(omega,mag2db(bb_dA5(1,:)),'k','LineWidth',2);
-semilogx(omega,mag2db(bb_dA7(1,:)),'m','LineWidth',2);
-title('Bound on additive uncertainties');
+semilogx(omega,mag2db(bb_dMout2(1,:)),'r','LineWidth',2)
+semilogx(omega,mag2db(bb_dMout5(1,:)),'k','LineWidth',2)
+semilogx(omega,mag2db(bb_dMout7(1,:)),'m','LineWidth',2)
+title('Bound on multiplicative Output uncertainties');
 legend('strict bound', 'Rational stable min phase, order 2',...
   'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
   'Location','SouthWest');
 
-%% Upper bound razionale stabile e fase minima
-pre_bound_dMin = frd(top_dMin,omega);
+%% %%%%%%%%%%% STAMPA AUTOVALORI %%%%%%%%%%%%%%%%%%
+ 
+clc
 
-% fit razionale e min phase per ricavare il bound
-%ord = 2; %Ordine della funzione di fitting 
-%bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
-%bb_dMin2 = sigma(bound_dM,omega);
-ord = 5; %Ordine della funzione di fitting 
-bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
-bb_dMin5 = sigma(bound_dM,omega);
-%ord = 7; %Ordine della funzione di fitting 
-%bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
-%bb_dMin7 = sigma(bound_dM,omega);
+%  disp('Autovalori del sistema nominale')
+%  eig(U_LTR_3)               % Autovalori del sistema di controllo nominale
 
-figure(6);
-semilogx(omega,mag2db(top_dMin),'b','LineWidth',2)
-grid on;
-hold on;
-%semilogx(omega,mag2db(bb_dMin2(1,:)),'r','LineWidth',2)
-semilogx(omega,mag2db(bb_dMin5(1,:)),'k','LineWidth',2)
-%semilogx(omega,mag2db(bb_dMin7(1,:)),'m','LineWidth',2)
-title('Bound on multiplicative uncertainties');
-legend('strict bound', 'Rational stable min phase, order 2',...
-  'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
-  'Location','SouthWest');
+ disp('Autovalori del sistema con pert. ammissibile')
+ eig(W_LTR_3_PERT_am)     % Autovalori del sistema di controllo perturbato 1
+
+ 
+ disp('Autovalori del sistema con pert. inammissibile ma stabile')
+ eig(W_LTR_3_PERT_in_st)   % Autovalori del sistema di controllo perturbato 2
+
+ 
+ disp('Autovalori del sistema con pert. inammissibile (e instabile)')
+ eig(W_LTR_3_PERT_in)      % Autovalori del sistema di controllo perturbato 3
+
+
 
 %% Definizione dei bounds
 
