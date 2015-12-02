@@ -17,13 +17,13 @@ rho = ureal('rho',1.2250,'Range',[1.1455 1.4224]);
 mq = ureal('mq',1.30,'Range',[0.620 2.0]);
 
 % Mass of a motor (kg). All motors have equal mass.
-mm = ureal('mm',0.068,'Range',[0.020 0.105]);
+mm = ureal('mm',0.068,'Range',[0.020 0.085]);
 % Motor length along x-axis (m). All motors have equal sizes.
-lx = ureal('lx',28.8e-3,'Range',[0.020 0.035]);
+lx = ureal('lx',28.8e-3,'Range',[0.015 0.030]);
 % Motor length along y-axis (m)
-ly = ureal('ly',28.8e-3,'Range',[0.020 0.035]);
+ly = ureal('ly',28.8e-3,'Range',[0.015 0.030]);
 % Motor length along z-axis (m)
-lz = ureal('lz',0.08,'Range',[0.05 0.1]);
+lz = ureal('lz',0.08,'Range',[0.03 0.6]);
 
 % Distance from the center of gravity to the center of a motor (m).
 % The quadrotor is symmetric regarding the XZ and YZ planes, so
@@ -32,7 +32,7 @@ dcg=0.288;
 
 dcgX = ureal('dcgX',0.288,'Range',[0.12 0.37]);
 dcgY = ureal('dcgY',0.288,'Range',[0.12 0.37]);
-dcgZ = ureal('dcgZ',0.03,'Range',[0.02 0.1]);
+dcgZ = ureal('dcgZ',0.03,'Range',[-0.1 0.1]);
 
 % Moment of inertia (x-axis) for motors 1 and 3
 % (kg.m^2).
@@ -70,7 +70,7 @@ cp = ureal('cp',0.0314,'Range',[0.0111 0.0465]);
 ct = ureal('ct',0.0726,'Range',[0.0348 0.0980]);
 
 % Propeller radius (m)
-rp = ureal('rp',13.4e-2,'Range',[0.10 0.15]);
+rp = ureal('rp',13.4e-2,'Range',[0.05 0.15]);
 % Constant value to calculate the moment provided
 % by a propeller given its angular speed (kg.m^2.rad^-1)
 Km=cp*4*rho*rp^5/pi()^3; 
@@ -194,6 +194,7 @@ canonMotor3 = canon(tfM3,'companion');
 tfM4 = zpk([],[p1m4 p2m4],ktfM4);
 canonMotor4 = canon(tfM4,'companion');
 
+disp('Display Motor step response');
 % Analyze motors dynamics
 opt = stepDataOptions;
 opt.StepAmplitude = 1000;
@@ -820,12 +821,12 @@ grid on;
 hold on;
 semilogx(omega,mag2db(bb_dMout2(1,:)),'r','LineWidth',2)
 semilogx(omega,mag2db(bb_dMout5(1,:)),'k','LineWidth',2)
-semilogx(omega,mag2db(bb_dMout7(1,:)),'m','LineWidth',2)
 title('Bound on multiplicative Output uncertainties');
 legend('strict bound', 'Rational stable min phase, order 2',...
-  'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
+  'Rational stable min phase, order 5',...
   'Location','SouthWest');
 
+disp('Step response for uncertain systems');
 figure(11)
 % Compute Closed Loop transfer functions
 for i=1:N
@@ -842,25 +843,55 @@ for i=1:N
     grid on
 end
 
-%% %%%%%%%%%%% STAMPA AUTOVALORI %%%%%%%%%%%%%%%%%%
-
+%% AUTOVALORI
+disp('Print eigenvalues of uncertain systems');
+pause();
 clc
 
-%  disp('Autovalori del sistema nominale')
-%  eig(U_LTR_3)               % Autovalori del sistema di controllo nominale
-
+for i=1:N
  disp('Autovalori del sistema')
- eig(W_LTR_3_PERT_am)     % Autovalori del sistema di controllo perturbato 1
+ i
+ eig(Closed_Loop_LTR{i})     % Autovalori del sistema di controllo perturbato 1
+end
 
- 
- disp('Autovalori del sistema con pert. inammissibile ma stabile')
- eig(W_LTR_3_PERT_in_st)   % Autovalori del sistema di controllo perturbato 2
+%% TASK 3 
 
- 
- disp('Autovalori del sistema con pert. inammissibile (e instabile)')
- eig(W_LTR_3_PERT_in)      % Autovalori del sistema di controllo perturbato 3
+%  Calcolo di strumenti da utilizzare
+%  nell'applicazione del controllo Hinf 
+
+% -----> PROBLEM F0 ha poli lungo asse IM 
+
+F0 = series(G,tenzo_min_nominale);
+% Matrice di sensibilità
+S0_LTR = feedback(eye(q),F0);
+S0_vs = sigma(S0_LTR,omega);
+max_S0_vs = S0_vs(1,:);
+
+F0_vs = sigma(F0,omega);
+max_F0_vs = F0_vs(1,:);
+P0G = frd(max_F0_vs,omega);
+
+ps_sign = frd(max_S0_vs.^-1,omega);
+ps = frd(max_S0_vs,omega);
+
+%approssmazione si 1/ps con w1                                
+w1 = zpk([-100],[-1 -10 -0.1],50);
+
+[MODX,FAS]=bode(w1,omega);
+w1M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
+                     % di w1 per ogni omega
+
+% Grafico di ps~ (inverso dell'andamento dei massimi
+% valori singolari di S0 al variare di omega) 
+% e ps ricavata tale che:
+% - tenda a zero per w -> inf
+% - ps >> 1 per w < wX
 
 
+figure(12)
+bodemag(ps_sign,'b',ps,'r',P0G,'m',w1M,'k',omega);
+legend('1/ps','max_S0','P0G','w1');
+grid on
 
 %% Definizione dei bounds
 
