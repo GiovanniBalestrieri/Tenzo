@@ -457,14 +457,14 @@ pause();
 rho1 = 0.001;
 rho2 = 1;
 rho3 = 10;
-alphaK = 2;
-QieCmp = blkdiag([0.00001 0; 0 0.00001],100*eye(3),eye(3));
-Qie = blkdiag([0.01 0; 0 0.01],100000*eye(3),zeros(3,3));
+alphaK = 5;
+%QieCmp = blkdiag([0.00001 0; 0 0.00001],100*eye(3),eye(3));
+%Qie = blkdiag([0.01 0; 0 0.01],100000*eye(3),zeros(3,3));
 Q = eye(size(AMin));
 
 Q = tenzo_min_nominale.c'*tenzo_min_nominale.c;
 
-RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
+%RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
 R = eye(size(BMinw,2));
 
 R1 = rho1*eye(p);
@@ -497,17 +497,17 @@ tenzoLQR1=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_1,tenzo_min_nominale
 tenzoLQR2=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_2,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 tenzoLQR3=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_3,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 
-disp('Displaying LQG 1');
+disp('Displaying LQR 1');
 pause();
 figure(3);
 step(tenzoLQR1);
 
-disp('Displaying LQG 2');
+disp('Displaying LQR 2');
 pause();
 figure(4)
 step(tenzoLQR2);
 
-disp('Displaying LQG 3');
+disp('Displaying LQR 3');
 pause();
 figure(5)
 step(tenzoLQR3);
@@ -618,7 +618,7 @@ U_LTR_2 = feedback(H_LTR_2,eye(q));
 sigma_3 = 10^12;
 V_3 = sigma_3^2*tenzo_min_nominale.b*tenzo_min_nominale.b';
 W_3 = eye(p);
-L_3=  lqr(tenzo_min_nominale.a',tenzo_min_nominale.c',V_3,W_3)';
+L_3=  lqr((tenzo_min_nominale.a+alpha*eye(n))',tenzo_min_nominale.c',V_3,W_3)';
 
 Ac_3 = tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt-L_3*tenzo_min_nominale.c-L_3*tenzo_min_nominale.d*Kopt;
 Bc_3 = L_3;
@@ -703,28 +703,6 @@ top_dA = max(max_sig_dA);
 top_dMin = max(max_sig_dMin);
 top_dMout = max(max_sig_dMout);
 
-%% 
-% 
-% figure(1);
-% semilogx(omega,mag2db(max_sig_nom),'k--','LineWidth',2)
-% grid on;
-% hold on;
-% for i=1:1:N
-%   semilogx(omega,mag2db(max_sig_unc(i,:)),'r:','LineWidth',2)
-% end
-% semilogx(omega,mag2db(top_unc),'b','LineWidth',5)
-% semilogx(omega,mag2db(max_sig_nom),'k','LineWidth',5)
-% title('Max sing values: Nominal (bk), Pert models (R), bound (blue)')
-
-%%  Additive
-% figure(2);
-% semilogx(omega,mag2db(top_dA),'b','LineWidth',5)
-% grid on;
-% hold on;
-% for i=1:1:N
-%   semilogx(omega,mag2db(max_sig_dA(i,:)),'r:','LineWidth',2)
-% end
-% title('Max sing values: additive uncertainties (red), bound (blue)')
 
 
 %% Input Moltiplicative uncertainties
@@ -749,31 +727,6 @@ for i=1:1:N
 end
 title('Max sing values: output multiplicative uncertainties (red), bound (blue)')
 
-%% Upper bound razionale stabile e fase minima
-% pre_bound_dA = frd(top_dA,omega);
-% 
-% % fit razionale e min phase per ricavare il bound
-% ord = 2; %Ordine della funzione di fitting 
-% bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
-% bb_dA2 = sigma(bound_dA,omega);
-% ord = 5; %Ordine della funzione di fitting 
-% bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
-% bb_dA5 = sigma(bound_dA,omega);
-% ord = 7; %Ordine della funzione di fitting
-% bound_dA = fitmagfrd(pre_bound_dA,ord,[],[],1); 
-% bb_dA7 = sigma(bound_dA,omega);
-% 
-% figure(5);
-% semilogx(omega,mag2db(top_dA),'b','LineWidth',2);
-% grid on;
-% hold on;
-% semilogx(omega,mag2db(bb_dA2(1,:)),'r','LineWidth',2);
-% semilogx(omega,mag2db(bb_dA5(1,:)),'k','LineWidth',2);
-% semilogx(omega,mag2db(bb_dA7(1,:)),'m','LineWidth',2);
-% title('Bound on additive uncertainties');
-% legend('strict bound', 'Rational stable min phase, order 2',...
-%   'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
-%   'Location','SouthWest');
 
 %% Upper bound MOLT IN lm(w) razionale stabile e fase minima
 % pre_bound_dMin = frd(top_dMin,omega);
@@ -859,7 +812,7 @@ end
 %  Calcolo di strumenti da utilizzare
 %  nell'applicazione del controllo Hinf 
 
-% -----> PROBLEM F0 ha poli lungo asse IM 
+% -----> PROBLEM F0 ha poli lungo asse IM  -> sposta C-buono
 
 F0 = series(G,tenzo_min_nominale);
 % Matrice di sensibilità
@@ -872,10 +825,10 @@ max_F0_vs = F0_vs(1,:);
 P0G = frd(max_F0_vs,omega);
 
 ps_sign = frd(max_S0_vs.^-1,omega);
-ps = frd(max_S0_vs,omega);
+mx_SO_vs = frd(max_S0_vs,omega);
 
 %approssmazione si 1/ps con w1                                
-w1 = zpk([-100],[-1 -10 -0.1],50);
+w1 = zpk([],[0 -2],1200);
 
 [MODX,FAS]=bode(w1,omega);
 w1M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -889,8 +842,85 @@ w1M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
 
 
 figure(12)
-bodemag(ps_sign,'b',ps,'r',P0G,'m',w1M,'k',omega);
-legend('1/ps','max_S0','P0G','w1');
+bodemag(ps_sign,'b',mx_S0_vs,'r',w1M,'k',omega);
+legend('1/ps','max_S0','w1');
+grid on
+
+%% 3.2) 
+
+ 
+figure(13);
+semilogx(omega,mag2db(max_sig_nom),'k--','LineWidth',2)
+grid on;
+hold on;
+for i=1:1:N
+  semilogx(omega,mag2db(max_sig_unc(i,:)),'r:','LineWidth',2)
+end
+semilogx(omega,mag2db(top_unc),'b','LineWidth',5)
+semilogx(omega,mag2db(max_sig_nom),'k','LineWidth',5)
+title('Max sing values: Nominal (bk), Pert models (R), bound (blue)')
+
+%  Additive
+figure(14);
+semilogx(omega,mag2db(top_dA),'b','LineWidth',5)
+grid on;
+hold on;
+for i=1:1:N
+  semilogx(omega,mag2db(max_sig_dA(i,:)),'r:','LineWidth',2)
+end
+title('Max sing values: additive uncertainties (red), bound (blue)')
+
+% Upper bound razionale stabile e fase minima
+pre_bound_dA = frd(top_dA,omega);
+
+% fit razionale e min phase per ricavare il bound
+ord = 2; %Ordine della funzione di fitting 
+bound_dA2 = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+bb_dA2 = sigma(bound_dA2,omega);
+ord = 5; %Ordine della funzione di fitting 
+bound_dA5 = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+bb_dA5 = sigma(bound_dA5,omega);
+ord = 7; %Ordine della funzione di fitting
+bound_dA7 = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+bb_dA7 = sigma(bound_dA7,omega);
+
+figure(15);
+semilogx(omega,mag2db(top_dA),'b','LineWidth',2);
+grid on;
+hold on;
+semilogx(omega,mag2db(bb_dA2(1,:)),'r-','LineWidth',2);
+semilogx(omega,mag2db(bb_dA5(1,:)),'ko','LineWidth',2);
+semilogx(omega,mag2db(bb_dA7(1,:)),'m','LineWidth',2);
+title('Bound on additive uncertainties');
+legend('strict bound', 'Rational stable min phase, order 2',...
+  'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
+  'Location','SouthWest');
+
+%% Costruzione V0
+
+% let us use as la the rational fit previously computed
+la = bound_dA2;
+
+V0_LTR = feedback(G,tenzo_min_nominale);
+
+% Max val sing di V0
+V0_vs = sigma(V0_LTR,omega);
+max_V0_vs = V0_vs(1,:);
+MAX_V0_vs = frd(max_V0_vs,omega);
+
+% la segnato
+la_signed = frd(max_V0_vs.^-1,omega);
+
+%approssmazione si la con w2                                
+w2 = zpk([-3 -5 -1],[0 0 -2],5);
+
+[MODX,FAS]=bode(w2,omega);
+w2M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
+                     % di w1 per ogni omega
+
+figure(16)
+bodemag(la_signed,'b',MAX_V0_vs,'r',la,'m',w2M,'k',omega);
+legend('la_sign','maxV0','la','w2');
 grid on
 
 %% Definizione dei bounds
