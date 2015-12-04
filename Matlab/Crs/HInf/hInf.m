@@ -24,7 +24,7 @@ k2 = ureal('k2',0.1,'Range',[0.0 0.9]);
 b1 = .1; %Attrito viscoso
 b2 = ureal('b2',.1,'Plusminus',.05);
 
-A=[zeros(2,2) eye(2); -(k1+k2)/m1 k2/m1 -(b1+b2)/m1 b2/m1; k2/m2 -k2/m2 b1/m2 -b2/m2];
+A=[zeros(2,2) eye(2); -(k1+k2)/m1 k2/m1 -(b1+b2)/m1 b2/m1; k2/m2 -k2/2 b1/m2 -b2/m2];
 B=[zeros(2,2); a1/m1 0;0 a2/m2];
 C=[eye(2) zeros(2,2)];
 D=zeros(2,2);

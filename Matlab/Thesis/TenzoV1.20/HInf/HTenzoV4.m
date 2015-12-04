@@ -881,20 +881,19 @@ bb_dA2 = sigma(bound_dA2,omega);
 ord = 5; %Ordine della funzione di fitting 
 bound_dA5 = fitmagfrd(pre_bound_dA,ord,[],[],1); 
 bb_dA5 = sigma(bound_dA5,omega);
-ord = 7; %Ordine della funzione di fitting
-bound_dA7 = fitmagfrd(pre_bound_dA,ord,[],[],1); 
-bb_dA7 = sigma(bound_dA7,omega);
+% ord = 7; %Ordine della funzione di fitting
+% bound_dA7 = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+% bb_dA7 = sigma(bound_dA7,omega);
 
 figure(15);
 semilogx(omega,mag2db(top_dA),'b','LineWidth',2);
 grid on;
 hold on;
 semilogx(omega,mag2db(bb_dA2(1,:)),'r-','LineWidth',2);
-semilogx(omega,mag2db(bb_dA5(1,:)),'ko','LineWidth',2);
-semilogx(omega,mag2db(bb_dA7(1,:)),'m','LineWidth',2);
+semilogx(omega,mag2db(bb_dA5(1,:)),'k--','LineWidth',2);
 title('Bound on additive uncertainties');
 legend('strict bound', 'Rational stable min phase, order 2',...
-  'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
+  'Rational stable min phase, order 5',...
   'Location','SouthWest');
 
 %% Costruzione V0
@@ -951,42 +950,147 @@ lm = bound_dMout2;
 
 % Le variazioni sono casuali e la maggiorante cambierebbe ogni volta
 % fissiamo:
-w3 = zpk([-100],[-10000],1000);
-[mod_w3,fas_w3]=bode(w3,omega);
-w3_X = frd(mod_w3,omega);
+w3_X = zpk([-100],[-10000],1000);
+[mod_w3,fas_w3]=bode(w3_X,omega);
+w3 = frd(mod_w3,omega);
 
 figure
 bodemag(lm,'b',lm_b,'r',max_T0_LTR,'c',max_F,'m',w3_X,'k--',omega)
 legend('lm','lm LTR','T0','PoG','w3')
 grid
 
-%% PROBLEM : Dovrei trovare una lm (maggiorante delle deltaP out) > lmb
-%  lmb > 1/sigma(T0)
+%% Part 4) - SINTESI DEL CONTROLLORE H-INFINITO 
+
+gamma_1 = 1/5;
+gamma_2 = 1/5;
+gamma_3 = 1/5; 
 
 
+W1 = gamma_1*w1*eye(q);
+W2 = gamma_2*w2*eye(q);
+W3 = gamma_3*w3*eye(q);
+
+% Grafico delle funzioni la, lm, ps considerate per la sintesi Hinf
+figure
+sigma(W1,'r')
+grid on
+hold on
+sigma(W2,'g')
+sigma(W3,'b')
+legend('W1','W2','W3')
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CASO 2: Uscite di prestazione [z1,z3] %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Primo Passo: Verifica applicabilità e sintesi h-infinito %
+alphaK = 0.0002;
+modello_ss_epsilon = ss(tenzo_min_nominale.a +alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
+% Costruzione sistema allargato
+P_aug = augw(modello_ss_epsilon,w3_X,W2,[]); 
+
+% Estrapolazione delle matrici caratterizzanti il sistema allargato
+A_bar = P_aug.A;
+
+[rB,cB] = size(P_aug.B);
+B1 = P_aug.B(:,1:cB-3);
+B2 = P_aug.B(:,cB-2:cB);
+
+[rC,cC] = size(P_aug.C);
+C1 = P_aug.C(1:rC-3,:);
+C2 = P_aug.C(rC-2:rC,:);
+
+D11 = P_aug.D(1:rC-3,1:cB-3);
+D12 = P_aug.D(1:rC-3,cB-2:cB);
+D21 = P_aug.D(rC-2:rC,1:cB-3);
+D22 = P_aug.D(rC-2:rC,cB-2:cB);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Verifica ipotesi di applicabilità H-infinito %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     
+% a) (A_bar,B2,C2) Cb-Stabilizzabile e Cb-Rilevabile
+eigen_A_bar = eig(A_bar);
+n_bar = size(A_bar);
+
+% PBH_TEST per verificare la Cb-Stabilizzabilità
+stab_flag=0;
+for i=1:length(eigen_A_bar)
+    if(real(eigen_A_bar(i))>=-alphaK)
+        pbh_matrix_reach = [(A_bar - eigen_A_bar(i)*eye(n_bar)) B2];
+        if(rank(pbh_matrix_reach)<n_bar)
+            disp('PBH VIOLATO');
+            stab_flag=1;
+            break;
+        end
+    end
+end
+if(stab_flag==0) 
+    disp('La coppia (A_bar,B2) è C-buono stabilizzabile')
+end 
+
+% PBH_TEST per verificare la Cb-Rilevabilità
+rel_flag=0;
+for i=1:length(eigen_A_bar)
+    if(real(eigen_A_bar(i))>=-alphaK)
+        pbh_matrix_obsv = [(A_bar - eigen_A_bar(i)*eye(n_bar)); C2];
+        if(rank(pbh_matrix_obsv)<n_bar)
+            disp('PBH VIOLATO');
+            rel_flag=1;
+            break;
+        end
+    end
+end
+if(rel_flag==0) 
+    disp('La coppia (A_bar,C2) è C-buono rilevabile')
+end 
+
+% D11 = 0 
+D11
+
+% c) D22 = 0
+D22
+
+% d) rank(D12) pieno colonna
+D12
+rank(D12)
+
+% e) nessuno zero di [A-sI,B2; C1, D12] sul confine di Cb
+disp(tzero(ss(P_aug.A,B2,C1,D12)))
+
+% f ) rg(D21) pieno riga
+D21
+rank(D21)
+
+% g) nessuno zero di [A-sI,B1; C2, D21] sul confine di Cb
+disp(tzero(ss(P_aug.A,B1,C2,D21)))
+
+
+[K,CL,GAM] = hinfsyn(P_aug); 
 
 
 %% Definizione dei bounds
-
-ps = gamma1*tf(1,[1 1])
-la{i} = deltaA_sys{i}
-lmD{i} = deltaMin_sys{i}
-lm{i} = deltaMout_sys{i}
-
-la = bb_dA5;
-lm = bb_dMin5;
-
-lm = tf([1 1], 1.1);
-lmD = lm
-
-figure
-sigma(lm,'r--')
-hold on
-grid on
-semilogx(omega,mag2db(lm),'b','LineWidth',2)
-semilogx(omega,mag2db(la),'b','LineWidth',2)
-
-bode(mag2db(lm))
+% 
+% 
+% ps = gamma1*tf(1,[1 1])
+% la{i} = deltaA_sys{i}
+% lmD{i} = deltaMin_sys{i}
+% lm{i} = deltaMout_sys{i}
+% 
+% la = bb_dA5;
+% lm = bb_dMin5;
+% 
+% lm = tf([1 1], 1.1);
+% lmD = lm
+% 
+% figure
+% sigma(lm,'r--')
+% hold on
+% grid on
+% semilogx(omega,mag2db(lm),'b','LineWidth',2)
+% semilogx(omega,mag2db(la),'b','LineWidth',2)
+% 
+% bode(mag2db(lm))
 
 
 % disp('End');
