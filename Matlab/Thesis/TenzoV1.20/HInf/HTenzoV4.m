@@ -829,7 +829,8 @@ ps_sign = frd(max_S0_vs.^-1,omega);
 ma_S0_vs = frd(max_S0_vs,omega);
 
 %approssmazione si 1/ps con w1                                
-w1 = zpk([],[0 -2],1200);
+w1 = zpk([-4],[-0.001 -2],100);
+step(w1)
 
 [MODX,FAS]=bode(w1,omega);
 w1M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -912,7 +913,7 @@ MAX_V0_vs = frd(max_V0_vs,omega);
 la_signed = frd(max_V0_vs.^-1,omega);
 
 %approssmazione si la con w2                                
-w2 = zpk([-3 -5 -1],[0 0 -2],5);
+w2 = zpk([-2 -10],[0 -5],0.1);
 
 [MODX,FAS]=bode(w2,omega);
 w2M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -968,7 +969,7 @@ gamma_3 = 1/5;
 
 W1 = gamma_1*w1*eye(q);
 W2 = gamma_2*w2*eye(q);
-W3 = gamma_3*w3*eye(q);
+W3 = gamma_3*w3_X*eye(q);
 
 % Grafico delle funzioni la, lm, ps considerate per la sintesi Hinf
 figure
@@ -979,15 +980,18 @@ sigma(W2,'g')
 sigma(W3,'b')
 legend('W1','W2','W3')
 
+figure 
+step(w3_X,'b',w2,'r',w1,'k')
+
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CASO 2: Uscite di prestazione [z1,z3] %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.0002;
+alphaK = 2;
 modello_ss_epsilon = ss(tenzo_min_nominale.a +alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
-P_aug = augw(modello_ss_epsilon,w3_X,W2,[]); 
+P_aug = augw(modello_ss_epsilon,W1,W2,w3_X); 
 
 % Estrapolazione delle matrici caratterizzanti il sistema allargato
 A_bar = P_aug.A;
