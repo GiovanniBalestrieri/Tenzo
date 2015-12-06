@@ -103,7 +103,7 @@ Ft0=mq*g;
 disp('Loading Parameters ... [OK]');
 
 %% Linearized Model
-
+cprintf('hyper', [char(10) 'Plan definition' char(10) char(10)]);
 cprintf('text', ['Using Linearized Model:' char (10) 'for infos press:  ']); 
 
 cprintf([1,0.5,0],'tenzo_nominale\n\n'); 
@@ -210,24 +210,26 @@ end
 
 %% Proprietà strutturali:
 % Verifica Raggiungibilità e Osservabilità
-disp('Press X for structural properties');
-pause();
+cprintf('hyper', [char(10) '1) Structural properties' char(10) char(10)]);
+
 raggiungibile = false;
 osservabile = false;
 if (rank(ctrb(tenzo_nominale.a,tenzo_nominale.b))==size(tenzo_nominale.a,1))
-    disp('Sistema raggiungibile');
+    cprintf('text', 'System');
+    cprintf('green', ' reachable \n'); 
     raggiungibile = true;
 else
-    disp('Sistema Irraggiungibile');
-    
+    cprintf('err', 'Unreachable system!\n');    
 end
 disp('Rank Reach Matrix:');
 disp(rank(ctrb(tenzo_nominale.a,tenzo_nominale.b)));
 
 if (rank(obsv(tenzo_nominale.a,tenzo_nominale.c))==size(tenzo_nominale.a,1))
-    disp('Sistema osservabile');
-else    
-    disp('Sistema Non osservabile');
+    cprintf('text', 'System');
+    cprintf('green', ' observable \n'); 
+else   
+    osservabile = false;
+    cprintf('err', 'Unobservable system!\n');    
 end
 disp('Rank Obsv matrix:');
 disp(rank(obsv(tenzo_nominale.a,tenzo_nominale.c)));
@@ -249,7 +251,7 @@ if raggiungibile == false
     end
     
     if stab_flag > 0
-        disp('Confermato anche dal Pbh test. Sys Non C-Buono stabile'); 
+        disp('Confermato anche dal Pbh test di stabilizzabilità.'); 
     end
 end
 
@@ -266,10 +268,15 @@ if osservabile == false
         end
     end
     
-    if stab_flag > 0
-       disp('Confermato anche dal Pbh test. Sys Non C-Buono stabile'); 
+    if rel_flag > 0
+       disp('Confermato anche dal Pbh test di rilevabilità.'); 
+       disp('Necessario omettere modi non osservabili.'); 
     end
 end
+%% Modifica impianto
+
+cprintf('hyper', [char(10) 'New Plant definition' char(10) char(10)]);
+
 
 % Il sys non è osservabile. 
 % Definiamo il sottosistema osservabile e raggiungibile
@@ -293,7 +300,7 @@ disp('Let us remove the unobservable modes/components from the state.');
     0 0 1/Izz 0];
 
 % define B matrix related to wi anuglar velocities
-BMinw = [Bw(3,:);Bw(6:end,:)]
+BMinw = [Bw(3,:);Bw(6:end,:)];
  
 outputsLocal = {'phi'; 'theta';'psi';'ze'};
 ClocalMin = [  
@@ -307,8 +314,7 @@ inputName = {'w1^2','w2^2','w3^2','w4^2'};
 
 disp('Equivalent system: We have removed the x,y position and x,y linear velocities from the plant.');
 disp('When we linearize the non linear model, these informations are lost');
-disp('Anyway, we do not need them for th Low Level Controller (attitude control)');
-
+cprintf('text','\nAnyway, we do not need them for \nthe Low Level Controller (attitude control)\n\n');
 
 tenzo_min_unc = uss(AMin,BMinw,ClocalMin,D,'statename',statesMin,'inputName',inputName,'outputname',outputsLocal);
 tenzo_min_nominale=tenzo_min_unc.NominalValue;
@@ -327,7 +333,7 @@ KalmanC = tenzo_nominale.c*U';
 
 %sysr
 
-disp('Yeah confirmed! Correct observable and reachable subsystem');
+cprintf('text', [char(10) 'Yeah confirmed! Correct observable and reachable subsystem' char(10)]);
 
 % Proprietà strutturali:
 
@@ -337,14 +343,16 @@ disp('Yeah confirmed! Correct observable and reachable subsystem');
 
 % Verifica Raggiungibilità e Osservabilità
 if (rank(ctrb(tenzo_min_nominale.a,tenzo_min_nominale.b))==size(tenzo_min_nominale.a,1))
-    disp('Sistema raggiungibile');
+    cprintf('text', 'System');
+    cprintf('green', ' reachable \n'); 
     disp(rank(ctrb(tenzo_min_nominale.a,tenzo_min_nominale.b)));
 else
     disp('Sistema Irraggiungibile');
 end
 
 if (rank(obsv(tenzo_min_nominale.a,tenzo_min_nominale.c))==size(tenzo_min_nominale.a,1))
-    disp('Sistema osservabile');
+    cprintf('text', 'System');
+    cprintf('green', ' observable \n'); 
 else    
     disp('Sistema Non osservabile');
 end
@@ -354,33 +362,29 @@ disp('It is fine now');
 
 % Invariant zeros 
 
-disp('Press X to display transmission zeros');
-pause();
+cprintf('cyan', '\nInvariant zeros\n'); 
 % Transfer function
 modello_tf = tf(tenzo_min_nominale);
-
-% invarianzZero
-disp('Invariant Zeros:');
 tzero(tenzo_min_nominale.a,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,eye(8))
 
-disp('Transmission Zeros');
+cprintf('cyan', '\nTransmission zeros\n'); 
 tzero(modello_tf)
 
 % valori singolari 
-figure(2)
-sigma(modello_tf,[],'o-')
-grid on
-
-
-% Controllo che P(s) non sia singolare nel calmpo razionale
-syms s
-if (det(tenzo_min_nominale.c *(s*eye(n)-tenzo_min_nominale.a)^(-1)*tenzo_min_nominale.b) ~= 0)
-    disp('P(s) Non singular nel campo Razionale');
-else
-    disp('P(s) singolare nel campo razionale');
+cprintf('cyan', '\nSingular Values\n');
+answer2 = input(['Display singular values? [y/n]' char(10)],'s');
+if isempty(answer2)
+    answer2 = 'y';
+end
+if strcmp(answer2,'y')
+    figure(2)
+    sigma(modello_tf,[],'o-')
+    grid on
 end
 
-%% Passo B:
+%% 2) - Passo primo: 
+
+cprintf('hyper', [char(10) '2) Passo 1: LQR' char(10) char(10)]);
 
 %          Scegliere R=rho*I con rho>0 e calcolare la matrice dei guadagni 
 %          ottimi per tali Q e R. 
@@ -391,6 +395,65 @@ end
 %              alto ad alte frequenze 
 
 
+% Stabilizzazione LQR
+
+disp('Stabilizzazione mediante LQR dallo stato stimato');
+disp('Press any key to continue.');
+pause();
+
+rho1 = 0.001;
+rho2 = 1;
+rho3 = 10;
+alphaK = 5;
+
+cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
+    num2str(rho2) '\n rho3 = ' num2str(rho3) '\n\n']);
+
+Q = tenzo_min_nominale.c'*tenzo_min_nominale.c;
+
+%RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
+R = eye(size(BMinw,2));
+
+R1 = rho1*eye(p);
+R2 = rho2*eye(p);
+R3 = rho3*eye(p);
+
+Kopt_1 = lqr(tenzo_min_nominale.a+alphaK*eye(n) , tenzo_min_nominale.b, Q, R1);
+Kopt_2 = lqr(tenzo_min_nominale.a+alphaK*eye(n) , tenzo_min_nominale.b, Q, R2);
+Kopt_3 = lqr(tenzo_min_nominale.a+alphaK*eye(n) , tenzo_min_nominale.b, Q, R3);
+
+tenzoLQR1=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_1,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoLQR2=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_2,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoLQR3=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_3,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+
+disp('X to continue');
+pause();
+
+disp('Displaying LQR with rho1');
+disp('Eig sys 1 CC retroazione dallo stato:');
+eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_1)
+figure(3);
+step(tenzoLQR1);
+title('Rho1 - CL  Lqr ');
+
+
+cprintf('text','\nX to continue');
+pause();
+disp('Displaying LQR 2 with rho2');
+disp('Eig sys 2 CC retroazione dallo stato:');
+eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_2)
+figure(3)
+step(tenzoLQR2);
+title('Rho2 - CL  Lqr ');
+
+cprintf('text','\nX to continue');
+pause();
+disp('Displaying LQR 3 with rho3');
+disp('Eig sys 3 CC retroazione dallo stato:');
+eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_3)
+figure(3)
+step(tenzoLQR3);
+title('Rho3 - CL Lqr ');
 
 % Ricostruzione dello stato con Kalman
 
@@ -415,72 +478,9 @@ Doss=zeros(q,p);
 disp('Autovalori A-V*C');
 disp(eig(tenzo_min_nominale.a-V*tenzo_min_nominale.c));
 
-% Stabilizzazione LQR
-
-disp('Stabilizzazione mediante LQR dallo stato stimato');
-disp('Press any key to continue.');
-pause();
-
-rho1 = 0.001;
-rho2 = 1;
-rho3 = 10;
-alphaK = 5;
-%QieCmp = blkdiag([0.00001 0; 0 0.00001],100*eye(3),eye(3));
-%Qie = blkdiag([0.01 0; 0 0.01],100000*eye(3),zeros(3,3));
-Q = eye(size(AMin));
-
-Q = tenzo_min_nominale.c'*tenzo_min_nominale.c;
-
-%RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
-R = eye(size(BMinw,2));
-
-R1 = rho1*eye(p);
-R2 = rho2*eye(p);
-R3 = rho3*eye(p);
-
-Kopt_1 = lqr(tenzo_min_nominale.a+alphaK*eye(n) , tenzo_min_nominale.b, Q, R1);
-Kopt_2 = lqr(tenzo_min_nominale.a+alphaK*eye(n) , tenzo_min_nominale.b, Q, R2);
-Kopt_3 = lqr(tenzo_min_nominale.a+alphaK*eye(n) , tenzo_min_nominale.b, Q, R3);
-
-disp('');
-
-disp('Eig sys 1 CC retroazione dallo stato:');
-eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_1)
-
-disp('');
-
-disp('Eig sys 2 CC retroazione dallo stato:');
-eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_2)
-
-disp('');
-
-disp('Eig sys 3 CC retroazione dallo stato:');
-eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_3)
-
-disp('Premere un tasto per visualizzare la Step Response...');
-pause;
-
-tenzoLQR1=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_1,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
-tenzoLQR2=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_2,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
-tenzoLQR3=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_3,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
-
-disp('Displaying LQR 1');
-pause();
-figure(3);
-step(tenzoLQR1);
-
-disp('Displaying LQR 2');
-pause();
-figure(3)
-step(tenzoLQR2);
-
-disp('Displaying LQR 3');
-pause();
-figure(3)
-step(tenzoLQR3);
-
-
 %% Passo 2
+clc
+cprintf('hyper', [char(10) '2) passo 2) Max val sing U0' char(10) char(10)]);
 
 F1_ss = ss(tenzo_min_nominale.a,tenzo_min_nominale.b,Kopt_1,zeros(q,q)); 
 F2_ss = ss(tenzo_min_nominale.a,tenzo_min_nominale.b,Kopt_2,zeros(q,q));
@@ -494,10 +494,18 @@ U0_3 = feedback(F3_ss,eye(q));
 
 % Verifica velocità della risposta nei 3 diversi casi 
 
-figure(6)
-step(U0_1,'b',U0_2,'r',U0_3,'g')
-legend('rho1 = 0.1','rho2 = 1','rho3 = 10')
-title('Verifica velocità della risposta a ciclo chiuso per tutti i Kopt');
+
+cprintf('cyan', '\nStep response of U0\n');
+answer3 = input(['Display step response? [y/n]' char(10)],'s');
+if isempty(answer3)
+    answer3 = 'y';
+end
+if strcmp(answer3,'y')
+    figure(6)
+    step(U0_1,'b',U0_2,'r',U0_3,'g')
+    legend('rho1 = 0.1','rho2 = 1','rho3 = 10')
+    title('Verifica velocità della risposta a ciclo chiuso per tutti i Kopt');
+end
 
 % Verifico che l'andamento della curva del massimo valor singolare della
 % matrice U0 del sistema a ciclo chiuso non sia troppo alto 
@@ -519,9 +527,10 @@ figure(7)
 semilogx(omega,20*log10(m_U0_1_vs),'r'); 
 hold on
 semilogx(omega,20*log10(m_U0_2_vs),'b');
+hold on
 semilogx(omega,20*log10(m_U0_3_vs),'g');
 grid on
-legend('U01 MVS','U02 MVS','U03 MVS')
+%legend('U01 MVS','U02 MVS','U03 MVS')
 title('Verifica andamento massimo valor singolare di U0');
 
 % Scelta di Kopt3
@@ -530,7 +539,9 @@ R    = R3;
 U0   = U0_3;
 Kopt = Kopt_3;
 
-%% Passo 3 - Loop Transfer Recovery
+%% 2) Passo 3 - Loop Transfer Recovery
+
+cprintf('hyper', [char(10) '2) passo 3) LTR' char(10) char(10)]);
 
 % TASK:    sostituire la retroazione dallo stato con quella da una stima 
 %          data da un filtro di Kalman, scegliendo V=sigma^2*B0*B0'. 
@@ -541,8 +552,23 @@ Kopt = Kopt_3;
 %          al sistema di controllo con retroazione dallo stato (calcolato al 
 %          secondo passo)
 
-% 1st Attempt 
+% Passo a)
+cprintf('hyper', [char(10) 'a) Singularity of P0(s)\n']);
+% Controllo che P(s) non sia singolare nel calmpo razionale
+syms s
+if (det(tenzo_min_nominale.c *(s*eye(n)-tenzo_min_nominale.a)^(-1)*tenzo_min_nominale.b) ~= 0)
+    cprintf('text','\nP(s) ');
+    cprintf('green', 'Non singular'); 
+    cprintf('text',' nel campo Razionale\n');
+else
+    cprintf('text','\nP(s)');
+    cprintf('err', 'Singular'); 
+    cprintf('text','nel campo Razionale\n');
+end
 
+cprintf('hyper', [char(10) 'b) Kalman with V\n']);
+
+% 1st Attempt 
 sigma_1 = 0.5;
 V_1 = sigma_1^2*tenzo_min_nominale.b*tenzo_min_nominale.b'; % matrice di intensità
 W_1 = eye(p);
@@ -579,7 +605,6 @@ G_2  = ss(Ac_2,Bc_2,Cc_2,Dc_2);       % Kalman Filter + Optimal K
 H_LTR_2 = series(tenzo_min_nominale,G_2);  
 U_LTR_2 = feedback(H_LTR_2,eye(q)); 
 
-
 % Third attempt
 
 sigma_3 = 10^6;
@@ -609,6 +634,10 @@ m_U_LTR_2_vs = U_LTR_2_vs(1,:);
 m_U_LTR_3_vs = U_LTR_3_vs(1,:);
 m_U0_vs = m_U0_3_vs;
 
+% display informations about the sigma values 
+cprintf('magenta',['V= s^2B*B \n3 attempts:\n sigma1 = ' num2str(sigma_1) '\n sigma2 = '...
+    num2str(sigma_2) '\n sigma3 = ' num2str(sigma_3) '\n\n']);
+
 % Grafici dei massimi valori singolari delle funzioni U0 e U_LTR_i , i = 1,2,3
 
 figure(8)
@@ -625,6 +654,10 @@ title('Max val sing of U0');
 % Scelgo la terza sigma
 
 G  = G_3; % Sistema filtro di kalman + guadagno k ottimo scelto per LTR
+
+cprintf('text',['We choose the third attempt with sigma = ' num2str(sigma_3) ...
+    '\nLet us call lma(w) the inverse of the max sing value of U0_3\n']);
+
 lma = frd(m_U_LTR_3_vs.^-1,omega);
 
 %% Quarto Task - Robustezza
