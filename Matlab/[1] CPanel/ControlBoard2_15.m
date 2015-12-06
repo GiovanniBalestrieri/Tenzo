@@ -2141,27 +2141,13 @@ delete(instrfindall)
                     grid on;
                     accReceived = true;
                     if asked
-                        
-                        %timerSamples = timerSamples +1
-                        disp('saving samples to file');
-                        %accDataToWrite = [axdata,time];
-                        %csvwrite('acc.dat',[accXr accYr accZr],timerSamples,0);
-                        [accXr accYr accZr]
-                        dlmwrite('accx.dat',[accXr accYr accZr],'-append', 'delimiter', ',');
-%                        disp('saving file to structure');
-                        %dat.x = axdata;
-                        %dat.y = aydata;
-                        %dat.z = azdata;
-                        %dat.time = time;
-                        %type accx.dat
-                        %save('AccSamples.mat','-struct','dat');
-                        
-                        %disp(deltaTAcc);
+                        % Write to file
+                        dlmwrite('accx.dat',[accXr accYr accZr,'-append', 'delimiter', ',');
                     end
                 
                 elseif tag == gyroTag
                     % Gyro
-                    %disp('Gyro');
+                    
                     [R,wXr,wYr,wZr,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
                     if gyrosco == true
                         if filterGyro
@@ -2179,33 +2165,27 @@ delete(instrfindall)
                             gzFdata = [ gzFdata(2:end) ; gzFilt ];                            
                     end
 
-                    %Plot the X magnitude
                     h1 = subplot(3,1,1,'Parent',hTabs(3));
-                    %set(hAx,'title','X angular velocity in deg/s');
                     plot(h1,index,gxFdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    %xlabel('Time');
-                    %ylabel('Wx');
-                    %axis([1 buf_len -80 80]);
-                    %hold on;
                     grid on;
+                    
                     h2 = subplot(3,1,2,'Parent',hTabs(3));
-                    %title('Y angular velocity in deg/s');
                     plot(h2,index,gyFdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    %xlabel('Time');
-                    %ylabel('Wy Acc');
-                    %axis([1 buf_len -80 80]);
                     grid on;
+                   
                     h3 = subplot(3,1,3,'Parent',hTabs(3));
-                    %title('Z angular velocity in deg/s');
-                    %hold on;
                     plot(h3,index,gzFdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                     
                     grid on;
-                    %axis([1 buf_len -80 80]);
-                    %xlabel('Time');
-                    %ylabel('Wz Acc');    
-
-                    % Toggle ack 
+                    
+                    if asked
+                        % Save to File
+                        if filterGyro
+                            dlmwrite('gyrox.dat',[wXr wYr wZr],'-append', 'delimiter', ',');
+                        else
+                            dlmwrite('gyrox.dat',[gxFilt gyFilt gzFilt],'-append', 'delimiter', ',');
+                        end
+                    end
                     gyroReceived = true;
                 elseif tag == estTag
                      % Magn
@@ -2241,29 +2221,25 @@ delete(instrfindall)
 
                     %Plot the X magnitude
                     h1 = subplot(3,1,1,'Parent',hTabs(3));
-                    %set(hAx,'title','X angular velocity in deg/s');
                     plot(h1,index,Rdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    %xlabel('Time');
-                    %ylabel('Wx');
-                    %axis([1 buf_len -80 80]);
-                    %hold on;
                     grid on;
+                    
                     h2 = subplot(3,1,2,'Parent',hTabs(3));
-                    %title('Y angular velocity in deg/s');
                     plot(h2,index,Pdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    %xlabel('Time');
-                    %ylabel('Wy Acc');
-                    %axis([1 buf_len -80 80]);
                     grid on;
+                    
                     h3 = subplot(3,1,3,'Parent',hTabs(3));
-                    %title('Z angular velocity in deg/s');
-                    %hold on;
                     grid on;
                     plot(h3,index,Ydata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    %axis([1 buf_len -80 80]);
-                    %xlabel('Time');
-                    %ylabel('Wz Acc');    
-                    % Toggle ack 
+                    
+                    if asked
+                        % Write to file
+                        if filterMagn
+                            dlmwrite('angx.dat',[rollM pitchM bearingM],'-append', 'delimiter', ',');
+                        else
+                            dlmwrite('angx.dat',[TFilt PFilt YFilt],'-append', 'delimiter', ',');
+                        end
+                    end
                     magnReceived = true;
                 
                 end
