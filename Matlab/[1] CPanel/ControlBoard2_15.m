@@ -2142,7 +2142,7 @@ delete(instrfindall)
                     accReceived = true;
                     if asked
                         % Write to file
-                        dlmwrite('accx.dat',[accXr accYr accZr,'-append', 'delimiter', ',');
+                        dlmwrite('accx.dat',[accXr accYr accZr],'-append', 'delimiter', ',');
                     end
                 
                 elseif tag == gyroTag
