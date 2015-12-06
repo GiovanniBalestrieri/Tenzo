@@ -167,7 +167,7 @@ global estTag;
 global timerSamples;
 % Version
 
-version = 2.10;
+version = 2.15;
 
 % Serial Protocol 2 - Bluetooth
 

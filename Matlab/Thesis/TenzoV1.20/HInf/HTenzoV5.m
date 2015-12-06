@@ -4,7 +4,10 @@
 clear all;
 clc;
 
+version = 0.5;
 
+disp(['Welcome to Tenzo!' char(10)]);
+disp(['version: ' num2str(version) ' ' char(10) '[stable]' char(10)]);
 % Physical properties of the quadrotor
 
 g=9.81; %Acceleration of gravity (m)
@@ -97,8 +100,9 @@ PWM_max=2200; %Upper limit of the PWM signal provided to
 %X0c=w0c;
 Ft0=mq*g;
 
+disp('Loading Parameters ... [OK]');
+
 %% Linearized Model
-disp('Welcome to Tenzo!');
 disp('Using Linearized Model: press tenzo_nominale for infos');
 
 states = {'xe','ye','ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb'};
@@ -159,7 +163,7 @@ disp('Verifica preliminare, autovalori del processo [eig(A)]:');
 %Definizione intervallo delle frequenze di interesse
 omega = logspace(-2,5,500);
 
-% Motors
+%% Motors
 
 % V - Include mixer in B 
 % V - Include motor's dynamic in A with state space canonical companion from 
@@ -194,17 +198,14 @@ canonMotor3 = canon(tfM3,'companion');
 tfM4 = zpk([],[p1m4 p2m4],ktfM4);
 canonMotor4 = canon(tfM4,'companion');
 
-disp('Display Motor step response');
+%disp('Display Motor step response');
+disp('');
 % Analyze motors dynamics
 opt = stepDataOptions;
 opt.StepAmplitude = 1000;
-title('Step response for motors');
-step(tfM1,opt);
 
-% Controllable
-%rank(ctrb(canonMotor.a,canonMotor.b));
-% Observable
-%rank(ctrb(canonMotor.a',canonMotor.c'));
+%title('Step response for motors');
+%step(tfM1,opt);
 
 disp('Motors Tf created.');
 
@@ -218,7 +219,7 @@ m1 = canon(mot1,'modal');
 % open('testMotors');
 % sim('testMotors');
 
-% Eigenvalues of the system
+%% Eigenvalues of the system
 alpha = 0;
 stab=1;
 eOp = eig(tenzo_nominale.a);
@@ -238,16 +239,18 @@ end
 if (stab==0) disp('Sistema instabile! Gli autovalori a ciclo aperto sono:'); end
 if (stab==1) disp('Sistema stabile! OLE!! Gli autovalori a ciclo aperto sono:'); end
 if (stab==2) disp('Sistema instabile! Sono presenti autovalori pari a zero con molteplicità > 1'); end
-disp(eOp);
+
+%disp(eOp);
 
 % Analisi risposta a gradino
-disp('Press any for Step Response:');
+disp('Press any key for Step Response:');
 pause;
 step(tenzo_nominale);
 
 %% Proprietà strutturali:
 % Verifica Raggiungibilità e Osservabilità
-
+disp('Press X for structural properties');
+pause();
 raggiungibile = false;
 osservabile = false;
 if (rank(ctrb(tenzo_nominale.a,tenzo_nominale.b))==size(tenzo_nominale.a,1))
@@ -269,7 +272,7 @@ disp('Rank Obsv matrix:');
 disp(rank(obsv(tenzo_nominale.a,tenzo_nominale.c)));
 
 
-    stab_flag=0;
+stab_flag=0;
 % PBH test of reachability
 if raggiungibile == false
     stab_flag=0;
@@ -347,12 +350,13 @@ disp('Anyway, we do not need them for th Low Level Controller (attitude control)
 
 
 tenzo_min_unc = uss(AMin,BMinw,ClocalMin,D,'statename',statesMin,'inputName',inputName,'outputname',outputsLocal);
-tenzo_min_nominale=tenzo_min_unc.NominalValue
+tenzo_min_nominale=tenzo_min_unc.NominalValue;
 
 % Sottosistema ragg e oss con decomposizione di Kalman
 % Check wether the solution is still valid with this subsys
 disp('Let us see if Matlab confirms our guess');
 disp('  Press X ');
+pause();
 
 [sysr,U] = minreal(tenzo_nominale,0.1);
 
@@ -389,6 +393,8 @@ disp('It is fine now');
 
 % Invariant zeros 
 
+disp('Press X to display transmission zeros');
+pause();
 % Transfer function
 modello_tf = tf(tenzo_min_nominale);
 
