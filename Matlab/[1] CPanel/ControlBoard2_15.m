@@ -722,18 +722,18 @@ delete(instrfindall)
     
     
     function stopSensorCallback(obj,event,handles)
+        asked = ~asked;
         disp('Saving records to file');
         timerSamples = 0;
-        
-        % TODO
     end
     
     function startSensorCallback(obj,event,h)
         disp('Recording ...');
         asked = ~asked;
-        %delete(timerfindall);
+        asked
+%        delete(timerfindall);
         if asked == true
-            timerSamples = 0;
+            %timerSamples = 0
           
             if serialFlag == 0 
                 %timerArduino = timer('ExecutionMode','fixedRate','Period',0.1,'TimerFcn',{@storeSerial});    
@@ -2140,13 +2140,15 @@ delete(instrfindall)
                     end
                     grid on;
                     accReceived = true;
-                    if ~asked
-                        timerSamples = timerSamples +1
-                        %disp('saving samples to file');
+                    if asked
+                        
+                        %timerSamples = timerSamples +1
+                        disp('saving samples to file');
                         %accDataToWrite = [axdata,time];
                         %csvwrite('acc.dat',[accXr accYr accZr],timerSamples,0);
-                        dlmwrite('accx.dat, d,'-append', 'delimiter', ',');
-                        disp('saving file to structure');
+                        [accXr accYr accZr]
+                        dlmwrite('accx.dat',[accXr accYr accZr],'-append', 'delimiter', ',');
+%                        disp('saving file to structure');
                         %dat.x = axdata;
                         %dat.y = aydata;
                         %dat.z = azdata;
