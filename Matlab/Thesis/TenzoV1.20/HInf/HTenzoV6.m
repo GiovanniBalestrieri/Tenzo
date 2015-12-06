@@ -478,7 +478,7 @@ Doss=zeros(q,p);
 disp('Autovalori A-V*C');
 disp(eig(tenzo_min_nominale.a-V*tenzo_min_nominale.c));
 
-%% Passo 2
+% 2) Passo 2
 clc
 cprintf('hyper', [char(10) '2) passo 2) Max val sing U0' char(10) char(10)]);
 
@@ -539,7 +539,7 @@ R    = R3;
 U0   = U0_3;
 Kopt = Kopt_3;
 
-%% 2) Passo 3 - Loop Transfer Recovery
+% 2) Passo 3 - Loop Transfer Recovery #passo 2
 
 cprintf('hyper', [char(10) '2) passo 3) LTR' char(10) char(10)]);
 
@@ -719,6 +719,7 @@ for i=1:1:N
   semilogx(omega,mag2db(max_sig_unc(i,:)),'r:','LineWidth',3)
   hold on
 end
+pause();
 semilogx(omega,mag2db(top_unc),'b','LineWidth',2)
 hold on
 semilogx(omega,mag2db(max_sig_nom),'c--','LineWidth',2)
@@ -738,7 +739,7 @@ for i=1:1:N
 end
 title('Max sing values: input multiplicative uncertainties');
 
-% Upper bound MOLT IN lm(w) razionale stabile e fase minima
+%% Upper bound MOLT IN lm(w) razionale stabile e fase minima
 
 cprintf('text',['Computing the bound lm~(w) of sigma(d^p~) ...\n PressX \n']);
 pause();
@@ -748,12 +749,6 @@ pre_bound_dMin = frd(top_dMin,omega);
 ord = 2; %Ordine della funzione di fitting 
 bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
 bb_dMin2 = sigma(bound_dM,omega);
-%ord = 5; %Ordine della funzione di fitting 
-%bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
-%bb_dMin5 = sigma(bound_dM,omega);
-%ord = 7; %Ordine della funzione di fitting 
-%bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
-%bb_dMin7 = sigma(bound_dM,omega);
 
 grid on;
 hold on;
@@ -769,8 +764,8 @@ legend('strict bound', 'Rational stable min phase, order 2',...
 cprintf('text','Press X to Display max val sing of d^p OUT  ...\n\n');
 pause();
 
-figure(9);
-semilogx(omega,mag2db(top_dMout),'b','LineWidth',5)
+figure(10);
+semilogx(omega,mag2db(top_dMout),'b','LineWidth',2)
 grid on;
 hold on;
 for i=1:1:N
@@ -779,26 +774,19 @@ end
 title('Max sing values: output multiplicative uncertainties')
 
 % Upper bound Molt OUT lm~(w) razionale stabile e fase minima
-cprintf('text','Computing the bound lm(w) of sigma(d^p) ...');
+cprintf('text','Computing the bound lm(w) of sigma(d^p) ...\nPRESS X\n');
+pause();
 
 pre_bound_dMout = frd(top_dMout,omega);
 
 % fit razionale e min phase per ricavare il bound
-ord = 2; %Ordine della funzione di fitting
+ord = 2; 
 bound_dMout2 = fitmagfrd(pre_bound_dMout,ord,[],[],1);
 bb_dMout2 = sigma(bound_dMout2,omega);
-% ord = 5; %Ordine della funzione di fitting 
-% bound_dMout5 = fitmagfrd(pre_bound_dMout,ord,[],[],1);
-% bb_dMout5 = sigma(bound_dMout5,omega);
-% ord = 7; %Ordine della funzione di fitting
-% bound_dMout7 = fitmagfrd(pre_bound_dMout,ord,[],[],1);
-% bb_dMout7 = sigma(bound_dMout7,omega);
 
-figure(10);
-semilogx(omega,mag2db(top_dMout),'b','LineWidth',2)
 grid on;
 hold on;
-semilogx(omega,mag2db(bb_dMout2(1,:)),'r','LineWidth',2)
+semilogx(omega,mag2db(bb_dMout2(1,:)),'k-','LineWidth',2)
 title('Bound on multiplicative Output uncertainties');
 legend('strict bound', 'Rational stable min phase, order 2',...
  'Location','SouthWest');
