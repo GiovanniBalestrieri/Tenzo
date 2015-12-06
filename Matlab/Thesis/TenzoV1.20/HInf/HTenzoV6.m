@@ -165,7 +165,7 @@ tenzo_nominale=tenzo_unc.NominalValue;
 disp(['Verifica preliminare, autovalori del processo [eig(A)]' char(10)]);
 
 %Definizione intervallo delle frequenze di interesse
-omega = logspace(-2,5,500);
+omega = logspace(-2,4,500);
 
 % Eigenvalues of the system
 alpha = 0;
@@ -684,9 +684,6 @@ deltaMin_sys{i} = (inv(tf(tenzo_min_nominale))) * deltaA_sys{i};
 deltaMout_sys{i} = deltaA_sys{i} * (inv(tf(tenzo_min_nominale)));
 end
 
-% generates 250 points between decades 10^( -2 ) and 10^( 3 ).
-%omega = logspace(-2,4,500);
-
 % Plots the singular values of the frequency response of a model nominale
 % specifies the frequency range or frequency points to be used for the plot
 temp = sigma(tenzo_min_nominale,omega);
@@ -714,12 +711,11 @@ top_dMout = max(max_sig_dMout);
 
 cprintf('text','Displaying max val sing of sys pert ...\n\n');
 
-figure(8);
+figure(9);
 for i=1:1:N
   semilogx(omega,mag2db(max_sig_unc(i,:)),'r:','LineWidth',3)
   hold on
 end
-pause();
 semilogx(omega,mag2db(top_unc),'b','LineWidth',2)
 hold on
 semilogx(omega,mag2db(max_sig_nom),'c--','LineWidth',2)
@@ -730,8 +726,8 @@ title('MaxSV: pert sys(red), max pert (blue) and nominal (cyan)');
 cprintf('text','Displaying max val sing of d^p~ IN ...\nPress X\n');
 pause();
 
-figure(9);
-semilogx(omega,mag2db(top_dMin),'b--','LineWidth',2)
+figure(10);
+semilogx(omega,mag2db(top_dMin),'b','LineWidth',2)
 grid on;
 hold on;
 for i=1:1:N
@@ -746,7 +742,7 @@ pause();
 pre_bound_dMin = frd(top_dMin,omega);
 
 % fit razionale e min phase per ricavare il bound
-ord = 2; %Ordine della funzione di fitting 
+ord = 2;
 bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
 bb_dMin2 = sigma(bound_dM,omega);
 
@@ -764,7 +760,7 @@ legend('strict bound', 'Rational stable min phase, order 2',...
 cprintf('text','Press X to Display max val sing of d^p OUT  ...\n\n');
 pause();
 
-figure(10);
+figure(11);
 semilogx(omega,mag2db(top_dMout),'b','LineWidth',2)
 grid on;
 hold on;
@@ -797,7 +793,7 @@ dpBomb = 7000*eye(4);
 %% Step response for all real plants
 
 disp('Step response for uncertain systems');
-figure(11)
+figure(12)
 
 % Compute Closed Loop transfer functions
 for i=1:N
@@ -842,7 +838,7 @@ end
 
 %% TASK 3 
 
-cprintf('hyper', [char(10) '3) passo 1) S0' char(10) char(10)]);
+cprintf('hyper', [char(10) '3) passo 1) S0,p_s(w) e w1(s)' char(10) char(10)]);
 
 %  Calcolo di strumenti da utilizzare
 %  nell'applicazione del controllo Hinf 
@@ -864,7 +860,6 @@ ma_S0_vs = frd(max_S0_vs,omega);
 
 %approssmazione si 1/ps con w1                                
 w1 = zpk([-4],[-0.001 -2],100);
-step(w1)
 
 [MODX,FAS]=bode(w1,omega);
 w1M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -877,61 +872,54 @@ w1M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
 % - ps >> 1 per w < wX
 
 
-figure(12)
+figure(13)
 bodemag(ps_sign,'b',ma_S0_vs,'r',w1M,'k',omega);
-legend('1/ps','max_S0','w1');
+legend('_ps_','max_S0','w1');
 grid on
 
 %% 3.2) 
 
- 
-figure(13);
-semilogx(omega,mag2db(max_sig_nom),'k--','LineWidth',2)
+cprintf('hyper', [char(10) '3) passo 1) la(s), V0(s) e w2(s)' char(10) char(10)]);
+
+figure(14);
 grid on;
 hold on;
 for i=1:1:N
   semilogx(omega,mag2db(max_sig_unc(i,:)),'r:','LineWidth',2)
 end
+hold on
 semilogx(omega,mag2db(top_unc),'b','LineWidth',5)
-semilogx(omega,mag2db(max_sig_nom),'k','LineWidth',5)
+hold on
+semilogx(omega,mag2db(max_sig_nom),'c','LineWidth',3)
 title('Max sing values: Nominal (bk), Pert models (R), bound (blue)')
 
 %  Additive
-figure(14);
-semilogx(omega,mag2db(top_dA),'b','LineWidth',5)
+figure(15);
+semilogx(omega,mag2db(top_dA),'b','LineWidth',3)
 grid on;
+hold on;
+semilogx(omega,mag2db(max_sig_nom),'c','LineWidth',3)
 hold on;
 for i=1:1:N
   semilogx(omega,mag2db(max_sig_dA(i,:)),'r:','LineWidth',2)
 end
-title('Max sing values: additive uncertainties (red), bound (blue)')
 
 % Upper bound razionale stabile e fase minima
 pre_bound_dA = frd(top_dA,omega);
 
 % fit razionale e min phase per ricavare il bound
-ord = 2; %Ordine della funzione di fitting 
+ord = 2; 
 bound_dA2 = fitmagfrd(pre_bound_dA,ord,[],[],1); 
 bb_dA2 = sigma(bound_dA2,omega);
-ord = 5; %Ordine della funzione di fitting 
-bound_dA5 = fitmagfrd(pre_bound_dA,ord,[],[],1); 
-bb_dA5 = sigma(bound_dA5,omega);
-% ord = 7; %Ordine della funzione di fitting
-% bound_dA7 = fitmagfrd(pre_bound_dA,ord,[],[],1); 
-% bb_dA7 = sigma(bound_dA7,omega);
 
-figure(15);
-semilogx(omega,mag2db(top_dA),'b','LineWidth',2);
-grid on;
 hold on;
-semilogx(omega,mag2db(bb_dA2(1,:)),'r-','LineWidth',2);
-semilogx(omega,mag2db(bb_dA5(1,:)),'k--','LineWidth',2);
+semilogx(omega,mag2db(bb_dA2(1,:)),'k-','LineWidth',2);
+grid on;
 title('Bound on additive uncertainties');
-legend('strict bound', 'Rational stable min phase, order 2',...
-  'Rational stable min phase, order 5',...
-  'Location','SouthWest');
 
 %% Costruzione V0
+
+cprintf('cyan', [char(10) 'V0(s) e w2(s)' char(10) char(10)]);
 
 % let us use as la the rational fit previously computed
 la = bound_dA2;
@@ -947,7 +935,7 @@ MAX_V0_vs = frd(max_V0_vs,omega);
 la_signed = frd(max_V0_vs.^-1,omega);
 
 %approssmazione si la con w2                                
-w2 = zpk([-2 -10],[0 -5],0.1);
+w2 = zpk([-2 -10],[0 -5],1850);
 
 [MODX,FAS]=bode(w2,omega);
 w2M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -955,7 +943,7 @@ w2M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
 
 figure(16)
 bodemag(la_signed,'b',MAX_V0_vs,'r',la,'m',w2M,'k',omega);
-legend('la_sign','maxV0','la','w2');
+legend('_la_','maxV0','la','w2');
 grid on
 
 %% 3.3)
@@ -989,17 +977,16 @@ w3_X = zpk([-100],[-10000],1000);
 [mod_w3,fas_w3]=bode(w3_X,omega);
 w3 = frd(mod_w3,omega);
 
-figure
-bodemag(lm,'b',lm_b,'r',max_T0_LTR,'c',max_F,'m',w3_X,'k--',omega)
-legend('lm','lm LTR','T0','PoG','w3')
+figure(17)
+bodemag(lm,'b',lm_b,'r',max_T0_LTR,'c',lma,'m',w3_X,'k--',omega)
+legend('lm','lm_b','T0','lm_a','w3')
 grid
 
 %% Part 4) - SINTESI DEL CONTROLLORE H-INFINITO 
 
-gamma_1 = 1/5;
-gamma_2 = 1/5;
+gamma_1 = 0.001;
+gamma_2 = 1;
 gamma_3 = 1/5; 
-
 
 W1 = gamma_1*w1*eye(q);
 W2 = gamma_2*w2*eye(q);
@@ -1022,7 +1009,7 @@ step(w3_X,'b',w2,'r',w1,'k')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 2;
+alphaK = 5;
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,W1,W2,w3_X); 
