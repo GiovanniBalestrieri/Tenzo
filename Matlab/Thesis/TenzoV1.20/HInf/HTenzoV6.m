@@ -4,7 +4,7 @@
 clear all;
 clc;
 
-version = 0.5;
+version = 0.65;
 
 disp(['Welcome to Tenzo!' char(10)]);
 disp(['version: ' num2str(version) ' ' char(10) '[stable]' char(10)]);
@@ -462,7 +462,7 @@ disp('Press any key to continue.');
 pause();
 
 %si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
-alphaK = 10;
+
 Q = eye(size(tenzo_min_nominale.a));
 W = eye(size(tenzo_min_nominale.a));
 R = eye(size(tenzo_min_nominale.c,1));
@@ -572,7 +572,7 @@ cprintf('hyper', [char(10) 'b) Kalman with V\n']);
 sigma_1 = 0.5;
 V_1 = sigma_1^2*tenzo_min_nominale.b*tenzo_min_nominale.b'; % matrice di intensità
 W_1 = eye(p);
-L_1 = lqr(tenzo_min_nominale.a',tenzo_min_nominale.c',V_1,W_1)';
+L_1 = lqr((tenzo_min_nominale.a+alphaK*eye(n))',tenzo_min_nominale.c',V_1,W_1)';
 
 % Definisco le matrici (Ac_i,Bc_i,Cc_i,Dc_i) di un sistema che, in serie
 % all'impianto nominale, darà luogo ad una matrice di trasferimento ad
@@ -594,7 +594,7 @@ U_LTR_1 = feedback(H_LTR_1,eye(q)); % Nuova matrice U_1 dopo LTR
 sigma_2 = 1000;
 V_2 = sigma_2^2*tenzo_min_nominale.b*tenzo_min_nominale.b'; % matrice di intensità
 W_2 = eye(p);
-L_2 = lqr(tenzo_min_nominale.a',tenzo_min_nominale.c',V_2,W_2)';
+L_2 = lqr((tenzo_min_nominale.a+alphaK*eye(n))',tenzo_min_nominale.c',V_2,W_2)';
 
 Ac_2 = tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt-L_2*tenzo_min_nominale.c-L_2*tenzo_min_nominale.d*Kopt;
 Bc_2 = L_2;
@@ -662,9 +662,17 @@ lma = frd(m_U_LTR_3_vs.^-1,omega);
 
 %% Quarto Task - Robustezza
 
-% Number of perturbations
-N=10
+cprintf('hyper', [char(10) '2) passo 4) Verify robustness of LTR' char(10) char(10)]);
 
+% Number of tests
+answer4 = input(['Please enter the number of experiments? (<1000)' char(10)]);
+if isempty(answer4)
+    answer4 = 10;
+end
+N = answer4;
+
+cprintf('cyan',['\n\nAnalyzing N experiments ...' ...
+    '\nComputing additive, molt (IN)\n and molt (OUT) perturbation matrices\n\n']);
 % Prende alcuni campioni del sistema incerto e calcola bound su incertezze
 for i=1:1:N
 sys{i} = usample(tenzo_min_unc);
@@ -677,11 +685,11 @@ deltaMout_sys{i} = deltaA_sys{i} * (inv(tf(tenzo_min_nominale)));
 end
 
 % generates 250 points between decades 10^( -2 ) and 10^( 3 ).
-omega = logspace(-2,5,500);
+%omega = logspace(-2,4,500);
 
 % Plots the singular values of the frequency response of a model nominale
 % specifies the frequency range or frequency points to be used for the plot
-temp = sigma(tenzo_nominale,omega);
+temp = sigma(tenzo_min_nominale,omega);
 % Select only max sing values
 max_sig_nom = temp(1,:);
 
@@ -696,27 +704,70 @@ for i=1:1:N
   max_sig_dMout(i,:) = temp(1,:);
 end
 
-max_sig_dMout(1,:);
 % Returns a row vector containing the maximum element from each column.
 top_unc = max(max_sig_unc);
 top_dA = max(max_sig_dA);
 top_dMin = max(max_sig_dMin);
 top_dMout = max(max_sig_dMout);
 
+% Input Moltiplicative uncertainties
+
+cprintf('text','Displaying max val sing of sys pert ...\n\n');
+
+figure(8);
+for i=1:1:N
+  semilogx(omega,mag2db(max_sig_unc(i,:)),'r:','LineWidth',3)
+  hold on
+end
+semilogx(omega,mag2db(top_unc),'b','LineWidth',2)
+hold on
+semilogx(omega,mag2db(max_sig_nom),'c--','LineWidth',2)
+grid on;
+title('MaxSV: pert sys(red), max pert (blue) and nominal (cyan)');
 
 
-%% Input Moltiplicative uncertainties
-% 
-% figure(3);
-% semilogx(omega,mag2db(top_dMin),'b','LineWidth',5)
-% grid on;
-% hold on;
-% for i=1:1:N
-%   semilogx(omega,mag2db(max_sig_dMin(i,:)),'r:','LineWidth',2)
-% end
-% title('Max sing values: input multiplicative uncertainties (red), bound (blue)')
+cprintf('text','Displaying max val sing of d^p~ IN ...\nPress X\n');
+pause();
 
-%% output multiplicative Out uncertainties
+figure(9);
+semilogx(omega,mag2db(top_dMin),'b--','LineWidth',2)
+grid on;
+hold on;
+for i=1:1:N
+  semilogx(omega,mag2db(max_sig_dMin(i,:)),'r:','LineWidth',3)
+end
+title('Max sing values: input multiplicative uncertainties');
+
+% Upper bound MOLT IN lm(w) razionale stabile e fase minima
+
+cprintf('text',['Computing the bound lm~(w) of sigma(d^p~) ...\n PressX \n']);
+pause();
+pre_bound_dMin = frd(top_dMin,omega);
+
+% fit razionale e min phase per ricavare il bound
+ord = 2; %Ordine della funzione di fitting 
+bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
+bb_dMin2 = sigma(bound_dM,omega);
+%ord = 5; %Ordine della funzione di fitting 
+%bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
+%bb_dMin5 = sigma(bound_dM,omega);
+%ord = 7; %Ordine della funzione di fitting 
+%bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
+%bb_dMin7 = sigma(bound_dM,omega);
+
+grid on;
+hold on;
+semilogx(omega,mag2db(bb_dMin2(1,:)),'k','LineWidth',2)
+%semilogx(omega,mag2db(bb_dMin5(1,:)),'k','LineWidth',2)
+%semilogx(omega,mag2db(bb_dMin7(1,:)),'m','LineWidth',2)
+title('Bound on multiplicative uncertainties');
+legend('strict bound', 'Rational stable min phase, order 2',...
+  'Location','SouthWest');
+%%
+
+% output multiplicative Out uncertainties
+cprintf('text','Press X to Display max val sing of d^p OUT  ...\n\n');
+pause();
 
 figure(9);
 semilogx(omega,mag2db(top_dMout),'b','LineWidth',5)
@@ -725,50 +776,22 @@ hold on;
 for i=1:1:N
   semilogx(omega,mag2db(max_sig_dMout(i,:)),'r:','LineWidth',2)
 end
-title('Max sing values: output multiplicative uncertainties (red), bound (blue)')
+title('Max sing values: output multiplicative uncertainties')
 
-
-%% Upper bound MOLT IN lm(w) razionale stabile e fase minima
-% pre_bound_dMin = frd(top_dMin,omega);
-% 
-% % fit razionale e min phase per ricavare il bound
-% %ord = 2; %Ordine della funzione di fitting 
-% %bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
-% %bb_dMin2 = sigma(bound_dM,omega);
-% ord = 5; %Ordine della funzione di fitting 
-% bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
-% bb_dMin5 = sigma(bound_dM,omega);
-% %ord = 7; %Ordine della funzione di fitting 
-% %bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
-% %bb_dMin7 = sigma(bound_dM,omega);
-% 
-% figure(6);
-% semilogx(omega,mag2db(top_dMin),'b','LineWidth',2)
-% grid on;
-% hold on;
-% %semilogx(omega,mag2db(bb_dMin2(1,:)),'r','LineWidth',2)
-% semilogx(omega,mag2db(bb_dMin5(1,:)),'k','LineWidth',2)
-% %semilogx(omega,mag2db(bb_dMin7(1,:)),'m','LineWidth',2)
-% title('Bound on multiplicative uncertainties');
-% legend('strict bound', 'Rational stable min phase, order 2',...
-%   'Rational stable min phase, order 5', 'Rational stable min phase, order 7',...
-%   'Location','SouthWest');
-
-%% Upper bound Molt OUT lm~(w) razionale stabile e fase minima
-
-omega = logspace(-2,6,500);
+% Upper bound Molt OUT lm~(w) razionale stabile e fase minima
+cprintf('text','Computing the bound lm(w) of sigma(d^p) ...');
 
 pre_bound_dMout = frd(top_dMout,omega);
 
 % fit razionale e min phase per ricavare il bound
-ord = 2; %Ordine della funzione di fitting 
-bound_dMout2 = fitmagfrd(pre_bound_dMout,ord,[],[],1); 
+ord = 2; %Ordine della funzione di fitting
+bound_dMout2 = fitmagfrd(pre_bound_dMout,ord,[],[],1);
 bb_dMout2 = sigma(bound_dMout2,omega);
 % ord = 5; %Ordine della funzione di fitting 
-% bound_dMout5 = fitmagfrd(pre_bound_dMout,ord,[],[],1); 
+% bound_dMout5 = fitmagfrd(pre_bound_dMout,ord,[],[],1);
 % bb_dMout5 = sigma(bound_dMout5,omega);
-% ord = 7; %Ordine della funzione di fitting 
-% bound_dMout7 = fitmagfrd(pre_bound_dMout,ord,[],[],1); 
+% ord = 7; %Ordine della funzione di fitting
+% bound_dMout7 = fitmagfrd(pre_bound_dMout,ord,[],[],1);
 % bb_dMout7 = sigma(bound_dMout7,omega);
 
 figure(10);
@@ -780,8 +803,14 @@ title('Bound on multiplicative Output uncertainties');
 legend('strict bound', 'Rational stable min phase, order 2',...
  'Location','SouthWest');
 
+% Defining delta^p~ distruttivo
+dpBomb = 7000*eye(4);
+
+%% Step response for all real plants
+
 disp('Step response for uncertain systems');
 figure(11)
+
 % Compute Closed Loop transfer functions
 for i=1:N
     Ac_3 = sys{i}.a-sys{i}.b*Kopt_3-L_3*sys{i}.c;
@@ -791,11 +820,26 @@ for i=1:N
 
     G_3 = ss(Ac_3,Bc_3,Cc_3,Dc_3);      % Sistema filtro di kalman + guadagno k ottimo
     H_LTR_3 = series(sys{i},G_3);   % Connessione in serie all'impianto nominale
-    Closed_Loop_LTR{i} = feedback(H_LTR_3,eye(q)); % Nuova matrice U_3 dopo LTR
-    step(Closed_Loop_LTR{i});
+    %Closed_Loop_LTR{i} = feedback(H_LTR_3,eye(q)); % Nuova matrice U_3 dopo LTR
+    step(feedback(H_LTR_3,eye(q)));
     hold on
     grid on
 end
+%disp('** Sys distruttivo ');
+%     
+%     pert_B_nominale = tenzo_min_nominale.b *dpBomb;
+%     sysPertBomb = ss(tenzo_min_nominale.a,pert_B_nominale,tenzo_min_nominale.c,tenzo_min_nominale.d);
+%     Ac_3 = tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_3-L_3*tenzo_min_nominale.c;
+%     Bc_3 = L_3;
+%     Cc_3 = Kopt;
+%     Dc_3 = zeros(q,q);
+%     G_3 = ss(Ac_3,Bc_3,Cc_3,Dc_3);      % Sistema nominale filtro di kalman + guadagno k ottimo
+%     H_LTR_3 = series(sysPertBomb,G_3);   % Connessione in serie all'impianto nominale
+%     Closed_Loop_LTR_bomb = feedback(H_LTR_3,eye(q)); % Nuova matrice U_3 dopo LTR
+%     step(Closed_Loop_LTR_bomb);
+%     hold on
+%     grid on
+
 
 %% AUTOVALORI
 disp('Print eigenvalues of uncertain systems');
@@ -809,6 +853,8 @@ for i=1:N
 end
 
 %% TASK 3 
+
+cprintf('hyper', [char(10) '3) passo 1) S0' char(10) char(10)]);
 
 %  Calcolo di strumenti da utilizzare
 %  nell'applicazione del controllo Hinf 
