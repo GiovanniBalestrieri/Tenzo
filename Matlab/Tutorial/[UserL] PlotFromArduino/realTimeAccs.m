@@ -96,10 +96,10 @@ while (abs(Wz) < 1090)
             if (strcmp(sentence(1,1),'A'))
                 notArrived = true;
                 %decodes "sentence" seperated (delimted) by commaseck Unit')
-                C = textscan(sentence,'%c %d %d %d %c','delimiter',',');
+                C = textscan(sentence,'%c %f %f %f %s','delimiter',',');
                 Wx = C{2};
                 Wy = C{3};
-                Wz = C{4};
+                Wz = C{4}
                 
                 %% Plotting angles
                 
