@@ -81,6 +81,7 @@ index = 1:buf_len;
 gxdata = zeros(buf_len,1);
 gydata = zeros(buf_len,1);
 gzdata = zeros(buf_len,1);
+timedata = zeros(buf_len,1);
 
 %% Data collection and Plotting
 while (abs(Wz) < 1090)
@@ -96,10 +97,11 @@ while (abs(Wz) < 1090)
             if (strcmp(sentence(1,1),'A'))
                 notArrived = true;
                 %decodes "sentence" seperated (delimted) by commaseck Unit')
-                C = textscan(sentence,'%c %f %f %f %s','delimiter',',');
+                C = textscan(sentence,'%c %f %f %f %f %s','delimiter',',');
                 Wx = C{2};
                 Wy = C{3};
-                Wz = C{4}
+                Wz = C{4};
+                timeMillis = C{5};
                 
                 %% Plotting angles
                 
@@ -109,6 +111,7 @@ while (abs(Wz) < 1090)
                 gxdata = [ gxdata(2:end) ; Wx ];
                 gydata = [ gydata(2:end) ; Wy ];
                 gzdata = [ gzdata(2:end) ; Wz ]; 
+                timedata = [ timedata(2:end) ; timeMillis ]; 
                                 
                 %Plot the X magnitude
                 subplot(3,1,1);

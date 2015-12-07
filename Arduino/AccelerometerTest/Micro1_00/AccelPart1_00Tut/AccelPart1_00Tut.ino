@@ -24,13 +24,22 @@ int contSamples = 0;
 
 // Serial byte received
 byte mode;
+float alphaA = 0.98;
+volatile float axm1,aym1,azm1;
+
+
+
+
 
 // Acc Timers
 unsigned long accTimer;
 unsigned long lastAccTimer;
 unsigned long startRead;
 unsigned long stopRead;
+unsigned long timer;
 int rate;
+boolean filterAcc = true;
+float aF[3];
 
 float zeroPoint(int axis)
 {
@@ -73,7 +82,23 @@ void serialRoutine()
      {
        Serial.println("Ok");  
      }
+     else if (t == 'M')
+     {
+        accRoutine(); 
+     }
+     
   }
+}
+
+void aFilter(volatile float val[])
+{
+  val[0] = (1-alphaA)*val[0] + alphaA*axm1;
+  val[1] = (1-alphaA)*val[1] + alphaA*aym1;
+  val[2] = (1-alphaA)*val[2] + alphaA*azm1;
+  
+  axm1 = val[0];
+  aym1 = val[1];
+  azm1 = val[2];
 }
 
 void accRoutine()
@@ -85,6 +110,14 @@ void accRoutine()
    aax = (((x*5000.0)/1023.0)-zeroX)/RESOLUTION;
    aay = (((y*5000.0)/1023.0)-zeroY)/RESOLUTION;
    aaz = (((z*5000.0)/1023.0)-zeroZ)/RESOLUTION;
+   
+   if (filterAcc)
+   {
+      aF[0] = aax;
+      aF[1] = aay;
+      aF[2] = aaz;
+      aFilter(aF);
+   }
   
    // computes sample time
    accTimer = millis() - lastAccTimer;
@@ -92,14 +125,15 @@ void accRoutine()
    lastAccTimer = millis(); 
    
      Serial.print("A,");
-     Serial.print(aax);
-     Serial.print(" ; ");
-     Serial.print(aay);
-     Serial.print(" ; ");          
-     Serial.print(aaz);
+     Serial.print(aF[0]);
+     Serial.print(",");
+     Serial.print(aF[1]);
+     Serial.print(",");          
+     Serial.print(aF[2]); 
      Serial.print(","); 
-     Serial.print("Z");        
-     //Serial.print(accTimer);  
-     //Serial.print(" ms/sample");   
+     timer = millis();     
+     Serial.print(timer);  
+     Serial.print(","); 
+     Serial.print("Z"); 
      Serial.println();
 }
