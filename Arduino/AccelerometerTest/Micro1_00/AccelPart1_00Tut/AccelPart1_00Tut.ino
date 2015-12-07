@@ -24,7 +24,7 @@ int contSamples = 0;
 
 // Serial byte received
 byte mode;
-float alphaA = 0.98;
+float alphaA = 0.8;
 volatile float axm1,aym1,azm1;
 
 
