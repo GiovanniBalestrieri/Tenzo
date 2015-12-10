@@ -546,7 +546,7 @@ disp('Press X to continue ...');
 pause();
 clc
 
-% 2) Passo 3 - Loop Transfer Recovery #passo 2
+%% 2) Passo 3 - Loop Transfer Recovery #passo 2
 
 cprintf('hyper', [char(10) '2) passo 3) LTR' char(10) char(10)]);
 
@@ -614,7 +614,7 @@ U_LTR_2 = feedback(H_LTR_2,eye(q));
 
 % Third attempt
 
-sigma_3 = 10^6;
+sigma_3 = 10^5;
 V_3 = sigma_3^2*tenzo_min_nominale.b*tenzo_min_nominale.b';
 W_3 = eye(p);
 L_3=  lqr((tenzo_min_nominale.a+alpha*eye(n))',tenzo_min_nominale.c',V_3,W_3)';
@@ -660,7 +660,7 @@ title('Max val sing of U0');
 
 % Scelgo la terza sigma
 
-G  = G_2; % Sistema filtro di kalman + guadagno k ottimo scelto per LTR
+G  = G_3; % Sistema filtro di kalman + guadagno k ottimo scelto per LTR
 
 cprintf('text',['We choose the third attempt with sigma = ' num2str(sigma_3) ...
     '\nLet us call lma(w) the inverse of the max sing value of U0_3\n']);
@@ -874,7 +874,7 @@ ps_sign = frd(max_S0_vs.^-1,omega);
 ma_S0_vs = frd(max_S0_vs,omega);
 
 %approssmazione si 1/ps con w1                                
-w1 = zpk([-4],[-0.001 -2],50);
+w1 = zpk([-4],[-0.001 -2],150);
 
 [MODX,FAS]=bode(w1,omega);
 w1M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -948,7 +948,7 @@ MAX_V0_vs = frd(max_V0_vs,omega);
 la_signed = frd(max_V0_vs.^-1,omega);
 
 %approssmazione si la con w2                                
-w2 = zpk([-2 -1],[-0.001  -0.005],100);
+w2 = zpk([-60 -40],[-0.0001  -0.0002],0.05);
 
 [MODX,FAS]=bode(w2,omega);
 w2M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -986,7 +986,7 @@ lm = bound_dMout2;
 
 % Le variazioni sono casuali e la maggiorante cambierebbe ogni volta
 % fissiamo:
-w3_X = zpk([-50],[-10000],1000);
+w3_X = zpk([-50],[-8000],500);
 [mod_w3,fas_w3]=bode(w3_X,omega);
 w3 = frd(mod_w3,omega);
 
@@ -997,9 +997,9 @@ grid
 
 %% Part 4) - SINTESI DEL CONTROLLORE H-INFINITO 
 
-gamma_1 = 0.001;
-gamma_2 = 1;
-gamma_3 = 1/5; 
+gamma_1 = 0.3;
+gamma_2 = 0.1;
+gamma_3 = 0.10; 
 
 W1 = gamma_1*w1*eye(q);
 W2 = gamma_2*w2*eye(q);
@@ -1013,19 +1013,19 @@ hold on
 sigma(W2,'g')
 sigma(W3,'b')
 legend('W1','W2','W3')
-
-figure 
-step(w3_X,'b',w2,'r',w1,'k')
+ 
+% figure 
+% step(w3_X,'b',w2,'r',w1,'k')
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CASO 1: Uscita di prestazione [z1]  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 5;
+alphaK = 0.8;
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
-P_aug = augw(modello_ss_epsilon,[W1],[],[]);
+P_aug = augw(modello_ss_epsilon,[],[W2],[]);
 
 % Estrapolazione delle matrici caratterizzanti il sistema allargato
 A_bar = P_aug.A;
@@ -1150,14 +1150,14 @@ V0_z13 = V0;
 step(T0)
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% CASO 2: Uscita di prestazione [z3]  %%
+% CASO 2: Uscita di prestazione [z1,z3]  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
 alphaK = 1.22;
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
-P_aug = augw(modello_ss_epsilon,[],[],[W3]);
+P_aug = augw(modello_ss_epsilon,[W1],[],[W3]);
 
 % Estrapolazione delle matrici caratterizzanti il sistema allargato
 A_bar = P_aug.A;
@@ -1239,11 +1239,11 @@ rank(D21)
 disp(tzero(ss(P_aug.A,B1,C2,D21)))
 
 
-[K,CL,GAM] = hinfsyn(P_aug); 
+[Kw1w3,CLw1w3,GAMw1w3] = hinfsyn(P_aug); 
 
 
 % Calcolo delle matrici F0, S0, T0, V0
-F0 = series(K,tenzo_min_nominale);
+F0 = series(Kw1w3,tenzo_min_nominale);
 
 S0 = feedback(eye(q),F0);
 
@@ -1286,10 +1286,10 @@ step(T0)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.0002;
+alphaK = 0.1;
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
-P_aug = augw(modello_ss_epsilon,[W1],[],[W3]);
+P_aug = augw(modello_ss_epsilon,[W1],[W2],[]);
 
 % Estrapolazione delle matrici caratterizzanti il sistema allargato
 A_bar = P_aug.A;
@@ -1411,35 +1411,7 @@ S0_z13 = S0;
 T0_z13 = T0;
 V0_z13 = V0;
 
-step(T0)
-
-
-%% Definizione dei bounds
-% 
-% 
-% ps = gamma1*tf(1,[1 1])
-% la{i} = deltaA_sys{i}
-% lmD{i} = deltaMin_sys{i}
-% lm{i} = deltaMout_sys{i}
-% 
-% la = bb_dA5;
-% lm = bb_dMin5;
-% 
-% lm = tf([1 1], 1.1);
-% lmD = lm
-% 
-% figure
-% sigma(lm,'r--')
-% hold on
-% grid on
-% semilogx(omega,mag2db(lm),'b','LineWidth',2)
-% semilogx(omega,mag2db(la),'b','LineWidth',2)
-% 
-% bode(mag2db(lm))
-
-
-% disp('End');
-
+step(T0);
 
 %% Verifica condizioni Astatismo
 
