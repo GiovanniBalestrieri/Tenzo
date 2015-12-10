@@ -4,7 +4,7 @@
 clear all;
 clc;
 
-version = 0.70;
+version = 0.80;
 
 disp(['Welcome to Tenzo!' char(10)]);
 disp(['version: ' num2str(version) ' ' char(10) '[stable]' char(10)]);
@@ -33,9 +33,15 @@ lz = ureal('lz',0.08,'Range',[0.03 0.6]);
 % dcg is the same for all motors.
 dcg=0.288; 
 
-dcgX = ureal('dcgX',0.288,'Range',[0.12 0.37]);
-dcgY = ureal('dcgY',0.288,'Range',[0.12 0.37]);
-dcgZ = ureal('dcgZ',0.03,'Range',[-0.1 0.1]);
+% % Reali
+% dcgX = ureal('dcgX',0.288,'Range',[0.12 0.37]);
+% dcgY = ureal('dcgY',0.288,'Range',[0.12 0.37]);
+% dcgZ = ureal('dcgZ',0.03,'Range',[-0.1 0.1]);
+
+%Forzate
+dcgX = ureal('dcgX',0.288,'Range',[0.001 0.99]);
+dcgY = ureal('dcgY',0.288,'Range',[0.001 0.99]);
+dcgZ = ureal('dcgZ',0.03,'Range',[-0.01 0.40]);
 
 % Moment of inertia (x-axis) for motors 1 and 3
 % (kg.m^2).
@@ -894,7 +900,7 @@ grid on
 
 %% 3.2) 
 
-cprintf('hyper', [char(10) '3) passo 1) la(s), V0(s) e w2(s)' char(10) char(10)]);
+cprintf('hyper', [char(10) '3) passo 2) V0(s) e w2(s)' char(10) char(10)]);
 
 figure(14);
 grid on;
@@ -961,6 +967,9 @@ grid on
 
 %% 3.3)
 
+cprintf('hyper', [char(10) '3) passo 3) T0(s) e w3(s)' char(10) char(10)]);
+
+
 % Calcolo di T0 
 
 F = series(G,tenzo_min_nominale);
@@ -997,6 +1006,9 @@ grid
 
 %% Part 4) - SINTESI DEL CONTROLLORE H-INFINITO 
 
+cprintf('hyper', [char(10) '4) passo 1)' char(10) char(10)]);
+
+
 gamma_1 = 0.3;
 gamma_2 = 0.0000001;
 gamma_3 = 0.10; 
@@ -1017,12 +1029,13 @@ legend('W1','W2','W3')
 % figure 
 % step(w3_X,'b',w2,'r',w1,'k')
 
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% CASO 1: Uscita di prestazione [z1]  %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% CASO 1: Uscita di prestazione [z1]  %%
+
+cprintf('hyper', [char(10) '4) passo 2)' char(10) char(10)]);
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.8;
+alphaK = 0.8
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[],[W2],[]);
@@ -1107,24 +1120,26 @@ rank(D21)
 disp(tzero(ss(P_aug.A,B1,C2,D21)))
 
 
-[K,CL,GAM] = hinfsyn(P_aug); 
+[K2,CL2,GAM2] = hinfsyn(P_aug); 
 
+
+cprintf('green', [char(10) 'Gamma:' num2str(GAM)  char(10)]);
 
 % Calcolo delle matrici F0, S0, T0, V0
-F0 = series(K,tenzo_min_nominale);
+F0 = series(K2,tenzo_min_nominale);
 
 S0 = feedback(eye(q),F0);
-
-% Controllo che il max valore singolare di S0 sia minore di W1^-1
-figure
-sigma(S0,'r',logspace(-1,4))
-hold on
-grid on
-sigma(inv(W1),'g',logspace(-1,4))
-legend('S0','W1^{-1}')
+% 
+% % Controllo che il max valore singolare di S0 sia minore di W1^-1
+% figure
+% sigma(S0,'r',logspace(-1,4))
+% hold on
+% grid on
+% sigma(inv(W1),'g',logspace(-1,4))
+% legend('S0','W1^{-1}')
 
 T0 = feedback(F0,eye(q));
-V0 = feedback(K,tenzo_min_nominale);
+V0 = feedback(K2,tenzo_min_nominale);
 % Controllo che il max valore singolare di V0 sia minore di W3^-1
 figure
 sigma(V0,'r',logspace(-1,4))
@@ -1132,20 +1147,20 @@ hold on
 grid on
 sigma(inv(W2),'g',logspace(-1,4))
 legend('V0','W2^{-1}')
-
-
-% Controllo che il max valore singolare di V0 sia minore di W3^-1
-figure
-sigma(T0,'r',logspace(-1,4))
-hold on
-grid on
-sigma(inv(W3),'g',logspace(-1,4))
-legend('T0','W3^{-1}')
+% 
+% 
+% % Controllo che il max valore singolare di V0 sia minore di W3^-1
+% figure
+% sigma(T0,'r',logspace(-1,4))
+% hold on
+% grid on
+% sigma(inv(W3),'g',logspace(-1,4))
+% legend('T0','W3^{-1}')
 
 % Salvo matrici per il confronto finale tra i vari controllori
-S0_z13 = S0;
-T0_z13 = T0;
-V0_z13 = V0;
+S0_z2 = S0;
+T0_z2 = T0;
+V0_z2 = V0;
 
 step(T0)
 
@@ -1154,7 +1169,7 @@ step(T0)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 1.22;
+alphaK = 1.22
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[W1],[],[W3]);
@@ -1241,6 +1256,7 @@ disp(tzero(ss(P_aug.A,B1,C2,D21)))
 
 [Kw1w3,CLw1w3,GAMw1w3] = hinfsyn(P_aug); 
 
+cprintf('green', [char(10) 'Gamma:' num2str(GAMw1w3)  char(10)]);
 
 % Calcolo delle matrici F0, S0, T0, V0
 F0 = series(Kw1w3,tenzo_min_nominale);
@@ -1257,13 +1273,13 @@ legend('S0','W1^{-1}')
 
 T0 = feedback(F0,eye(q));
 V0 = feedback(K,tenzo_min_nominale);
-% Controllo che il max valore singolare di V0 sia minore di W3^-1
-figure
-sigma(V0,'r',logspace(-1,4))
-hold on
-grid on
-sigma(inv(W2),'g',logspace(-1,4))
-legend('V0','W2^{-1}')
+% % Controllo che il max valore singolare di V0 sia minore di W3^-1
+% figure
+% sigma(V0,'r',logspace(-1,4))
+% hold on
+% grid on
+% sigma(inv(W2),'g',logspace(-1,4))
+% legend('V0','W2^{-1}')
 
 
 % Controllo che il max valore singolare di V0 sia minore di W3^-1
@@ -1286,7 +1302,7 @@ step(T0)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.3;
+alphaK = 0.3
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[],[W2],[W3]);
@@ -1373,6 +1389,7 @@ disp(tzero(ss(P_aug.A,B1,C2,D21)))
 
 [K23,CL23,GAM23] = hinfsyn(P_aug); 
 
+cprintf('green', [char(10) 'Gamma:' num2str(GAM23)  char(10)]);
 
 % Calcolo delle matrici F0, S0, T0, V0
 F0 = series(K23,tenzo_min_nominale);
@@ -1412,6 +1429,13 @@ T0_z23 = T0;
 V0_z23 = V0;
 
 step(T0);
+
+
+%%        Secondo Passo: Verifica robustezza stabilità      %
+
+
+cprintf('hyper', [char(10) 'Verifica robustezza e stabilità' char(10)  char(10)]);
+
 
 % disp('avvio simulazione 1');
 % %pause;
