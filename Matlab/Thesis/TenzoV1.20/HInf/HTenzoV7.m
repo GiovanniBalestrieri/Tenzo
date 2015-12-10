@@ -934,8 +934,7 @@ semilogx(omega,mag2db(bb_dA2(1,:)),'k-','LineWidth',2);
 grid on;
 title('Bound on additive uncertainties');
 
-%% Costruzione V0
-
+% Costruzione V0
 cprintf('cyan', [char(10) 'V0(s) e w2(s)' char(10) char(10)]);
 
 V0_LTR = feedback(G,tenzo_min_nominale);
