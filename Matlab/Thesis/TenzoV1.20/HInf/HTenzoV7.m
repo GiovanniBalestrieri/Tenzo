@@ -660,7 +660,7 @@ title('Max val sing of U0');
 
 % Scelgo la terza sigma
 
-G  = G_3; % Sistema filtro di kalman + guadagno k ottimo scelto per LTR
+G  = G_2; % Sistema filtro di kalman + guadagno k ottimo scelto per LTR
 
 cprintf('text',['We choose the third attempt with sigma = ' num2str(sigma_3) ...
     '\nLet us call lma(w) the inverse of the max sing value of U0_3\n']);
@@ -730,7 +730,7 @@ semilogx(omega,mag2db(max_sig_nom),'c--','LineWidth',2)
 grid on;
 title('MaxSV: pert sys(red), max pert (blue) and nominal (cyan)');
 
-cprintf(-[1 0 1],'Variazioni non strutturate moltiplicative sull IN');
+cprintf(-[1 0 1],'Variazioni non strutturate moltiplicative sull IN\n');
 
 cprintf('text','Displaying max val sing of d^p~ IN ...\nPress X\n');
 pause();
@@ -765,7 +765,7 @@ legend('strict bound', 'Rational stable min phase, order 2',...
   'Location','SouthWest');
 %%
 
-cprintf(-[1 0 1],'Variazioni non strutturate moltiplicative sull OUT');
+cprintf(-[1 0 1],'Variazioni non strutturate moltiplicative sull OUT\n');
 % output multiplicative Out uncertainties
 cprintf('text','Press X to Display max val sing of d^p OUT  ...\n\n');
 pause();
@@ -874,7 +874,7 @@ ps_sign = frd(max_S0_vs.^-1,omega);
 ma_S0_vs = frd(max_S0_vs,omega);
 
 %approssmazione si 1/ps con w1                                
-w1 = zpk([-4],[-0.001 -2],100);
+w1 = zpk([-4],[-0.001 -2],50);
 
 [MODX,FAS]=bode(w1,omega);
 w1M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -898,7 +898,6 @@ cprintf('hyper', [char(10) '3) passo 1) la(s), V0(s) e w2(s)' char(10) char(10)]
 
 figure(14);
 grid on;
-hold on;
 for i=1:1:N
   semilogx(omega,mag2db(max_sig_unc(i,:)),'r:','LineWidth',2)
 end
@@ -927,6 +926,9 @@ ord = 2;
 bound_dA2 = fitmagfrd(pre_bound_dA,ord,[],[],1); 
 bb_dA2 = sigma(bound_dA2,omega);
 
+% let us use as la the rational fit previously computed
+la = bound_dA2;
+
 hold on;
 semilogx(omega,mag2db(bb_dA2(1,:)),'k-','LineWidth',2);
 grid on;
@@ -935,9 +937,6 @@ title('Bound on additive uncertainties');
 %% Costruzione V0
 
 cprintf('cyan', [char(10) 'V0(s) e w2(s)' char(10) char(10)]);
-
-% let us use as la the rational fit previously computed
-la = bound_dA2;
 
 V0_LTR = feedback(G,tenzo_min_nominale);
 
@@ -950,7 +949,7 @@ MAX_V0_vs = frd(max_V0_vs,omega);
 la_signed = frd(max_V0_vs.^-1,omega);
 
 %approssmazione si la con w2                                
-w2 = zpk([-2 -10],[0 -5],1850);
+w2 = zpk([-2 -1],[-0.001  -0.005],100);
 
 [MODX,FAS]=bode(w2,omega);
 w2M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -988,7 +987,7 @@ lm = bound_dMout2;
 
 % Le variazioni sono casuali e la maggiorante cambierebbe ogni volta
 % fissiamo:
-w3_X = zpk([-100],[-10000],1000);
+w3_X = zpk([-50],[-10000],1000);
 [mod_w3,fas_w3]=bode(w3_X,omega);
 w3 = frd(mod_w3,omega);
 
