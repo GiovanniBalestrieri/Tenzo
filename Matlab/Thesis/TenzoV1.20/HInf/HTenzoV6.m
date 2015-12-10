@@ -4,7 +4,7 @@
 clear all;
 clc;
 
-version = 0.65;
+version = 0.70;
 
 disp(['Welcome to Tenzo!' char(10)]);
 disp(['version: ' num2str(version) ' ' char(10) '[stable]' char(10)]);
