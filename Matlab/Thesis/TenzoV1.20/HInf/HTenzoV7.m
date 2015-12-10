@@ -998,7 +998,7 @@ grid
 %% Part 4) - SINTESI DEL CONTROLLORE H-INFINITO 
 
 gamma_1 = 0.3;
-gamma_2 = 0.1;
+gamma_2 = 0.0000001;
 gamma_3 = 0.10; 
 
 W1 = gamma_1*w1*eye(q);
@@ -1282,14 +1282,14 @@ V0_z13 = V0;
 step(T0)
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% CASO 3: Uscita di prestazione [z2]  %%
+% CASO 3: Uscita di prestazione [z2,z3]  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.1;
+alphaK = 0.3;
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
-P_aug = augw(modello_ss_epsilon,[W1],[W2],[]);
+P_aug = augw(modello_ss_epsilon,[],[W2],[W3]);
 
 % Estrapolazione delle matrici caratterizzanti il sistema allargato
 A_bar = P_aug.A;
@@ -1371,11 +1371,11 @@ rank(D21)
 disp(tzero(ss(P_aug.A,B1,C2,D21)))
 
 
-[K,CL,GAM] = hinfsyn(P_aug); 
+[K23,CL23,GAM23] = hinfsyn(P_aug); 
 
 
 % Calcolo delle matrici F0, S0, T0, V0
-F0 = series(K,tenzo_min_nominale);
+F0 = series(K23,tenzo_min_nominale);
 
 S0 = feedback(eye(q),F0);
 
@@ -1388,7 +1388,7 @@ sigma(inv(W1),'g',logspace(-1,4))
 legend('S0','W1^{-1}')
 
 T0 = feedback(F0,eye(q));
-V0 = feedback(K,tenzo_min_nominale);
+V0 = feedback(K23,tenzo_min_nominale);
 % Controllo che il max valore singolare di V0 sia minore di W3^-1
 figure
 sigma(V0,'r',logspace(-1,4))
@@ -1407,138 +1407,12 @@ sigma(inv(W3),'g',logspace(-1,4))
 legend('V0','W3^{-1}')
 
 % Salvo matrici per il confronto finale tra i vari controllori
-S0_z13 = S0;
-T0_z13 = T0;
-V0_z13 = V0;
+S0_z23 = S0;
+T0_z23 = T0;
+V0_z23 = V0;
 
 step(T0);
 
-%% Verifica condizioni Astatismo
-
-% disp('Condizioni Astatismo');
-% pause;
-% n=size(AMin,2);
-% p=size(BMinw,2);
-% q=size(ClocalMin,1);
-% 
-% % Definizione segnali esogeni
-% disp('Definizione dei Disturbi da reiettare:');
-% disp('d(t)=');
-% alpha=3; omega=0.5; gamma1=0;
-% k1=1; h1=1; h2=1; gamma2=complex(0,omega);
-% 
-% disp('Definizione segnali esogeni');
-% disp('gamma 1:='); disp(gamma1);
-% disp('gamma 2:='); disp(gamma2);
-% 
-% if (rank(ctrb(AMin+alpha*eye(n),BMinw))==n)
-%     disp('(a3) -> verificata, la coppia (AMin,BMin) raggiungibile, rank(P)'); 
-%     disp(rank(ctrb(AMin,BMinw))); 
-% end
-% if (rank(obsv(AMin+alpha*eye(n),ClocalMin))==n) 
-%     disp('(a3) -> verificata, la coppia (A,C) osservabile, rank(Q)');
-%     disp(rank(obsv(AMin,ClocalMin))); 
-% end
-% 
-% R1=[ AMin-gamma1*eye(size(AMin)) BMinw ;
-%     ClocalMin D];
-% 
-% if (rank(R1)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma1 �:'); disp(rank(R1)); end
-% R2=[ AMin-gamma2*eye(size(AMin)) BMinw ; ClocalMin D];
-% if (rank(R2)==n+q) disp('b) verificata ,rango della matrice 5.4.23 per gamma2 �:'); disp(rank(R2)); end
-
-%% Calcolo del modello interno
-% 
-% disp('specifica 2) Calcolo modello interno KM1');
-% k1_segnato=max(k1,h1);
-% k2_segnato=h2;
-% disp('max(k1,h1):'); 
-% disp(k1_segnato); 
-% disp('max(k2,h2):'); 
-% disp(k2_segnato);
-% syms s;
-% disp('Definiamo il polinomio phi(lambda)');
-% phi1=((s-gamma1)^k1_segnato)*((s-gamma2)^k2_segnato)*((s-conj(gamma2))^k2_segnato)
-% disp('phi(lambda)=');
-% disp((phi1));
-% mu=3;
-% disp('mu=');
-% disp(mu);
-% 
-% Aphi=compan(sym2poly(phi1));
-% APhi=zeros(3);
-% APhi(3,:)=Aphi(1,:);
-% APhi(1,2)=Aphi(2,1);
-% APhi(2,3)=Aphi(3,2);
-% disp('matrice in forma compagna Aphi:');
-% disp(APhi);
-% disp('Bphi:');
-% BPhi=[0;0;1];
-% disp(BPhi);
-% 
-% disp('La matrice dinamica AK1 del modello interno KM1:');
-% AK1=blkdiag(APhi,APhi,APhi,APhi);
-% disp(AK1);
-% disp('La matrice dinamica BK1 del modello interno KM1:');
-% BK1=blkdiag(BPhi,BPhi,BPhi,BPhi);
-% disp(BK1);
-% 
-% %% Calcolo delle matrici F1,F2 + V di Kalman 
-% alpha = 0.5;
-% 
-% disp('Calcolo delle matrici F1,F2 per S1-S2 +  V per Kalman');
-% Asig =[ AMin-BMinw*K zeros(n,size(AK1,2)); -BK1*ClocalMin AK1];
-% Bsig = [ BMinw; -BK1*D];
-% 
-% R = eye(size(Asig,2));
-% %Q = blkdiag([1 0; 0 1],1*eye(3),eye(3),eye(12));
-% %Q = 1000000*eye(20);
-% R = eye(size(Bsig,2));
-% F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
-% 
-% F2=F(:,1:size(AMin,1));
-% disp('dimensioni [pxn]:');
-% disp(size(F2));
-% F1=F(:,size(AMin,1)+1:size(F,2));
-% disp('dimensioni [pxq*mu]:');
-% disp(size(F1));
-% 
-% % disp('matrice per Kalman:');
-% % V=lqr((AMin-BMin*K)',ClocalMin',Q,R)';
-% disp('dimensione attesa [nxq]');
-% disp(size(V));
-% 
-% disp('verifica spostamento autovalori:');
-% disp('autovalori A+B*F2');
-% disp(eig(AMin-BMinw*K+BMinw*F2));
-% disp('autovalori A-V*C');
-% disp(eig(AMin-BMinw*K-V*ClocalMin));
-% 
-% % specifica 3 ) definizione matrici per simulink:
-% 
-% disp('specifica 3 ) definizione matrici per simulink:');
-% 
-% M=[ 1 0 0 0 1 1 1 1]';
-% N=[ 0; 0; 0; 0];
-% %per disturbo sul processo definisco Bmod:
-% Bmodw = [M BMinw]; %nota prima d e poi u scambio la somma per comodit�
-% Dmod  = [N D];
-% 
-% %si ricorda che delta zita0=(A-VC)*zita0 +(B-VD)u + sommatoria (M-VN)*d +V*y
-% Aoss=AMin-V*ClocalMin;
-% Bossw=[BMinw-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
-% Coss=eye(n);
-% Doss=zeros(size(Bossw));
-% 
-% % Ricordando che delta xi1=AK1*xi+ Bk1*e
-% AMI=AK1;
-% BMI=BK1;
-% CMI=eye(q*mu);
-% DMI=zeros(q*mu,q);
-% 
-% satW = 8000;
-% saMenoW = -400;
-% 
 % disp('avvio simulazione 1');
 % %pause;
 % 
