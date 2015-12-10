@@ -7,7 +7,10 @@ clc;
 version = 0.80;
 
 disp(['Welcome to Tenzo!' char(10)]);
-disp(['version: ' num2str(version) ' ' char(10) '[stable]' char(10)]);
+
+cprintf('text','version:  '); 
+cprintf([1,0.5,0],[num2str(version) char(10) '\n']); 
+%disp(['version: ' num2str(version) ' ' char(10) '[stable]' char(10)]);
 % Physical properties of the quadrotor
 
 g=9.81; %Acceleration of gravity (m)
@@ -17,7 +20,7 @@ g=9.81; %Acceleration of gravity (m)
 rho = ureal('rho',1.2250,'Range',[1.1455 1.4224]);
 
 % Total mass of the quadrotor [Kg]
-mq = ureal('mq',1.30,'Range',[0.620 2.0]);
+mq = ureal('mq',1.30,'Range',[0.020 2.0]);
 
 % Mass of a motor (kg). All motors have equal mass.
 mm = ureal('mm',0.068,'Range',[0.020 0.085]);
@@ -38,10 +41,10 @@ dcg=0.288;
 % dcgY = ureal('dcgY',0.288,'Range',[0.12 0.37]);
 % dcgZ = ureal('dcgZ',0.03,'Range',[-0.1 0.1]);
 
-%Forzate
-dcgX = ureal('dcgX',0.288,'Range',[0.001 0.99]);
-dcgY = ureal('dcgY',0.288,'Range',[0.001 0.99]);
-dcgZ = ureal('dcgZ',0.03,'Range',[-0.01 0.40]);
+% %Forzate
+dcgX = ureal('dcgX',0.288,'Range',[0.09 0.59]);
+dcgY = ureal('dcgY',0.288,'Range',[0.09 0.59]);
+dcgZ = ureal('dcgZ',0.03,'Range',[-0.20 0.40]);
 
 % Moment of inertia (x-axis) for motors 1 and 3
 % (kg.m^2).
@@ -73,13 +76,15 @@ II=diag([Ixx Iyy Izz]);
 % Inflow coefficient
 If = ureal('If',-0.3559,'Range',[-0.4000 -0.1559]);
 
-% Thrust coefficient of the propeller and Power coefficient
+% % Thrust coefficient of the propeller and Power coefficient
 cp = ureal('cp',0.0314,'Range',[0.0111 0.0465]);
 
 ct = ureal('ct',0.0726,'Range',[0.0348 0.0980]);
 
 % Propeller radius (m)
 rp = ureal('rp',13.4e-2,'Range',[0.05 0.15]);
+
+
 % Constant value to calculate the moment provided
 % by a propeller given its angular speed (kg.m^2.rad^-1)
 Km=cp*4*rho*rp^5/pi()^3; 
@@ -1035,7 +1040,7 @@ legend('W1','W2','W3')
 cprintf('hyper', [char(10) '4) passo 2)' char(10) char(10)]);
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.8
+alphaK = 0.2
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[],[W2],[]);
@@ -1123,7 +1128,7 @@ disp(tzero(ss(P_aug.A,B1,C2,D21)))
 [K2,CL2,GAM2] = hinfsyn(P_aug); 
 
 
-cprintf('green', [char(10) 'Gamma:' num2str(GAM)  char(10)]);
+cprintf('green', [char(10) 'Gamma:' num2str(GAM2)  char(10)]);
 
 % Calcolo delle matrici F0, S0, T0, V0
 F0 = series(K2,tenzo_min_nominale);
@@ -1162,7 +1167,7 @@ S0_z2 = S0;
 T0_z2 = T0;
 V0_z2 = V0;
 
-step(T0)
+%step(T0)
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CASO 2: Uscita di prestazione [z1,z3]  %%
@@ -1272,7 +1277,7 @@ sigma(inv(W1),'g',logspace(-1,4))
 legend('S0','W1^{-1}')
 
 T0 = feedback(F0,eye(q));
-V0 = feedback(K,tenzo_min_nominale);
+V0 = feedback(Kw1w3,tenzo_min_nominale);
 % % Controllo che il max valore singolare di V0 sia minore di W3^-1
 % figure
 % sigma(V0,'r',logspace(-1,4))
@@ -1295,7 +1300,7 @@ S0_z13 = S0;
 T0_z13 = T0;
 V0_z13 = V0;
 
-step(T0)
+%step(T0)
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CASO 3: Uscita di prestazione [z2,z3]  %%
@@ -1395,14 +1400,14 @@ cprintf('green', [char(10) 'Gamma:' num2str(GAM23)  char(10)]);
 F0 = series(K23,tenzo_min_nominale);
 
 S0 = feedback(eye(q),F0);
-
-% Controllo che il max valore singolare di S0 sia minore di W1^-1
-figure
-sigma(S0,'r',logspace(-1,4))
-hold on
-grid on
-sigma(inv(W1),'g',logspace(-1,4))
-legend('S0','W1^{-1}')
+% 
+% % Controllo che il max valore singolare di S0 sia minore di W1^-1
+% figure
+% sigma(S0,'r',logspace(-1,4))
+% hold on
+% grid on
+% sigma(inv(W1),'g',logspace(-1,4))
+% legend('S0','W1^{-1}')
 
 T0 = feedback(F0,eye(q));
 V0 = feedback(K23,tenzo_min_nominale);
