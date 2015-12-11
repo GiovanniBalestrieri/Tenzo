@@ -111,6 +111,13 @@ PWM_max=2200; %Upper limit of the PWM signal provided to
 %X0c=w0c;
 Ft0=mq*g;
 
+% Simulation paramenters
+amplitudePertIN = 3;
+cstPertIn = 19;
+
+amplitudePertOut = 1;
+cstPertOut = 0;
+
 disp('Loading Parameters ... [OK]');
 
 %% Linearized Model
@@ -502,6 +509,7 @@ answer10 = input(['Do you want to see how it handles real situations? [y/n]' cha
 if isempty(answer2)
     answer10 = 'y';
 end
+
 if strcmp(answer10,'y')
     %figure(25)
     Kopt = Kopt_1;
@@ -696,6 +704,32 @@ G  = G_3; % Sistema filtro di kalman + guadagno k ottimo scelto per LTR
 
 cprintf('text',['We choose the third attempt with sigma = ' num2str(sigma_3) ...
     '\nLet us call lma(w) the inverse of the max sing value of U0_3\n']);
+
+
+% Displaying control system in real situations
+
+% Defining Observer's matrices
+Aoss=tenzo_min_nominale.a-L_3*tenzo_min_nominale.c;
+Bossw=[tenzo_min_nominale.b-L_3*D L_3]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
+Coss=eye(size(Aoss,1));
+poss = size(Bossw,2);
+qoss = size(Aoss,2);
+Doss=zeros(size(Aoss,1),poss);
+
+answer11 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
+if isempty(answer2)
+    answer11 = 'y';
+end
+if strcmp(answer11,'y')
+    %figure(25)
+    Kopt = Kopt_3;
+    A0 = tenzo_min_nominale.a;
+    B0 = tenzo_min_nominale.b;
+    C0 = tenzo_min_nominale.c;
+    D0 = tenzo_min_nominale.d;
+    open('LqrTenzo.slx');
+    sim('LqrTenzo.slx');
+end
 
 lma = frd(m_U_LTR_3_vs.^-1,omega);
 disp('PressX to continue ... ');
