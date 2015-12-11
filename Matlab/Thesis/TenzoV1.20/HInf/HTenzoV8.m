@@ -432,7 +432,7 @@ pause();
 rho1 = 0.001;
 rho2 = 1;
 rho3 = 10;
-alphaK = 10;
+alphaK = 1;
 
 cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
     num2str(rho2) '\n rho3 = ' num2str(rho3) '\n\n']);
@@ -1340,14 +1340,6 @@ legend('S0','W1^{-1}')
 
 T0 = feedback(F0,eye(q));
 V0 = feedback(Kw1w3,tenzo_min_nominale);
-% % Controllo che il max valore singolare di V0 sia minore di W3^-1
-% figure
-% sigma(V0,'r',logspace(-1,4))
-% hold on
-% grid on
-% sigma(inv(W2),'g',logspace(-1,4))
-% legend('V0','W2^{-1}')
-
 
 % Controllo che il max valore singolare di V0 sia minore di W3^-1
 figure(21)
@@ -1362,7 +1354,6 @@ S0_z13 = S0;
 T0_z13 = T0;
 V0_z13 = V0;
 
-%step(T0)
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CASO 3: Uscita di prestazione [z2,z3]  %%
@@ -1495,8 +1486,24 @@ S0_z23 = S0;
 T0_z23 = T0;
 V0_z23 = V0;
 
-step(T0);
 
+% valori singolari 
+cprintf('cyan', '\nSingular Values\n');
+answer20 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
+if isempty(answer2)
+    answer20 = 'y';
+end
+
+if strcmp(answer20,'y')
+    %figure(25)
+    Kinf = Kw1w3;
+    A0 = tenzo_min_nominale.a;
+    B0 = tenzo_min_nominale.b;
+    C0 = tenzo_min_nominale.c;
+    D0 = tenzo_min_nominale.d;
+    open('HinfTenzo.slx');
+    sim('HinfTenzo.slx');
+end
 
 %%        Secondo Passo: Verifica robustezza stabilità      %
 
