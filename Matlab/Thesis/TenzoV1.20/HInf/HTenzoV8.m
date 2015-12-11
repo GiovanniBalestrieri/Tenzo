@@ -418,7 +418,7 @@ pause();
 rho1 = 0.001;
 rho2 = 1;
 rho3 = 10;
-alphaK = 5;
+alphaK = 10;
 
 cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
     num2str(rho2) '\n rho3 = ' num2str(rho3) '\n\n']);
