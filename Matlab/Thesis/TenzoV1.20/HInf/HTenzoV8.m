@@ -488,10 +488,10 @@ disp(size(V));
 % Defining Observer's matrices
 Aoss=tenzo_min_nominale.a-V*tenzo_min_nominale.c;
 Bossw=[tenzo_min_nominale.b-V*D V]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
-Coss=eye(q);
+Coss=eye(size(Aoss,1));
 poss = size(Bossw,2);
 qoss = size(Aoss,2);
-Doss=zeros(q,p);
+Doss=zeros(size(Aoss,1),poss);
 
 disp('Autovalori A-V*C');
 disp(eig(tenzo_min_nominale.a-V*tenzo_min_nominale.c));

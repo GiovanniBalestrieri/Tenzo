@@ -82,7 +82,7 @@ Cremote = [ 1 0 0 0 0 0 0 0 0 0 0 0;
            0 0 0 0 0 0 0 0 1 0 0 0];
        
 CFull = eye(size(A));       
-DFull = zeros(size(A),4);
+DFull = zeros(size(A,1),4);
 inputs = {'Thrust','TauPhi','TauTheta','TauPsi'};
 D = zeros(4,4);
 
