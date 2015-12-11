@@ -112,11 +112,18 @@ PWM_max=2200; %Upper limit of the PWM signal provided to
 Ft0=mq*g;
 
 % Simulation paramenters
-amplitudePertIN = 3;
-cstPertIn = 19;
+amplitudePertIN = 6;
+omegaPertIN = 6;
+cstPertIn = 3;
 
-amplitudePertOut = 1;
+amplitudePertOut = 0;
+omegaPertOut = 6;
 cstPertOut = 0;
+
+% Noise
+randomAmpNoise =  0.1;
+amplitudeNoise = 0.03;
+omegaNoise = 370; % ~60Hz
 
 disp('Loading Parameters ... [OK]');
 
@@ -512,7 +519,7 @@ end
 
 if strcmp(answer10,'y')
     %figure(25)
-    Kopt = Kopt_1;
+    Kopt = Kopt_3;
     A0 = tenzo_min_nominale.a;
     B0 = tenzo_min_nominale.b;
     C0 = tenzo_min_nominale.c;
