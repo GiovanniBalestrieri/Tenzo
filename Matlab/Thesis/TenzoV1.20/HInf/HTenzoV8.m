@@ -1497,10 +1497,10 @@ end
 if strcmp(answer20,'y')
     %figure(25)
     Kinf = Kw1w3;
-    A0 = tenzo_min_nominale.a;
-    B0 = tenzo_min_nominale.b;
-    C0 = tenzo_min_nominale.c;
-    D0 = tenzo_min_nominale.d;
+    set_param('HinfTenzo/H-Infinity/','A','Kinf.a')
+    set_param('HinfTenzo/H-Infinity/','B','Kinf.b')
+    set_param('HinfTenzo/H-Infinity/','C','Kinf.c')
+    set_param('HinfTenzo/H-Infinity/','D','Kinf.d')
     open('HinfTenzo.slx');
     sim('HinfTenzo.slx');
 end
