@@ -947,7 +947,7 @@ ps_sign = frd(max_S0_vs.^-1,omega);
 ma_S0_vs = frd(max_S0_vs,omega);
 
 %approssmazione si 1/ps con w1                                
-w1 = zpk([-4],[-0.001 -2],150);
+w1 = zpk([-4],[-0.001 -0.01 -0.01],1);
 
 [MODX,FAS]=bode(w1,omega);
 w1M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -959,10 +959,16 @@ w1M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
 % - tenda a zero per w -> inf
 % - ps >> 1 per w < wX
 
+% ATTENZIONE : cautela richiesta nella scelta di ps(w) 
+% la banda di pulsazioni per le quali ps>>1 non deve arrivare fino a
+% valori per i quali min_sig(P)<<1
+
+max_sig_nom_B = frd(max_sig_nom,omega);
+
 
 figure(13)
-bodemag(ps_sign,'b',ma_S0_vs,'r',w1M,'k',omega);
-legend('_ps_','max_S0','w1');
+bodemag(ps_sign,'b',ma_S0_vs,'r',w1M,'k',max_sig_nom_B,'c+',omega);
+legend('_ps_','max_S0','w1','Po');
 grid on
 
 %% 3.2) 
@@ -1026,7 +1032,7 @@ w2 = zpk([-60 -40],[-0.0001  -0.0002],0.05);
 [MODX,FAS]=bode(w2,omega);
 w2M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
                      % di w1 per ogni omega
-
+                     
 figure(16)
 bodemag(la_signed,'b',MAX_V0_vs,'r',la,'m',w2M,'k',omega);
 legend('_la_','maxV0','la','w2');
@@ -1062,7 +1068,7 @@ lm = bound_dMout2;
 
 % Le variazioni sono casuali e la maggiorante cambierebbe ogni volta
 % fissiamo:
-w3_X = zpk([-50],[-8000],500);
+w3_X = zpk([-5],[-8000],5000);
 [mod_w3,fas_w3]=bode(w3_X,omega);
 w3 = frd(mod_w3,omega);
 
@@ -1355,6 +1361,24 @@ T0_z13 = T0;
 V0_z13 = V0;
 
 
+% valori singolari 
+cprintf('cyan', '\nSingular Values\n');
+answer19 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
+if isempty(answer2)
+    answer19 = 'y';
+end
+
+if strcmp(answer19,'y')
+    %figure(25)
+    Kinf = Kw1w3;
+    set_param('HinfTenzo/H-Infinity/','A','Kinf.a');
+    set_param('HinfTenzo/H-Infinity/','B','Kinf.b');
+    set_param('HinfTenzo/H-Infinity/','C','Kinf.c');
+    set_param('HinfTenzo/H-Infinity/','D','Kinf.d');
+    open('HinfTenzo.slx');
+    sim('HinfTenzo.slx');
+end
+
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CASO 3: Uscita di prestazione [z2,z3]  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1497,10 +1521,10 @@ end
 if strcmp(answer20,'y')
     %figure(25)
     Kinf = Kw1w3;
-    set_param('HinfTenzo/H-Infinity/','A','Kinf.a')
-    set_param('HinfTenzo/H-Infinity/','B','Kinf.b')
-    set_param('HinfTenzo/H-Infinity/','C','Kinf.c')
-    set_param('HinfTenzo/H-Infinity/','D','Kinf.d')
+    set_param('HinfTenzo/H-Infinity/','A','Kinf.a');
+    set_param('HinfTenzo/H-Infinity/','B','Kinf.b');
+    set_param('HinfTenzo/H-Infinity/','C','Kinf.c');
+    set_param('HinfTenzo/H-Infinity/','D','Kinf.d');
     open('HinfTenzo.slx');
     sim('HinfTenzo.slx');
 end
