@@ -4,7 +4,7 @@
 clear all;
 clc;
 
-version = 0.80;
+version = 0.85;
 
 disp(['Welcome to Tenzo!' char(10)]);
 
@@ -121,8 +121,8 @@ omegaPertOut = 6;
 cstPertOut = 0;
 
 % Noise
-randomAmpNoise =  0.1;
-amplitudeNoise = 0.03;
+randomAmpNoise =  0.07;
+amplitudeNoise = 0.09;
 omegaNoise = 370; % ~60Hz
 
 disp('Loading Parameters ... [OK]');
