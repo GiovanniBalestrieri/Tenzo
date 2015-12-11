@@ -484,15 +484,36 @@ R = eye(size(tenzo_min_nominale.c,1));
 V=lqr((tenzo_min_nominale.a+alphaK*eye(n))',tenzo_min_nominale.c',Q,R)';
 %disp('Dimensione attesa [nxq]');
 disp(size(V));
+
+% Defining Observer's matrices
 Aoss=tenzo_min_nominale.a-V*tenzo_min_nominale.c;
 Bossw=[tenzo_min_nominale.b-V*D V]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
 Coss=eye(q);
+poss = size(Bossw,2);
+qoss = size(Aoss,2);
 Doss=zeros(q,p);
 
 disp('Autovalori A-V*C');
 disp(eig(tenzo_min_nominale.a-V*tenzo_min_nominale.c));
 
-% 2) Passo 2
+% valori singolari 
+cprintf('cyan', '\nSingular Values\n');
+answer10 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
+if isempty(answer2)
+    answer10 = 'y';
+end
+if strcmp(answer10,'y')
+    %figure(25)
+    Kopt = Kopt_1;
+    A0 = tenzo_min_nominale.a;
+    B0 = tenzo_min_nominale.b;
+    C0 = tenzo_min_nominale.c;
+    D0 = tenzo_min_nominale.d;
+    open('LqrTenzo.slx');
+    sim('LqrTenzo.slx');
+end
+
+%% 2) Passo 2
 clc
 cprintf('hyper', [char(10) '2) passo 2) Max val sing U0' char(10) char(10)]);
 
@@ -1023,7 +1044,7 @@ W2 = gamma_2*w2*eye(q);
 W3 = gamma_3*w3_X*eye(q);
 
 % Grafico delle funzioni la, lm, ps considerate per la sintesi Hinf
-figure
+figure(18)
 sigma(W1,'r')
 grid on
 hold on
@@ -1146,7 +1167,7 @@ S0 = feedback(eye(q),F0);
 T0 = feedback(F0,eye(q));
 V0 = feedback(K2,tenzo_min_nominale);
 % Controllo che il max valore singolare di V0 sia minore di W3^-1
-figure
+figure(19)
 sigma(V0,'r',logspace(-1,4))
 hold on
 grid on
@@ -1269,7 +1290,7 @@ F0 = series(Kw1w3,tenzo_min_nominale);
 S0 = feedback(eye(q),F0);
 
 % Controllo che il max valore singolare di S0 sia minore di W1^-1
-figure
+figure(20)
 sigma(S0,'r',logspace(-1,4))
 hold on
 grid on
@@ -1288,7 +1309,7 @@ V0 = feedback(Kw1w3,tenzo_min_nominale);
 
 
 % Controllo che il max valore singolare di V0 sia minore di W3^-1
-figure
+figure(21)
 sigma(T0,'r',logspace(-1,4))
 hold on
 grid on
@@ -1412,7 +1433,7 @@ S0 = feedback(eye(q),F0);
 T0 = feedback(F0,eye(q));
 V0 = feedback(K23,tenzo_min_nominale);
 % Controllo che il max valore singolare di V0 sia minore di W3^-1
-figure
+figure(22)
 sigma(V0,'r',logspace(-1,4))
 hold on
 grid on
@@ -1421,7 +1442,7 @@ legend('V0','W2^{-1}')
 
 
 % Controllo che il max valore singolare di V0 sia minore di W3^-1
-figure
+figure(23)
 sigma(T0,'r',logspace(-1,4))
 hold on
 grid on
