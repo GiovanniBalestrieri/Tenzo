@@ -121,8 +121,8 @@ omegaPertOut = 6;
 cstPertOut = 0;
 
 % Noise
-randomAmpNoise =  0.07;
-amplitudeNoise = 0.09;
+randomAmpNoise =  1;
+amplitudeNoise = 2;
 omegaNoise = 370; % ~60Hz
 
 disp('Loading Parameters ... [OK]');
@@ -1082,28 +1082,41 @@ grid
 cprintf('hyper', [char(10) '4) passo 1)' char(10) char(10)]);
 
 
-gamma_1 = 0.3;
+% gamma_1 = 0.3;
+% gamma_2 = 0.0000001;
+% gamma_3 = 0.10; 
+
+gamma_1 = 0.1;
 gamma_2 = 0.0000001;
-gamma_3 = 0.10; 
+gamma_3 = 0.1; 
 
 W1 = gamma_1*w1*eye(q);
+W1Old = w1*eye(q);
 W2 = gamma_2*w2*eye(q);
+W2Old = w2*eye(q);
 W3 = gamma_3*w3_X*eye(q);
+W3Old = w3_X*eye(q);
 
 % Grafico delle funzioni la, lm, ps considerate per la sintesi Hinf
 figure(18)
 sigma(W1,'r')
-grid on
+hold on
+sigma(W1Old,'r+')
 hold on
 sigma(W2,'g')
+hold on
+sigma(W2Old,'g+')
+hold on
 sigma(W3,'b')
-legend('W1','W2','W3')
+hold on
+sigma(W3Old,'b+')
+grid on
+legend('W1','W1Old','W2','W2Old','W3','W3Old')
  
 % figure 
 % step(w3_X,'b',w2,'r',w1,'k')
 
-
-%% CASO 1: Uscita di prestazione [z1]  %%
+%% CASO 1: Uscita di prestazione [z2]  %%
 
 cprintf('hyper', [char(10) '4) passo 2)' char(10) char(10)]);
 
@@ -1220,8 +1233,7 @@ hold on
 grid on
 sigma(inv(W2),'g',logspace(-1,4))
 legend('V0','W2^{-1}')
-% 
-% 
+
 % % Controllo che il max valore singolare di V0 sia minore di W3^-1
 % figure
 % sigma(T0,'r',logspace(-1,4))
@@ -1242,7 +1254,7 @@ V0_z2 = V0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.2
+alphaK = 0.001
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[W1],[],[W3]);
@@ -1362,7 +1374,7 @@ V0_z13 = V0;
 
 
 % valori singolari 
-cprintf('cyan', '\nSingular Values\n');
+cprintf('cyan', '\nH-Inifinity W1 and W3\n');
 answer19 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
 if isempty(answer2)
     answer19 = 'y';
@@ -1384,10 +1396,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.3
+alphaK = 0.01;
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
-P_aug = augw(modello_ss_epsilon,[],[W2],[W3]);
+P_aug = augw(modello_ss_epsilon,[W1],[W2],[W3]);
 
 % Estrapolazione delle matrici caratterizzanti il sistema allargato
 A_bar = P_aug.A;
@@ -1477,14 +1489,13 @@ cprintf('green', [char(10) 'Gamma:' num2str(GAM23)  char(10)]);
 F0 = series(K23,tenzo_min_nominale);
 
 S0 = feedback(eye(q),F0);
-% 
-% % Controllo che il max valore singolare di S0 sia minore di W1^-1
-% figure
-% sigma(S0,'r',logspace(-1,4))
-% hold on
-% grid on
-% sigma(inv(W1),'g',logspace(-1,4))
-% legend('S0','W1^{-1}')
+% Controllo che il max valore singolare di S0 sia minore di W1^-1
+figure(20)
+sigma(S0,'r',logspace(-1,4))
+hold on
+grid on
+sigma(inv(W1),'g',logspace(-1,4))
+legend('S0','W1^{-1}')
 
 T0 = feedback(F0,eye(q));
 V0 = feedback(K23,tenzo_min_nominale);
@@ -1512,20 +1523,18 @@ V0_z23 = V0;
 
 
 % valori singolari 
-cprintf('cyan', '\nSingular Values\n');
 answer20 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
 if isempty(answer2)
     answer20 = 'y';
 end
 
 if strcmp(answer20,'y')
-    %figure(25)
-    Kinf = Kw1w3;
+    Kinf = K23;
+    open('HinfTenzo.slx');
     set_param('HinfTenzo/H-Infinity/','A','Kinf.a');
     set_param('HinfTenzo/H-Infinity/','B','Kinf.b');
     set_param('HinfTenzo/H-Infinity/','C','Kinf.c');
     set_param('HinfTenzo/H-Infinity/','D','Kinf.d');
-    open('HinfTenzo.slx');
     sim('HinfTenzo.slx');
 end
 
