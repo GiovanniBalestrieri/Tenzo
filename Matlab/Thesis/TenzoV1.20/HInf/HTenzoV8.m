@@ -112,11 +112,11 @@ PWM_max=2200; %Upper limit of the PWM signal provided to
 Ft0=mq*g;
 
 % Simulation paramenters
-amplitudePertIN = 6;
+amplitudePertIN = 1000;
 omegaPertIN = 6;
 cstPertIn = 3;
 
-amplitudePertOut = 0;
+amplitudePertOut = 13;
 omegaPertOut = 6;
 cstPertOut = 0;
 
@@ -723,18 +723,19 @@ poss = size(Bossw,2);
 qoss = size(Aoss,2);
 Doss=zeros(size(Aoss,1),poss);
 
+
+open('LqrTenzo.slx');
+Kopt = Kopt_3;
+A0 = tenzo_min_nominale.a;
+B0 = tenzo_min_nominale.b;
+C0 = tenzo_min_nominale.c;
+D0 = tenzo_min_nominale.d;
+    
 answer11 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
 if isempty(answer2)
     answer11 = 'y';
 end
 if strcmp(answer11,'y')
-    %figure(25)
-    Kopt = Kopt_3;
-    A0 = tenzo_min_nominale.a;
-    B0 = tenzo_min_nominale.b;
-    C0 = tenzo_min_nominale.c;
-    D0 = tenzo_min_nominale.d;
-    open('LqrTenzo.slx');
     sim('LqrTenzo.slx');
 end
 
@@ -1396,7 +1397,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.01;
+alphaK = 0.07;
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[W1],[W2],[W3]);
@@ -1486,11 +1487,11 @@ disp(tzero(ss(P_aug.A,B1,C2,D21)))
 cprintf('green', [char(10) 'Gamma:' num2str(GAM23)  char(10)]);
 
 % Calcolo delle matrici F0, S0, T0, V0
-F0 = series(K23,tenzo_min_nominale);
+F0 = series(K123,tenzo_min_nominale);
 
 S0 = feedback(eye(q),F0);
 % Controllo che il max valore singolare di S0 sia minore di W1^-1
-figure(20)
+figure(22)
 sigma(S0,'r',logspace(-1,4))
 hold on
 grid on
@@ -1500,7 +1501,7 @@ legend('S0','W1^{-1}')
 T0 = feedback(F0,eye(q));
 V0 = feedback(K23,tenzo_min_nominale);
 % Controllo che il max valore singolare di V0 sia minore di W3^-1
-figure(22)
+figure(23)
 sigma(V0,'r',logspace(-1,4))
 hold on
 grid on
@@ -1509,12 +1510,12 @@ legend('V0','W2^{-1}')
 
 
 % Controllo che il max valore singolare di V0 sia minore di W3^-1
-figure(23)
+figure(24)
 sigma(T0,'r',logspace(-1,4))
 hold on
 grid on
 sigma(inv(W3),'g',logspace(-1,4))
-legend('V0','W3^{-1}')
+legend('T0','W3^{-1}')
 
 % Salvo matrici per il confronto finale tra i vari controllori
 S0_z23 = S0;
@@ -1528,13 +1529,14 @@ if isempty(answer2)
     answer20 = 'y';
 end
 
+open('HinfTenzo.slx');
+set_param('HinfTenzo/H-Infinity/','A','Kinf.a');
+set_param('HinfTenzo/H-Infinity/','B','Kinf.b');
+set_param('HinfTenzo/H-Infinity/','C','Kinf.c');
+set_param('HinfTenzo/H-Infinity/','D','Kinf.d');
+
 if strcmp(answer20,'y')
-    Kinf = K23;
-    open('HinfTenzo.slx');
-    set_param('HinfTenzo/H-Infinity/','A','Kinf.a');
-    set_param('HinfTenzo/H-Infinity/','B','Kinf.b');
-    set_param('HinfTenzo/H-Infinity/','C','Kinf.c');
-    set_param('HinfTenzo/H-Infinity/','D','Kinf.d');
+    Kinf = K123;
     sim('HinfTenzo.slx');
 end
 
