@@ -1242,7 +1242,7 @@ V0_z2 = V0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 1.22
+alphaK = 0.2
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[W1],[],[W3]);
@@ -1370,12 +1370,12 @@ end
 
 if strcmp(answer19,'y')
     %figure(25)
-    Kinf = Kw1w3;
+    Kinf = Kw1w3;    
+    open('HinfTenzo.slx');
     set_param('HinfTenzo/H-Infinity/','A','Kinf.a');
     set_param('HinfTenzo/H-Infinity/','B','Kinf.b');
     set_param('HinfTenzo/H-Infinity/','C','Kinf.c');
     set_param('HinfTenzo/H-Infinity/','D','Kinf.d');
-    open('HinfTenzo.slx');
     sim('HinfTenzo.slx');
 end
 
