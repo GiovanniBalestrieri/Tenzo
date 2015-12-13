@@ -23,13 +23,13 @@ rho = ureal('rho',1.2250,'Range',[1.1455 1.4224]);
 mq = ureal('mq',1.30,'Range',[0.020 2.0]);
 
 % Mass of a motor (kg). All motors have equal mass.
-mm = ureal('mm',0.068,'Range',[0.020 0.085]);
+mm = ureal('mm',0.068,'Range',[0.020 0.095]);
 % Motor length along x-axis (m). All motors have equal sizes.
 lx = ureal('lx',28.8e-3,'Range',[0.015 0.030]);
 % Motor length along y-axis (m)
 ly = ureal('ly',28.8e-3,'Range',[0.015 0.030]);
 % Motor length along z-axis (m)
-lz = ureal('lz',0.08,'Range',[0.03 0.6]);
+lz = ureal('lz',0.04,'Range',[0.03 0.06]);
 
 % Distance from the center of gravity to the center of a motor (m).
 % The quadrotor is symmetric regarding the XZ and YZ planes, so
@@ -37,8 +37,8 @@ lz = ureal('lz',0.08,'Range',[0.03 0.6]);
 dcg=0.288; 
 
 % % Reali
-dcgX = ureal('dcgX',0.288,'Range',[0.12 0.37]);
-dcgY = ureal('dcgY',0.288,'Range',[0.12 0.37]);
+dcgX = ureal('dcgX',0.288,'Range',[0.12 0.40]);
+dcgY = ureal('dcgY',0.288,'Range',[0.12 0.40]);
 dcgZ = ureal('dcgZ',0.03,'Range',[-0.1 0.1]);
 
 % % %Forzate
@@ -743,10 +743,7 @@ if strcmp(answer11,'y')
 end
 
 amplitudePertOut = 0;
-
 set_param('LQRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
-
-
 
 lma = frd(m_U_LTR_3_vs.^-1,omega);
 disp('PressX to continue ... ');
@@ -827,14 +824,14 @@ for i=1:1:N
 end
 title('Max sing values: input multiplicative uncertainties');
 
-%% Upper bound MOLT IN lm(w) razionale stabile e fase minima
+% Upper bound MOLT IN lm(w) razionale stabile e fase minima
 
 cprintf('text',['Computing the bound lm~(w) of sigma(d^p~) ...\n PressX \n']);
 pause();
 pre_bound_dMin = frd(top_dMin,omega);
 
 % fit razionale e min phase per ricavare il bound
-ord = 2;
+ord = 1;
 bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
 bb_dMin2 = sigma(bound_dM,omega);
 
@@ -846,7 +843,6 @@ semilogx(omega,mag2db(bb_dMin2(1,:)),'k','LineWidth',2)
 title('Bound on multiplicative uncertainties');
 legend('strict bound', 'Rational stable min phase, order 2',...
   'Location','SouthWest');
-%%
 
 cprintf(-[1 0 1],'Variazioni non strutturate moltiplicative sull OUT\n');
 % output multiplicative Out uncertainties
@@ -880,8 +876,6 @@ title('Bound on multiplicative Output uncertainties');
 legend('strict bound', 'Rational stable min phase, order 2',...
  'Location','SouthWest');
 
-% Defining delta^p~ distruttivo
-dpBomb = 7000*eye(4);
 
 %% Step response for all real plants
 
@@ -955,7 +949,7 @@ P0G = frd(max_F0_vs,omega);
 
 ps_sign = frd(max_S0_vs.^-1,omega);
 ma_S0_vs = frd(max_S0_vs,omega);
-%%
+%
 %approssmazione si 1/ps con w1                                
 w1 = zpk([-400],[-0.00005 -0.004],0.02);
 
@@ -1108,8 +1102,8 @@ cprintf('hyper', [char(10) '4) passo 1)' char(10) char(10)]);
 % gamma_3 = 0.10; 
 
 gamma_1 = 1;
-gamma_2 = 0.000001;
-gamma_3 = 0.1; 
+gamma_2 = 0.00000001;
+gamma_3 = 0.001; 
 
 W1 = gamma_1*w1*eye(q);
 W1Old = w1*eye(q);
@@ -1272,7 +1266,7 @@ set_param('HinfTenzo/Controller/H-Infinity/','D','Kinf.d');
 amplitudePertIN = 700;
 amplitudePertOutZ = 2;
 amplitudePertOutptp = 30;
-omegaPertOut = 0.1;
+omegaPertOut = 1;
 
 
 % Set amplitude out pert
@@ -1447,14 +1441,12 @@ if strcmp(answer21,'y')
     sim('HinfTenzo.slx');
 end
 
-%step(T0)
-
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% CASO 3: Uscita di prestazione [z2,z3]  %%
+% CASO 3: Uscita di prestazione [z1,z2,z3]  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.007;
+alphaK = 0.2;
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[W1],[W2],[W3]);
@@ -1621,9 +1613,6 @@ figure(25);
 semilogx(omega,mag2db(max_sig_nom),'k--','LineWidth',3);
 grid on
 
-figure(27);
-semilogx(omega,mag2db(max_sig_nom),'k--','LineWidth',3);
-grid on
 
 temp = sigma(W1,omega);
 max_sigma_W1(i,:) = temp(1,:);
