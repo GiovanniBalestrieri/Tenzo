@@ -955,13 +955,14 @@ P0G = frd(max_F0_vs,omega);
 
 ps_sign = frd(max_S0_vs.^-1,omega);
 ma_S0_vs = frd(max_S0_vs,omega);
-
+%%
 %approssmazione si 1/ps con w1                                
-w1 = zpk([-4],[-0.0001 0.001],0.9);
+w1 = zpk([-400],[-0.00005 -0.004],0.02);
 
 [MODX,FAS]=bode(w1,omega);
-w1M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
-                     % di w1 per ogni omega
+w1M = frd(MODX,omega); 
+% Otteniamo la funzione ps imponendola pari al modulo
+% di w1 per ogni omega
 
 % Grafico di ps~ (inverso dell'andamento dei massimi
 % valori singolari di S0 al variare di omega) 
@@ -985,27 +986,34 @@ grid on
 
 cprintf('hyper', [char(10) '3) passo 2) V0(s) e w2(s)' char(10) char(10)]);
 
+
+%  Additive
+figure(15);
+for i=1:1:N
+  semilogx(omega,mag2db(max_sig_dA(i,:)),'k--','LineWidth',1)
+  hold on
+end
+semilogx(omega,mag2db(top_dA),'b','LineWidth',2)
+hold on;
+semilogx(omega,mag2db(max_sig_nom),'c','LineWidth',3)
+grid on;
+title('Max sing values: pert dp (bk), nominal (cyan), top_dp (blue)')
+
+pause(1)
+
 figure(14);
 grid on;
 for i=1:1:N
-  semilogx(omega,mag2db(max_sig_unc(i,:)),'r:','LineWidth',2)
+  semilogx(omega,mag2db(max_sig_unc(i,:)),'k--','LineWidth',1)
+  hold on
 end
 hold on
 semilogx(omega,mag2db(top_unc),'b','LineWidth',5)
 hold on
 semilogx(omega,mag2db(max_sig_nom),'c','LineWidth',3)
-title('Max sing values: pert (bk), Bound (cyan), top Unc (blue)')
+title('Max sing values: pert (bk), nominal (cyan), top Unc (blue)')
 
-%  Additive
-figure(15);
-hold on;
-for i=1:1:N
-  semilogx(omega,mag2db(max_sig_dA(i,:)),'r:','LineWidth',2)
-end
-semilogx(omega,mag2db(top_dA),'b','LineWidth',3)
-grid on;
-hold on;
-semilogx(omega,mag2db(max_sig_nom),'c','LineWidth',3)
+pause(2)
 
 % Upper bound razionale stabile e fase minima
 pre_bound_dA = frd(top_dA,omega);
@@ -1052,8 +1060,7 @@ grid on
 
 cprintf('hyper', [char(10) '3) passo 3) T0(s) e w3(s)' char(10) char(10)]);
 
-
-% Calcolo di T0 
+% Calcolo di T0
 
 F = series(G,tenzo_min_nominale);
 F_vs = sigma(F,omega);
@@ -1085,7 +1092,11 @@ w3 = frd(mod_w3,omega);
 figure(17)
 bodemag(lm,'b',lm_b,'r',max_T0_LTR,'c',lma,'m',w3_X,'k--',omega)
 legend('lm','lm_b','T0','lm_a','w3')
-grid
+grid on
+
+disp('X ...');
+pause()
+
 
 %% Part 4) - SINTESI DEL CONTROLLORE H-INFINITO 
 
@@ -1096,9 +1107,9 @@ cprintf('hyper', [char(10) '4) passo 1)' char(10) char(10)]);
 % gamma_2 = 0.0000001;
 % gamma_3 = 0.10; 
 
-gamma_1 = 0.0001;
-gamma_2 = 0.00001;
-gamma_3 = 0.04; 
+gamma_1 = 1;
+gamma_2 = 0.000001;
+gamma_3 = 0.1; 
 
 W1 = gamma_1*w1*eye(q);
 W1Old = w1*eye(q);
@@ -1136,7 +1147,7 @@ alphaK = 0.2;
 
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
-P_aug = augw(modello_ss_epsilon,[],W2,W3);
+P_aug = augw(modello_ss_epsilon,[W1],[],W3);
 
 % Estrapolazione delle matrici caratterizzanti il sistema allargato
 A_bar = P_aug.A;
@@ -1277,7 +1288,7 @@ set_param('HinfTenzo/DisturboOut/ErrOutZ/disturbo/SineOut','Frequency','omegaPer
 
 
 % valori singolari 
-cprintf('cyan', '\nH-Inifinity W1 and W3\n');
+cprintf('cyan', '\nH-Infinity W1 and W3\n');
 answer19 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
 if isempty(answer2)
     answer19 = 'y';
@@ -1600,11 +1611,19 @@ for i=1:N
 %   semilogx(omega,mag2db(max_sig_dMin(i,:)),'r:','LineWidth',3);
 %   hold on
 %   grid on
-  figure(27)
+  figure(27);
   semilogx(omega,mag2db(max_sig_dMout(i,:)),'r:','LineWidth',3);
   hold on
-  grid on
 end
+
+% Draw nominal plant
+figure(25);
+semilogx(omega,mag2db(max_sig_nom),'k--','LineWidth',3);
+grid on
+
+figure(27);
+semilogx(omega,mag2db(max_sig_nom),'k--','LineWidth',3);
+grid on
 
 temp = sigma(W1,omega);
 max_sigma_W1(i,:) = temp(1,:);
