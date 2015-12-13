@@ -525,10 +525,10 @@ D0 = tenzo_min_nominale.d;
 
 set_param('LQRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
 
+Kopt = Kopt_3;
 
 if strcmp(answer10,'y')
     %figure(25)
-    Kopt = Kopt_3;
     sim('LqrTenzo.slx');
 end
 
@@ -694,7 +694,7 @@ m_U0_vs = m_U0_3_vs;
 
 % display informations about the sigma values 
 cprintf('magenta',['V= s^2B*B \n3 attempts:\n sigma1 = ' num2str(sigma_1) '\n sigma2 = '...
-    num2str(sigma_2) '\n sigma3 = ' num2str(sigma_3) '\n\n']);
+num2str(sigma_2) '\n sigma3 = ' num2str(sigma_3) '\n\n']);
 
 % Grafici dei massimi valori singolari delle funzioni U0 e U_LTR_i , i = 1,2,3
 
@@ -1596,7 +1596,6 @@ temp = sigma(W3,omega);
 max_sigma_W3(i,:) = temp(1,:);
 top_w3 = max(max_sigma_W3);
 
-
 figure(25);
 semilogx(omega,mag2db(top_w1),'b','LineWidth',4);
 
@@ -1607,8 +1606,38 @@ semilogx(omega,mag2db(top_w3),'b','LineWidth',4);
 
 cprintf('text', [char(10) 'Verifica autovalori sys perturbati' char(10)  char(10)]);
 
-
-
+for i=1:1
+    F_pert_add = series(K123,sys{i}); % Catena diretta considerando le pert.
+    T_pert{i} = feedback(F1_pert_add,eye(q));
+    step(T1_pert,2.5)
+    hold on
+    % check autovalori
+    
+    eigPert{i} = eig(T_pert{i});
+    temp = eigPert{i};
+    for j=1:deg(tf(T_pert{i}))
+       if real(temp(j))>-alphaK
+           cprintf('text',[char(10) 'eig: ' num2str(j) ' ']);
+           cprintf('err',['unstable: ' num2str(temp(j)) char(10)]);
+       end
+    end
+end
+    sys{i};
+i = 2;
+    F_pert_add = series(Kw1w3,tenzo_min_nominale); % Catena diretta considerando le pert.
+    T_pert{i} = feedback(F1_pert_add,eye(q));
+    step(T1_pert,2.5)
+    hold on
+    % check autovalori
+    
+    eigPert{i} = eig(T_pert{i});
+    temp = eigPert{i}
+%     for j=1:deg(tf(T_pert{i}))
+%        if real(temp(j))>-alphaK
+%            cprintf('text',[char(10) 'eig: ' num2str(j) ' ']);
+%            cprintf('err',['unstable: ' num2str(temp(j)) char(10)]);
+%        end
+%     end
 
 %% 
 
