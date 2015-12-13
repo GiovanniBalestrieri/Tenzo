@@ -1512,7 +1512,7 @@ disp(tzero(ss(P_aug.A,B1,C2,D21)))
 
 [K123,CL123,GAM123] = hinfsyn(P_aug); 
 
-cprintf('green', [char(10) 'Gamma:' num2str(GAM23)  char(10)]);
+cprintf('green', [char(10) 'Gamma:' num2str(GAM123)  char(10)]);
 
 % Calcolo delle matrici F0, S0, T0, V0
 F0 = series(K123,tenzo_min_nominale);
@@ -1570,20 +1570,47 @@ end
 
 %%        Secondo Passo: Verifica robustezza stabilità      %
 
-cprintf('hyper', [char(10) 'Verifica robustezza e stabilità' char(10)  char(10)]);
+cprintf('hyper', [char(10) '4) 2: Verifica robustezza e stabilità' char(10)  char(10)]);
 
 % Verifica pert additive
-for i=0:N
+for i=1:N
   figure(25);
-  max_sig_dA(i,:);
+  semilogx(omega,mag2db(max_sig_dA(i,:)),'r:','LineWidth',3);
   hold on
+  grid on
   figure(26);
-  max_sig_dMin(i,:);
+  semilogx(omega,mag2db(max_sig_dMin(i,:)),'r:','LineWidth',3);
   hold on
+  grid on
   figure(27)
-  max_sig_dMout(i,:); 
+  semilogx(omega,mag2db(max_sig_dMout(i,:)),'r:','LineWidth',3);
   hold on
+  grid on
 end
+
+temp = sigma(W1,omega);
+max_sigma_W1(i,:) = temp(1,:);
+top_w1 = max(max_sigma_W1);
+
+temp = sigma(W3,omega);
+max_sigma_W3(i,:) = temp(1,:);
+top_w3 = max(max_sigma_W3);
+
+
+figure(25);
+semilogx(omega,mag2db(top_w1),'b','LineWidth',4);
+
+figure(27)
+semilogx(omega,mag2db(top_w3),'b','LineWidth',4);
+
+%% Calcolo autovalori
+
+cprintf('text', [char(10) 'Verifica autovalori sys perturbati' char(10)  char(10)]);
+
+
+
+
+%% 
 
 % disp('avvio simulazione 1');
 % %pause;
