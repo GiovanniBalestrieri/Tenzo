@@ -4,7 +4,7 @@
 clear all;
 clc;
 
-version = 0.85;
+version = 0.90;
 
 disp(['Welcome to Tenzo!' char(10)]);
 
@@ -37,14 +37,14 @@ lz = ureal('lz',0.08,'Range',[0.03 0.6]);
 dcg=0.288; 
 
 % % Reali
-% dcgX = ureal('dcgX',0.288,'Range',[0.12 0.37]);
-% dcgY = ureal('dcgY',0.288,'Range',[0.12 0.37]);
-% dcgZ = ureal('dcgZ',0.03,'Range',[-0.1 0.1]);
+dcgX = ureal('dcgX',0.288,'Range',[0.12 0.37]);
+dcgY = ureal('dcgY',0.288,'Range',[0.12 0.37]);
+dcgZ = ureal('dcgZ',0.03,'Range',[-0.1 0.1]);
 
-% %Forzate
-dcgX = ureal('dcgX',0.288,'Range',[0.09 0.59]);
-dcgY = ureal('dcgY',0.288,'Range',[0.09 0.59]);
-dcgZ = ureal('dcgZ',0.03,'Range',[-0.20 0.40]);
+% % %Forzate
+% dcgX = ureal('dcgX',0.288,'Range',[0.09 0.59]);
+% dcgY = ureal('dcgY',0.288,'Range',[0.09 0.59]);
+% dcgZ = ureal('dcgZ',0.03,'Range',[-0.20 0.40]);
 
 % Moment of inertia (x-axis) for motors 1 and 3
 % (kg.m^2).
@@ -528,7 +528,6 @@ set_param('LQRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePe
 Kopt = Kopt_3;
 
 if strcmp(answer10,'y')
-    %figure(25)
     sim('LqrTenzo.slx');
 end
 
@@ -660,8 +659,8 @@ Cc_2 = Kopt;
 Dc_2 = zeros(q,q);
 
 G_2  = ss(Ac_2,Bc_2,Cc_2,Dc_2);       % Kalman Filter + Optimal K
-H_LTR_2 = series(tenzo_min_nominale,G_2);  
-U_LTR_2 = feedback(H_LTR_2,eye(q)); 
+H_LTR_2 = series(tenzo_min_nominale,G_2);
+U_LTR_2 = feedback(H_LTR_2,eye(q));
 
 % Third attempt
 
@@ -743,7 +742,7 @@ if strcmp(answer11,'y')
     sim('LqrTenzo.slx');
 end
 
-amplitudePertOut = 10;
+amplitudePertOut = 0;
 
 set_param('LQRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
 
@@ -1038,7 +1037,7 @@ MAX_V0_vs = frd(max_V0_vs,omega);
 la_signed = frd(max_V0_vs.^-1,omega);
 
 %approssmazione si la con w2                                
-w2 = zpk([-10 -40],[-0.0001  -0.0002],0.07);
+w2 = zpk([-40 -90],[-0.0001  -0.0002],0.05);
 
 [MODX,FAS]=bode(w2,omega);
 w2M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -1079,7 +1078,7 @@ lm = bound_dMout2;
 
 % Le variazioni sono casuali e la maggiorante cambierebbe ogni volta
 % fissiamo:
-w3_X = zpk([-40 -600 -700],[-1100 -120000 -10000],1630600);
+w3_X = zpk([-40 -600 -700],[-1100 -120000 -10000],700600);
 [mod_w3,fas_w3]=bode(w3_X,omega);
 w3 = frd(mod_w3,omega);
 
@@ -1097,9 +1096,9 @@ cprintf('hyper', [char(10) '4) passo 1)' char(10) char(10)]);
 % gamma_2 = 0.0000001;
 % gamma_3 = 0.10; 
 
-gamma_1 = 0.00001;
+gamma_1 = 0.0001;
 gamma_2 = 0.00001;
-gamma_3 = 0.5; 
+gamma_3 = 0.04; 
 
 W1 = gamma_1*w1*eye(q);
 W1Old = w1*eye(q);
@@ -1133,10 +1132,11 @@ legend('W1','W1Old','W2','W2Old','W3','W3Old')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 2
+alphaK = 0.2;
+
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
-P_aug = augw(modello_ss_epsilon,[],[],[W3]);
+P_aug = augw(modello_ss_epsilon,[],W2,W3);
 
 % Estrapolazione delle matrici caratterizzanti il sistema allargato
 A_bar = P_aug.A;
