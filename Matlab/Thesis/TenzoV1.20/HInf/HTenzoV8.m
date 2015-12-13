@@ -114,9 +114,9 @@ Ft0=mq*g;
 % Simulation paramenters
 amplitudePertIN = 1000;
 omegaPertIN = 6;
-cstPertIn = 3;
+cstPertIn = 0;
 
-amplitudePertOut = 13;
+amplitudePertOut = 0;
 omegaPertOut = 6;
 cstPertOut = 0;
 
@@ -517,14 +517,18 @@ if isempty(answer2)
     answer10 = 'y';
 end
 
+open('LqrTenzo.slx');
+A0 = tenzo_min_nominale.a;
+B0 = tenzo_min_nominale.b;
+C0 = tenzo_min_nominale.c;
+D0 = tenzo_min_nominale.d;
+
+set_param('LQRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
+
+
 if strcmp(answer10,'y')
     %figure(25)
     Kopt = Kopt_3;
-    A0 = tenzo_min_nominale.a;
-    B0 = tenzo_min_nominale.b;
-    C0 = tenzo_min_nominale.c;
-    D0 = tenzo_min_nominale.d;
-    open('LqrTenzo.slx');
     sim('LqrTenzo.slx');
 end
 
@@ -739,6 +743,12 @@ if strcmp(answer11,'y')
     sim('LqrTenzo.slx');
 end
 
+amplitudePertOut = 10;
+
+set_param('LQRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
+
+
+
 lma = frd(m_U_LTR_3_vs.^-1,omega);
 disp('PressX to continue ... ');
 pause()
@@ -948,7 +958,7 @@ ps_sign = frd(max_S0_vs.^-1,omega);
 ma_S0_vs = frd(max_S0_vs,omega);
 
 %approssmazione si 1/ps con w1                                
-w1 = zpk([-4],[-0.001 -0.01 -0.01],1);
+w1 = zpk([-4],[-0.001 -0.01 -0.01],0.9);
 
 [MODX,FAS]=bode(w1,omega);
 w1M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -1374,6 +1384,29 @@ T0_z13 = T0;
 V0_z13 = V0;
 
 
+open('HinfTenzo.slx');
+set_param('HinfTenzo/H-Infinity/','A','Kinf.a');
+set_param('HinfTenzo/H-Infinity/','B','Kinf.b');
+set_param('HinfTenzo/H-Infinity/','C','Kinf.c');
+set_param('HinfTenzo/H-Infinity/','D','Kinf.d');
+amplitudePertIN = 700;
+amplitudePertOutZ = 2;
+amplitudePertOutptp = 30;
+omegaPertOut = 0.1;
+
+
+% Set amplitude out pert
+set_param('HinfTenzo/DisturboIn/ErrIn/disturbo/SineIn','amplitude','amplitudePertIN');
+
+% Set amplitude out pert
+set_param('HinfTenzo/DisturboOut/ErrOutZ/disturbo/SineOut','amplitude','amplitudePertOutZ');
+set_param('HinfTenzo/DisturboOut/ErrOutAtt/disturbo/SineOut','amplitude','amplitudePertOutptp');
+
+% set frequency of out pert
+set_param('HinfTenzo/DisturboOut/ErrOutAtt/disturbo/SineOut','Frequency','omegaPertOut');
+set_param('HinfTenzo/DisturboOut/ErrOutZ/disturbo/SineOut','Frequency','omegaPertOut');
+
+
 % valori singolari 
 cprintf('cyan', '\nH-Inifinity W1 and W3\n');
 answer19 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
@@ -1384,11 +1417,6 @@ end
 if strcmp(answer19,'y')
     %figure(25)
     Kinf = Kw1w3;    
-    open('HinfTenzo.slx');
-    set_param('HinfTenzo/H-Infinity/','A','Kinf.a');
-    set_param('HinfTenzo/H-Infinity/','B','Kinf.b');
-    set_param('HinfTenzo/H-Infinity/','C','Kinf.c');
-    set_param('HinfTenzo/H-Infinity/','D','Kinf.d');
     sim('HinfTenzo.slx');
 end
 
@@ -1482,7 +1510,7 @@ rank(D21)
 disp(tzero(ss(P_aug.A,B1,C2,D21)))
 
 
-[K23,CL23,GAM23] = hinfsyn(P_aug); 
+[K123,CL123,GAM123] = hinfsyn(P_aug); 
 
 cprintf('green', [char(10) 'Gamma:' num2str(GAM23)  char(10)]);
 
@@ -1499,7 +1527,7 @@ sigma(inv(W1),'g',logspace(-1,4))
 legend('S0','W1^{-1}')
 
 T0 = feedback(F0,eye(q));
-V0 = feedback(K23,tenzo_min_nominale);
+V0 = feedback(K123,tenzo_min_nominale);
 % Controllo che il max valore singolare di V0 sia minore di W3^-1
 figure(23)
 sigma(V0,'r',logspace(-1,4))
@@ -1518,9 +1546,9 @@ sigma(inv(W3),'g',logspace(-1,4))
 legend('T0','W3^{-1}')
 
 % Salvo matrici per il confronto finale tra i vari controllori
-S0_z23 = S0;
-T0_z23 = T0;
-V0_z23 = V0;
+S0_z123 = S0;
+T0_z123 = T0;
+V0_z123 = V0;
 
 
 % valori singolari 
