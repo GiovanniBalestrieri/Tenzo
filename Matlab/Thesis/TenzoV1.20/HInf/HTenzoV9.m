@@ -1079,7 +1079,7 @@ lm = bound_dMout2;
 
 % Le variazioni sono casuali e la maggiorante cambierebbe ogni volta
 % fissiamo:
-w3_X = zpk([-40 -600 -700],[-1100 -120000 -22000],1630600);
+w3_X = zpk([-40 -600 -700],[-1100 -120000 -10000],1630600);
 [mod_w3,fas_w3]=bode(w3_X,omega);
 w3 = frd(mod_w3,omega);
 
@@ -1097,9 +1097,9 @@ cprintf('hyper', [char(10) '4) passo 1)' char(10) char(10)]);
 % gamma_2 = 0.0000001;
 % gamma_3 = 0.10; 
 
-gamma_1 = 0.1;
-gamma_2 = 0.0000001;
-gamma_3 = 0.1; 
+gamma_1 = 0.00001;
+gamma_2 = 0.00001;
+gamma_3 = 0.5; 
 
 W1 = gamma_1*w1*eye(q);
 W1Old = w1*eye(q);
@@ -1133,10 +1133,10 @@ legend('W1','W1Old','W2','W2Old','W3','W3Old')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.001
+alphaK = 2
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
-P_aug = augw(modello_ss_epsilon,[W1],[],[W3]);
+P_aug = augw(modello_ss_epsilon,[],[],[W3]);
 
 % Estrapolazione delle matrici caratterizzanti il sistema allargato
 A_bar = P_aug.A;
@@ -1252,6 +1252,7 @@ T0_z13 = T0;
 V0_z13 = V0;
 
 
+Kinf = Kw1w3;   
 open('HinfTenzo.slx');
 set_param('HinfTenzo/Controller/H-Infinity/','A','Kinf.a');
 set_param('HinfTenzo/Controller/H-Infinity/','B','Kinf.b');
@@ -1281,10 +1282,7 @@ answer19 = input(['Do you want to see how it handles real situations? [y/n]' cha
 if isempty(answer2)
     answer19 = 'y';
 end
-
 if strcmp(answer19,'y')
-    %figure(25)
-    Kinf = Kw1w3;    
     sim('HinfTenzo.slx');
 end
 
@@ -1294,7 +1292,7 @@ cprintf('hyper', [char(10) '4) passo 2)' char(10) char(10) 'X']);
 pause();
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.3
+alphaK = 0.0001
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[],[W2],[]);
@@ -1402,6 +1400,42 @@ S0_z2 = S0;
 T0_z2 = T0;
 V0_z2 = V0;
 
+open('HinfTenzo.slx');
+set_param('HinfTenzo/Controller/H-Infinity/','A','Kinf.a');
+set_param('HinfTenzo/Controller/H-Infinity/','B','Kinf.b');
+set_param('HinfTenzo/Controller/H-Infinity/','C','Kinf.c');
+set_param('HinfTenzo/Controller/H-Infinity/','D','Kinf.d');
+amplitudePertIN = 0;
+amplitudePertOutZ = 0;
+amplitudePertOutptp = 0;
+omegaPertOut = 0.1;
+
+
+% Set amplitude out pert
+set_param('HinfTenzo/DisturboIn/ErrIn/disturbo/SineIn','amplitude','amplitudePertIN');
+
+% Set amplitude out pert
+set_param('HinfTenzo/DisturboOut/ErrOutZ/disturbo/SineOut','amplitude','amplitudePertOutZ');
+set_param('HinfTenzo/DisturboOut/ErrOutAtt/disturbo/SineOut','amplitude','amplitudePertOutptp');
+
+% set frequency of out pert
+set_param('HinfTenzo/DisturboOut/ErrOutAtt/disturbo/SineOut','Frequency','omegaPertOut');
+set_param('HinfTenzo/DisturboOut/ErrOutZ/disturbo/SineOut','Frequency','omegaPertOut');
+
+
+% valori singolari 
+cprintf('cyan', '\nH-Inifinity W1 and W3\n');
+answer21 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
+if isempty(answer21)
+    answer21 = 'y';
+end
+
+if strcmp(answer21,'y')
+    %figure(25)
+    Kinf = Kw1w3;    
+    sim('HinfTenzo.slx');
+end
+
 %step(T0)
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1409,7 +1443,7 @@ V0_z2 = V0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.07;
+alphaK = 0.007;
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[W1],[W2],[W3]);
