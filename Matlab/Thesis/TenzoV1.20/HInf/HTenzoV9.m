@@ -958,7 +958,7 @@ ps_sign = frd(max_S0_vs.^-1,omega);
 ma_S0_vs = frd(max_S0_vs,omega);
 
 %approssmazione si 1/ps con w1                                
-w1 = zpk([-4],[-0.001 -0.01 -0.01],0.9);
+w1 = zpk([-4],[-0.0001 0.001],0.9);
 
 [MODX,FAS]=bode(w1,omega);
 w1M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -995,18 +995,18 @@ hold on
 semilogx(omega,mag2db(top_unc),'b','LineWidth',5)
 hold on
 semilogx(omega,mag2db(max_sig_nom),'c','LineWidth',3)
-title('Max sing values: Nominal (bk), Pert models (R), bound (blue)')
+title('Max sing values: pert (bk), Bound (cyan), top Unc (blue)')
 
 %  Additive
 figure(15);
-semilogx(omega,mag2db(top_dA),'b','LineWidth',3)
-grid on;
-hold on;
-semilogx(omega,mag2db(max_sig_nom),'c','LineWidth',3)
 hold on;
 for i=1:1:N
   semilogx(omega,mag2db(max_sig_dA(i,:)),'r:','LineWidth',2)
 end
+semilogx(omega,mag2db(top_dA),'b','LineWidth',3)
+grid on;
+hold on;
+semilogx(omega,mag2db(max_sig_nom),'c','LineWidth',3)
 
 % Upper bound razionale stabile e fase minima
 pre_bound_dA = frd(top_dA,omega);
@@ -1038,7 +1038,7 @@ MAX_V0_vs = frd(max_V0_vs,omega);
 la_signed = frd(max_V0_vs.^-1,omega);
 
 %approssmazione si la con w2                                
-w2 = zpk([-60 -40],[-0.0001  -0.0002],0.05);
+w2 = zpk([-10 -40],[-0.0001  -0.0002],0.07);
 
 [MODX,FAS]=bode(w2,omega);
 w2M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -1079,7 +1079,7 @@ lm = bound_dMout2;
 
 % Le variazioni sono casuali e la maggiorante cambierebbe ogni volta
 % fissiamo:
-w3_X = zpk([-5],[-8000],5000);
+w3_X = zpk([-40 -600 -700],[-1100 -120000 -22000],1630600);
 [mod_w3,fas_w3]=bode(w3_X,omega);
 w3 = frd(mod_w3,omega);
 
@@ -1127,138 +1127,6 @@ legend('W1','W1Old','W2','W2Old','W3','W3Old')
 % figure 
 % step(w3_X,'b',w2,'r',w1,'k')
 
-%% CASO 1: Uscita di prestazione [z2]  %%
-
-cprintf('hyper', [char(10) '4) passo 2)' char(10) char(10)]);
-
-% Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.2
-modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
-% Costruzione sistema allargato
-P_aug = augw(modello_ss_epsilon,[],[W2],[]);
-
-% Estrapolazione delle matrici caratterizzanti il sistema allargato
-A_bar = P_aug.A;
-
-[rB,cB] = size(P_aug.B);
-
-B1 = P_aug.B(:,1:cB/2);
-B2 = P_aug.B(:,cB/2+1:cB);
-
-[rC,cC] = size(P_aug.C);
-C1 = P_aug.C(1:rC-q,:);
-C2 = P_aug.C(rC-q+1:rC,:);
-
-D11 = P_aug.D(1:rC-q,1:cB/2);
-D12 = P_aug.D(1:rC-q,cB/2+1:cB);
-D21 = P_aug.D(rC-q+1:rC,1:cB/2);
-D22 = P_aug.D(rC-q+1:rC,cB/2+1:cB);
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Verifica ipotesi di applicabilità H-infinito %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     
-% a) (A_bar,B2,C2) Cb-Stabilizzabile e Cb-Rilevabile
-eigen_A_bar = eig(A_bar);
-n_bar = size(A_bar);
-
-% PBH_TEST per verificare la Cb-Stabilizzabilità
-stab_flag=0;
-for i=1:length(eigen_A_bar)
-    if(real(eigen_A_bar(i))>=-alphaK)
-        pbh_matrix_reach = [(A_bar - eigen_A_bar(i)*eye(n_bar)) B2];
-        if(rank(pbh_matrix_reach)<n_bar)
-            i
-            disp('PBH VIOLATO');
-            stab_flag=1;
-            break;
-        end
-    end
-end
-if(stab_flag==0) 
-    disp('La coppia (A_bar,B2) è C-buono stabilizzabile')
-end 
-
-% PBH_TEST per verificare la Cb-Rilevabilità
-rel_flag=0;
-for i=1:length(eigen_A_bar)
-    if(real(eigen_A_bar(i))>=-alphaK)
-        pbh_matrix_obsv = [(A_bar - eigen_A_bar(i)*eye(n_bar)); C2];
-        if(rank(pbh_matrix_obsv)<n_bar)
-            i
-            disp('PBH VIOLATO');
-            rel_flag=1;
-            break;
-        end
-    end
-end
-if(rel_flag==0) 
-    disp('La coppia (A_bar,C2) è C-buono rilevabile')
-end 
-
-% D11 = 0 
-D11
-
-% c) D22 = 0
-D22
-
-% d) rank(D12) pieno colonna
-D12
-rank(D12)
-
-% e) nessuno zero di [A-sI,B2; C1, D12] sul confine di Cb
-disp(tzero(ss(P_aug.A,B2,C1,D12)))
-
-% f ) rg(D21) pieno riga
-D21
-rank(D21)
-
-% g) nessuno zero di [A-sI,B1; C2, D21] sul confine di Cb
-disp(tzero(ss(P_aug.A,B1,C2,D21)))
-
-
-[K2,CL2,GAM2] = hinfsyn(P_aug); 
-
-
-cprintf('green', [char(10) 'Gamma:' num2str(GAM2)  char(10)]);
-
-% Calcolo delle matrici F0, S0, T0, V0
-F0 = series(K2,tenzo_min_nominale);
-
-S0 = feedback(eye(q),F0);
-% 
-% % Controllo che il max valore singolare di S0 sia minore di W1^-1
-% figure
-% sigma(S0,'r',logspace(-1,4))
-% hold on
-% grid on
-% sigma(inv(W1),'g',logspace(-1,4))
-% legend('S0','W1^{-1}')
-
-T0 = feedback(F0,eye(q));
-V0 = feedback(K2,tenzo_min_nominale);
-% Controllo che il max valore singolare di V0 sia minore di W3^-1
-figure(19)
-sigma(V0,'r',logspace(-1,4))
-hold on
-grid on
-sigma(inv(W2),'g',logspace(-1,4))
-legend('V0','W2^{-1}')
-
-% % Controllo che il max valore singolare di V0 sia minore di W3^-1
-% figure
-% sigma(T0,'r',logspace(-1,4))
-% hold on
-% grid on
-% sigma(inv(W3),'g',logspace(-1,4))
-% legend('T0','W3^{-1}')
-
-% Salvo matrici per il confronto finale tra i vari controllori
-S0_z2 = S0;
-T0_z2 = T0;
-V0_z2 = V0;
-
-%step(T0)
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CASO 2: Uscita di prestazione [z1,z3]  %%
@@ -1385,10 +1253,10 @@ V0_z13 = V0;
 
 
 open('HinfTenzo.slx');
-set_param('HinfTenzo/H-Infinity/','A','Kinf.a');
-set_param('HinfTenzo/H-Infinity/','B','Kinf.b');
-set_param('HinfTenzo/H-Infinity/','C','Kinf.c');
-set_param('HinfTenzo/H-Infinity/','D','Kinf.d');
+set_param('HinfTenzo/Controller/H-Infinity/','A','Kinf.a');
+set_param('HinfTenzo/Controller/H-Infinity/','B','Kinf.b');
+set_param('HinfTenzo/Controller/H-Infinity/','C','Kinf.c');
+set_param('HinfTenzo/Controller/H-Infinity/','D','Kinf.d');
 amplitudePertIN = 700;
 amplitudePertOutZ = 2;
 amplitudePertOutptp = 30;
@@ -1419,6 +1287,122 @@ if strcmp(answer19,'y')
     Kinf = Kw1w3;    
     sim('HinfTenzo.slx');
 end
+
+%% CASO 1: Uscita di prestazione [z2]  %%
+
+cprintf('hyper', [char(10) '4) passo 2)' char(10) char(10) 'X']);
+pause();
+
+% Primo Passo: Verifica applicabilità e sintesi h-infinito %
+alphaK = 0.3
+modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
+% Costruzione sistema allargato
+P_aug = augw(modello_ss_epsilon,[],[W2],[]);
+
+% Estrapolazione delle matrici caratterizzanti il sistema allargato
+A_bar = P_aug.A;
+
+[rB,cB] = size(P_aug.B);
+
+B1 = P_aug.B(:,1:cB/2);
+B2 = P_aug.B(:,cB/2+1:cB);
+
+[rC,cC] = size(P_aug.C);
+C1 = P_aug.C(1:rC-q,:);
+C2 = P_aug.C(rC-q+1:rC,:);
+
+D11 = P_aug.D(1:rC-q,1:cB/2);
+D12 = P_aug.D(1:rC-q,cB/2+1:cB);
+D21 = P_aug.D(rC-q+1:rC,1:cB/2);
+D22 = P_aug.D(rC-q+1:rC,cB/2+1:cB);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Verifica ipotesi di applicabilità H-infinito %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     
+% a) (A_bar,B2,C2) Cb-Stabilizzabile e Cb-Rilevabile
+eigen_A_bar = eig(A_bar);
+n_bar = size(A_bar);
+
+% PBH_TEST per verificare la Cb-Stabilizzabilità
+stab_flag=0;
+for i=1:length(eigen_A_bar)
+    if(real(eigen_A_bar(i))>=-alphaK)
+        pbh_matrix_reach = [(A_bar - eigen_A_bar(i)*eye(n_bar)) B2];
+        if(rank(pbh_matrix_reach)<n_bar)
+            i
+            disp('PBH VIOLATO');
+            stab_flag=1;
+            break;
+        end
+    end
+end
+if(stab_flag==0) 
+    disp('La coppia (A_bar,B2) è C-buono stabilizzabile')
+end 
+
+% PBH_TEST per verificare la Cb-Rilevabilità
+rel_flag=0;
+for i=1:length(eigen_A_bar)
+    if(real(eigen_A_bar(i))>=-alphaK)
+        pbh_matrix_obsv = [(A_bar - eigen_A_bar(i)*eye(n_bar)); C2];
+        if(rank(pbh_matrix_obsv)<n_bar)
+            i
+            disp('PBH VIOLATO');
+            rel_flag=1;
+            break;
+        end
+    end
+end
+if(rel_flag==0) 
+    disp('La coppia (A_bar,C2) è C-buono rilevabile')
+end 
+
+% D11 = 0 
+D11
+
+% c) D22 = 0
+D22
+
+% d) rank(D12) pieno colonna
+D12
+rank(D12)
+
+% e) nessuno zero di [A-sI,B2; C1, D12] sul confine di Cb
+disp(tzero(ss(P_aug.A,B2,C1,D12)))
+
+% f ) rg(D21) pieno riga
+D21
+rank(D21)
+
+% g) nessuno zero di [A-sI,B1; C2, D21] sul confine di Cb
+disp(tzero(ss(P_aug.A,B1,C2,D21)))
+
+
+[K2,CL2,GAM2] = hinfsyn(P_aug); 
+
+cprintf('green', [char(10) 'Gamma:' num2str(GAM2)  char(10)]);
+
+% Calcolo delle matrici F0, S0, T0, V0
+F0 = series(K2,tenzo_min_nominale);
+S0 = feedback(eye(q),F0);
+T0 = feedback(F0,eye(q));
+V0 = feedback(K2,tenzo_min_nominale);
+
+% Controllo che il max valore singolare di V0 sia minore di W3^-1
+figure(19)
+sigma(V0,'r',logspace(-1,4))
+hold on
+grid on
+sigma(inv(W2),'g',logspace(-1,4))
+legend('V0','W2^{-1}')
+
+% Salvo matrici per il confronto finale tra i vari controllori
+S0_z2 = S0;
+T0_z2 = T0;
+V0_z2 = V0;
+
+%step(T0)
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CASO 3: Uscita di prestazione [z2,z3]  %%
@@ -1577,11 +1561,11 @@ for i=1:N
   figure(25);
   semilogx(omega,mag2db(max_sig_dA(i,:)),'r:','LineWidth',3);
   hold on
-  grid on
-  figure(26);
-  semilogx(omega,mag2db(max_sig_dMin(i,:)),'r:','LineWidth',3);
-  hold on
-  grid on
+   grid on
+%   figure(26);
+%   semilogx(omega,mag2db(max_sig_dMin(i,:)),'r:','LineWidth',3);
+%   hold on
+%   grid on
   figure(27)
   semilogx(omega,mag2db(max_sig_dMout(i,:)),'r:','LineWidth',3);
   hold on
@@ -1606,32 +1590,32 @@ semilogx(omega,mag2db(top_w3),'b','LineWidth',4);
 
 cprintf('text', [char(10) 'Verifica autovalori sys perturbati' char(10)  char(10)]);
 
-for i=1:1
-    F_pert_add = series(K123,sys{i}); % Catena diretta considerando le pert.
-    T_pert{i} = feedback(F1_pert_add,eye(q));
-    step(T1_pert,2.5)
-    hold on
-    % check autovalori
-    
-    eigPert{i} = eig(T_pert{i});
-    temp = eigPert{i};
-    for j=1:deg(tf(T_pert{i}))
-       if real(temp(j))>-alphaK
-           cprintf('text',[char(10) 'eig: ' num2str(j) ' ']);
-           cprintf('err',['unstable: ' num2str(temp(j)) char(10)]);
-       end
-    end
-end
+% for i=1:1
+%     F_pert_add = series(K123,sys{i}); % Catena diretta considerando le pert.
+%     T_pert{i} = feedback(F1_pert_add,eye(q));
+%     step(T1_pert,2.5)
+%     hold on
+%     % check autovalori
+%     
+%     eigPert{i} = eig(T_pert{i});
+%     temp = eigPert{i};
+%     for j=1:deg(tf(T_pert{i}))
+%        if real(temp(j))>-alphaK
+%            cprintf('text',[char(10) 'eig: ' num2str(j) ' ']);
+%            cprintf('err',['unstable: ' num2str(temp(j)) char(10)]);
+%        end
+%     end
+% end
     sys{i};
 i = 2;
-    F_pert_add = series(Kw1w3,tenzo_min_nominale); % Catena diretta considerando le pert.
-    T_pert{i} = feedback(F1_pert_add,eye(q));
+    F_pert_add = series(tenzo_min_nominale,G_3); % Catena diretta considerando le pert.
+    T_pert = feedback(F1_pert_add,eye(q));
     step(T1_pert,2.5)
     hold on
     % check autovalori
     
-    eigPert{i} = eig(T_pert{i});
-    temp = eigPert{i}
+    eigPert = eig(T_pert);
+    temp = eigPert
 %     for j=1:deg(tf(T_pert{i}))
 %        if real(temp(j))>-alphaK
 %            cprintf('text',[char(10) 'eig: ' num2str(j) ' ']);
