@@ -1570,9 +1570,20 @@ end
 
 %%        Secondo Passo: Verifica robustezza stabilità      %
 
-
 cprintf('hyper', [char(10) 'Verifica robustezza e stabilità' char(10)  char(10)]);
 
+% Verifica pert additive
+for i=0:N
+  figure(25);
+  max_sig_dA(i,:);
+  hold on
+  figure(26);
+  max_sig_dMin(i,:);
+  hold on
+  figure(27)
+  max_sig_dMout(i,:); 
+  hold on
+end
 
 % disp('avvio simulazione 1');
 % %pause;
