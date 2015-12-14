@@ -865,7 +865,7 @@ pause();
 pre_bound_dMout = frd(top_dMout,omega);
 
 % fit razionale e min phase per ricavare il bound
-ord = 2; 
+ord = 1; 
 bound_dMout2 = fitmagfrd(pre_bound_dMout,ord,[],[],1);
 bb_dMout2 = sigma(bound_dMout2,omega);
 
@@ -929,6 +929,15 @@ if strcmp(answer5,'y')
 end
 
 %% TASK 3 
+
+
+
+cprintf('hyper', [char(10) '3) passo 0) Equalizzazione' char(10) char(10)]);
+
+E1 = diag([1 1/90 1/90 1/90]);
+E2 = eye(4);
+
+E1^-1
 
 cprintf('hyper', [char(10) '3) passo 1) S0,p_s(w) e w1(s)' char(10) char(10)]);
 
@@ -1103,7 +1112,7 @@ cprintf('hyper', [char(10) '4) passo 1)' char(10) char(10)]);
 
 gamma_1 = 1;
 gamma_2 = 0.00000001;
-gamma_3 = 0.001; 
+gamma_3 = 0.05; 
 
 W1 = gamma_1*w1*eye(q);
 W1Old = w1*eye(q);
@@ -1137,7 +1146,7 @@ legend('W1','W1Old','W2','W2Old','W3','W3Old')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.2;
+alphaK = 0.009;
 
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
