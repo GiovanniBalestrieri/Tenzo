@@ -1063,7 +1063,7 @@ lm_b = frd(max_T0_LTR_vs.^-1,omega);
 pre_bound_dMout = frd(top_dMout,omega);
 
 % fit razionale e min phase per ricavare il bound
-ord = 2; %Ordine della funzione di fitting 
+ord = 1; %Ordine della funzione di fitting 
 bound_dMout2 = fitmagfrd(pre_bound_dMout,ord,[],[],1); 
 bb_dMout2 = sigma(bound_dMout2,omega);
 max_dMout2 = bb_dMout2(1,:);
@@ -1071,8 +1071,9 @@ lm = bound_dMout2;
 
 % Le variazioni sono casuali e la maggiorante cambierebbe ogni volta
 % fissiamo:
-w3_X = zpk([-40 -600 -700],[-1100 -120000 -10000],700600);
-[mod_w3,fas_w3]=bode(w3_X,omega);
+w3_X = zpk([-70 -600 -700],[-1100 -120000 -10000],1000600);
+w3_Y = zpk([-600 -600 -700],[-1100 -120000 -10000],1000600);
+[mod_w3,fas_w3]=bode(w3_Y,omega);
 w3 = frd(mod_w3,omega);
 
 figure(17)
