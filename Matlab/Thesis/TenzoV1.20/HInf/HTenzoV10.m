@@ -971,7 +971,7 @@ grid on
 %% 3.2) 
 
 cprintf('hyper', [char(10) '3) passo 2) V0(s) e w2(s)' char(10) char(10)]);
-
+pause();
 
 %  Additive
 figure(15);
@@ -1045,7 +1045,7 @@ grid on
 %% 3.3)
 
 cprintf('hyper', [char(10) '3) passo 3) T0(s) e w3(s)' char(10) char(10)]);
-
+pause();
 % Calcolo di T0
 
 F = series(G,tenzo_min_nominale);
@@ -1088,7 +1088,7 @@ pause()
 %% Part 4) - SINTESI DEL CONTROLLORE H-INFINITO 
 
 cprintf('hyper', [char(10) '4) passo 1)' char(10) char(10)]);
-
+pause();
 
 % gamma_1 = 0.3;
 % gamma_2 = 0.0000001;
@@ -1128,6 +1128,9 @@ legend('W1','W1Old','W2','W2Old','W3','W3Old')
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CASO 2: Uscita di prestazione [z1,z3]  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+cprintf('hyper', [char(10) '4) passo 2) UScite di prestazione [z1,z3]' char(10) char(10)]);
+pause();
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
 alphaK = 0.02;
@@ -1286,7 +1289,7 @@ end
 
 %% CASO 1: Uscita di prestazione [z2]  %%
 
-cprintf('hyper', [char(10) '4) passo 2)' char(10) char(10) 'X']);
+cprintf('hyper', [char(10) 'Uscita di prestazione: z2' char(10) char(10) 'X']);
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
 alphaK = 0.001
