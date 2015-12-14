@@ -1663,6 +1663,16 @@ i = 2;
 %     end
 
 %% 
+F0_Hinf = series(Kw1w3,tenzo_min_nominale);
+
+F0_Hinf_sv = sigma(F0_Hinf,omega);
+F0_Hinf_msv = frd(F0_Hinf_sv(1,:),omega);
+
+control_func = w1/(1-w3);
+
+figure(50)
+bodemag(control_func,F0_Hinf_msv);
+legend('ps/(1-lm)','msvF0');
 
 % disp('avvio simulazione 1');
 % %pause;
