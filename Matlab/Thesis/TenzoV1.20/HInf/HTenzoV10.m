@@ -4,7 +4,7 @@
 clear all;
 clc;
 
-version = 0.90;
+version = 1.00;
 
 disp(['Welcome to Tenzo!' char(10)]);
 
