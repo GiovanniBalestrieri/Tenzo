@@ -896,21 +896,6 @@ for i=1:N
     hold on
     grid on
 end
-%disp('** Sys distruttivo ');
-%     
-%     pert_B_nominale = tenzo_min_nominale.b *dpBomb;
-%     sysPertBomb = ss(tenzo_min_nominale.a,pert_B_nominale,tenzo_min_nominale.c,tenzo_min_nominale.d);
-%     Ac_3 = tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_3-L_3*tenzo_min_nominale.c;
-%     Bc_3 = L_3;
-%     Cc_3 = Kopt;
-%     Dc_3 = zeros(q,q);
-%     G_3 = ss(Ac_3,Bc_3,Cc_3,Dc_3);      % Sistema nominale filtro di kalman + guadagno k ottimo
-%     H_LTR_3 = series(sysPertBomb,G_3);   % Connessione in serie all'impianto nominale
-%     Closed_Loop_LTR_bomb = feedback(H_LTR_3,eye(q)); % Nuova matrice U_3 dopo LTR
-%     step(Closed_Loop_LTR_bomb);
-%     hold on
-%     grid on
-
 
 %% AUTOVALORI
 cprintf('cyan', '\nEigenvalues of closed loop with LTR + LQ + pert\n');
@@ -1046,7 +1031,7 @@ MAX_V0_vs = frd(max_V0_vs,omega);
 la_signed = frd(max_V0_vs.^-1,omega);
 
 %approssmazione si la con w2                                
-w2 = zpk([-40 -90],[-0.0001  -0.0002],0.05);
+w2 = zpk([-390 -420 -550],[-0.0001  -0.0002 -9000],0.05);
 
 [MODX,FAS]=bode(w2,omega);
 w2M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
