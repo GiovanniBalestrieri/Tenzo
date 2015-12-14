@@ -886,7 +886,7 @@ figure(12)
 for i=1:N
     Ac_3 = sys{i}.a-sys{i}.b*Kopt_3-L_3*sys{i}.c;
     Bc_3 = L_3;
-    Cc_3 = Kopt;
+    Cc_3 = Kopt_3;
     Dc_3 = zeros(q,q);
 
     G_3 = ss(Ac_3,Bc_3,Cc_3,Dc_3);      % Sistema filtro di kalman + guadagno k ottimo
@@ -1632,9 +1632,10 @@ semilogx(omega,mag2db(top_w3),'b','LineWidth',4);
 
 cprintf('text', [char(10) 'Verifica autovalori sys perturbati' char(10)  char(10)]);
 alphaK = 0;
-for i=1:N
-    cprintf('text', [char(10) 'Verifica' num2str(i)  char(10)]);
-    
+contLQ = 0;
+contHinf = 0;
+for i=1:10
+    cprintf('text', [char(10) 'Verifica ' num2str(i)  char(10)]);
     
     cprintf('text', [char(10) '       H infinity'  char(10)]);
     
@@ -1661,12 +1662,13 @@ for i=1:N
         cprintf('err',['Sistem unstable H-Infinty!' char(10)]);
     else% if errore == 0
         cprintf('green',['Sistem Stable!' char(10)]);
+        contHinf = contHinf + 1 ;
     end
     
     cprintf('text', [char(10) '       LQR + LTR'  char(10)]);
     
     %  Catena diretta considerando le pert + LQR + LTR.
-    F1_pert_add = series(sys{i},G_3); 
+    F1_pert_add = series(G_3,sys{i}); 
     T1_pert = feedback(F1_pert_add,eye(q));
     figure(55)
     step(T1_pert,2.5)
@@ -1685,9 +1687,19 @@ for i=1:N
     end
     if errore
         cprintf('err',['Sistem unstable H-Infinty!' char(10)]);
+    else
+        cprintf('green',['Sistem stable' char(10)]);
+        contLQ = contLQ + 1 ;
     end
     
 end
+
+  percStableH = contHinf/N*100;
+  percStableL = contLQ/N*100;
+  cprintf('hyper',[char(10) 'Number of Cb-Stable perturbed systems:' char(10)]);
+  cprintf('blue',['  ' num2str(percStableH) '%' char(10) char(10)]);
+  cprintf('blue',['  ' num2str(percStableL) '%' char(10)]);
+
 
 %% 
 F0_Hinf = series(Kw1w3,tenzo_min_nominale);

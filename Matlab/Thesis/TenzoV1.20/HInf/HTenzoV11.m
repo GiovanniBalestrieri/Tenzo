@@ -942,11 +942,7 @@ P0G = frd(max_F0_vs,omega);
 ps_sign = frd(max_S0_vs.^-1,omega);
 ma_S0_vs = frd(max_S0_vs,omega);
 %
-%approssmazione si 1/ps con w1                                
-w1 = zpk([-400],[-0.00005 -0.004],0.02);
 
-[MODX,FAS]=bode(w1,omega);
-w1M = frd(MODX,omega); 
 % Otteniamo la funzione ps imponendola pari al modulo
 % di w1 per ogni omega
 
@@ -959,6 +955,12 @@ w1M = frd(MODX,omega);
 % ATTENZIONE : cautela richiesta nella scelta di ps(w) 
 % la banda di pulsazioni per le quali ps>>1 non deve arrivare fino a
 % valori per i quali min_sig(P)<<1
+
+%approssmazione di 1/ps con w1                                
+w1 = zpk([-400],[-0.05 -0.04],0.01);
+
+[MODX,FAS]=bode(w1,omega);
+w1M = frd(MODX,omega); 
 
 max_sig_nom_B = frd(max_sig_nom,omega);
 
@@ -1030,8 +1032,10 @@ MAX_V0_vs = frd(max_V0_vs,omega);
 % la segnato
 la_signed = frd(max_V0_vs.^-1,omega);
 
-%approssmazione si la con w2                                
-w2 = zpk([-0.4 -0.2 -0.5 -8000],[-0.0024  -0.0025 -0.0002 -9000],500.05);
+%approssmazione si la con w2
+w2 = zpk([-120 -140 -150],[-0.0024  -0.0025 -9000],0.08);
+                         
+% w2 = zpk([-0.4 -0.2 -0.5],[-0.0024 -0.0025 -0.0002],50.05);
 
 [MODX,FAS]=bode(w2,omega);
 w2M = frd(MODX,omega); 
@@ -1070,16 +1074,16 @@ lm = bound_dMout2;
 
 % Le variazioni sono casuali e la maggiorante cambierebbe ogni volta
 % fissiamo:
-w3_X = zpk([-70 -600 -700],[-1100 -120000 -10000],1000600);
-w3_Y = zpk([-600 -600 -700],[-1100 -120000 -10000],1000600);
+%
+w3_Y = zpk([-15 -15 -700],[-1100 -120000 -10000],29000600);
 [mod_w3,fas_w3]=bode(w3_Y,omega);
 w3 = frd(mod_w3,omega);
 
 figure(17)
-bodemag(lm,'b',lm_b,'r',max_T0_LTR,'c',lma,'m',w3_X,'k--',omega)
+bodemag(lm,'b',lm_b,'r',max_T0_LTR,'c',lma,'m',w3_Y,'k--',omega)
 legend('lm','lm_b','T0','lm_a','w3')
 grid on
-
+%
 disp('X ...');
 pause()
 
@@ -1094,9 +1098,9 @@ pause();
 % gamma_2 = 0.0000001;
 % gamma_3 = 0.10; 
 
-gamma_1 = 1;
-gamma_2 = 0.0000001;
-gamma_3 = 0.02; 
+gamma_1 = 0.7;
+gamma_2 = 0.00001;
+gamma_3 = 0.04; 
 
 W1 = gamma_1*w1*E1;
 W1Old = w1*E1;
@@ -1109,7 +1113,7 @@ W3Old = w3_X*E1;
 figure(18)
 sigma(W1,'r')
 hold on
-%sigma(W1Old,'r+')
+sigma(W1Old,'r+')
 hold on
 sigma(W2,'g')
 hold on
@@ -1117,7 +1121,7 @@ hold on
 hold on
 sigma(W3,'b')
 hold on
-%sigma(W3Old,'b+')
+sigma(W3Old,'b+')
 grid on
 legend('W1','W1Old','W2','W2Old','W3','W3Old')
  
@@ -1133,11 +1137,11 @@ cprintf('hyper', [char(10) '4) passo 2) UScite di prestazione [z1,z3]' char(10) 
 pause();
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.00002;
+alphaK = 0.002;
 
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
-P_aug = augw(modello_ss_epsilon,[W1],[],W3);
+P_aug = augw(modello_ss_epsilon,W1,[],W3);
 
 % Estrapolazione delle matrici caratterizzanti il sistema allargato
 A_bar = P_aug.A;
@@ -1292,7 +1296,7 @@ end
 cprintf('hyper', [char(10) 'Uscita di prestazione: z2' char(10) char(10) 'X']);
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.0002
+alphaK = 0.002
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[W1],[W2],[]);
@@ -1407,18 +1411,8 @@ S0_z2 = S0;
 T0_z2 = T0;
 V0_z2 = V0;
 
+
 open('HinfTenzo.slx');
-set_param('HinfTenzo/Controller/H-Infinity/','A','Kinf.a');
-set_param('HinfTenzo/Controller/H-Infinity/','B','Kinf.b');
-set_param('HinfTenzo/Controller/H-Infinity/','C','Kinf.c');
-set_param('HinfTenzo/Controller/H-Infinity/','D','Kinf.d');
-amplitudePertIN = 0;
-amplitudePertOutZ = 0;
-amplitudePertOutptp = 0;
-omegaPertOut = 0.1;
-
-Kinf = K2;    
-
 % Set amplitude out pert
 set_param('HinfTenzo/DisturboIn/ErrIn/disturbo/SineIn','amplitude','amplitudePertIN');
 
@@ -1438,19 +1432,28 @@ if isempty(answer21)
 end
 
 if strcmp(answer21,'y')
-    %figure(25)
+    set_param('HinfTenzo/Controller/H-Infinity/','A','Kinf.a');
+    set_param('HinfTenzo/Controller/H-Infinity/','B','Kinf.b');
+    set_param('HinfTenzo/Controller/H-Infinity/','C','Kinf.c');
+    set_param('HinfTenzo/Controller/H-Infinity/','D','Kinf.d');
+    amplitudePertIN = 0;
+    amplitudePertOutZ = 0;
+    amplitudePertOutptp = 0;
+    omegaPertOut = 0.1;
+
+    Kinf = K2;    
     sim('HinfTenzo.slx');
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% CASO 3: Uscita di prestazione [z1,z2,z3]  %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% CASO 3: Uscita di prestazione [z1,z2,z3]  
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-%alphaK = 0.009;
+alphaK = 0.001;
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
+
 % Costruzione sistema allargato
-P_aug = augw(modello_ss_epsilon,[W1],[W2],[W3]);
+P_aug = augw(modello_ss_epsilon,W1,W2,W3);
 
 % Estrapolazione delle matrici caratterizzanti il sistema allargato
 A_bar = P_aug.A;
@@ -1571,23 +1574,21 @@ legend('T0','W3^{-1}')
 S0_z123 = S0;
 T0_z123 = T0;
 V0_z123 = V0;
-
-
+    
 % valori singolari 
-answer20 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
+answer20 = input(['Apply Controller to Simulink? [y/n]' char(10)],'s');
 if isempty(answer2)
     answer20 = 'y';
 end
 
-open('HinfTenzo.slx');
-set_param('HinfTenzo/H-Infinity/','A','Kinf.a');
-set_param('HinfTenzo/H-Infinity/','B','Kinf.b');
-set_param('HinfTenzo/H-Infinity/','C','Kinf.c');
-set_param('HinfTenzo/H-Infinity/','D','Kinf.d');
-
 if strcmp(answer20,'y')
     Kinf = K123;
-    sim('HinfTenzo.slx');
+    open('HinfTenzo.slx');
+    set_param('HinfTenzo/H-Infinity/','A','Kinf.a');
+    set_param('HinfTenzo/H-Infinity/','B','Kinf.b');
+    set_param('HinfTenzo/H-Infinity/','C','Kinf.c');
+    set_param('HinfTenzo/H-Infinity/','D','Kinf.d');
+    %sim('HInfTenzo.slx');
 end
 
 %%        Secondo Passo: Verifica robustezza stabilità      %
@@ -1693,6 +1694,8 @@ for i=1:N
     end
     if errore
         cprintf('err',['Sistem unstable H-Infinty!' char(10)]);
+    else
+        cprintf('green',['Sistem Stable!' char(10)]);
     end
     
 end
