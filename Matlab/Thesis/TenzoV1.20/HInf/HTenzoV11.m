@@ -4,7 +4,7 @@
 clear all;
 clc;
 
-version = 1.00;
+version = 1.20;
 
 disp(['Welcome to Tenzo!' char(10)]);
 
@@ -20,7 +20,7 @@ g=9.81; %Acceleration of gravity (m)
 rho = ureal('rho',1.2250,'Range',[1.1455 1.4224]);
 
 % Total mass of the quadrotor [Kg]
-mq = ureal('mq',1.30,'Range',[0.020 2.0]);
+mq = ureal('mq',1.30,'Range',[0.800 2.0]);
 
 % Mass of a motor (kg). All motors have equal mass.
 mm = ureal('mm',0.068,'Range',[0.020 0.095]);
@@ -37,9 +37,9 @@ lz = ureal('lz',0.04,'Range',[0.03 0.06]);
 dcg=0.288; 
 
 % % Reali
-dcgX = ureal('dcgX',0.288,'Range',[0.12 0.40]);
-dcgY = ureal('dcgY',0.288,'Range',[0.12 0.40]);
-dcgZ = ureal('dcgZ',0.03,'Range',[-0.1 0.1]);
+dcgX = ureal('dcgX',0.288,'Range',[0.22 0.40]);
+dcgY = ureal('dcgY',0.288,'Range',[0.22 0.40]);
+dcgZ = ureal('dcgZ',0.05,'Range', [0.04 0.1]);
 
 % % %Forzate
 % dcgX = ureal('dcgX',0.288,'Range',[0.09 0.59]);
@@ -82,7 +82,7 @@ cp = ureal('cp',0.0314,'Range',[0.0111 0.0465]);
 ct = ureal('ct',0.0726,'Range',[0.0348 0.0980]);
 
 % Propeller radius (m)
-rp = ureal('rp',13.4e-2,'Range',[0.05 0.15]);
+rp = ureal('rp',13.4e-2,'Range',[0.08 0.15]);
 
 
 % Constant value to calculate the moment provided
@@ -1031,11 +1031,10 @@ MAX_V0_vs = frd(max_V0_vs,omega);
 la_signed = frd(max_V0_vs.^-1,omega);
 
 %approssmazione si la con w2                                
-w2 = zpk([-390 -420 -550],[-0.0024  -0.0025 -9000],0.05);
+w2 = zpk([-0.4 -0.2 -0.5 -8000],[-0.0024  -0.0025 -0.0002 -9000],500.05);
 
 [MODX,FAS]=bode(w2,omega);
-w2M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
-                     % di w1 per ogni omega
+w2M = frd(MODX,omega); 
                      
 figure(16)
 bodemag(la_signed,'b',MAX_V0_vs,'r',la,'m',w2M,'k',omega);
@@ -1086,6 +1085,7 @@ pause()
 
 
 %% Part 4) - SINTESI DEL CONTROLLORE H-INFINITO 
+%  # sagomatura #tuning
 
 cprintf('hyper', [char(10) '4) passo 1)' char(10) char(10)]);
 pause();
@@ -1095,7 +1095,7 @@ pause();
 % gamma_3 = 0.10; 
 
 gamma_1 = 1;
-gamma_2 = 0.00001;
+gamma_2 = 0.0000001;
 gamma_3 = 0.02; 
 
 W1 = gamma_1*w1*E1;
@@ -1292,7 +1292,7 @@ end
 cprintf('hyper', [char(10) 'Uscita di prestazione: z2' char(10) char(10) 'X']);
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.00002
+alphaK = 0.0002
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[W1],[W2],[]);
@@ -1394,6 +1394,14 @@ grid on
 sigma(inv(W2),'g',logspace(-1,4))
 legend('V0','W2^{-1}')
 
+figure(60)
+sigma(S0,'r',logspace(-1,4))
+hold on
+grid on
+sigma(inv(W1),'g',logspace(-1,4))
+legend('S0','W1^{-1}')
+
+
 % Salvo matrici per il confronto finale tra i vari controllori
 S0_z2 = S0;
 T0_z2 = T0;
@@ -1408,6 +1416,8 @@ amplitudePertIN = 0;
 amplitudePertOutZ = 0;
 amplitudePertOutptp = 0;
 omegaPertOut = 0.1;
+
+Kinf = K2;    
 
 % Set amplitude out pert
 set_param('HinfTenzo/DisturboIn/ErrIn/disturbo/SineIn','amplitude','amplitudePertIN');
@@ -1429,13 +1439,12 @@ end
 
 if strcmp(answer21,'y')
     %figure(25)
-    Kinf = K2;    
     sim('HinfTenzo.slx');
 end
 
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CASO 3: Uscita di prestazione [z1,z2,z3]  %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
 %alphaK = 0.009;
@@ -1634,8 +1643,6 @@ cprintf('text', [char(10) 'Verifica autovalori sys perturbati' char(10)  char(10
 alphaK = 0;
 for i=1:N
     cprintf('text', [char(10) 'Verifica' num2str(i)  char(10)]);
-    
-    
     cprintf('text', [char(10) '       H infinity'  char(10)]);
     
     % Catena diretta considerando le pert + Hinf
@@ -1646,6 +1653,7 @@ for i=1:N
     hold on
     
     % check autovalori
+    
     eigPert = eig(T_pert);
     temp = eigPert;
     errore = 0;
