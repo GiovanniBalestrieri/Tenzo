@@ -1096,7 +1096,7 @@ cprintf('hyper', [char(10) '4) passo 1)' char(10) char(10)]);
 
 gamma_1 = 1;
 gamma_2 = 0.0000001;
-gamma_3 = 0.05; 
+gamma_3 = 0.02; 
 
 W1 = gamma_1*w1*eye(q);
 W1Old = w1*eye(q);
@@ -1130,7 +1130,7 @@ legend('W1','W1Old','W2','W2Old','W3','W3Old')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.009;
+alphaK = 0.02;
 
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
@@ -1588,10 +1588,10 @@ for i=1:N
   semilogx(omega,mag2db(max_sig_dA(i,:)),'r:','LineWidth',3);
   hold on
    grid on
-%   figure(26);
-%   semilogx(omega,mag2db(max_sig_dMin(i,:)),'r:','LineWidth',3);
-%   hold on
-%   grid on
+  figure(26);
+  semilogx(omega,mag2db(max_sig_dMin(i,:)),'r:','LineWidth',3);
+  hold on
+  grid on
   figure(27);
   semilogx(omega,mag2db(max_sig_dMout(i,:)),'r:','LineWidth',3);
   hold on
@@ -1607,12 +1607,20 @@ temp = sigma(W1,omega);
 max_sigma_W1(i,:) = temp(1,:);
 top_w1 = max(max_sigma_W1);
 
+
+temp = sigma(W2,omega);
+max_sigma_W2(i,:) = temp(1,:);
+top_w2 = max(max_sigma_W2);
+
 temp = sigma(W3,omega);
 max_sigma_W3(i,:) = temp(1,:);
 top_w3 = max(max_sigma_W3);
 
 figure(25);
 semilogx(omega,mag2db(top_w1),'b','LineWidth',4);
+
+figure(26);
+semilogx(omega,mag2db(top_w2),'b','LineWidth',4);
 
 figure(27)
 semilogx(omega,mag2db(top_w3),'b','LineWidth',4);
