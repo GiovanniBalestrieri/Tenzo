@@ -937,8 +937,6 @@ cprintf('hyper', [char(10) '3) passo 0) Equalizzazione' char(10) char(10)]);
 E1 = diag([1 1/90 1/90 1/90]);
 E2 = eye(4);
 
-E1^-1
-
 cprintf('hyper', [char(10) '3) passo 1) S0,p_s(w) e w1(s)' char(10) char(10)]);
 
 %  Calcolo di strumenti da utilizzare
@@ -1111,7 +1109,7 @@ cprintf('hyper', [char(10) '4) passo 1)' char(10) char(10)]);
 % gamma_3 = 0.10; 
 
 gamma_1 = 1;
-gamma_2 = 0.00000001;
+gamma_2 = 0.0000001;
 gamma_3 = 0.05; 
 
 W1 = gamma_1*w1*eye(q);
@@ -1303,10 +1301,9 @@ end
 %% CASO 1: Uscita di prestazione [z2]  %%
 
 cprintf('hyper', [char(10) '4) passo 2)' char(10) char(10) 'X']);
-pause();
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.0001
+alphaK = 0.001
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[],[W2],[]);
@@ -1390,7 +1387,6 @@ rank(D21)
 % g) nessuno zero di [A-sI,B1; C2, D21] sul confine di Cb
 disp(tzero(ss(P_aug.A,B1,C2,D21)))
 
-
 [K2,CL2,GAM2] = hinfsyn(P_aug); 
 
 cprintf('green', [char(10) 'Gamma:' num2str(GAM2)  char(10)]);
@@ -1424,7 +1420,6 @@ amplitudePertOutZ = 0;
 amplitudePertOutptp = 0;
 omegaPertOut = 0.1;
 
-
 % Set amplitude out pert
 set_param('HinfTenzo/DisturboIn/ErrIn/disturbo/SineIn','amplitude','amplitudePertIN');
 
@@ -1436,9 +1431,8 @@ set_param('HinfTenzo/DisturboOut/ErrOutAtt/disturbo/SineOut','amplitude','amplit
 set_param('HinfTenzo/DisturboOut/ErrOutAtt/disturbo/SineOut','Frequency','omegaPertOut');
 set_param('HinfTenzo/DisturboOut/ErrOutZ/disturbo/SineOut','Frequency','omegaPertOut');
 
-
 % valori singolari 
-cprintf('cyan', '\nH-Inifinity W1 and W3\n');
+cprintf('cyan', '\nH-Inifinity W2\n');
 answer21 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
 if isempty(answer21)
     answer21 = 'y';
@@ -1446,7 +1440,7 @@ end
 
 if strcmp(answer21,'y')
     %figure(25)
-    Kinf = Kw1w3;    
+    Kinf = K2;    
     sim('HinfTenzo.slx');
 end
 
@@ -1455,7 +1449,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.2;
+alphaK = 0.009;
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[W1],[W2],[W3]);
