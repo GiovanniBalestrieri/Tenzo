@@ -899,8 +899,6 @@ end
 
 %% AUTOVALORI
 cprintf('cyan', '\nEigenvalues of closed loop with LTR + LQ + pert\n');
-pause();
-
 answer5 = input(['Do you want me to show them? [y/n]' char(10)],'s');
 if isempty(answer5)
     answer5 = 'y';
@@ -914,8 +912,6 @@ if strcmp(answer5,'y')
 end
 
 %% TASK 3 
-
-
 
 cprintf('hyper', [char(10) '3) passo 0) Equalizzazione' char(10) char(10)]);
 
@@ -1106,8 +1102,8 @@ W1 = gamma_1*w1*E1;
 W1Old = w1*E1;
 W2 = gamma_2*w2*E2;
 W2Old = w2*E2;
-W3 = gamma_3*w3_X*E1;
-W3Old = w3_X*E1;
+W3 = gamma_3*w3_Y*E1;
+W3Old = w3_Y*E1;
 
 % Grafico delle funzioni la, lm, ps considerate per la sintesi Hinf
 figure(18)
@@ -1137,7 +1133,7 @@ cprintf('hyper', [char(10) '4) passo 2) UScite di prestazione [z1,z3]' char(10) 
 pause();
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.002;
+alphaK = 2;
 
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
