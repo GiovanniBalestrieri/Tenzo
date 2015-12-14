@@ -937,6 +937,8 @@ cprintf('hyper', [char(10) '3) passo 0) Equalizzazione' char(10) char(10)]);
 E1 = diag([1 1/90 1/90 1/90]);
 E2 = eye(4);
 
+
+
 %%
 
 cprintf('hyper', [char(10) '3) passo 1) S0,p_s(w) e w1(s)' char(10) char(10)]);
@@ -952,12 +954,21 @@ S0_LTR = feedback(eye(q),F0);
 S0_vs = sigma(S0_LTR,omega);
 max_S0_vs = S0_vs(1,:);
 
+% Equalizzazione
+S0_LTR_EQ = E1*S0_LTR*E1^-1;
+S0_vs_EQ = sigma(S0_LTR_EQ,omega);
+max_S0_vs_EQ = S0_vs_EQ(1,:);
+
 F0_vs = sigma(F0,omega);
 max_F0_vs = F0_vs(1,:);
 P0G = frd(max_F0_vs,omega);
 
 ps_sign = frd(max_S0_vs.^-1,omega);
 ma_S0_vs = frd(max_S0_vs,omega);
+
+% Equalizzazione
+ps_sign_EQ = frd(max_S0_vs_EQ.^-1,omega);
+ma_S0_vs_EQ = frd(max_S0_vs_EQ,omega);
 %
 %approssmazione si 1/ps con w1                                
 w1 = zpk([-400],[-0.00005 -0.004],0.02);
@@ -978,7 +989,6 @@ w1M = frd(MODX,omega);
 % valori per i quali min_sig(P)<<1
 
 max_sig_nom_B = frd(max_sig_nom,omega);
-
 
 figure(13)
 bodemag(ps_sign,'b',ma_S0_vs,'r',w1M,'k',max_sig_nom_B,'c+',omega);
@@ -1028,6 +1038,7 @@ bb_dA2 = sigma(bound_dA2,omega);
 
 % let us use as la the rational fit previously computed
 la = bound_dA2;
+la_EQ = E1*la*E2^-1;
 
 hold on;
 semilogx(omega,mag2db(bb_dA2(1,:)),'k-','LineWidth',2);
@@ -1038,6 +1049,7 @@ title('Bound on additive uncertainties');
 cprintf('cyan', [char(10) 'V0(s) e w2(s)' char(10) char(10)]);
 
 V0_LTR = feedback(G,tenzo_min_nominale);
+V0_LTR_EQ = E2*V0_LTR*E1^-1;
 
 % Max val sing di V0
 V0_vs = sigma(V0_LTR,omega);
@@ -1071,6 +1083,7 @@ max_F_vs = F_vs(1,:);
 max_F = frd(max_F_vs,omega);
 
 T0_LTR = feedback(F,eye(p));
+T0_LTR_EQ = E1*T0_LTR*E1^-1;
 T0_LTR_vs = sigma(T0_LTR,omega);
 max_T0_LTR_vs = T0_LTR_vs(1,:);
 max_T0_LTR = frd(max_T0_LTR_vs,omega);
@@ -1115,6 +1128,14 @@ gamma_2 = 0.00000001;
 gamma_3 = 0.05; 
 
 W1 = gamma_1*w1*eye(q);
+W1Old = w1*eye(q);
+W2 = gamma_2*w2*eye(q);
+W2Old = w2*eye(q);
+W3 = gamma_3*w3_X*eye(q);
+W3Old = w3_X*eye(q);
+
+
+W1_EQ = gamma_1*w1_EQ*eye(q);
 W1Old = w1*eye(q);
 W2 = gamma_2*w2*eye(q);
 W2Old = w2*eye(q);
