@@ -1031,7 +1031,7 @@ MAX_V0_vs = frd(max_V0_vs,omega);
 la_signed = frd(max_V0_vs.^-1,omega);
 
 %approssmazione si la con w2                                
-w2 = zpk([-390 -420 -550],[-0.0001  -0.0002 -9000],0.05);
+w2 = zpk([-390 -420 -550],[-0.0024  -0.0025 -9000],0.05);
 
 [MODX,FAS]=bode(w2,omega);
 w2M = frd(MODX,omega); % Otteniamo la funzione ps imponendola pari al modulo
@@ -1095,29 +1095,29 @@ pause();
 % gamma_3 = 0.10; 
 
 gamma_1 = 1;
-gamma_2 = 0.0000001;
+gamma_2 = 0.00000001;
 gamma_3 = 0.02; 
 
-W1 = gamma_1*w1*eye(q);
-W1Old = w1*eye(q);
-W2 = gamma_2*w2*eye(q);
-W2Old = w2*eye(q);
-W3 = gamma_3*w3_X*eye(q);
-W3Old = w3_X*eye(q);
+W1 = gamma_1*w1*E1;
+W1Old = w1*E1;
+W2 = gamma_2*w2*E2;
+W2Old = w2*E2;
+W3 = gamma_3*w3_X*E1;
+W3Old = w3_X*E1;
 
 % Grafico delle funzioni la, lm, ps considerate per la sintesi Hinf
 figure(18)
 sigma(W1,'r')
 hold on
-sigma(W1Old,'r+')
+%sigma(W1Old,'r+')
 hold on
 sigma(W2,'g')
 hold on
-sigma(W2Old,'g+')
+%sigma(W2Old,'g+')
 hold on
 sigma(W3,'b')
 hold on
-sigma(W3Old,'b+')
+%sigma(W3Old,'b+')
 grid on
 legend('W1','W1Old','W2','W2Old','W3','W3Old')
  
@@ -1133,7 +1133,7 @@ cprintf('hyper', [char(10) '4) passo 2) UScite di prestazione [z1,z3]' char(10) 
 pause();
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.02;
+alphaK = 0.00002;
 
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
@@ -1292,7 +1292,7 @@ end
 cprintf('hyper', [char(10) 'Uscita di prestazione: z2' char(10) char(10) 'X']);
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.001
+%alphaK = 0.001
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[],[W2],[]);
@@ -1438,7 +1438,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.009;
+%alphaK = 0.009;
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
 P_aug = augw(modello_ss_epsilon,[W1],[W2],[W3]);
@@ -1631,39 +1631,63 @@ semilogx(omega,mag2db(top_w3),'b','LineWidth',4);
 %% Calcolo autovalori
 
 cprintf('text', [char(10) 'Verifica autovalori sys perturbati' char(10)  char(10)]);
-
-% for i=1:1
-%     F_pert_add = series(K123,sys{i}); % Catena diretta considerando le pert.
-%     T_pert{i} = feedback(F1_pert_add,eye(q));
-%     step(T1_pert,2.5)
-%     hold on
-%     % check autovalori
-%     
-%     eigPert{i} = eig(T_pert{i});
-%     temp = eigPert{i};
-%     for j=1:deg(tf(T_pert{i}))
-%        if real(temp(j))>-alphaK
-%            cprintf('text',[char(10) 'eig: ' num2str(j) ' ']);
-%            cprintf('err',['unstable: ' num2str(temp(j)) char(10)]);
-%        end
-%     end
-% end
-    sys{i};
-i = 2;
-    F_pert_add = series(tenzo_min_nominale,G_3); % Catena diretta considerando le pert.
-    T_pert = feedback(F1_pert_add,eye(q));
+alphaK = 0;
+for i=1:N
+    cprintf('text', [char(10) 'Verifica' num2str(i)  char(10)]);
+    
+    
+    cprintf('text', [char(10) '       H infinity'  char(10)]);
+    
+    % Catena diretta considerando le pert + Hinf
+    F_pert_add = series(Kw1w3,sys{i}); 
+    T_pert = feedback(F_pert_add,eye(q));
+    figure(54)
+    step(T_pert,2.5)
+    hold on
+    
+    % check autovalori
+    eigPert = eig(T_pert);
+    temp = eigPert;
+    errore = 0;
+    for j=1:size(T_pert.a,1)
+       %disp('bomb');
+       if real(temp(j))>-alphaK
+           errore = 1;
+           cprintf('text',[char(10) 'eig: ' num2str(j) ' ']);
+           cprintf('err',['unstable: ' num2str(temp(j)) char(10)]);
+       end
+    end
+    if errore == 1
+        cprintf('err',['Sistem unstable H-Infinty!' char(10)]);
+    else% if errore == 0
+        cprintf('green',['Sistem Stable!' char(10)]);
+    end
+    
+    cprintf('text', [char(10) '       LQR + LTR'  char(10)]);
+    
+    %  Catena diretta considerando le pert + LQR + LTR.
+    F1_pert_add = series(sys{i},G_3); 
+    T1_pert = feedback(F1_pert_add,eye(q));
+    figure(55)
     step(T1_pert,2.5)
     hold on
     % check autovalori
     
-    eigPert = eig(T_pert);
-    temp = eigPert
-%     for j=1:deg(tf(T_pert{i}))
-%        if real(temp(j))>-alphaK
-%            cprintf('text',[char(10) 'eig: ' num2str(j) ' ']);
-%            cprintf('err',['unstable: ' num2str(temp(j)) char(10)]);
-%        end
-%     end
+    eigPert = eig(T1_pert);
+    temp = eigPert;
+    errore = 0;
+    for j=1:T1_pert.a
+       if real(temp(j))>-alphaK
+           errore = 1;
+           cprintf('text',[char(10) 'eig: ' num2str(j) ' ']);
+           cprintf('err',['unstable: ' num2str(temp(j)) char(10)]);
+       end
+    end
+    if errore
+        cprintf('err',['Sistem unstable H-Infinty!' char(10)]);
+    end
+    
+end
 
 %% 
 F0_Hinf = series(Kw1w3,tenzo_min_nominale);
@@ -1676,10 +1700,4 @@ control_func = w1/(1-w3);
 figure(50)
 bodemag(control_func,F0_Hinf_msv);
 legend('ps/(1-lm)','msvF0');
-
-% disp('avvio simulazione 1');
-% %pause;
-% 
-% open('progetto3Tenzo.mdl')
-% sim('progetto3Tenzo.mdl')
-
+grid on;
