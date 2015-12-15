@@ -729,7 +729,7 @@ qoss = size(Aoss,2);
 KDoss=zeros(size(Aoss,1),poss);
 
 
-open('LqrTenzo.slx');
+open('LTRTenzo.slx');
 Kopt = Kopt_3;
 A0 = tenzo_min_nominale.a;
 B0 = tenzo_min_nominale.b;
