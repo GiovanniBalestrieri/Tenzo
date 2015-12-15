@@ -943,7 +943,7 @@ ma_S0_vs = frd(max_S0_vs,omega);
 % valori per i quali min_sig(P)<<1
 
 %approssmazione di 1/ps con w1                                
-w1 = zpk([],[-0.5 -0.004],3);
+w1 = zpk([],[-0.5 -0.004],2.5);
 
 [MODX,FAS]=bode(w1,omega);
 w1M = frd(MODX,omega); 
@@ -1075,9 +1075,13 @@ pause();
 % gamma_2 = 0.0000001;
 % gamma_3 = 0.10; 
 
-gamma_1 = 0.8;
+% gamma_1 = 0.8;
+% gamma_2 = 0.00001;
+% gamma_3 = 0.02; 
+
+gamma_1 = 1;
 gamma_2 = 0.00001;
-gamma_3 = 0.02; 
+gamma_3 = 0.1; 
 
 W1 = gamma_1*w1*E1;
 W1Old = w1*E1;
