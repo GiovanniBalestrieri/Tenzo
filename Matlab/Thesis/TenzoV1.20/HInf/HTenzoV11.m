@@ -1094,9 +1094,9 @@ pause();
 % gamma_2 = 0.0000001;
 % gamma_3 = 0.10; 
 
-gamma_1 = 0.7;
+gamma_1 = 0.8;
 gamma_2 = 0.00001;
-gamma_3 = 0.04; 
+gamma_3 = 0.02; 
 
 W1 = gamma_1*w1*E1;
 W1Old = w1*E1;
@@ -1133,7 +1133,7 @@ cprintf('hyper', [char(10) '4) passo 2) UScite di prestazione [z1,z3]' char(10) 
 pause();
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 6;
+alphaK = 0.5;
 
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
@@ -1266,7 +1266,7 @@ omegaPertOut = 1;
 
 
 % Set amplitude out pert
-set_param('HinfTenzo/DisturboIn/ErrIn/disturbo/SineIn','amplitude','amplitudePertIN');
+set_param('HinfTenzo/DisturboIn/ErrIn/distOut/seno','amplitude','amplitudePertIN');
 
 % Set amplitude out pert
 set_param('HinfTenzo/DisturboOut/ErrOutZ/disturbo/SineOut','amplitude','amplitudePertOutZ');
