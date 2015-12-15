@@ -592,7 +592,7 @@ legend('rho=0.01','rho=1','rho=100');
 
 R    = R1;
 U0   = U0_1;
-Kopt = Kopt_1;
+Kopt = Kopt_3;
 
 disp('Press X to continue ...');
 pause();
@@ -721,12 +721,12 @@ cprintf('text',['We choose the third attempt with sigma = ' num2str(sigma_3) ...
 % Displaying control system in real situations
 
 % Defining Observer's matrices
-Aoss=tenzo_min_nominale.a-L_3*tenzo_min_nominale.c;
-Bossw=[tenzo_min_nominale.b-L_3*D L_3]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
-Coss=eye(size(Aoss,1));
+KAoss=tenzo_min_nominale.a-L_3*tenzo_min_nominale.c;
+KBossw=[tenzo_min_nominale.b-L_3*D L_3]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
+KCoss=eye(size(Aoss,1));
 poss = size(Bossw,2);
 qoss = size(Aoss,2);
-Doss=zeros(size(Aoss,1),poss);
+KDoss=zeros(size(Aoss,1),poss);
 
 
 open('LqrTenzo.slx');
@@ -735,6 +735,14 @@ A0 = tenzo_min_nominale.a;
 B0 = tenzo_min_nominale.b;
 C0 = tenzo_min_nominale.c;
 D0 = tenzo_min_nominale.d;
+
+% Set amplitude out pert
+set_param('LqrTenzo/Koss/ss','A','KAoss');
+set_param('LqrTenzo/Optima Controller/F1','Gain','Kopt');
+set_param('LqrTenzo/Koss/ss','B','KBossw');
+set_param('LqrTenzo/Koss/ss','C','KCoss');
+set_param('LqrTenzo/Koss/ss','D','KDoss');
+
     
 answer11 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
 if isempty(answer2)
