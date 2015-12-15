@@ -429,9 +429,9 @@ disp('Stabilizzazione mediante LQR dallo stato stimato');
 disp('Press any key to continue.');
 pause();
 
-rho1 = 0.001;
+rho1 = 0.01;
 rho2 = 1;
-rho3 = 10;
+rho3 = 100;
 alphaK = 1;
 
 cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
@@ -556,7 +556,8 @@ end
 if strcmp(answer3,'y')
     figure(6)
     step(U0_1,'b',U0_2,'r',U0_3,'g')
-    legend('rho1 = 0.1','rho2 = 1','rho3 = 10')
+    hold on
+    legend('rho1 = 0.01','rho2 = 1','rho3 = 100')
     title('Verifica velocità della risposta a ciclo chiuso per tutti i Kopt');
 end
 
@@ -585,12 +586,13 @@ semilogx(omega,20*log10(m_U0_3_vs),'g');
 grid on
 %legend('U01 MVS','U02 MVS','U03 MVS')
 title('Verifica andamento massimo valor singolare di U0');
+legend('rho=0.01','rho=1','rho=100');
 
 % Scelta di Kopt3
 
-R    = R3;
-U0   = U0_3;
-Kopt = Kopt_3;
+R    = R1;
+U0   = U0_1;
+Kopt = Kopt_1;
 
 disp('Press X to continue ...');
 pause();
@@ -760,7 +762,7 @@ end
 N = answer4;
 
 cprintf('cyan',['\n\nAnalyzing N experiments ...' ...
-    '\nComputing additive, molt (IN)\n and molt (OUT) perturbation matrices\n\n']);
+    '\nComputing deltap, delta^p and delta^p~ matrices\n\n']);
 % Prende alcuni campioni del sistema incerto e calcola bound su incertezze
 for i=1:1:N
 sys{i} = usample(tenzo_min_unc);
@@ -770,6 +772,7 @@ deltaA_sys{i} = tf(sys{i}) - tf(tenzo_min_nominale);
 deltaMin_sys{i} = (inv(tf(tenzo_min_nominale))) * deltaA_sys{i};
 % Moltiplicative riportate sull'Usicta
 deltaMout_sys{i} = deltaA_sys{i} * (inv(tf(tenzo_min_nominale)));
+cprintf('text','.');
 end
 
 % Plots the singular values of the frequency response of a model nominale
@@ -797,23 +800,39 @@ top_dMout = max(max_sig_dMout);
 
 % Input Moltiplicative uncertainties
 
-cprintf('text','Displaying max val sing of sys pert ...\n\n');
+cprintf(-[1 0 1],'Variazioni non strutturate additive\n');
+pause()
 
-figure(9);
-for i=1:1:N
-  semilogx(omega,mag2db(max_sig_unc(i,:)),'r:','LineWidth',3)
-  hold on
+pre_bound_dA = frd(top_dA,omega);
+% fit razionale e min phase per ricavare il bound
+ord = 2; 
+bound_dA2 = fitmagfrd(pre_bound_dA,ord,[],[],1);
+bb_dA2 = sigma(bound_dA2,omega);
+
+figure(9)
+for i=1:N
+    semilogx(omega,mag2db(max_sig_dA(i,:)),'r:','LineWidth',2)
+    hold on
 end
-semilogx(omega,mag2db(top_unc),'b','LineWidth',2)
 hold on
 semilogx(omega,mag2db(max_sig_nom),'c--','LineWidth',2)
+hold on;
 grid on;
-title('MaxSV: pert sys(red), max pert (blue) and nominal (cyan)');
+semilogx(omega,mag2db(bb_dA2(1,:)),'k-','LineWidth',2)
+title('Bound dA unc');
+
+% UpperBound Moltiplicative In perturbation
+% #moltin  #pert #unc
 
 cprintf(-[1 0 1],'Variazioni non strutturate moltiplicative sull IN\n');
-
-cprintf('text','Displaying max val sing of d^p~ IN ...\nPress X\n');
 pause();
+
+pre_bound_dMin = frd(top_dMin,omega);
+
+% fit razionale e min phase per ricavare il bound
+ord = 2;
+bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
+bb_dMin2 = sigma(bound_dM,omega);
 
 figure(10);
 semilogx(omega,mag2db(top_dMin),'b','LineWidth',2)
@@ -821,61 +840,33 @@ grid on;
 hold on;
 for i=1:1:N
   semilogx(omega,mag2db(max_sig_dMin(i,:)),'r:','LineWidth',3)
+  hold on
 end
-title('Max sing values: input multiplicative uncertainties');
-
-% Upper bound MOLT IN lm(w) razionale stabile e fase minima
-
-cprintf('text',['Computing the bound lm~(w) of sigma(d^p~) ...\n PressX \n']);
-pause();
-pre_bound_dMin = frd(top_dMin,omega);
-
-% fit razionale e min phase per ricavare il bound
-ord = 1;
-bound_dM = fitmagfrd(pre_bound_dMin,ord,[],[],1); 
-bb_dMin2 = sigma(bound_dM,omega);
-
-grid on;
-hold on;
 semilogx(omega,mag2db(bb_dMin2(1,:)),'k','LineWidth',2)
-%semilogx(omega,mag2db(bb_dMin5(1,:)),'k','LineWidth',2)
-%semilogx(omega,mag2db(bb_dMin7(1,:)),'m','LineWidth',2)
-title('Bound on multiplicative uncertainties');
-legend('strict bound', 'Rational stable min phase, order 2',...
-  'Location','SouthWest');
+title('MSV: dMin unc');
+
+% Upper bound MOLT OUT lm(w) razionale stabile e fase minima
 
 cprintf(-[1 0 1],'Variazioni non strutturate moltiplicative sull OUT\n');
 % output multiplicative Out uncertainties
-cprintf('text','Press X to Display max val sing of d^p OUT  ...\n\n');
 pause();
+
+pre_bound_dMout = frd(top_dMout,omega);
+% fit razionale e min phase per ricavare il bound
+ord = 1; 
+bound_dMout2 = fitmagfrd(pre_bound_dMout,ord,[],[],1);
+bb_dMout2 = sigma(bound_dMout2,omega);
 
 figure(11);
 semilogx(omega,mag2db(top_dMout),'b','LineWidth',2)
 grid on;
 hold on;
 for i=1:1:N
-  semilogx(omega,mag2db(max_sig_dMout(i,:)),'r:','LineWidth',2)
+  semilogx(omega,mag2db(max_sig_dMout(i,:)),'r:','LineWidth',2);
+  hold on;
 end
-title('Max sing values: output multiplicative uncertainties')
-
-% Upper bound Molt OUT lm~(w) razionale stabile e fase minima
-cprintf('text','Computing the bound lm(w) of sigma(d^p) ...\nPRESS X\n');
-pause();
-
-pre_bound_dMout = frd(top_dMout,omega);
-
-% fit razionale e min phase per ricavare il bound
-ord = 1; 
-bound_dMout2 = fitmagfrd(pre_bound_dMout,ord,[],[],1);
-bb_dMout2 = sigma(bound_dMout2,omega);
-
-grid on;
-hold on;
 semilogx(omega,mag2db(bb_dMout2(1,:)),'k-','LineWidth',2)
-title('Bound on multiplicative Output uncertainties');
-legend('strict bound', 'Rational stable min phase, order 2',...
- 'Location','SouthWest');
-
+title('MSV: output multiplicative uncertainties');
 
 %% Step response for all real plants
 
@@ -893,8 +884,9 @@ for i=1:N
     H_LTR_3 = series(sys{i},G_3);   % Connessione in serie all'impianto nominale
     Closed_Loop_LTR{i} = feedback(H_LTR_3,eye(q)); % Nuova matrice U_3 dopo LTR
     step(feedback(H_LTR_3,eye(q)));
-    hold on
-    grid on
+    hold on;
+    grid on;
+    cprintf('text','.');
 end
 
 %% AUTOVALORI
@@ -906,7 +898,6 @@ end
 if strcmp(answer5,'y')
     for i=1:N
      disp('Autovalori del sistema')
-     i
      eig(Closed_Loop_LTR{i})     % Autovalori del sistema di controllo perturbato 1
     end
 end
@@ -953,7 +944,7 @@ ma_S0_vs = frd(max_S0_vs,omega);
 % valori per i quali min_sig(P)<<1
 
 %approssmazione di 1/ps con w1                                
-w1 = zpk([-400],[-0.05 -0.04],0.01);
+w1 = zpk([400],[-0.05 -0.04],0.01);
 
 [MODX,FAS]=bode(w1,omega);
 w1M = frd(MODX,omega); 
@@ -962,7 +953,7 @@ max_sig_nom_B = frd(max_sig_nom,omega);
 
 
 figure(13)
-bodemag(ps_sign,'b',ma_S0_vs,'r',w1M,'k',max_sig_nom_B,'c+',omega);
+bodemag(ps_sign,'b',ma_S0_vs,'r',w1M,'k',max_sig_nom_B,'c',omega);
 legend('_ps_','max_S0','w1','Po');
 grid on
 
