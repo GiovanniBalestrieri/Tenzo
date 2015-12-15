@@ -432,7 +432,7 @@ pause();
 rho1 = 0.01;
 rho2 = 1;
 rho3 = 100;
-alphaK = 1;
+alphaK = 3;
 
 cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
     num2str(rho2) '\n rho3 = ' num2str(rho3) '\n\n']);
@@ -735,14 +735,6 @@ A0 = tenzo_min_nominale.a;
 B0 = tenzo_min_nominale.b;
 C0 = tenzo_min_nominale.c;
 D0 = tenzo_min_nominale.d;
-
-% Set amplitude out pert
-set_param('LqrTenzo/Koss/ss','A','KAoss');
-set_param('LqrTenzo/Optima Controller/F1','Gain','Kopt');
-set_param('LqrTenzo/Koss/ss','B','KBossw');
-set_param('LqrTenzo/Koss/ss','C','KCoss');
-set_param('LqrTenzo/Koss/ss','D','KDoss');
-
     
 answer11 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
 if isempty(answer2)
@@ -753,7 +745,7 @@ if strcmp(answer11,'y')
 end
 
 amplitudePertOut = 0;
-set_param('LQRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
+set_param('LTRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
 
 lma = frd(m_U_LTR_3_vs.^-1,omega);
 disp('PressX to continue ... ');
