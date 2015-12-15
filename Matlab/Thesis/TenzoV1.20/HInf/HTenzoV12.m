@@ -432,7 +432,7 @@ pause();
 rho1 = 0.01;
 rho2 = 1;
 rho3 = 100;
-alphaK = 3;
+alphaK = 2;
 
 cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
     num2str(rho2) '\n rho3 = ' num2str(rho3) '\n\n']);
@@ -601,7 +601,7 @@ clc
 %% 2) Passo 3 - Loop Transfer Recovery #passo 2
 
 cprintf('hyper', [char(10) '2) passo 3) LTR' char(10) char(10)]);
-
+alphaK = 0.01;
 % TASK:    sostituire la retroazione dallo stato con quella da una stima 
 %          data da un filtro di Kalman, scegliendo V=sigma^2*B0*B0'. 
 %          Adottiamo scelte via via crescenti di sigma in modo che il max
