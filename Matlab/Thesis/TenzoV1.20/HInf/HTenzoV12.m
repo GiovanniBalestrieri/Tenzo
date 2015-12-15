@@ -798,8 +798,7 @@ top_dA = max(max_sig_dA);
 top_dMin = max(max_sig_dMin);
 top_dMout = max(max_sig_dMout);
 
-% Input Moltiplicative uncertainties
-
+% Input Additive uncertainties
 cprintf(-[1 0 1],'Variazioni non strutturate additive\n');
 pause()
 
@@ -944,7 +943,7 @@ ma_S0_vs = frd(max_S0_vs,omega);
 % valori per i quali min_sig(P)<<1
 
 %approssmazione di 1/ps con w1                                
-w1 = zpk([400],[-0.05 -0.04],0.01);
+w1 = zpk([],[-0.5 -0.004],3);
 
 [MODX,FAS]=bode(w1,omega);
 w1M = frd(MODX,omega); 
@@ -962,49 +961,49 @@ grid on
 cprintf('hyper', [char(10) '3) passo 2) V0(s) e w2(s)' char(10) char(10)]);
 pause();
 
-%  Additive
-figure(15);
-for i=1:1:N
-  semilogx(omega,mag2db(max_sig_dA(i,:)),'k--','LineWidth',1)
-  hold on
-end
-semilogx(omega,mag2db(top_dA),'b','LineWidth',2)
-hold on;
-semilogx(omega,mag2db(max_sig_nom),'c','LineWidth',3)
-grid on;
-title('Max sing values: pert dp (bk), nominal (cyan), top_dp (blue)')
+% %  Additive
+% figure(15);
+% for i=1:1:N
+%   semilogx(omega,mag2db(max_sig_dA(i,:)),'k--','LineWidth',1)
+%   hold on
+% end
+% semilogx(omega,mag2db(top_dA),'b','LineWidth',2)
+% hold on;
+% semilogx(omega,mag2db(max_sig_nom),'c','LineWidth',3)
+% grid on;
+% title('Max sing values: pert dp (bk), nominal (cyan), top_dp (blue)')
 
-pause(1)
+%pause(1)
 
-figure(14);
-grid on;
-for i=1:1:N
-  semilogx(omega,mag2db(max_sig_unc(i,:)),'k--','LineWidth',1)
-  hold on
-end
-hold on
-semilogx(omega,mag2db(top_unc),'b','LineWidth',5)
-hold on
-semilogx(omega,mag2db(max_sig_nom),'c','LineWidth',3)
-title('Max sing values: pert (bk), nominal (cyan), top Unc (blue)')
+% figure(14);
+% grid on;
+% for i=1:1:N
+%   semilogx(omega,mag2db(max_sig_unc(i,:)),'k--','LineWidth',1)
+%   hold on
+% end
+% hold on
+% semilogx(omega,mag2db(top_unc),'b','LineWidth',5)
+% hold on
+% semilogx(omega,mag2db(max_sig_nom),'c','LineWidth',3)
+% title('Max sing values: pert (bk), nominal (cyan), top Unc (blue)')
 
 pause(2)
 
-% Upper bound razionale stabile e fase minima
-pre_bound_dA = frd(top_dA,omega);
-
-% fit razionale e min phase per ricavare il bound
-ord = 2; 
-bound_dA2 = fitmagfrd(pre_bound_dA,ord,[],[],1); 
-bb_dA2 = sigma(bound_dA2,omega);
+% % Upper bound razionale stabile e fase minima
+% pre_bound_dA = frd(top_dA,omega);
+% 
+% % fit razionale e min phase per ricavare il bound
+% ord = 2; 
+% bound_dA2 = fitmagfrd(pre_bound_dA,ord,[],[],1); 
+% bb_dA2 = sigma(bound_dA2,omega);
 
 % let us use as la the rational fit previously computed
 la = bound_dA2;
-
-hold on;
-semilogx(omega,mag2db(bb_dA2(1,:)),'k-','LineWidth',2);
-grid on;
-title('Bound on additive uncertainties');
+% 
+% hold on;
+% semilogx(omega,mag2db(bb_dA2(1,:)),'k-','LineWidth',2);
+% grid on;
+% title('Bound on additive uncertainties');
 
 % Costruzione V0
 cprintf('cyan', [char(10) 'V0(s) e w2(s)' char(10) char(10)]);
@@ -1020,7 +1019,8 @@ MAX_V0_vs = frd(max_V0_vs,omega);
 la_signed = frd(max_V0_vs.^-1,omega);
 
 %approssmazione si la con w2
-w2 = zpk([-120 -140 -150],[-0.0024  -0.0025 -9000],0.08);
+w2 = zpk([-6200 -6400],[-0.0024  -0.0025 ],0.0000018);
+%w2 = zpk([-120 -140 -150],[-0.0024  -0.0025 -9000],0.18);
                          
 % w2 = zpk([-0.4 -0.2 -0.5],[-0.0024 -0.0025 -0.0002],50.05);
 
@@ -1050,19 +1050,13 @@ max_T0_LTR = frd(max_T0_LTR_vs,omega);
 
 lm_b = frd(max_T0_LTR_vs.^-1,omega);
 
-pre_bound_dMout = frd(top_dMout,omega);
-
 % fit razionale e min phase per ricavare il bound
-ord = 1; %Ordine della funzione di fitting 
-bound_dMout2 = fitmagfrd(pre_bound_dMout,ord,[],[],1); 
-bb_dMout2 = sigma(bound_dMout2,omega);
-max_dMout2 = bb_dMout2(1,:);
 lm = bound_dMout2;
 
 % Le variazioni sono casuali e la maggiorante cambierebbe ogni volta
 % fissiamo:
 %
-w3_Y = zpk([-15 -15 -700],[-1100 -120000 -10000],29000600);
+w3_Y = zpk([-15 -555 -2000],[-1100 -120000 -10000],500600);
 [mod_w3,fas_w3]=bode(w3_Y,omega);
 w3 = frd(mod_w3,omega);
 
@@ -1070,10 +1064,6 @@ figure(17)
 bodemag(lm,'b',lm_b,'r',max_T0_LTR,'c',lma,'m',w3_Y,'k--',omega)
 legend('lm','lm_b','T0','lm_a','w3')
 grid on
-%
-disp('X ...');
-pause()
-
 
 %% Part 4) - SINTESI DEL CONTROLLORE H-INFINITO 
 %  # sagomatura #tuning
