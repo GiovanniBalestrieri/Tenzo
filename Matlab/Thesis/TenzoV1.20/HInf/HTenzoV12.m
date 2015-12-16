@@ -1083,7 +1083,7 @@ pause();
 
 gamma_1 = 1;
 gamma_2 = 0.00001;
-gamma_3 = 0.1; 
+gamma_3 = 0.3; 
 
 W1 = gamma_1*w1*E1;
 W1Old = w1*E1;
