@@ -432,7 +432,7 @@ pause();
 rho1 = 0.01;
 rho2 = 1;
 rho3 = 100;
-alphaK = 2;
+alphaK = 2.5;
 
 cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
     num2str(rho2) '\n rho3 = ' num2str(rho3) '\n\n']);
@@ -601,7 +601,7 @@ clc
 %% 2) Passo 3 - Loop Transfer Recovery #passo 2
 
 cprintf('hyper', [char(10) '2) passo 3) LTR' char(10) char(10)]);
-alphaK = 0.01;
+
 % TASK:    sostituire la retroazione dallo stato con quella da una stima 
 %          data da un filtro di Kalman, scegliendo V=sigma^2*B0*B0'. 
 %          Adottiamo scelte via via crescenti di sigma in modo che il max
@@ -735,25 +735,33 @@ A0 = tenzo_min_nominale.a;
 B0 = tenzo_min_nominale.b;
 C0 = tenzo_min_nominale.c;
 D0 = tenzo_min_nominale.d;
-    
+
+set_param('LTRTenzo/processo/Processo1','A','A0');
+set_param('LTRTenzo/processo/Processo1','B','B0');
+set_param('LTRTenzo/processo/Processo1','C','C0');
+set_param('LTRTenzo/processo/Processo1','D','D0');
+
 answer11 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
 if isempty(answer2)
     answer11 = 'y';
 end
 if strcmp(answer11,'y')
-    sim('LqrTenzo.slx');
+    sim('LTRTenzo.slx');
 end
 
 amplitudePertOut = 0;
+amplitudePertIn = 200;
 set_param('LTRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
+set_param('LTRTenzo/DisturboIn/ErrIn/disturbo/SineIn','amplitude','amplitudePertIn');
 
 lma = frd(m_U_LTR_3_vs.^-1,omega);
-disp('PressX to continue ... ');
-pause()
+
 %% Quarto Task - Robustezza
 
 cprintf('hyper', [char(10) '2) passo 4) Verify robustness of LTR' char(10) char(10)]);
 
+disp('Press X ... ');
+pause()
 % Number of tests
 answer4 = input(['Please enter the number of experiments? (<1000)' char(10)]);
 if isempty(answer4)
