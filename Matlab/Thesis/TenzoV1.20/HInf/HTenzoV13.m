@@ -20,7 +20,7 @@ g=9.81; %Acceleration of gravity (m)
 rho = ureal('rho',1.2250,'Range',[1.1455 1.4224]);
 
 % Total mass of the quadrotor [Kg]
-mq = ureal('mq',1.30,'Range',[0.800 2.0]);
+mq = ureal('mq',1.30,'Range',[0.800 1.5]);
 
 % Mass of a motor (kg). All motors have equal mass.
 mm = ureal('mm',0.068,'Range',[0.020 0.095]);
@@ -37,8 +37,8 @@ lz = ureal('lz',0.04,'Range',[0.03 0.06]);
 dcg=0.288; 
 
 % % Reali
-dcgX = ureal('dcgX',0.288,'Range',[0.22 0.40]);
-dcgY = ureal('dcgY',0.288,'Range',[0.22 0.40]);
+dcgX = ureal('dcgX',0.288,'Range',[0.32 0.40]);
+dcgY = ureal('dcgY',0.288,'Range',[0.32 0.40]);
 dcgZ = ureal('dcgZ',0.05,'Range', [0.04 0.1]);
 
 % % %Forzate
@@ -417,7 +417,8 @@ cprintf('hyper', [char(10) '2) Passo 1: LQR' char(10) char(10)]);
 %          Scegliere R=rho*I con rho>0 e calcolare la matrice dei guadagni 
 %          ottimi per tali Q e R. 
 %          Scelgo rho tenendo conto che:
-%          1. il controllo non deve dar luogo ad una risposta troppo lenta.
+%          1. il controllo
+% non deve dar luogo ad una risposta troppo lenta.
 %          2. l'andamento della curva del massimo valor singolare della 
 %              matrice U0 del sistema a ciclo chiuso non deve essere troppo
 %              alto ad alte frequenze 
@@ -433,6 +434,7 @@ rho1 = 0.01;
 rho2 = 1;
 rho3 = 100;
 alphaK = 0.9;
+alphaKLQR = alphaK;
 
 cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
     num2str(rho2) '\n rho3 = ' num2str(rho3) '\n\n']);
@@ -523,9 +525,11 @@ B0 = tenzo_min_nominale.b;
 C0 = tenzo_min_nominale.c;
 D0 = tenzo_min_nominale.d;
 
-set_param('LQRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
-
 Kopt = Kopt_3;
+
+set_param('LQRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
+set_param('LqrTenzo/Optima Controller/F1','Gain','Kopt1');
+
 
 if strcmp(answer10,'y')
     sim('LqrTenzo.slx');
@@ -741,6 +745,12 @@ set_param('LTRTenzo/processo/Processo1','B','B0');
 set_param('LTRTenzo/processo/Processo1','C','C0');
 set_param('LTRTenzo/processo/Processo1','D','D0');
 
+amplitudePertOut = 0;
+amplitudePertIn = 200;
+set_param('LTRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
+set_param('LTRTenzo/DisturboIn/ErrIn/disturbo/SineIn','amplitude','amplitudePertIn');
+
+
 answer11 = input(['Do you want to see how it handles real situations? [y/n]' char(10)],'s');
 if isempty(answer2)
     answer11 = 'y';
@@ -748,11 +758,6 @@ end
 if strcmp(answer11,'y')
     sim('LTRTenzo.slx');
 end
-
-amplitudePertOut = 0;
-amplitudePertIn = 200;
-set_param('LTRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
-set_param('LTRTenzo/DisturboIn/ErrIn/disturbo/SineIn','amplitude','amplitudePertIn');
 
 lma = frd(m_U_LTR_3_vs.^-1,omega);
 
@@ -896,6 +901,18 @@ for i=1:N
     cprintf('text','.');
 end
 
+% Compute Closed Loop transfer functions
+% for i=1:N
+%     tenzoLQR3=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_3,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);     % Sistema filtro di kalman + guadagno k ottimo
+%     H_LTR_3 = series(sys{i},G_3);   % Connessione in serie all'impianto nominale
+%     Closed_Loop_LTR{i} = feedback(H_LTR_3,eye(q)); % Nuova matrice U_3 dopo LTR
+%     step(feedback(H_LTR_3,eye(q)));
+%     hold on;
+%     grid on;
+%     cprintf('text','.');
+% end
+
+
 %% AUTOVALORI
 cprintf('cyan', '\nEigenvalues of closed loop with LTR + LQ + pert\n');
 answer5 = input(['Do you want me to show them? [y/n]' char(10)],'s');
@@ -953,7 +970,7 @@ ma_S0_vs = frd(max_S0_vs,omega);
 % valori per i quali min_sig(P)<<1
 
 %approssmazione di 1/ps con w1                                
-w1 = zpk([],[-0.5 -0.004],4.5);
+w1 = zpk([],[-0.5 -0.004],3);
 
 [MODX,FAS]=bode(w1,omega);
 w1M = frd(MODX,omega); 
@@ -1066,13 +1083,13 @@ lm = bound_dMout2;
 % Le variazioni sono casuali e la maggiorante cambierebbe ogni volta
 % fissiamo:
 %
-w3_Y = zpk([-44 -555 -2000],[-1100 -120000 -10000],200600);
+w3_Y = zpk([-17 -555 -2000],[-1100 -120000 -10000],500600);
 [mod_w3,fas_w3]=bode(w3_Y,omega);
 w3 = frd(mod_w3,omega);
 
 figure(17)
-bodemag(lm,'b',lm_b,'r',max_T0_LTR,'c',lma,'m',w3_Y,'k--',omega)
-legend('lm','lm_b','T0','lm_a','w3')
+bodemag(lm,'b',lm_b,'r',max_T0_LTR,'c',w3_Y,'k--',omega)
+legend('lm','lm_b','T0','w3')
 grid on
 
 %% Part 4) - SINTESI DEL CONTROLLORE H-INFINITO 
@@ -1089,9 +1106,9 @@ pause();
 % gamma_2 = 0.00001;
 % gamma_3 = 0.02; 
 
-gamma_1 = 1;
-gamma_2 = 0.00001;
-gamma_3 = 0.3; 
+gamma_1 = 0.65;
+gamma_2 = 0.00000001;
+gamma_3 = 0.1; 
 
 W1 = gamma_1*w1*E1;
 W1Old = w1*E1;
@@ -1128,7 +1145,8 @@ cprintf('hyper', [char(10) '4) passo 2) UScite di prestazione [z1,z3]' char(10) 
 pause();
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.2;
+alphaK = 2;
+alphaKH = alphaK;
 
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
@@ -1257,7 +1275,7 @@ set_param('HinfTenzo/Controller/H-Infinity/','D','Kinf.d');
 amplitudePertIN = 700;
 amplitudePertOutZ = 2;
 amplitudePertOutptp = 30;
-omegaPertOut = 1;
+omegaPertOut = 0.5;
 
 
 % Set amplitude out pert
@@ -1632,11 +1650,10 @@ semilogx(omega,mag2db(top_w3),'b','LineWidth',4);
 %% Calcolo autovalori
 
 cprintf('text', [char(10) 'Verifica autovalori sys perturbati' char(10)  char(10)]);
-alphaK = 0.18;
-alphaKLQR = 0.01;
+
 contLQ = 0;
 contHinf = 0;
-for i=1:30
+for i=1:10
     cprintf('text', [char(10) 'Verifica ' num2str(i)  char(10)]);
     
     cprintf('text', [char(10) '       H infinity'  char(10)]);
@@ -1645,7 +1662,7 @@ for i=1:30
     F_pert_add = series(Kw1w3,sys{i}); 
     T_pert = feedback(F_pert_add,eye(q));
     figure(54)
-    step(T_pert,2.5)
+    step(T_pert,5.5)
     hold on
     
     % check autovalori
@@ -1654,7 +1671,7 @@ for i=1:30
     errore = 0;
     for j=1:size(T_pert.a,1)
        %disp('bomb');
-       if real(temp(j))>=-alphaK
+       if real(temp(j))>=-0.02
            errore = 1;
            cprintf('text',[char(10) 'eig: ' num2str(j) ' ']);
            cprintf('err',['unstable: ' num2str(temp(j)) char(10)]);
@@ -1679,7 +1696,7 @@ for i=1:30
     H_LTR_3 = series(sys{i},G_3);  
     Closed_Loop_LTR = feedback(H_LTR_3,eye(q));
     figure(55)
-    step(Closed_Loop_LTR,2.5);
+    step(Closed_Loop_LTR,5.5);
     hold on
     grid on
     % check autovalori
@@ -1688,7 +1705,7 @@ for i=1:30
     temp = eigPert;
     errore = 0;
     for j=1:size(eigPert,1)
-       if real(temp(j))>=-alphaK
+       if real(temp(j))>=-alphaKLQR
            errore = 1;
            cprintf('text',[char(10) 'eig: ' num2str(j) ' ']);
            cprintf('err',['unstable: ' num2str(temp(j)) char(10)]);
