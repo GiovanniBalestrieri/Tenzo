@@ -481,7 +481,7 @@ disp('Eig sys 3 CC retroazione dallo stato:');
 eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_3)
 figure(3)
 step(tenzoLQR3);
-title('Rho3 - CL Lqr ');
+title('Rho3 - CL Lqr');
 
 % Ricostruzione dello stato con Kalman
 
@@ -913,6 +913,8 @@ cprintf('hyper', [char(10) '3) passo 1) S0,p_s(w) e w1(s)' char(10) char(10)]);
 %  Calcolo di strumenti da utilizzare
 %  nell'applicazione del controllo Hinf 
 
+% #Sagomatura w1
+
 % -----> PROBLEM F0 ha poli lungo asse IM  -> sposta C-buono
 
 F0 = series(G,tenzo_min_nominale);
@@ -943,7 +945,7 @@ ma_S0_vs = frd(max_S0_vs,omega);
 % valori per i quali min_sig(P)<<1
 
 %approssmazione di 1/ps con w1                                
-w1 = zpk([],[-0.5 -0.004],2.5);
+w1 = zpk([],[-0.5 -0.004],4.5);
 
 [MODX,FAS]=bode(w1,omega);
 w1M = frd(MODX,omega); 
@@ -1056,7 +1058,7 @@ lm = bound_dMout2;
 % Le variazioni sono casuali e la maggiorante cambierebbe ogni volta
 % fissiamo:
 %
-w3_Y = zpk([-15 -555 -2000],[-1100 -120000 -10000],500600);
+w3_Y = zpk([-44 -555 -2000],[-1100 -120000 -10000],200600);
 [mod_w3,fas_w3]=bode(w3_Y,omega);
 w3 = frd(mod_w3,omega);
 
@@ -1118,7 +1120,7 @@ cprintf('hyper', [char(10) '4) passo 2) UScite di prestazione [z1,z3]' char(10) 
 pause();
 
 % Primo Passo: Verifica applicabilità e sintesi h-infinito %
-alphaK = 0.5;
+alphaK = 0.2;
 
 modello_ss_epsilon = ss(tenzo_min_nominale.a+alphaK*eye(n),tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d)
 % Costruzione sistema allargato
@@ -1251,7 +1253,7 @@ omegaPertOut = 1;
 
 
 % Set amplitude out pert
-set_param('HinfTenzo/DisturboIn/ErrIn/distOut/seno','amplitude','amplitudePertIN');
+%set_param('HinfTenzo/DisturboIn/ErrIn/distOut/seno','amplitude','amplitudePertIN');
 
 % Set amplitude out pert
 set_param('HinfTenzo/DisturboOut/ErrOutZ/disturbo/SineOut','amplitude','amplitudePertOutZ');
@@ -1395,7 +1397,7 @@ V0_z2 = V0;
 
 open('HinfTenzo.slx');
 % Set amplitude out pert
-set_param('HinfTenzo/DisturboIn/ErrIn/disturbo/SineIn','amplitude','amplitudePertIN');
+%set_param('HinfTenzo/DisturboIn/ErrIn/distOut/seno','amplitude','amplitudePertIN');
 
 % Set amplitude out pert
 set_param('HinfTenzo/DisturboOut/ErrOutZ/disturbo/SineOut','amplitude','amplitudePertOutZ');
@@ -1622,10 +1624,11 @@ semilogx(omega,mag2db(top_w3),'b','LineWidth',4);
 %% Calcolo autovalori
 
 cprintf('text', [char(10) 'Verifica autovalori sys perturbati' char(10)  char(10)]);
-alphaK = 0;
+alphaK = 0.18;
+alphaKLQR = 0.01;
 contLQ = 0;
 contHinf = 0;
-for i=1:N
+for i=1:30
     cprintf('text', [char(10) 'Verifica ' num2str(i)  char(10)]);
     
     cprintf('text', [char(10) '       H infinity'  char(10)]);
@@ -1643,7 +1646,7 @@ for i=1:N
     errore = 0;
     for j=1:size(T_pert.a,1)
        %disp('bomb');
-       if real(temp(j))>-alphaK
+       if real(temp(j))>=-alphaK
            errore = 1;
            cprintf('text',[char(10) 'eig: ' num2str(j) ' ']);
            cprintf('err',['unstable: ' num2str(temp(j)) char(10)]);
@@ -1676,8 +1679,8 @@ for i=1:N
     eigPert = eig(Closed_Loop_LTR);
     temp = eigPert;
     errore = 0;
-    for j=1:T1_pert.a
-       if real(temp(j))>-alphaK
+    for j=1:size(eigPert,1)
+       if real(temp(j))>=-alphaK
            errore = 1;
            cprintf('text',[char(10) 'eig: ' num2str(j) ' ']);
            cprintf('err',['unstable: ' num2str(temp(j)) char(10)]);
@@ -1691,7 +1694,6 @@ for i=1:N
     end
     
 end
-
   percStableH = contHinf/N*100;
   percStableL = contLQ/N*100;
   cprintf('hyper',[char(10) 'Number of Cb-Stable perturbed systems:' char(10)]);
