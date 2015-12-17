@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.110"
+    ComputedModelVersion    "1.111"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -65,8 +65,8 @@ Model {
 	ViewObjType		"SimulinkTopLevel"
 	LoadSaveID		"0"
 	Extents			[1265.0, 573.0]
-	ZoomFactor		[1.5]
-	Offset			[242.05952380952334, 97.824618134895957]
+	ZoomFactor		[1.0]
+	Offset			[-19.273809523809973, 19.157951468229328]
       }
     }
   }
@@ -76,9 +76,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Dec 17 01:38:47 2015"
-  RTWModifiedTimeStamp	  372217121
-  ModelVersionFormat	  "1.%<AutoIncrement:110>"
+  LastModifiedDate	  "Thu Dec 17 01:44:42 2015"
+  RTWModifiedTimeStamp	  372217480
+  ModelVersionFormat	  "1.%<AutoIncrement:111>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1089,7 +1089,7 @@ Model {
     TiledPaperMargins	    [1.270000, 1.270000, 1.270000, 1.270000]
     TiledPageScale	    1
     ShowPageBoundaries	    off
-    ZoomFactor		    "150"
+    ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
     SIDHighWatermark	    "463"
     Block {
@@ -2247,7 +2247,7 @@ Model {
       Name		      "Demux5"
       SID		      "381"
       Ports		      [1, 4]
-      Position		      [320, 177, 325, 333]
+      Position		      [310, 177, 315, 333]
       ZOrder		      -6
       ShowName		      off
       DisplayOption	      "bar"
@@ -7082,7 +7082,7 @@ Model {
       Name		      "Subsystem"
       SID		      "319"
       Ports		      [4, 4]
-      Position		      [365, 211, 495, 299]
+      Position		      [365, 218, 465, 292]
       ZOrder		      -21
       BackgroundColor	      "red"
       ShowName		      off
@@ -8609,7 +8609,7 @@ Model {
       ZOrder		      12
       SrcBlock		      "Demux5"
       SrcPort		      1
-      Points		      [10, 0; 0, 30]
+      Points		      [20, 0; 0, 30]
       DstBlock		      "Subsystem"
       DstPort		      1
     }
@@ -8617,7 +8617,7 @@ Model {
       ZOrder		      13
       SrcBlock		      "Demux5"
       SrcPort		      2
-      Points		      [15, 0; 0, 10]
+      Points		      [30, 0]
       DstBlock		      "Subsystem"
       DstPort		      2
     }
@@ -8625,7 +8625,7 @@ Model {
       ZOrder		      14
       SrcBlock		      "Demux5"
       SrcPort		      3
-      Points		      [10, 0; 0, -10]
+      Points		      [14, 0; 0, -10]
       DstBlock		      "Subsystem"
       DstPort		      3
     }
@@ -8633,7 +8633,7 @@ Model {
       ZOrder		      15
       SrcBlock		      "Demux5"
       SrcPort		      4
-      Points		      [21, 0; 0, -30]
+      Points		      [18, 0; 0, -30]
       DstBlock		      "Subsystem"
       DstPort		      4
     }
