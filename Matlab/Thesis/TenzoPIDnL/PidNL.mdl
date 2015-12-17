@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.107"
+    ComputedModelVersion    "1.110"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -35,74 +35,39 @@ Model {
     $PropName		    "BdWindowsInfo"
     $ObjectID		    2
     $ClassName		    "Simulink.BDWindowsInfo"
-    Array {
-      Type		      "Simulink.WindowInfo"
-      Dimension		      2
+    Object {
+      $PropName		      "WindowsInfo"
+      $ObjectID		      3
+      $ClassName	      "Simulink.WindowInfo"
+      IsActive		      [1]
+      Location		      [55.0, 14.0, 1321.0, 944.0]
       Object {
-	$ObjectID		3
-	IsActive		[0]
-	Location		[391.0, 42.0, 643.0, 915.0]
-	Object {
-	  $PropName		  "ModelBrowserInfo"
-	  $ObjectID		  4
-	  $ClassName		  "Simulink.ModelBrowserInfo"
-	  Visible		  [0]
-	  DockPosition		  "Left"
-	  Width			  [50]
-	  Height		  [50]
-	  Filter		  [9]
-	}
-	Object {
-	  $PropName		  "ExplorerBarInfo"
-	  $ObjectID		  5
-	  $ClassName		  "Simulink.ExplorerBarInfo"
-	  Visible		  [1]
-	}
-	Object {
-	  $PropName		  "EditorsInfo"
-	  $ObjectID		  6
-	  $ClassName		  "Simulink.EditorInfo"
-	  IsActive		  [1]
-	  ViewObjType		  "SimulinkSubsys"
-	  LoadSaveID		  "288"
-	  Extents		  [587.0, 544.0]
-	  ZoomFactor		  [1.0]
-	  Offset		  [0.0, 0.0]
-	}
+	$PropName		"ModelBrowserInfo"
+	$ObjectID		4
+	$ClassName		"Simulink.ModelBrowserInfo"
+	Visible			[0]
+	DockPosition		"Left"
+	Width			[50]
+	Height			[50]
+	Filter			[9]
       }
       Object {
-	$ObjectID		7
+	$PropName		"ExplorerBarInfo"
+	$ObjectID		5
+	$ClassName		"Simulink.ExplorerBarInfo"
+	Visible			[1]
+      }
+      Object {
+	$PropName		"EditorsInfo"
+	$ObjectID		6
+	$ClassName		"Simulink.EditorInfo"
 	IsActive		[1]
-	Location		[55.0, 14.0, 1321.0, 944.0]
-	Object {
-	  $PropName		  "ModelBrowserInfo"
-	  $ObjectID		  8
-	  $ClassName		  "Simulink.ModelBrowserInfo"
-	  Visible		  [0]
-	  DockPosition		  "Left"
-	  Width			  [50]
-	  Height		  [50]
-	  Filter		  [9]
-	}
-	Object {
-	  $PropName		  "ExplorerBarInfo"
-	  $ObjectID		  9
-	  $ClassName		  "Simulink.ExplorerBarInfo"
-	  Visible		  [1]
-	}
-	Object {
-	  $PropName		  "EditorsInfo"
-	  $ObjectID		  10
-	  $ClassName		  "Simulink.EditorInfo"
-	  IsActive		  [1]
-	  ViewObjType		  "SimulinkTopLevel"
-	  LoadSaveID		  "0"
-	  Extents		  [1265.0, 573.0]
-	  ZoomFactor		  [1.0]
-	  Offset		  [0.0, 0.0]
-	}
+	ViewObjType		"SimulinkTopLevel"
+	LoadSaveID		"0"
+	Extents			[1265.0, 573.0]
+	ZoomFactor		[1.5]
+	Offset			[242.05952380952334, 97.824618134895957]
       }
-      PropName		      "WindowsInfo"
     }
   }
   Created		  "Sun May 03 03:14:57 2015"
@@ -111,9 +76,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Dec 17 01:26:26 2015"
-  RTWModifiedTimeStamp	  372216379
-  ModelVersionFormat	  "1.%<AutoIncrement:107>"
+  LastModifiedDate	  "Thu Dec 17 01:38:47 2015"
+  RTWModifiedTimeStamp	  372217121
+  ModelVersionFormat	  "1.%<AutoIncrement:110>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -154,7 +119,7 @@ Model {
   TryForcingSFcnDF	  off
   Object {
     $PropName		    "DataLoggingOverride"
-    $ObjectID		    11
+    $ObjectID		    7
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "lqr_115"
     overrideMode_	    [0.0]
@@ -219,13 +184,13 @@ Model {
     Type		    "Handle"
     Dimension		    1
     Simulink.ConfigSet {
-      $ObjectID		      12
+      $ObjectID		      8
       Version		      "1.15.0"
       Array {
 	Type			"Handle"
 	Dimension		9
 	Simulink.SolverCC {
-	  $ObjectID		  13
+	  $ObjectID		  9
 	  Version		  "1.15.0"
 	  StartTime		  "0.0"
 	  StopTime		  "50.0"
@@ -260,7 +225,7 @@ Model {
 	  InsertRTBMode		  "Whenever possible"
 	}
 	Simulink.DataIOCC {
-	  $ObjectID		  14
+	  $ObjectID		  10
 	  Version		  "1.15.0"
 	  Decimation		  "1"
 	  ExternalInput		  "[t, u]"
@@ -293,7 +258,7 @@ Model {
 	  Refine		  "1"
 	}
 	Simulink.OptimizationCC {
-	  $ObjectID		  15
+	  $ObjectID		  11
 	  Version		  "1.15.0"
 	  Array {
 	    Type		    "Cell"
@@ -350,7 +315,7 @@ Model {
 	  AccelVerboseBuild	  off
 	}
 	Simulink.DebuggingCC {
-	  $ObjectID		  16
+	  $ObjectID		  12
 	  Version		  "1.15.0"
 	  RTPrefix		  "error"
 	  ConsistencyChecking	  "none"
@@ -439,7 +404,7 @@ Model {
 	  IntegerSaturationMsg	  "warning"
 	}
 	Simulink.HardwareCC {
-	  $ObjectID		  17
+	  $ObjectID		  13
 	  Version		  "1.15.0"
 	  ProdBitPerChar	  8
 	  ProdBitPerShort	  16
@@ -479,7 +444,7 @@ Model {
 	  ProdEqTarget		  on
 	}
 	Simulink.ModelReferenceCC {
-	  $ObjectID		  18
+	  $ObjectID		  14
 	  Version		  "1.15.0"
 	  UpdateModelReferenceTargets "IfOutOfDateOrStructuralChange"
 	  CheckModelReferenceTargetMessage "error"
@@ -494,7 +459,7 @@ Model {
 	  SupportModelReferenceSimTargetCustomCode off
 	}
 	Simulink.SFSimCC {
-	  $ObjectID		  19
+	  $ObjectID		  15
 	  Version		  "1.15.0"
 	  SFSimOverflowDetection  on
 	  SFSimEcho		  on
@@ -507,7 +472,7 @@ Model {
 	}
 	Simulink.RTWCC {
 	  $BackupClass		  "Simulink.RTWCC"
-	  $ObjectID		  20
+	  $ObjectID		  16
 	  Version		  "1.15.0"
 	  Array {
 	    Type		    "Cell"
@@ -587,7 +552,7 @@ Model {
 	    Type		    "Handle"
 	    Dimension		    2
 	    Simulink.CodeAppCC {
-	      $ObjectID		      21
+	      $ObjectID		      17
 	      Version		      "1.15.0"
 	      Array {
 		Type			"Cell"
@@ -659,7 +624,7 @@ Model {
 	    }
 	    Simulink.GRTTargetCC {
 	      $BackupClass	      "Simulink.TargetCC"
-	      $ObjectID		      22
+	      $ObjectID		      18
 	      Version		      "1.15.0"
 	      Array {
 		Type			"Cell"
@@ -744,7 +709,7 @@ Model {
 	  }
 	}
 	hdlcoderui.hdlcc {
-	  $ObjectID		  23
+	  $ObjectID		  19
 	  Version		  "1.15.0"
 	  Description		  "HDL Coder custom configuration component"
 	  Name			  "HDL Coder"
@@ -766,11 +731,11 @@ Model {
   }
   Simulink.ConfigSet {
     $PropName		    "ActiveConfigurationSet"
-    $ObjectID		    12
+    $ObjectID		    8
   }
   Object {
     $PropName		    "DataTransfer"
-    $ObjectID		    24
+    $ObjectID		    20
     $ClassName		    "Simulink.GlobalDataTransfer"
     DefaultTransitionBetweenSyncTasks "Ensure deterministic transfer (maximum delay)"
     DefaultTransitionBetweenAsyncTasks "Ensure data integrity only"
@@ -1124,137 +1089,14 @@ Model {
     TiledPaperMargins	    [1.270000, 1.270000, 1.270000, 1.270000]
     TiledPageScale	    1
     ShowPageBoundaries	    off
-    ZoomFactor		    "100"
+    ZoomFactor		    "150"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "446"
-    Block {
-      BlockType		      BusCreator
-      Name		      "Bus\nCreator"
-      SID		      "401"
-      Ports		      [5, 1]
-      Position		      [235, 304, 240, 546]
-      ZOrder		      -2
-      BlockMirror	      on
-      NamePlacement	      "alternate"
-      ShowName		      off
-      Inputs		      "5"
-      DisplayOption	      "bar"
-    }
-    Block {
-      BlockType		      SubSystem
-      Name		      "C"
-      SID		      "169"
-      Ports		      [1, 1]
-      Position		      [695, 47, 765, 93]
-      ZOrder		      -4
-      LibraryVersion	      "1.32"
-      ErrorFcn		      "Stateflow.Translate.translate"
-      PermitHierarchicalResolution "ExplicitOnly"
-      TreatAsAtomicUnit	      on
-      RequestExecContextInheritance off
-      SFBlockType	      "MATLAB Function"
-      System {
-	Name			"C"
-	Location		[193, 226, 852, 905]
-	Open			off
-	ModelBrowserVisibility	off
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"usletter"
-	PaperUnits		"inches"
-	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	SIDHighWatermark	"28"
-	Block {
-	  BlockType		  Inport
-	  Name			  "X"
-	  SID			  "169::1"
-	  Position		  [20, 101, 40, 119]
-	  ZOrder		  -1
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Demux
-	  Name			  " Demux "
-	  SID			  "169::27"
-	  Ports			  [1, 1]
-	  Position		  [270, 230, 320, 270]
-	  ZOrder		  13
-	  Outputs		  "1"
-	}
-	Block {
-	  BlockType		  S-Function
-	  Name			  " SFunction "
-	  SID			  "169::26"
-	  Tag			  "Stateflow S-Function PidNL 1"
-	  Ports			  [1, 2]
-	  Position		  [180, 100, 230, 160]
-	  ZOrder		  12
-	  FunctionName		  "sf_sfun"
-	  PortCounts		  "[1 2]"
-	  Port {
-	    PortNumber		    2
-	    Name		    "ymis"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	}
-	Block {
-	  BlockType		  Terminator
-	  Name			  " Terminator "
-	  SID			  "169::28"
-	  Position		  [460, 241, 480, 259]
-	  ZOrder		  14
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "ymis"
-	  SID			  "169::5"
-	  Position		  [460, 101, 480, 119]
-	  ZOrder		  -5
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  ZOrder		  5
-	  SrcBlock		  "X"
-	  SrcPort		  1
-	  DstBlock		  " SFunction "
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "ymis"
-	  ZOrder		  6
-	  Labels		  [0, 0]
-	  SrcBlock		  " SFunction "
-	  SrcPort		  2
-	  DstBlock		  "ymis"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  7
-	  SrcBlock		  " Demux "
-	  SrcPort		  1
-	  DstBlock		  " Terminator "
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  8
-	  SrcBlock		  " SFunction "
-	  SrcPort		  1
-	  DstBlock		  " Demux "
-	  DstPort		  1
-	}
-      }
-    }
+    SIDHighWatermark	    "463"
     Block {
       BlockType		      Constant
       Name		      "Constant"
       SID		      "32"
-      Position		      [40, 430, 70, 460]
+      Position		      [430, 135, 460, 165]
       ZOrder		      12
     }
     Block {
@@ -1262,13 +1104,14 @@ Model {
       Name		      "Ctrl Mix"
       SID		      "288"
       Ports		      [4, 1]
-      Position		      [460, 25, 550, 115]
+      Position		      [560, 210, 650, 300]
       ZOrder		      -6
+      BackgroundColor	      "orange"
       RequestExecContextInheritance off
       System {
 	Name			"Ctrl Mix"
-	Location		[391, 42, 1034, 957]
-	Open			on
+	Location		[55, 14, 1376, 958]
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1349,7 +1192,7 @@ Model {
 	  }
 	  System {
 	    Name		    "+ Config Control Mixing"
-	    Location		    [19, 45, 1349, 969]
+	    Location		    [55, 14, 1376, 958]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -1765,7 +1608,7 @@ Model {
 	  }
 	  System {
 	    Name		    "X Config Control Mixing"
-	    Location		    [12, 45, 1342, 1079]
+	    Location		    [55, 14, 1376, 958]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -2401,23 +2244,10 @@ Model {
     }
     Block {
       BlockType		      Demux
-      Name		      "Demux"
-      SID		      "402"
-      Ports		      [1, 12]
-      Position		      [420, 310, 425, 540]
-      ZOrder		      -6
-      BlockMirror	      on
-      NamePlacement	      "alternate"
-      ShowName		      off
-      Outputs		      "12"
-      DisplayOption	      "bar"
-    }
-    Block {
-      BlockType		      Demux
       Name		      "Demux5"
       SID		      "381"
       Ports		      [1, 4]
-      Position		      [250, 17, 255, 173]
+      Position		      [320, 177, 325, 333]
       ZOrder		      -6
       ShowName		      off
       DisplayOption	      "bar"
@@ -2426,7 +2256,7 @@ Model {
       BlockType		      Gain
       Name		      "Gain"
       SID		      "33"
-      Position		      [130, 430, 160, 460]
+      Position		      [520, 135, 550, 165]
       ZOrder		      13
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
       OutDataTypeStr	      "Inherit: Inherit via internal rule"
@@ -2434,201 +2264,15 @@ Model {
     }
     Block {
       BlockType		      SubSystem
-      Name		      "Output1"
-      SID		      "122"
-      Ports		      [1]
-      Position		      [785, 52, 830, 88]
-      ZOrder		      16
-      BackgroundColor	      "green"
-      RequestExecContextInheritance off
-      System {
-	Name			"Output1"
-	Location		[457, 45, 1380, 969]
-	Open			off
-	ModelBrowserVisibility	off
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"usletter"
-	PaperUnits		"inches"
-	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	Block {
-	  BlockType		  Inport
-	  Name			  "In1"
-	  SID			  "123"
-	  Position		  [20, 140, 50, 155]
-	  ZOrder		  10
-	  BlockRotation		  270
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Demux
-	  Name			  "Demux3"
-	  SID			  "203"
-	  Ports			  [1, 4]
-	  Position		  [210, 86, 215, 124]
-	  ZOrder		  12
-	  ShowName		  off
-	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  Demux
-	  Name			  "Demux4"
-	  SID			  "204"
-	  Ports			  [1, 3]
-	  Position		  [340, 81, 345, 119]
-	  ZOrder		  -6
-	  ShowName		  off
-	  Outputs		  "3"
-	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  Mux
-	  Name			  "Mux"
-	  SID			  "205"
-	  Ports			  [3, 1]
-	  Position		  [255, 81, 260, 119]
-	  ZOrder		  -12
-	  ShowName		  off
-	  Inputs		  "3"
-	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "R2D"
-	  SID			  "206"
-	  Ports			  [1, 1]
-	  Position		  [285, 85, 315, 115]
-	  ZOrder		  -12
-	  LibraryVersion	  "1.43"
-	  SourceBlock		  "simulink_extras/Transformations/Radians\nto Degrees"
-	  SourceType		  "RadiansToDegrees"
-	  ContentPreviewEnabled	  off
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "y(t)1"
-	  SID			  "207"
-	  Ports			  [4]
-	  Position		  [400, 89, 430, 121]
-	  ZOrder		  13
-	  NamePlacement		  "alternate"
-	  Floating		  off
-	  Location		  [54, 53, 1367, 767]
-	  Open			  off
-	  NumInputPorts		  "4"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	    axes2		    "%<SignalLabel>"
-	    axes3		    "%<SignalLabel>"
-	    axes4		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.501960784313725 0.501960784313725 0.501960784313725]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[1 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  YMin			  "-1.29247e-26~-9e-10~-3.5e-08~-4.2"
-	  YMax			  "6e-10~-5.16988e-26~-6.61744e-24~-3.8"
-	  SaveName		  "ScopeData10"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Line {
-	  ZOrder		  1
-	  SrcBlock		  "In1"
-	  SrcPort		  1
-	  Points		  [0, -30]
-	  DstBlock		  "Demux3"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  2
-	  SrcBlock		  "Demux3"
-	  SrcPort		  4
-	  DstBlock		  "y(t)1"
-	  DstPort		  4
-	}
-	Line {
-	  ZOrder		  3
-	  SrcBlock		  "R2D"
-	  SrcPort		  1
-	  DstBlock		  "Demux4"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  4
-	  SrcBlock		  "Demux3"
-	  SrcPort		  1
-	  DstBlock		  "Mux"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  5
-	  SrcBlock		  "Demux3"
-	  SrcPort		  2
-	  DstBlock		  "Mux"
-	  DstPort		  2
-	}
-	Line {
-	  ZOrder		  6
-	  SrcBlock		  "Demux3"
-	  SrcPort		  3
-	  DstBlock		  "Mux"
-	  DstPort		  3
-	}
-	Line {
-	  ZOrder		  7
-	  SrcBlock		  "Mux"
-	  SrcPort		  1
-	  DstBlock		  "R2D"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  8
-	  SrcBlock		  "Demux4"
-	  SrcPort		  1
-	  DstBlock		  "y(t)1"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  9
-	  SrcBlock		  "Demux4"
-	  SrcPort		  2
-	  DstBlock		  "y(t)1"
-	  DstPort		  2
-	}
-	Line {
-	  ZOrder		  10
-	  SrcBlock		  "Demux4"
-	  SrcPort		  3
-	  DstBlock		  "y(t)1"
-	  DstPort		  3
-	}
-      }
-    }
-    Block {
-      BlockType		      SubSystem
       Name		      "Path"
       SID		      "392"
       Ports		      [0, 1]
-      Position		      [30, 25, 70, 85]
+      Position		      [50, 230, 115, 280]
       ZOrder		      -11
       RequestExecContextInheritance off
       System {
 	Name			"Path"
-	Location		[417, 70, 695, 580]
+	Location		[55, 14, 1376, 958]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -2781,14 +2425,14 @@ Model {
       BlockType		      SubSystem
       Name		      "Position Controller"
       SID		      "329"
-      Ports		      [2, 1]
-      Position		      [105, 14, 215, 176]
+      Ports		      [1, 1]
+      Position		      [150, 229, 275, 281]
       ZOrder		      159
       BackgroundColor	      "[0.596078, 0.878431, 0.921569]"
       RequestExecContextInheritance off
       System {
 	Name			"Position Controller"
-	Location		[19, 45, 1380, 997]
+	Location		[55, 14, 1376, 958]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -2807,15 +2451,6 @@ Model {
 	  SID			  "330"
 	  Position		  [15, 193, 45, 207]
 	  ZOrder		  213
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "State Input"
-	  SID			  "331"
-	  Position		  [155, 303, 185, 317]
-	  ZOrder		  211
-	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -3419,7 +3054,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  Object {
 	    $PropName		    "MaskObject"
-	    $ObjectID		    25
+	    $ObjectID		    21
 	    $ClassName		    "Simulink.Mask"
 	    Display		    "fprintf(['Kp = ' num2str(Kp) '\\n' ...\n    'Kd = ' num2str(Kd) '\\n' ...\n    'Attitude Limit (+/-"
 	    "): ' num2str(ASat*180/pi) '°']);"
@@ -3428,7 +3063,7 @@ Model {
 	      Type		      "Simulink.MaskParameter"
 	      Dimension		      3
 	      Object {
-		$ObjectID		26
+		$ObjectID		22
 		Type			"promote"
 		Array {
 		  Type			  "Cell"
@@ -3441,7 +3076,7 @@ Model {
 		Value			"0.32"
 	      }
 	      Object {
-		$ObjectID		27
+		$ObjectID		23
 		Type			"promote"
 		Array {
 		  Type			  "Cell"
@@ -3454,7 +3089,7 @@ Model {
 		Value			"0.1"
 	      }
 	      Object {
-		$ObjectID		28
+		$ObjectID		24
 		Type			"promote"
 		Array {
 		  Type			  "Cell"
@@ -3714,7 +3349,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  Object {
 	    $PropName		    "MaskObject"
-	    $ObjectID		    29
+	    $ObjectID		    25
 	    $ClassName		    "Simulink.Mask"
 	    Display		    "fprintf(['Kp = ' num2str(Kp) '\\n' ...\n    'Kd = ' num2str(Kd) '\\n' ...\n    'Attitude Limit (+/-"
 	    "): ' num2str(ASat*180/pi) '°']);"
@@ -3723,7 +3358,7 @@ Model {
 	      Type		      "Simulink.MaskParameter"
 	      Dimension		      3
 	      Object {
-		$ObjectID		30
+		$ObjectID		26
 		Type			"promote"
 		Array {
 		  Type			  "Cell"
@@ -3736,7 +3371,7 @@ Model {
 		Value			"0.32"
 	      }
 	      Object {
-		$ObjectID		31
+		$ObjectID		27
 		Type			"promote"
 		Array {
 		  Type			  "Cell"
@@ -3749,7 +3384,7 @@ Model {
 		Value			"0.10"
 	      }
 	      Object {
-		$ObjectID		32
+		$ObjectID		28
 		Type			"promote"
 		Array {
 		  Type			  "Cell"
@@ -3971,6 +3606,15 @@ Model {
 	  }
 	}
 	Block {
+	  BlockType		  From
+	  Name			  "y(t)"
+	  SID			  "463"
+	  Position		  [45, 300, 95, 320]
+	  ZOrder		  237
+	  GotoTag		  "ymis"
+	  TagVisibility		  "global"
+	}
+	Block {
 	  BlockType		  Outport
 	  Name			  "Attitude Cmd"
 	  SID			  "375"
@@ -3988,8 +3632,8 @@ Model {
 	  DstPort		  2
 	}
 	Line {
-	  ZOrder		  2
-	  SrcBlock		  "State Input"
+	  ZOrder		  21
+	  SrcBlock		  "y(t)"
 	  SrcPort		  1
 	  DstBlock		  "Bus\nSelector1"
 	  DstPort		  1
@@ -4155,8 +3799,9 @@ Model {
       Name		      "Quadcopter Dynamics"
       SID		      "236"
       Ports		      [1, 1]
-      Position		      [575, 38, 675, 102]
+      Position		      [735, 223, 835, 287]
       ZOrder		      -13
+      BackgroundColor	      "blue"
       RequestExecContextInheritance off
       System {
 	Name			"Quadcopter Dynamics"
@@ -7032,7 +6677,7 @@ Model {
       SID		      "180"
       Tag		      "STV Subsys"
       Ports		      [0, 1]
-      Position		      [40, 311, 125, 399]
+      Position		      [430, 16, 515, 104]
       ZOrder		      -20
       CopyFcn		      "sigbuilder_block('copy');"
       DeleteFcn		      "sigbuilder_block('delete');"
@@ -7051,7 +6696,7 @@ Model {
       MaskHideContents	      on
       Object {
 	$PropName		"MaskObject"
-	$ObjectID		33
+	$ObjectID		29
 	$ClassName		"Simulink.Mask"
 	Type			"Sigbuilder block"
 	Description		"Simulink:masks:SigbuilderBlock_MD"
@@ -7437,13 +7082,14 @@ Model {
       Name		      "Subsystem"
       SID		      "319"
       Ports		      [4, 4]
-      Position		      [295, 26, 425, 114]
+      Position		      [365, 211, 495, 299]
       ZOrder		      -21
+      BackgroundColor	      "red"
       ShowName		      off
       RequestExecContextInheritance off
       System {
 	Name			"Subsystem"
-	Location		[351, 101, 1079, 826]
+	Location		[55, 14, 1376, 958]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -7460,7 +7106,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "PhiRef"
 	  SID			  "323"
-	  Position		  [155, 73, 185, 87]
+	  Position		  [145, 78, 175, 92]
 	  ZOrder		  -1
 	  IconDisplay		  "Port number"
 	}
@@ -7468,7 +7114,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "ThetaRef"
 	  SID			  "325"
-	  Position		  [145, 173, 175, 187]
+	  Position		  [145, 188, 175, 202]
 	  ZOrder		  -2
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -7477,7 +7123,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "PsiRef"
 	  SID			  "327"
-	  Position		  [145, 273, 175, 287]
+	  Position		  [145, 313, 175, 327]
 	  ZOrder		  -3
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -7486,7 +7132,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "ZRef"
 	  SID			  "321"
-	  Position		  [130, 438, 160, 452]
+	  Position		  [145, 458, 175, 472]
 	  ZOrder		  -4
 	  Port			  "4"
 	  IconDisplay		  "Port number"
@@ -7495,7 +7141,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From1"
 	  SID			  "315"
-	  Position		  [55, 371, 130, 399]
+	  Position		  [65, 366, 140, 394]
 	  ZOrder		  -9
 	  GotoTag		  "ze"
 	}
@@ -7511,7 +7157,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From3"
 	  SID			  "317"
-	  Position		  [25, 121, 100, 149]
+	  Position		  [65, 151, 140, 179]
 	  ZOrder		  -9
 	  GotoTag		  "theta"
 	}
@@ -7519,7 +7165,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From4"
 	  SID			  "318"
-	  Position		  [35, 221, 110, 249]
+	  Position		  [65, 261, 140, 289]
 	  ZOrder		  -9
 	  GotoTag		  "psi"
 	}
@@ -7528,7 +7174,7 @@ Model {
 	  Name			  "PID Controller"
 	  SID			  "295"
 	  Ports			  [1, 1]
-	  Position		  [340, 392, 380, 428]
+	  Position		  [375, 447, 415, 483]
 	  ZOrder		  -6
 	  LibraryVersion	  "1.356"
 	  SourceBlock		  "simulink/Continuous/PID Controller"
@@ -7652,7 +7298,7 @@ Model {
 	  Name			  "PID Controller1"
 	  SID			  "296"
 	  Ports			  [1, 1]
-	  Position		  [375, 27, 415, 63]
+	  Position		  [380, 67, 420, 103]
 	  ZOrder		  -6
 	  LibraryVersion	  "1.356"
 	  SourceBlock		  "simulink/Continuous/PID Controller"
@@ -7776,7 +7422,7 @@ Model {
 	  Name			  "PID Controller2"
 	  SID			  "297"
 	  Ports			  [1, 1]
-	  Position		  [365, 117, 405, 153]
+	  Position		  [380, 177, 420, 213]
 	  ZOrder		  -6
 	  LibraryVersion	  "1.356"
 	  SourceBlock		  "simulink/Continuous/PID Controller"
@@ -7900,7 +7546,7 @@ Model {
 	  Name			  "PID Controller3"
 	  SID			  "298"
 	  Ports			  [1, 1]
-	  Position		  [375, 242, 415, 278]
+	  Position		  [375, 302, 415, 338]
 	  ZOrder		  -6
 	  LibraryVersion	  "1.356"
 	  SourceBlock		  "simulink/Continuous/PID Controller"
@@ -8024,7 +7670,7 @@ Model {
 	  Name			  "Sum"
 	  SID			  "299"
 	  Ports			  [2, 1]
-	  Position		  [185, 435, 205, 455]
+	  Position		  [200, 455, 220, 475]
 	  ZOrder		  -18
 	  ShowName		  off
 	  IconShape		  "round"
@@ -8038,7 +7684,7 @@ Model {
 	  Name			  "Sum1"
 	  SID			  "300"
 	  Ports			  [2, 1]
-	  Position		  [210, 70, 230, 90]
+	  Position		  [200, 75, 220, 95]
 	  ZOrder		  -18
 	  ShowName		  off
 	  IconShape		  "round"
@@ -8052,7 +7698,7 @@ Model {
 	  Name			  "Sum2"
 	  SID			  "301"
 	  Ports			  [2, 1]
-	  Position		  [200, 170, 220, 190]
+	  Position		  [200, 185, 220, 205]
 	  ZOrder		  -18
 	  ShowName		  off
 	  IconShape		  "round"
@@ -8066,7 +7712,7 @@ Model {
 	  Name			  "Sum3"
 	  SID			  "302"
 	  Ports			  [2, 1]
-	  Position		  [200, 270, 220, 290]
+	  Position		  [200, 310, 220, 330]
 	  ZOrder		  -18
 	  ShowName		  off
 	  IconShape		  "round"
@@ -8080,7 +7726,7 @@ Model {
 	  Name			  "w0  1"
 	  SID			  "303"
 	  Ports			  [1]
-	  Position		  [295, 369, 325, 401]
+	  Position		  [305, 389, 335, 421]
 	  ZOrder		  -3
 	  NamePlacement		  "alternate"
 	  ShowName		  off
@@ -8114,7 +7760,7 @@ Model {
 	  Name			  "w0  2"
 	  SID			  "304"
 	  Ports			  [1]
-	  Position		  [305, 39, 335, 71]
+	  Position		  [305, 44, 335, 76]
 	  ZOrder		  -3
 	  NamePlacement		  "alternate"
 	  ShowName		  off
@@ -8148,7 +7794,7 @@ Model {
 	  Name			  "w0  3"
 	  SID			  "305"
 	  Ports			  [1]
-	  Position		  [305, 184, 335, 216]
+	  Position		  [305, 149, 335, 181]
 	  ZOrder		  -3
 	  NamePlacement		  "alternate"
 	  ShowName		  off
@@ -8182,7 +7828,7 @@ Model {
 	  Name			  "w0  4"
 	  SID			  "306"
 	  Ports			  [1]
-	  Position		  [325, 314, 355, 346]
+	  Position		  [305, 244, 335, 276]
 	  ZOrder		  -3
 	  NamePlacement		  "alternate"
 	  ShowName		  off
@@ -8215,7 +7861,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "phiCor"
 	  SID			  "322"
-	  Position		  [440, 38, 470, 52]
+	  Position		  [460, 78, 490, 92]
 	  ZOrder		  -26
 	  IconDisplay		  "Port number"
 	}
@@ -8223,7 +7869,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "ThetaCor"
 	  SID			  "324"
-	  Position		  [430, 128, 460, 142]
+	  Position		  [460, 188, 490, 202]
 	  ZOrder		  -27
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -8232,7 +7878,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "PsiCor"
 	  SID			  "326"
-	  Position		  [440, 253, 470, 267]
+	  Position		  [460, 313, 490, 327]
 	  ZOrder		  -28
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -8241,26 +7887,25 @@ Model {
 	  BlockType		  Outport
 	  Name			  "ZCor"
 	  SID			  "320"
-	  Position		  [440, 403, 470, 417]
+	  Position		  [460, 458, 490, 472]
 	  ZOrder		  -29
 	  Port			  "4"
 	  IconDisplay		  "Port number"
 	}
 	Line {
-	  ZOrder		  1
+	  ZOrder		  32
 	  SrcBlock		  "Sum1"
 	  SrcPort		  1
-	  Points		  [0, -50; 45, 0]
+	  Points		  [55, 0]
 	  Branch {
-	    ZOrder		    2
-	    Points		    [80, 0]
-	    DstBlock		    "PID Controller1"
+	    ZOrder		    25
+	    Points		    [0, -25]
+	    DstBlock		    "w0  2"
 	    DstPort		    1
 	  }
 	  Branch {
-	    ZOrder		    3
-	    Points		    [0, 25]
-	    DstBlock		    "w0  2"
+	    ZOrder		    2
+	    DstBlock		    "PID Controller1"
 	    DstPort		    1
 	  }
 	}
@@ -8268,7 +7913,7 @@ Model {
 	  ZOrder		  4
 	  SrcBlock		  "From2"
 	  SrcPort		  1
-	  Points		  [75, 0]
+	  Points		  [65, 0]
 	  DstBlock		  "Sum1"
 	  DstPort		  1
 	}
@@ -8276,7 +7921,7 @@ Model {
 	  ZOrder		  5
 	  SrcBlock		  "From3"
 	  SrcPort		  1
-	  Points		  [105, 0]
+	  Points		  [65, 0]
 	  DstBlock		  "Sum2"
 	  DstPort		  1
 	}
@@ -8286,15 +7931,14 @@ Model {
 	  SrcPort		  1
 	  Points		  [60, 0]
 	  Branch {
-	    ZOrder		    7
-	    Points		    [0, -45]
-	    DstBlock		    "PID Controller2"
+	    ZOrder		    27
+	    Points		    [0, -30]
+	    DstBlock		    "w0  3"
 	    DstPort		    1
 	  }
 	  Branch {
-	    ZOrder		    8
-	    Points		    [0, 20]
-	    DstBlock		    "w0  3"
+	    ZOrder		    7
+	    DstBlock		    "PID Controller2"
 	    DstPort		    1
 	  }
 	}
@@ -8302,7 +7946,7 @@ Model {
 	  ZOrder		  9
 	  SrcBlock		  "From4"
 	  SrcPort		  1
-	  Points		  [95, 0]
+	  Points		  [65, 0]
 	  DstBlock		  "Sum3"
 	  DstPort		  1
 	}
@@ -8312,15 +7956,13 @@ Model {
 	  SrcPort		  1
 	  Points		  [65, 0]
 	  Branch {
-	    ZOrder		    11
-	    Points		    [0, -20]
-	    DstBlock		    "PID Controller3"
+	    ZOrder		    28
+	    DstBlock		    "w0  4"
 	    DstPort		    1
 	  }
 	  Branch {
-	    ZOrder		    12
-	    Points		    [0, 50]
-	    DstBlock		    "w0  4"
+	    ZOrder		    11
+	    DstBlock		    "PID Controller3"
 	    DstPort		    1
 	  }
 	}
@@ -8370,7 +8012,7 @@ Model {
 	  ZOrder		  19
 	  SrcBlock		  "From1"
 	  SrcPort		  1
-	  Points		  [60, 0]
+	  Points		  [65, 0]
 	  DstBlock		  "Sum"
 	  DstPort		  1
 	}
@@ -8378,15 +8020,15 @@ Model {
 	  ZOrder		  20
 	  SrcBlock		  "Sum"
 	  SrcPort		  1
-	  Points		  [0, -35; 50, 0]
+	  Points		  [66, 0]
 	  Branch {
-	    ZOrder		    21
+	    ZOrder		    30
 	    DstBlock		    "PID Controller"
 	    DstPort		    1
 	  }
 	  Branch {
 	    ZOrder		    22
-	    Points		    [0, -25]
+	    Points		    [0, -60]
 	    DstBlock		    "w0  1"
 	    DstPort		    1
 	  }
@@ -8408,7 +8050,7 @@ Model {
 	Annotation {
 	  SID			  "308"
 	  Name			  "e_phi"
-	  Position		  [320, 77, 346, 92]
+	  Position		  [320, 27, 346, 42]
 	  InternalMargins	  [0, 0, 0, 0]
 	  FixedHeight		  off
 	  FixedWidth		  off
@@ -8417,7 +8059,7 @@ Model {
 	Annotation {
 	  SID			  "309"
 	  Name			  "e_theta"
-	  Position		  [319, 224, 354, 239]
+	  Position		  [320, 134, 355, 149]
 	  InternalMargins	  [0, 0, 0, 0]
 	  FixedHeight		  off
 	  FixedWidth		  off
@@ -8426,11 +8068,505 @@ Model {
 	Annotation {
 	  SID			  "307"
 	  Name			  "E_ze"
-	  Position		  [312, 361, 336, 376]
+	  Position		  [320, 296, 344, 311]
 	  InternalMargins	  [0, 0, 0, 0]
 	  FixedHeight		  off
 	  FixedWidth		  off
 	  ZOrder		  -3
+	}
+      }
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "XandY"
+      SID		      "458"
+      Ports		      [1]
+      Position		      [935, 230, 1020, 280]
+      ZOrder		      161
+      BackgroundColor	      "green"
+      RequestExecContextInheritance off
+      System {
+	Name			"XandY"
+	Location		[55, 14, 1376, 958]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"80"
+	Block {
+	  BlockType		  Inport
+	  Name			  "In1"
+	  SID			  "459"
+	  Position		  [20, 38, 50, 52]
+	  ZOrder		  161
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "C"
+	  SID			  "169"
+	  Ports			  [1, 1]
+	  Position		  [115, 22, 185, 68]
+	  ZOrder		  -4
+	  LibraryVersion	  "1.32"
+	  ErrorFcn		  "Stateflow.Translate.translate"
+	  PermitHierarchicalResolution "ExplicitOnly"
+	  TreatAsAtomicUnit	  on
+	  RequestExecContextInheritance	off
+	  SFBlockType		  "MATLAB Function"
+	  System {
+	    Name		    "C"
+	    Location		    [193, 226, 852, 905]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    SIDHighWatermark	    "28"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "X"
+	      SID		      "169::1"
+	      Position		      [20, 101, 40, 119]
+	      ZOrder		      -1
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Demux
+	      Name		      " Demux "
+	      SID		      "169::27"
+	      Ports		      [1, 1]
+	      Position		      [270, 230, 320, 270]
+	      ZOrder		      13
+	      Outputs		      "1"
+	    }
+	    Block {
+	      BlockType		      S-Function
+	      Name		      " SFunction "
+	      SID		      "169::26"
+	      Tag		      "Stateflow S-Function PidNL 1"
+	      Ports		      [1, 2]
+	      Position		      [180, 100, 230, 160]
+	      ZOrder		      12
+	      FunctionName	      "sf_sfun"
+	      PortCounts	      "[1 2]"
+	      Port {
+		PortNumber		2
+		Name			"ymis"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      Terminator
+	      Name		      " Terminator "
+	      SID		      "169::28"
+	      Position		      [460, 241, 480, 259]
+	      ZOrder		      14
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "ymis"
+	      SID		      "169::5"
+	      Position		      [460, 101, 480, 119]
+	      ZOrder		      -5
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      ZOrder		      5
+	      SrcBlock		      "X"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "ymis"
+	      ZOrder		      6
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
+	      SrcPort		      2
+	      DstBlock		      "ymis"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      7
+	      SrcBlock		      " Demux "
+	      SrcPort		      1
+	      DstBlock		      " Terminator "
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      8
+	      SrcBlock		      " SFunction "
+	      SrcPort		      1
+	      DstBlock		      " Demux "
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "Output1"
+	  SID			  "122"
+	  Ports			  [1]
+	  Position		  [205, 27, 250, 63]
+	  ZOrder		  16
+	  BackgroundColor	  "green"
+	  RequestExecContextInheritance	off
+	  System {
+	    Name		    "Output1"
+	    Location		    [457, 45, 1380, 969]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "In1"
+	      SID		      "123"
+	      Position		      [20, 140, 50, 155]
+	      ZOrder		      10
+	      BlockRotation	      270
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Demux
+	      Name		      "Demux3"
+	      SID		      "203"
+	      Ports		      [1, 4]
+	      Position		      [210, 86, 215, 124]
+	      ZOrder		      12
+	      ShowName		      off
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Demux
+	      Name		      "Demux4"
+	      SID		      "204"
+	      Ports		      [1, 3]
+	      Position		      [340, 81, 345, 119]
+	      ZOrder		      -6
+	      ShowName		      off
+	      Outputs		      "3"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Mux
+	      Name		      "Mux"
+	      SID		      "205"
+	      Ports		      [3, 1]
+	      Position		      [255, 81, 260, 119]
+	      ZOrder		      -12
+	      ShowName		      off
+	      Inputs		      "3"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "R2D"
+	      SID		      "206"
+	      Ports		      [1, 1]
+	      Position		      [285, 85, 315, 115]
+	      ZOrder		      -12
+	      LibraryVersion	      "1.43"
+	      SourceBlock	      "simulink_extras/Transformations/Radians\nto Degrees"
+	      SourceType	      "RadiansToDegrees"
+	      ContentPreviewEnabled   off
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "y(t)1"
+	      SID		      "207"
+	      Ports		      [4]
+	      Position		      [400, 89, 430, 121]
+	      ZOrder		      13
+	      NamePlacement	      "alternate"
+	      Floating		      off
+	      Location		      [54, 53, 1367, 767]
+	      Open		      off
+	      NumInputPorts	      "4"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+		axes2			"%<SignalLabel>"
+		axes3			"%<SignalLabel>"
+		axes4			"%<SignalLabel>"
+	      }
+	      List {
+		ListType		ScopeGraphics
+		FigureColor		"[0.501960784313725 0.501960784313725 0.501960784313725]"
+		AxesColor		"[0 0 0]"
+		AxesTickColor		"[1 1 1]"
+		LineColors		"[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		LineStyles		"-|-|-|-|-|-"
+		LineWidths		"[1 0.5 0.5 0.5 0.5 0.5]"
+		MarkerStyles		"none|none|none|none|none|none"
+	      }
+	      YMin		      "-1.29247e-26~-9e-10~-3.5e-08~-4.2"
+	      YMax		      "6e-10~-5.16988e-26~-6.61744e-24~-3.8"
+	      SaveName		      "ScopeData10"
+	      DataFormat	      "StructureWithTime"
+	      LimitDataPoints	      off
+	      SampleTime	      "0"
+	    }
+	    Line {
+	      ZOrder		      1
+	      SrcBlock		      "In1"
+	      SrcPort		      1
+	      Points		      [0, -30]
+	      DstBlock		      "Demux3"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      2
+	      SrcBlock		      "Demux3"
+	      SrcPort		      4
+	      DstBlock		      "y(t)1"
+	      DstPort		      4
+	    }
+	    Line {
+	      ZOrder		      3
+	      SrcBlock		      "R2D"
+	      SrcPort		      1
+	      DstBlock		      "Demux4"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      4
+	      SrcBlock		      "Demux3"
+	      SrcPort		      1
+	      DstBlock		      "Mux"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      5
+	      SrcBlock		      "Demux3"
+	      SrcPort		      2
+	      DstBlock		      "Mux"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      6
+	      SrcBlock		      "Demux3"
+	      SrcPort		      3
+	      DstBlock		      "Mux"
+	      DstPort		      3
+	    }
+	    Line {
+	      ZOrder		      7
+	      SrcBlock		      "Mux"
+	      SrcPort		      1
+	      DstBlock		      "R2D"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      8
+	      SrcBlock		      "Demux4"
+	      SrcPort		      1
+	      DstBlock		      "y(t)1"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      9
+	      SrcBlock		      "Demux4"
+	      SrcPort		      2
+	      DstBlock		      "y(t)1"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      10
+	      SrcBlock		      "Demux4"
+	      SrcPort		      3
+	      DstBlock		      "y(t)1"
+	      DstPort		      3
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "Selector"
+	  SID			  "448"
+	  Ports			  [1, 1]
+	  Position		  [115, 109, 185, 151]
+	  ZOrder		  160
+	  RequestExecContextInheritance	off
+	  System {
+	    Name		    "Selector"
+	    Location		    [55, 14, 1376, 958]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "In1"
+	      SID		      "449"
+	      Position		      [430, 387, 460, 403]
+	      ZOrder		      1
+	      BlockMirror	      on
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      BusCreator
+	      Name		      "Bus\nCreator"
+	      SID		      "401"
+	      Ports		      [5, 1]
+	      Position		      [180, 274, 185, 516]
+	      ZOrder		      -2
+	      BlockMirror	      on
+	      NamePlacement	      "alternate"
+	      ShowName		      off
+	      Inputs		      "5"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Demux
+	      Name		      "Demux"
+	      SID		      "402"
+	      Ports		      [1, 12]
+	      Position		      [365, 280, 370, 510]
+	      ZOrder		      -6
+	      BlockMirror	      on
+	      NamePlacement	      "alternate"
+	      ShowName		      off
+	      Outputs		      "12"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "Out1"
+	      SID		      "450"
+	      Position		      [85, 388, 115, 402]
+	      ZOrder		      2
+	      BlockMirror	      on
+	      NamePlacement	      "alternate"
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      ZOrder		      32
+	      SrcBlock		      "In1"
+	      SrcPort		      1
+	      DstBlock		      "Demux"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      33
+	      SrcBlock		      "Bus\nCreator"
+	      SrcPort		      1
+	      DstBlock		      "Out1"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      18
+	      SrcBlock		      "Demux"
+	      SrcPort		      1
+	      Points		      [-80, 0; 0, 10]
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      19
+	      SrcBlock		      "Demux"
+	      SrcPort		      2
+	      Points		      [-80, 0; 0, 40]
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      20
+	      SrcBlock		      "Demux"
+	      SrcPort		      9
+	      Points		      [-80, 0; 0, -50]
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      3
+	    }
+	    Line {
+	      ZOrder		      21
+	      SrcBlock		      "Demux"
+	      SrcPort		      10
+	      Points		      [-160, 0]
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      4
+	    }
+	    Line {
+	      ZOrder		      22
+	      SrcBlock		      "Demux"
+	      SrcPort		      11
+	      Points		      [-80, 0; 0, 10]
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      5
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "ymis"
+	  SID			  "461"
+	  Position		  [205, 119, 255, 141]
+	  ZOrder		  163
+	  GotoTag		  "Refs"
+	  TagVisibility		  "global"
+	}
+	Line {
+	  ZOrder		  37
+	  SrcBlock		  "Selector"
+	  SrcPort		  1
+	  DstBlock		  "ymis"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  2
+	  SrcBlock		  "C"
+	  SrcPort		  1
+	  DstBlock		  "Output1"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  35
+	  SrcBlock		  "In1"
+	  SrcPort		  1
+	  Points		  [33, 0]
+	  Branch {
+	    ZOrder		    32
+	    Points		    [0, 85]
+	    DstBlock		    "Selector"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    4
+	    DstBlock		    "C"
+	    DstPort		    1
+	  }
 	}
       }
     }
@@ -8439,38 +8575,6 @@ Model {
       SrcBlock		      "Constant"
       SrcPort		      1
       DstBlock		      "Gain"
-      DstPort		      1
-    }
-    Line {
-      ZOrder		      2
-      SrcBlock		      "C"
-      SrcPort		      1
-      DstBlock		      "Output1"
-      DstPort		      1
-    }
-    Line {
-      ZOrder		      3
-      SrcBlock		      "Quadcopter Dynamics"
-      SrcPort		      1
-      Points		      [0, 0]
-      Branch {
-	ZOrder			4
-	DstBlock		"C"
-	DstPort			1
-      }
-      Branch {
-	ZOrder			5
-	Labels			[1, 0]
-	Points			[0, 130; -180, 0; 0, 225]
-	DstBlock		"Demux"
-	DstPort			1
-      }
-    }
-    Line {
-      ZOrder		      6
-      SrcBlock		      "Ctrl Mix"
-      SrcPort		      1
-      DstBlock		      "Quadcopter Dynamics"
       DstPort		      1
     }
     Line {
@@ -8502,17 +8606,10 @@ Model {
       DstPort		      4
     }
     Line {
-      ZOrder		      11
-      SrcBlock		      "Position Controller"
-      SrcPort		      1
-      DstBlock		      "Demux5"
-      DstPort		      1
-    }
-    Line {
       ZOrder		      12
       SrcBlock		      "Demux5"
       SrcPort		      1
-      Points		      [10, 0; 0, 5]
+      Points		      [10, 0; 0, 30]
       DstBlock		      "Subsystem"
       DstPort		      1
     }
@@ -8520,7 +8617,7 @@ Model {
       ZOrder		      13
       SrcBlock		      "Demux5"
       SrcPort		      2
-      Points		      [10, 0; 0, -15]
+      Points		      [15, 0; 0, 10]
       DstBlock		      "Subsystem"
       DstPort		      2
     }
@@ -8528,7 +8625,7 @@ Model {
       ZOrder		      14
       SrcBlock		      "Demux5"
       SrcPort		      3
-      Points		      [10, 0; 0, -35]
+      Points		      [10, 0; 0, -10]
       DstBlock		      "Subsystem"
       DstPort		      3
     }
@@ -8536,7 +8633,7 @@ Model {
       ZOrder		      15
       SrcBlock		      "Demux5"
       SrcPort		      4
-      Points		      [20, 0]
+      Points		      [21, 0; 0, -30]
       DstBlock		      "Subsystem"
       DstPort		      4
     }
@@ -8548,57 +8645,30 @@ Model {
       DstPort		      1
     }
     Line {
-      ZOrder		      17
-      SrcBlock		      "Bus\nCreator"
+      ZOrder		      35
+      SrcBlock		      "Quadcopter Dynamics"
       SrcPort		      1
-      Points		      [-50, 0; 0, -210; -105, 0; 0, -80]
-      DstBlock		      "Position Controller"
-      DstPort		      2
-    }
-    Line {
-      ZOrder		      18
-      SrcBlock		      "Demux"
-      SrcPort		      1
-      Points		      [-80, 0; 0, 10]
-      DstBlock		      "Bus\nCreator"
+      DstBlock		      "XandY"
       DstPort		      1
     }
     Line {
-      ZOrder		      19
-      SrcBlock		      "Demux"
-      SrcPort		      2
-      Points		      [-80, 0; 0, 40]
-      DstBlock		      "Bus\nCreator"
-      DstPort		      2
+      ZOrder		      36
+      SrcBlock		      "Position Controller"
+      SrcPort		      1
+      DstBlock		      "Demux5"
+      DstPort		      1
     }
     Line {
-      ZOrder		      20
-      SrcBlock		      "Demux"
-      SrcPort		      9
-      Points		      [-80, 0; 0, -50]
-      DstBlock		      "Bus\nCreator"
-      DstPort		      3
-    }
-    Line {
-      ZOrder		      21
-      SrcBlock		      "Demux"
-      SrcPort		      10
-      Points		      [-160, 0]
-      DstBlock		      "Bus\nCreator"
-      DstPort		      4
-    }
-    Line {
-      ZOrder		      22
-      SrcBlock		      "Demux"
-      SrcPort		      11
-      Points		      [-80, 0; 0, 10]
-      DstBlock		      "Bus\nCreator"
-      DstPort		      5
+      ZOrder		      37
+      SrcBlock		      "Ctrl Mix"
+      SrcPort		      1
+      DstBlock		      "Quadcopter Dynamics"
+      DstPort		      1
     }
     Annotation {
       SID		      "328"
       Name		      "Control"
-      Position		      [360, 128, 394, 143]
+      Position		      [430, 303, 464, 318]
       InternalMargins	      [0, 0, 0, 0]
       FixedHeight	      off
       FixedWidth	      off
@@ -8607,7 +8677,7 @@ Model {
     Annotation {
       SID		      "377"
       Name		      "Manca il controllo sulla posizione"
-      Position		      [152, 239, 299, 254]
+      Position		      [152, 96, 299, 111]
       InternalMargins	      [0, 0, 0, 0]
       FixedHeight	      off
       FixedWidth	      off
@@ -8806,7 +8876,7 @@ Stateflow {
   }
   chart {
     id			    2
-    name		    "C"
+    name		    "XandY/C"
     windowPosition	    [495 18.75 230 501]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1366 768 1.333333333333333]
@@ -8918,7 +8988,7 @@ Stateflow {
   }
   instance {
     id			    8
-    name		    "C"
+    name		    "XandY/C"
     machine		    1
     chart		    2
   }
