@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.106"
+    ComputedModelVersion    "1.107"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -95,11 +95,11 @@ Model {
 	  $ObjectID		  10
 	  $ClassName		  "Simulink.EditorInfo"
 	  IsActive		  [1]
-	  ViewObjType		  "SimulinkSubsys"
-	  LoadSaveID		  "438"
+	  ViewObjType		  "SimulinkTopLevel"
+	  LoadSaveID		  "0"
 	  Extents		  [1265.0, 573.0]
 	  ZoomFactor		  [1.0]
-	  Offset		  [0.0, -15.0]
+	  Offset		  [0.0, 0.0]
 	}
       }
       PropName		      "WindowsInfo"
@@ -111,9 +111,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Dec 17 01:17:51 2015"
-  RTWModifiedTimeStamp	  372215867
-  ModelVersionFormat	  "1.%<AutoIncrement:106>"
+  LastModifiedDate	  "Thu Dec 17 01:26:26 2015"
+  RTWModifiedTimeStamp	  372216379
+  ModelVersionFormat	  "1.%<AutoIncrement:107>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1112,8 +1112,8 @@ Model {
   }
   System {
     Name		    "PidNL"
-    Location		    [85, 14, 1199, 958]
-    Open		    off
+    Location		    [55, 14, 1376, 958]
+    Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -4188,10 +4188,11 @@ Model {
 	  Ports			  [1, 1]
 	  Position		  [80, 23, 165, 87]
 	  ZOrder		  -45
+	  BackgroundColor	  "green"
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "Motors"
-	    Location		    [511, 59, 1030, 636]
+	    Location		    [55, 14, 1376, 958]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -4520,7 +4521,6 @@ Model {
 	      Points		      [0, 0]
 	      Branch {
 		ZOrder			16
-		Points			[5, 0]
 		DstBlock		"Mux"
 		DstPort			1
 	      }
@@ -4549,15 +4549,15 @@ Model {
 	      ZOrder		      20
 	      SrcBlock		      "Demux5"
 	      SrcPort		      1
-	      Points		      [5, 0]
+	      Points		      [0, 0]
 	      Branch {
-		ZOrder			21
+		ZOrder			23
 		DstBlock		"Sat"
 		DstPort			1
 	      }
 	      Branch {
 		ZOrder			22
-		Points			[-5, 0; 0, -40]
+		Points			[0, -40]
 		DstBlock		"ws1"
 		DstPort			1
 	      }
@@ -6578,7 +6578,7 @@ Model {
 	      System {
 		Name			"SquareGains"
 		Location		[55, 14, 1376, 958]
-		Open			on
+		Open			off
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
 		ScreenColor		"white"
