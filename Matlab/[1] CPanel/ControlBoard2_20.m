@@ -2056,7 +2056,7 @@ delete(instrfindall)
     end 
     
     %% Serial Protocol 2.0 Bluetooth
-    % #bluetooth
+    % #bluetooth #record #plot
     function serialProtocol2()
         [mess,count] = fscanf(xbee);
         %disp('Reading incoming buffer. Dimensions:');
@@ -2203,7 +2203,7 @@ delete(instrfindall)
 
                         if filterMagn
                             % Apply noise filtering
-                            TFilt = (1 - alpha)*TFilt + alpha*rollM;
+                            TFilt = (1 - alpha)*TFilt + alpha*rollM
                             PFilt = (1 - alpha)*PFilt + alpha*pitchM;
                             YFilt = (1 - alpha)*YFilt + alpha*bearingM;
 
@@ -2235,9 +2235,9 @@ delete(instrfindall)
                     if asked
                         % Write to file
                         if filterMagn
-                            dlmwrite('angx.dat',[rollM pitchM bearingM],'-append', 'delimiter', ',');
-                        else
                             dlmwrite('angx.dat',[TFilt PFilt YFilt],'-append', 'delimiter', ',');
+                        else
+                            dlmwrite('angx.dat',[rollM pitchM bearingM],'-append', 'delimiter', ',');
                         end
                     end
                     magnReceived = true;
