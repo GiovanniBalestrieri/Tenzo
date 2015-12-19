@@ -695,7 +695,7 @@ void SerialRoutine()
         {
           Serial.print("m,");
           Serial.print(tenzoProp.getThrottle());
-          Serial.print(",z");
+          Serial.println(",z");
         }
       }
       else if (t == 'a')
@@ -706,7 +706,7 @@ void SerialRoutine()
         {
           Serial.print("m,");
           Serial.print(tenzoProp.getThrottle());
-          Serial.print(",z");
+          Serial.println(",z");
         }
       }
       else if (t == 'v')

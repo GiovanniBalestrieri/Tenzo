@@ -164,6 +164,7 @@ global timerTag;
 global gyroTag;
 global footerTag;
 global estTag; 
+global throttleTag;
 global timerSamples;
 % Version
 
@@ -718,14 +719,19 @@ delete(instrfindall)
             'Parent',hTabs(3), 'Callback',@rtSensorCallback);
     end
     
+    if (~exist('handles.throttleVal','var'))
+        handles.throttleVal = uicontrol('Style','text', 'String','throttle', ...
+            'Position', [20 120 30 20],...
+            'Parent',hTabs(3), 'FontSize',10,'FontWeight','normal');
+    end
     
-    if (~exist('handles.stop','var'))
+    if (~exist('handles.upMotors','var'))
         handles.upMotors = uicontrol('Style','pushbutton', 'String','UP', ...
             'Position', [20 80 30 30],...
             'Parent',hTabs(3), 'Callback',@upMotorsCallback);
     end
     
-    if (~exist('handles.stop','var'))
+    if (~exist('handles.downMotors','var'))
         handles.downMotors = uicontrol('Style','pushbutton', 'String','DW', ...
             'Position', [20 20 30 30],...
             'Parent',hTabs(3), 'Callback',@downMotorsCallback);
@@ -2171,8 +2177,7 @@ delete(instrfindall)
                     end
                 
                 elseif tag == gyroTag
-                    % Gyro
-                    
+                    % Gyro                    
                     [R,wXr,wYr,wZr,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
                     if gyrosco == true
                         if filterGyro
@@ -2266,7 +2271,11 @@ delete(instrfindall)
                         end
                     end
                     magnReceived = true;
-                
+                elseif tag == throttleTag
+                    % TODO
+                    [R,throttleActualValue,t] = strread(mess,'%s%f%s',1,'delimiter',',');
+                    throttleActualValue
+                    set(handles.throttleVal,'Value',throttleActualValue);
                 end
             end
             
