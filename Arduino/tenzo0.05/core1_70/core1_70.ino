@@ -691,7 +691,12 @@ void SerialRoutine()
       else if (t == 'q')
       {
         tenzoProp.setThrottle(tenzoProp.getThrottle() + 10);
-        Serial.println(tenzoProp.getThrottle());
+        if (!sakura.getProcessing())
+        {
+          Serial.print("m,");
+          Serial.print(tenzoProp.getThrottle());
+          Serial.print(",z");
+        }
       }
       else if (t == 'a')
       {
@@ -699,7 +704,9 @@ void SerialRoutine()
         
         if (!sakura.getProcessing())
         {
-          Serial.println(tenzoProp.getThrottle());
+          Serial.print("m,");
+          Serial.print(tenzoProp.getThrottle());
+          Serial.print(",z");
         }
       }
       else if (t == 'v')

@@ -774,14 +774,14 @@ delete(instrfindall)
 
     function upMotorsCallback(obj,event,h)
         disp('UP ...');
-        
-        % TODO
+        cmd = 'q';
+        sendNMess(cmd);
     end
 
     function downMotorsCallback(obj,event,h)
         disp('DOWN ...');
-        
-        % TODO
+        cmd = 'a';
+        sendNMess(cmd);
     end
     
     %% Data acquisition panel Callback
