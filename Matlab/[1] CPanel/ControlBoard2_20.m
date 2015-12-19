@@ -718,6 +718,19 @@ delete(instrfindall)
             'Parent',hTabs(3), 'Callback',@rtSensorCallback);
     end
     
+    
+    if (~exist('handles.stop','var'))
+        handles.upMotors = uicontrol('Style','pushbutton', 'String','UP', ...
+            'Position', [20 80 30 30],...
+            'Parent',hTabs(3), 'Callback',@upMotorsCallback);
+    end
+    
+    if (~exist('handles.stop','var'))
+        handles.downMotors = uicontrol('Style','pushbutton', 'String','DW', ...
+            'Position', [20 20 30 30],...
+            'Parent',hTabs(3), 'Callback',@downMotorsCallback);
+    end
+    
     %% Sensor Tab Callbacks
     
     
@@ -757,6 +770,18 @@ delete(instrfindall)
         %disp(abs(az));
         disp('[verbose] serialFlag:');
         serialFlag;
+    end
+
+    function upMotorsCallback(obj,event,h)
+        disp('UP ...');
+        
+        % TODO
+    end
+
+    function downMotorsCallback(obj,event,h)
+        disp('DOWN ...');
+        
+        % TODO
     end
     
     %% Data acquisition panel Callback
