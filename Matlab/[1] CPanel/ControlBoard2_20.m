@@ -135,6 +135,23 @@ global aggYawKi;
 global consYawKp;
 global consYawKd;
 global consYawKi;
+
+% OMEga
+
+global consRollKpW;
+global consRollKdW;
+global consRollKiW
+global consPitchKpW;
+global consPitchKdW;
+global consPitchKiW;
+global consYawKpW;
+global consYawKdW;
+global consYawKiW;
+
+
+
+% fine
+
 global rt;
 global firing;
 global recording;
@@ -165,6 +182,28 @@ global gyroTag;
 global footerTag;
 global estTag; 
 global throttleTag;
+
+% pid tag
+global yawConsTagW;
+global yawConsTag;
+global rollConsTagW;
+global rollConsTag;
+global pitchConsTagW;
+global pitchConsTag;
+global yawAggTag;
+global pitchAggTag;
+global rollAggTag;
+
+rollConsTag = 'rc';
+rollAggTag = 'ra';
+rollConsTagW = 'rcw';
+pitchConsTag = 'pc';
+pitchAggTag = 'pa';
+pitchConsTagW = 'pcw';
+yawConsTag = 'yc';
+yawAggTag = 'ya';
+yawConsTagW = 'ycw';
+
 global timerSamples;
 % Version
 
@@ -2279,7 +2318,7 @@ delete(instrfindall)
                 elseif tag == rollConsTag
                     % Pid Roll CONS
                     disp('Pid Roll Cons');
-                    [R,CRkp,CRki,CRkd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    [R,consRollKp,consRollKi,consRollKd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
                     
                     % TODO get setpoint  
 
@@ -2292,10 +2331,8 @@ delete(instrfindall)
                  elseif tag == rollaggTag
                     % Pid Roll CONS
                     disp('Pid Roll Agg');
-
-                    % TODO get pid values
-                    % TODO get setpoint  
-
+                    [R,aggRollKp,aggRollKi,aggRollKd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    
                     if strcmp(pidModeStrategy,'0')
                         set(handles.pidKpSlider,'Value',aggRollKp);
                         set(handles.pidKdSlider,'Value',aggRollKd);
@@ -2305,10 +2342,9 @@ delete(instrfindall)
                   elseif tag == pitchConsTag
                     % Pid Pitch CONS
                     disp('Pid Pitch Cons');
-
-                    % TODO get pid values
-                    % TODO get setpoint  
-
+                    
+                    [R,consPitchKp,consPitchKi,consPitchKd,setpointPitchTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    
                     if strcmp(pidModeStrategy,'0')
                         set(handles.pidKpSlider,'Value',consPitchKp);
                         set(handles.pidKdSlider,'Value',consPitchKd);
@@ -2318,10 +2354,9 @@ delete(instrfindall)
                  elseif tag == pitchaggTag
                     % Pid Pitch Agg
                     disp('Pid Pitch Agg');
-
-                    % TODO get pid values
-                    % TODO get setpoint  
-
+                    
+                    [R,aggPitchKp,aggPitchKi,aggPitchKd,setpointPitchTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    
                     if strcmp(pidModeStrategy,'0')
                         set(handles.pidKpSlider,'Value',aggPitchKp);
                         set(handles.pidKdSlider,'Value',aggPitchKd);
@@ -2331,29 +2366,64 @@ delete(instrfindall)
                   elseif tag == yawConsTag
                     % Pid yaw CONS
                     disp('Pid yaw Cons');
-
-                    % TODO get pid values
-                    % TODO get setpoint  
-
+    
+                    [R,consYawKp,consYawKi,consYawKd,setpointYawTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    
                     if strcmp(pidModeStrategy,'0')
                         set(handles.pidKpSlider,'Value',consYawKp);
                         set(handles.pidKdSlider,'Value',consYawKd);
                         set(handles.pidKiSlider,'Value',consYawKi);
                         set(handles.referencePIDVal,'String',setpointYawTemp);
                     end   
-                 elseif tag == pitchaggTag
+                 elseif tag == yawAggTag
                     % Pid Yaw Agg
                     disp('Pid Yaw Agg');
 
-                    % TODO get pid values
-                    % TODO get setpoint  
-
+                    [R,aggYawKp,aggYawKi,aggYawKd,setpointYawTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    
                     if strcmp(pidModeStrategy,'0')
                         set(handles.pidKpSlider,'Value',aggYawKp);
                         set(handles.pidKdSlider,'Value',aggYawKd);
                         set(handles.pidKiSlider,'Value',aggYawKi);
                         set(handles.referencePIDVal,'String',setpointYawTemp);
                     end 
+                elseif tag == rollConsTagW
+                    % Pid Roll CONS
+                    disp('Pid Roll W Cons');
+                    [R,consRollKpW,consRollKiW,consRollKdW,setpointRollTempW,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    
+                    % TODO get setpoint  
+
+                    if strcmp(pidModeStrategy,'0')
+                        set(handles.pidKpSlider,'Value',consRollKpW);
+                        set(handles.pidKdSlider,'Value',consRollKdW);
+                        set(handles.pidKiSlider,'Value',consRollKiW);
+                        set(handles.referencePIDVal,'String',setpointRollTempW);
+                    end
+                elseif tag == pitchConsTagW
+                    % Pid Pitch CONS
+                    disp('Pid Pitch W Cons');
+                    
+                    [R,consPitchKpW,consPitchKiW,consPitchKdW,setpointPitchTempW,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    
+                    if strcmp(pidModeStrategy,'0')
+                        set(handles.pidKpSlider,'Value',consPitchKpW);
+                        set(handles.pidKdSlider,'Value',consPitchKdW);
+                        set(handles.pidKiSlider,'Value',consPitchKiW);
+                        set(handles.referencePIDVal,'String',setpointPitchTempW);
+                    end
+                elseif tag == yawConsTagW
+                    % Pid yaw CONS
+                    disp('Pid yaw Cons');
+    
+                    [R,consYawKpW,consYawKiW,consYawKdW,setpointYawTempW,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    
+                    if strcmp(pidModeStrategy,'0')
+                        set(handles.pidKpSlider,'Value',consYawKpW);
+                        set(handles.pidKdSlider,'Value',consYawKdW);
+                        set(handles.pidKiSlider,'Value',consYawKiW);
+                        set(handles.referencePIDVal,'String',setpointYawTempW);
+                    end    
                 end
             end
             

@@ -842,65 +842,90 @@ void SerialRoutine()
       else if (t == 'F')
       {
         consKiCascRoll = consKiCascRoll + 0.05;
-        Serial.print("consKiCascRoll:  ");
-        Serial.println(consKiCascRoll);
+        if (verbosePidValuesFeedback)
+        {
+          //Serial.print("consKiCascRoll:  ");
+          //Serial.println(consKiCascRoll);
+          sendPidVal(0,0);
+        }
       }     
       else if (t == 'g')
       {
         consKdCascRoll = consKdCascRoll - 0.05;
         if (consKdCascRoll<0)
           consKdCascRoll = 0;
-        Serial.print("consKDCascRoll:  ");
-        Serial.println(consKdCascRoll);
+        if (verbosePidValuesFeedback)
+        {
+          //Serial.print("consKDCascRoll:  ");
+        //Serial.println(consKdCascRoll);
+          sendPidVal(0,0);
+        }
       }         
       else if (t == 'G')
       {
         consKdCascRoll = consKdCascRoll + 0.05;
-        Serial.print("consKDCascRoll:  ");
-        Serial.println(consKdCascRoll);
-      }
-    
+        if (verbosePidValuesFeedback)
+        {
+          ///Serial.print("consKDCascRoll:  ");
+          //Serial.println(consKdCascRoll);
+           sendPidVal(0,0); 
+        }
+      }    
       else if (t == 'h')
       {
         consKpCascRollW = consKpCascRollW - 0.05;
         if (consKpCascRollW<0)
           consKpCascRollW = 0;
-        Serial.print("consKpCascRoll W:  ");
-        Serial.println(consKpCascRollW);
+        if (verbosePidValuesFeedback)
+        {
+          //Serial.print("consKpCascRoll W:  ");
+          //Serial.println(consKpCascRollW);
+          sendPidVak(3,0);
+        } 
       }         
       else if (t == 'H')
       {
         consKpCascRollW = consKpCascRollW + 0.05;
-        Serial.print("consKpCascRoll  W:  ");
-        Serial.println(consKpCascRollW);
+        if (verbosePidValuesFeedback)
+        {
+          sendPidVak(3,0);
+        } 
       }     
       else if (t == 'j')
       {
         consKiCascRollW = consKiCascRollW - 0.05;
         if (consKiCascRollW<0)
           consKiCascRollW = 0;
-        Serial.print("consKICascRoll W:  ");
-        Serial.println(consKiCascRollW);
+        if (verbosePidValuesFeedback)
+        {
+          sendPidVak(3,0);
+        } 
       }         
       else if (t == 'J')
       {
         consKiCascRollW = consKiCascRollW + 0.05;
-        Serial.print("consKiCascRoll W :  ");
-        Serial.println(consKiCascRollW);
+        if (verbosePidValuesFeedback)
+        {
+          sendPidVak(3,0);
+        } 
       }     
       else if (t == 'k')
       {
         consKdCascRollW = consKdCascRollW - 0.05;
         if (consKdCascRollW<0)
           consKdCascRollW = 0;
-        Serial.print("consKDCascRoll W:  ");
-        Serial.println(consKdCascRollW);
+        if (verbosePidValuesFeedback)
+        {
+          sendPidVak(3,0);
+        } 
       }         
       else if (t == 'K')
       {
         consKdCascRollW = consKdCascRollW + 0.05;
-        Serial.print("consKDcascRoll W:  ");
-        Serial.println(consKdCascRollW);
+        if (verbosePidValuesFeedback)
+        {
+          sendPidVak(3,0);
+        } 
       }       
   }
   timerSec = micros()-secRoutine;
