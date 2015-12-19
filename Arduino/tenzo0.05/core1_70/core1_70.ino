@@ -90,6 +90,7 @@ int limitPidMax = 250;
  
 boolean inConsRoll = false; 
 boolean inConsPitch = false;
+boolean verbosePidValuesFeedback = true;
 // Define IO and setpoint for control
 //double SetpointRoll = 0, InputRoll, errorRoll;
 // Define the aggressive and conservative Tuning Parameters
@@ -413,7 +414,7 @@ volatile float angleYAccF;
 
 volatile float aax,aay,aaz;
 volatile float axm1,aym1,azm1;
-volatile float alphaA = 0.99, alphaW = 0.8;
+volatile float alphaA = 0.80, alphaW = 0.8;
 volatile float estXAngle = 0, estYAngle = 0, estZAngle = 0;
 volatile float kG = 0.975, kA = 0.025, kGZ=0.60, kAZ = 0.40;
 
@@ -809,22 +810,34 @@ void SerialRoutine()
         consKpCascRoll = consKpCascRoll - 0.05;
         if (consKpCascRoll<0)
           consKpCascRoll = 0;
-        Serial.print("consKpCascRoll:  ");
-        Serial.println(consKpCascRoll);
+        if (verbosePidValuesFeedback)
+        {
+          //Serial.print("consKpCascRoll:  ");
+          //Serial.println(consKpCascRoll);
+          sendPidVal(0,0);
+        }          
       }         
       else if (t == 'D')
       {
         consKpCascRoll = consKpCascRoll + 0.05;
-        Serial.print("consKpCascRoll:  ");
-        Serial.println(consKpCascRoll);
+        if (verbosePidValuesFeedback)
+        {
+          //Serial.print("consKpCascRoll:  ");
+          //Serial.println(consKpCascRoll);
+          sendPidVal(0,0);
+        }
       }     
       else if (t == 'f')
       {
         consKiCascRoll = consKiCascRoll - 0.05;
         if (consKiCascRoll<0)
           consKiCascRoll = 0;
-        Serial.print("consKICascRoll:  ");
-        Serial.println(consKiCascRoll);
+        if (verbosePidValuesFeedback)
+        {
+          //Serial.print("consKICascRoll:  ");
+          //Serial.println(consKiCascRoll);
+          sendPidVal(0,0); 
+        }
       }         
       else if (t == 'F')
       {
@@ -927,6 +940,145 @@ void SerialRoutine()
       servoTime = micros();
       servoTime = micros() - servoTime;
     }
+  }
+}
+
+// Send pid value feedback to App
+void sendPidVal(int which,int mode)
+{
+  /*           WHICH:
+   * Roll = 0
+   * Pitch = 1 
+   * Yaw = 2
+   *           MODE
+   * Cons = 0
+   * Agg = 1
+   */
+  if (which == 0)
+  {
+    if (mode == 0)
+    {
+      Serial.print("rc,");
+      Serial.print(consKpCascRoll);
+      Serial.print(",");
+      Serial.print(consKiCascRoll);
+      Serial.print(",");
+      Serial.print(consKdCascRoll);
+      Serial.print(",");
+      Serial.print(SetpointCascRoll);
+      Serial.println(",z");
+    } 
+    else if (mode = 1)
+    {
+      Serial.print("ra,");
+      Serial.print(aggKpCascRoll);
+      Serial.print(",");
+      Serial.print(aggKiCascRoll);
+      Serial.print(",");
+      Serial.print(aggKdCascRoll);
+      Serial.print(",");
+      Serial.print(SetpointCascRoll);
+      Serial.println(",z");
+    }                     
+  }
+  if (which == 1)
+  {
+    if (mode == 0)
+    {
+      Serial.print("pc,");
+      Serial.print(consKpCascPitch);
+      Serial.print(",");
+      Serial.print(consKiCascPitch);
+      Serial.print(",");
+      Serial.print(consKdCascPitch);
+      Serial.print(",");
+      Serial.print(SetpointCascPitch);
+      Serial.println(",z");
+    } 
+    else if (mode = 1)
+    {
+      Serial.print("pa,");
+      Serial.print(aggKpCascPitch);
+      Serial.print(",");
+      Serial.print(aggKiCascPitch);
+      Serial.print(",");
+      Serial.print(aggKdCascPitch);
+      Serial.print(",");
+      Serial.print(SetpointCascPitch);
+      Serial.println(",z");
+    }                     
+  }
+  if (which == 2)
+  {
+    if (mode == 0)
+    {
+      Serial.print("yc,");
+      Serial.print(consKpCascYaw);
+      Serial.print(",");
+      Serial.print(consKiCascYaw);
+      Serial.print(",");
+      Serial.print(consKdCascYaw);
+      Serial.print(",");
+      Serial.print(SetpointCascYaw);
+      Serial.println(",z");
+    } 
+    else if (mode = 1)
+    {
+      Serial.print("ya,");
+      Serial.print(aggKpCascYaw);
+      Serial.print(",");
+      Serial.print(aggKiCascYaw);
+      Serial.print(",");
+      Serial.print(aggKdCascYaw);
+      Serial.print(",");
+      Serial.print(SetpointCascYaw);
+      Serial.println(",z");
+    }                     
+  }
+  if (which == 3)
+  {
+    if (mode == 0)
+    {
+      Serial.print("rcw,");
+      Serial.print(consKpCascRollW);
+      Serial.print(",");
+      Serial.print(consKiCascRollW);
+      Serial.print(",");
+      Serial.print(consKdCascRollW);
+      Serial.print(",");
+      Serial.print(SetpointCascRoll);
+      Serial.println(",z");
+    }     
+  }
+  if (which == 4)
+  {
+    if (mode == 0)
+    {
+      Serial.print("pcw,");
+      Serial.print(consKpCascPitchW);
+      Serial.print(",");
+      Serial.print(consKiCascPitchW);
+      Serial.print(",");
+      Serial.print(consKdCascPitchW);
+      Serial.print(",");
+      Serial.print(SetpointCascPitch);
+      Serial.println(",z");
+    } 
+  }
+  if (which == 5)
+  {
+    if (mode == 0)
+    {
+      Serial.print("ycw,");
+      Serial.print(consKpCascYawW);
+      Serial.print(",");
+      Serial.print(consKiCascYawW);
+      Serial.print(",");
+      Serial.print(consKdCascYawW);
+      Serial.print(",");
+      Serial.print(SetpointCascYaw);
+      Serial.println(",z");
+    } 
   }
 }
 

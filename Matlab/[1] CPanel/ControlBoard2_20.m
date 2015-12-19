@@ -1407,14 +1407,14 @@ delete(instrfindall)
     end
 
     function pidKpSliderCallBack(src,eventData)
-       set(handles.pidKpVal,'String',get(handles.pidKpSlider,'Value')); 
-       if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
+       %set(handles.pidKpVal,'String',get(handles.pidKpSlider,'Value')); 
+       %if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
            
-       end
+       %end
     end
 
     function pidKdSliderCallBack(src,eventData)
-       set(handles.pidKdVal,'String',get(handles.pidKdSlider,'Value'));
+       %set(handles.pidKdVal,'String',get(handles.pidKdSlider,'Value'));
 %        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
 %        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',1,', ...
 %            num2str(get(handles.pidKpSlider,'Value')),',X']
@@ -1423,7 +1423,7 @@ delete(instrfindall)
     end
 
     function pidKiSliderCallBack(src,eventData)
-       set(handles.pidKiVal,'String',get(handles.pidKiSlider,'Value'));
+       %set(handles.pidKiVal,'String',get(handles.pidKiSlider,'Value'));
 %        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
 %        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',2,', ...
 %            num2str(get(handles.pidKpSlider,'Value')),',X']
@@ -2275,10 +2275,85 @@ delete(instrfindall)
                 elseif tag == throttleTag
                     % TODO
                     [R,throttleActualValue,N] = strread(mess,'%s%f%s',1,'delimiter',',');
-                    throttleActualValue
                     set(handles.throttleVal,'String',throttleActualValue);
-                else
-                    tag
+                elseif tag == rollConsTag
+                    % Pid Roll CONS
+                    disp('Pid Roll Cons');
+                    [R,CRkp,CRki,CRkd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    
+                    % TODO get setpoint  
+
+                    if strcmp(pidModeStrategy,'0')
+                        set(handles.pidKpSlider,'Value',consRollKp);
+                        set(handles.pidKdSlider,'Value',consRollKd);
+                        set(handles.pidKiSlider,'Value',consRollKi);
+                        set(handles.referencePIDVal,'String',setpointRollTemp);
+                    end   
+                 elseif tag == rollaggTag
+                    % Pid Roll CONS
+                    disp('Pid Roll Agg');
+
+                    % TODO get pid values
+                    % TODO get setpoint  
+
+                    if strcmp(pidModeStrategy,'0')
+                        set(handles.pidKpSlider,'Value',aggRollKp);
+                        set(handles.pidKdSlider,'Value',aggRollKd);
+                        set(handles.pidKiSlider,'Value',aggRollKi);
+                        set(handles.referencePIDVal,'String',setpointRollTemp);
+                    end   
+                  elseif tag == pitchConsTag
+                    % Pid Pitch CONS
+                    disp('Pid Pitch Cons');
+
+                    % TODO get pid values
+                    % TODO get setpoint  
+
+                    if strcmp(pidModeStrategy,'0')
+                        set(handles.pidKpSlider,'Value',consPitchKp);
+                        set(handles.pidKdSlider,'Value',consPitchKd);
+                        set(handles.pidKiSlider,'Value',consPitchKi);
+                        set(handles.referencePIDVal,'String',setpointPitchTemp);
+                    end   
+                 elseif tag == pitchaggTag
+                    % Pid Pitch Agg
+                    disp('Pid Pitch Agg');
+
+                    % TODO get pid values
+                    % TODO get setpoint  
+
+                    if strcmp(pidModeStrategy,'0')
+                        set(handles.pidKpSlider,'Value',aggPitchKp);
+                        set(handles.pidKdSlider,'Value',aggPitchKd);
+                        set(handles.pidKiSlider,'Value',aggPitchKi);
+                        set(handles.referencePIDVal,'String',setpointPitchTemp);
+                    end  
+                  elseif tag == yawConsTag
+                    % Pid yaw CONS
+                    disp('Pid yaw Cons');
+
+                    % TODO get pid values
+                    % TODO get setpoint  
+
+                    if strcmp(pidModeStrategy,'0')
+                        set(handles.pidKpSlider,'Value',consYawKp);
+                        set(handles.pidKdSlider,'Value',consYawKd);
+                        set(handles.pidKiSlider,'Value',consYawKi);
+                        set(handles.referencePIDVal,'String',setpointYawTemp);
+                    end   
+                 elseif tag == pitchaggTag
+                    % Pid Yaw Agg
+                    disp('Pid Yaw Agg');
+
+                    % TODO get pid values
+                    % TODO get setpoint  
+
+                    if strcmp(pidModeStrategy,'0')
+                        set(handles.pidKpSlider,'Value',aggYawKp);
+                        set(handles.pidKdSlider,'Value',aggYawKd);
+                        set(handles.pidKiSlider,'Value',aggYawKi);
+                        set(handles.referencePIDVal,'String',setpointYawTemp);
+                    end 
                 end
             end
             
