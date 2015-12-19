@@ -176,6 +176,7 @@ accTag = 'a';
 gyroTag = 'o';
 timerTag = 't';
 footerTag = 'z';
+throttleTag = 'm';
 estTag = 'e';
 % Data Acquisition vars
 
@@ -2273,9 +2274,11 @@ delete(instrfindall)
                     magnReceived = true;
                 elseif tag == throttleTag
                     % TODO
-                    [R,throttleActualValue,t] = strread(mess,'%s%f%s',1,'delimiter',',');
+                    [R,throttleActualValue,N] = strread(mess,'%s%f%s',1,'delimiter',',');
                     throttleActualValue
-                    set(handles.throttleVal,'Value',throttleActualValue);
+                    set(handles.throttleVal,'String',throttleActualValue);
+                else
+                    tag
                 end
             end
             

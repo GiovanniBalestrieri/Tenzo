@@ -331,14 +331,14 @@ const int zaxis = 2;
 
 
 // 3.3 Fully loaded Tenzo V2.2
-int xRawMin = 402;
-int xRawMax = 277;
+int xRawMin = 409;
+int xRawMax = 278;
 // 
-int yRawMin = 402;
-int yRawMax = 269;
+int yRawMin = 404;
+int yRawMax = 272;
 // 
-int zRawMin = 416;
-int zRawMax = 283;
+int zRawMin = 419;
+int zRawMax = 288;
 
 float XError,YError,ZError;
 
