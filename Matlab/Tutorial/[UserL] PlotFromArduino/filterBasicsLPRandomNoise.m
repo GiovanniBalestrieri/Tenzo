@@ -8,20 +8,21 @@ clc;
 %          Signal definition
 
 % Sampling Frequency Fs
-Fs = 500;
+Fs = 1*10^7;
 % Sinusoid frequency
-NoiseFreq = 150;
-freq = 2;
+NoiseFreq = 10^6;
+freq = 10^3;
 
-maxTime = 1;
+maxTime = 0.005;
 t = 0:1/Fs:maxTime;
 
 % Generate random values [min,max] = [xm,xM]
-xm = 0.2;
-xM = 0.5;
+xm = 0.002;
+xM = 0.005;
 amp = xm+ (xM-xm).*rand(1,1);
+amp = 0.9
 
-y = sin(2*pi*freq*t) + amp*sin(2*pi*NoiseFreq*t);
+y = 5*sin(2*pi*freq*t) + amp*sin(2*pi*NoiseFreq*t);
 
 % Plots raw data vs samples
 figure(1);
@@ -54,7 +55,7 @@ X_magsNorm = (X_mags - min(X_mags)) / ( max(X_mags) - min(X_mags) );
 %% Filter Design
 
 % Designs a second order filter using a butterworth design guidelines
-[b a] = butter(3,0.2,'low');
+[b a] = butter(2,0.03,'low');
 
 % Plot the frequency response (normalized frequency)
 figure(3)

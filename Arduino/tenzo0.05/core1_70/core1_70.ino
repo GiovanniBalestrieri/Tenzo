@@ -399,7 +399,7 @@ volatile int rawAz = 0;
 volatile int dt=0;
 
 volatile float wF[3];
-volatile float aF[3];
+volatile float aF[3] = {0,0,0};
 volatile boolean filterGyro = false;
 volatile boolean filterAcc = true;
 volatile boolean initializedSetup = false;
@@ -415,11 +415,9 @@ volatile float angleYAccF;
 
 volatile float aax,aay,aaz;
 volatile float axm1,aym1,azm1;
-volatile float alphaA = 0.80, alphaW = 0.8;
+volatile float alphaA= 0.995, alphaW = 0.8;
 volatile float estXAngle = 0, estYAngle = 0, estZAngle = 0;
 volatile float kG = 0.975, kA = 0.025, kGZ=0.60, kAZ = 0.40;
-
-
 
 void setupAcceleromter()
 {
@@ -930,7 +928,7 @@ void SerialRoutine()
       }  
       else if (t == 'w')
       {
-        alphaA = alphaA + 0.01;
+        alphaA = alphaA + 0.001;
         if (alphaA>=1)
           alphaA = 1;
         if (verboseFilterAccMatlab)
@@ -940,7 +938,7 @@ void SerialRoutine()
       }     
       else if (t == 's')
       {
-        alphaA = alphaA - 0.01;
+        alphaA = alphaA - 0.001;
         if (alphaA<=0)
           alphaA = 0;
         if (verboseFilterAccMatlab)
@@ -992,7 +990,7 @@ void SerialRoutine()
 // Send accelerometer filter value to Matlab for dynamic change
 void sendAlphaAcc()
 {
-  Serial.print("af,");
+  Serial.print("f,");
   Serial.print(alphaA);
   Serial.println(",z");
 }
