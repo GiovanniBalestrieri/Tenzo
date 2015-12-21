@@ -935,6 +935,14 @@ void SerialRoutine()
         {
           sendAlphaAcc();
         } 
+      }     
+      else if (t == 's')
+      {
+        alphaA = alphaA - 0.01;
+        if (verboseFilterAccMatlab)
+        {
+          sendAlphaAcc();
+        } 
       }       
   }
   timerSec = micros()-secRoutine;

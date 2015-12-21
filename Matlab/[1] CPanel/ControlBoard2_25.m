@@ -2466,12 +2466,10 @@ delete(instrfindall)
                     disp('Changing Filter parameter');
     
                     [R,filterParam,N] = strread(mess,'%s%f%s',1,'delimiter',',');
-                    
-                    if strcmp(pidModeStrategy,'0')
-                        set(handles.filterVal,'Value',filterParam);
-                    end 
+                    filterParam
+                    set(handles.filterVal,'Value',filterParam);
                 end
-            end
+                end5
             
         end
         
