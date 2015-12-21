@@ -91,6 +91,7 @@ int limitPidMax = 250;
 boolean inConsRoll = false; 
 boolean inConsPitch = false;
 boolean verbosePidValuesFeedback = true;
+boolean verboseFilterAccMatlab = true;
 // Define IO and setpoint for control
 //double SetpointRoll = 0, InputRoll, errorRoll;
 // Define the aggressive and conservative Tuning Parameters
@@ -926,6 +927,14 @@ void SerialRoutine()
         {
           sendPidVal(3,0);
         } 
+      }  
+      else if (t == 'w')
+      {
+        alphaA = alphaA + 0.01;
+        if (verboseFilterAccMatlab)
+        {
+          sendAlphaAcc();
+        } 
       }       
   }
   timerSec = micros()-secRoutine;
@@ -967,6 +976,8 @@ void SerialRoutine()
     }
   }
 }
+
+// Send accelerometer filter value to Matlab for dynamic change
 
 // Send pid value feedback to App
 void sendPidVal(int which,int mode)

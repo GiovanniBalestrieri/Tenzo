@@ -193,6 +193,7 @@ global pitchConsTag;
 global yawAggTag;
 global pitchAggTag;
 global rollAggTag;
+global accFilterTag;
 
 rollConsTag = 'rc';
 rollAggTag = 'ra';
@@ -203,6 +204,10 @@ pitchConsTagW = 'pcw';
 yawConsTag = 'yc';
 yawAggTag = 'ya';
 yawConsTagW = 'ycw';
+
+% Filter
+
+accFilterTag = 'af';
 
 global timerSamples;
 % Version
@@ -740,31 +745,43 @@ delete(instrfindall)
     
     guidata(handles.hFig,handles);
     
-    
+    % Start ACquisition
     if (~exist('handles.start','var'))
         handles.sensorStart = uicontrol('Style','pushbutton', 'String','Rec', ...
             'Position', [20 320 30 30],...
             'Parent',hTabs(3), 'Callback',@startSensorCallback);
     end
     
+    %Stop acquisition
     if (~exist('handles.stop','var'))
         handles.stopSensor = uicontrol('Style','pushbutton', 'String','Stp', ...
-            'Position', [20 240 30 30],...
+            'Position', [20 270 30 30],...
             'Parent',hTabs(3), 'Callback',@stopSensorCallback);
     end
     
+    %Change Filter Acc ++
     if (~exist('handles.stop','var'))
         handles.rtSens = uicontrol('Style','pushbutton', 'String','R-T', ...
             'Position', [20 160 30 30],...
             'Parent',hTabs(3), 'Callback',@rtSensorCallback);
     end
     
+    
+    %Change Filter Acc --
+    if (~exist('handles.stop','var'))
+        handles.rtSens = uicontrol('Style','pushbutton', 'String','R-T', ...
+            'Position', [20 160 30 30],...
+            'Parent',hTabs(3), 'Callback',@rtSensorCallback);
+    end
+    
+    % Increase throttle speed
     if (~exist('handles.throttleVal','var'))
         handles.throttleVal = uicontrol('Style','text', 'String','throttle', ...
             'Position', [20 120 30 20],...
             'Parent',hTabs(3), 'FontSize',10,'FontWeight','normal');
     end
     
+    % Decrease throttle speed
     if (~exist('handles.upMotors','var'))
         handles.upMotors = uicontrol('Style','pushbutton', 'String','UP', ...
             'Position', [20 80 30 30],...
@@ -2423,7 +2440,16 @@ delete(instrfindall)
                         set(handles.pidKdSlider,'Value',consYawKdW);
                         set(handles.pidKiSlider,'Value',consYawKiW);
                         set(handles.referencePIDVal,'String',setpointYawTempW);
-                    end    
+                    end 
+                 elseif tag == accFilterTag
+                    % Pid yaw CONS
+                    disp('Changing Filter parameter');
+    
+                    [R,filterParam,N] = strread(mess,'%s%f%s',1,'delimiter',',');
+                    
+                    if strcmp(pidModeStrategy,'0')
+                        set(handles.filterAccTxt,'Value',filterParam);
+                    end 
                 end
             end
             
