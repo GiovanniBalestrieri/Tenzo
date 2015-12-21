@@ -212,7 +212,7 @@ accFilterTag = 'af';
 global timerSamples;
 % Version
 
-version = 2.15;
+version = 2.25;
 
 % Serial Protocol 2 - Bluetooth
 
@@ -759,35 +759,43 @@ delete(instrfindall)
             'Parent',hTabs(3), 'Callback',@stopSensorCallback);
     end
     
+     % Show Filter value
+    if (~exist('handles.filterVal','var'))
+        handles.filterVal = uicontrol('Style','text', 'String','Fac', ...
+            'Position', [20 230 30 20],...
+            'Parent',hTabs(3), 'FontSize',10,'FontWeight','normal');
+    end
+    
     %Change Filter Acc ++
-    if (~exist('handles.stop','var'))
-        handles.rtSens = uicontrol('Style','pushbutton', 'String','R-T', ...
-            'Position', [20 160 30 30],...
-            'Parent',hTabs(3), 'Callback',@rtSensorCallback);
+    if (~exist('handles.filterAccIncrease','var'))
+        handles.filterAccIncrease = uicontrol('Style','pushbutton', 'String','FAc', ...
+            'Position', [20 190 30 30],...
+            'Parent',hTabs(3), 'Callback',@filterAccIncCallback);
     end
     
     
     %Change Filter Acc --
-    if (~exist('handles.stop','var'))
-        handles.rtSens = uicontrol('Style','pushbutton', 'String','R-T', ...
-            'Position', [20 160 30 30],...
-            'Parent',hTabs(3), 'Callback',@rtSensorCallback);
+    if (~exist('handles.filterAccDecrease','var'))
+        handles.filterAccDecrease = uicontrol('Style','pushbutton', 'String','FAd', ...
+            'Position', [20 140 30 30],...
+            'Parent',hTabs(3), 'Callback',@filterAccDecCallback);
     end
     
-    % Increase throttle speed
+    % Show throttle speed
     if (~exist('handles.throttleVal','var'))
         handles.throttleVal = uicontrol('Style','text', 'String','throttle', ...
-            'Position', [20 120 30 20],...
+            'Position', [20 100 30 20],...
             'Parent',hTabs(3), 'FontSize',10,'FontWeight','normal');
     end
     
-    % Decrease throttle speed
+    %Increase throttle speed
     if (~exist('handles.upMotors','var'))
         handles.upMotors = uicontrol('Style','pushbutton', 'String','UP', ...
-            'Position', [20 80 30 30],...
+            'Position', [20 60 30 30],...
             'Parent',hTabs(3), 'Callback',@upMotorsCallback);
     end
     
+    % Decrease throttle speed
     if (~exist('handles.downMotors','var'))
         handles.downMotors = uicontrol('Style','pushbutton', 'String','DW', ...
             'Position', [20 20 30 30],...
@@ -838,6 +846,18 @@ delete(instrfindall)
     function upMotorsCallback(obj,event,h)
         disp('UP ...');
         cmd = 'q';
+        sendNMess(cmd);
+    end
+
+    function filterAccIncCallback(obj,event,h)
+        disp('alphaA ++');
+        cmd = 'w';
+        sendNMess(cmd);
+    end
+
+    function filterAccDecCallback(obj,event,h)
+        disp('alphaA --');
+        cmd = 's';
         sendNMess(cmd);
     end
 
@@ -2448,7 +2468,7 @@ delete(instrfindall)
                     [R,filterParam,N] = strread(mess,'%s%f%s',1,'delimiter',',');
                     
                     if strcmp(pidModeStrategy,'0')
-                        set(handles.filterAccTxt,'Value',filterParam);
+                        set(handles.filterVal,'Value',filterParam);
                     end 
                 end
             end
