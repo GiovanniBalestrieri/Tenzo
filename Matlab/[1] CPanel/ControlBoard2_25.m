@@ -2927,7 +2927,7 @@ delete(instrfindall)
                                 set(handles.referencePIDVal,'String',setpointPitchTemp);
                             end
                         end                   
-                        if type == 14 
+                        if type == 14
                             % Pid Pitch AGG
                             disp('Pid Pitch Agg');
                             aggPitchKpTemp = typecast([uint8(mess(typei + 1)), uint8(mess(typei + 2)),uint8(mess(typei + 3)), uint8(mess(typei + 4))], 'int32');

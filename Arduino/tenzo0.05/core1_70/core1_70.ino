@@ -931,6 +931,8 @@ void SerialRoutine()
       else if (t == 'w')
       {
         alphaA = alphaA + 0.01;
+        if (alphaA>=1)
+          alphaA = 1;
         if (verboseFilterAccMatlab)
         {
           sendAlphaAcc();
@@ -939,6 +941,8 @@ void SerialRoutine()
       else if (t == 's')
       {
         alphaA = alphaA - 0.01;
+        if (alphaA<=0)
+          alphaA = 0;
         if (verboseFilterAccMatlab)
         {
           sendAlphaAcc();
