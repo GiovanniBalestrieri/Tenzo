@@ -978,6 +978,12 @@ void SerialRoutine()
 }
 
 // Send accelerometer filter value to Matlab for dynamic change
+void sendAlphaAcc()
+{
+  Serial.print("af,");
+  Serial.print(alphaA);
+  Serial.println(",z");
+}
 
 // Send pid value feedback to App
 void sendPidVal(int which,int mode)
