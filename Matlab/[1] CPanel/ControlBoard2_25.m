@@ -450,20 +450,22 @@ delete(instrfindall)
         val = get(hTabGroup,'SelectedTab');
         if val ~= hTabs(4)
         %disp('Tab1 selected');
-        set(handles.pidKiSlider,'Visible','off');
-        set(handles.pidKpSlider,'Visible','off');
-        set(handles.pidKdSlider,'Visible','off');
-        disp(pidStrategy);
+            set(handles.pidKiSlider,'Visible','off');
+            set(handles.pidKpSlider,'Visible','off');
+            set(handles.pidKdSlider,'Visible','off');
+            disp(pidStrategy);
         end
-        if val == hTabs(4) && get(pidRad,'Value') == 1
-        %disp('Tab1 selected');
-        set(handles.pidKiSlider,'Visible','on');
-        set(handles.pidKpSlider,'Visible','on');
-        set(handles.pidKdSlider,'Visible','on');
+        if val == hTabs(4) 
+            if get(pidRad,'Value') == 1
+                %disp('Tab1 selected');
+                set(handles.pidKiSlider,'Visible','on');
+                set(handles.pidKpSlider,'Visible','on');
+                set(handles.pidKdSlider,'Visible','on');
+            end
         end
         if val == hTabs(5)
-        disp('Usb cable required!');
-        warndlg('Usb Cable required to acquire data','Attention');
+            disp('Usb cable required!');
+            warndlg('Usb Cable required to acquire data','Attention');
         end
     end
 
@@ -2469,7 +2471,7 @@ delete(instrfindall)
                     filterParam
                     set(handles.filterVal,'Value',filterParam);
                 end
-                end5
+            end
             
         end
         
