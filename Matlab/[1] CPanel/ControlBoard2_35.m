@@ -46,6 +46,7 @@ global rAPPID;
 global rAYPID;
 global rAAPID;
 global tenzoStateID;
+global tenzoStateID2;
 global connID;
 
 global bufferSend;
@@ -223,6 +224,7 @@ pidDisableTag = 'd';
 accFilterTag = 'f';
 takeOffAckTag = 'i';
 landAckTag = 'L';
+tenzoStateID2 = 'S';
 
 % dynamic pid 
 rollConsTag = 'rc';
@@ -2176,7 +2178,7 @@ delete(instrfindall)
                 elseif tag == rollConsTag(1) && mess(2) == rollConsTag(2)
                     % Pid Roll CONS
                     disp('Pid Roll Cons');
-                    [R,consRollKp,consRollKi,consRollKd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    [R,consRollKp,consRollKi,consRollKd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
                     
                     % TODO get setpoint  
 
@@ -2189,7 +2191,7 @@ delete(instrfindall)
                  elseif tag == rollAggTag(1) && mess(2) == rollAggTag(2)
                     % Pid Roll CONS
                     disp('Pid Roll Agg');
-                    [R,aggRollKp,aggRollKi,aggRollKd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    [R,aggRollKp,aggRollKi,aggRollKd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
                     
                     if strcmp(pidModeStrategy,'0')
                         set(handles.pidKpSlider,'Value',aggRollKp);
@@ -2201,7 +2203,7 @@ delete(instrfindall)
                     % Pid Pitch CONS
                     disp('Pid Pitch Cons');
                     
-                    [R,consPitchKp,consPitchKi,consPitchKd,setpointPitchTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    [R,consPitchKp,consPitchKi,consPitchKd,setpointPitchTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
                     
                     if strcmp(pidModeStrategy,'0')
                         set(handles.pidKpSlider,'Value',consPitchKp);
@@ -2213,7 +2215,7 @@ delete(instrfindall)
                     % Pid Pitch Agg
                     disp('Pid Pitch Agg');
                     
-                    [R,aggPitchKp,aggPitchKi,aggPitchKd,setpointPitchTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    [R,aggPitchKp,aggPitchKi,aggPitchKd,setpointPitchTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
                     
                     if strcmp(pidModeStrategy,'0')
                         set(handles.pidKpSlider,'Value',aggPitchKp);
@@ -2225,7 +2227,7 @@ delete(instrfindall)
                     % Pid yaw CONS
                     disp('Pid yaw Cons');
     
-                    [R,consYawKp,consYawKi,consYawKd,setpointYawTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    [R,consYawKp,consYawKi,consYawKd,setpointYawTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
                     
                     if strcmp(pidModeStrategy,'0')
                         set(handles.pidKpSlider,'Value',consYawKp);
@@ -2237,7 +2239,7 @@ delete(instrfindall)
                     % Pid Yaw Agg
                     disp('Pid Yaw Agg');
 
-                    [R,aggYawKp,aggYawKi,aggYawKd,setpointYawTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    [R,aggYawKp,aggYawKi,aggYawKd,setpointYawTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
                     
                     if strcmp(pidModeStrategy,'0')
                         set(handles.pidKpSlider,'Value',aggYawKp);
@@ -2248,7 +2250,7 @@ delete(instrfindall)
                 elseif tag == rollConsTagW(1) && mess(2) == rollConsTagW(2)
                     % Pid Roll CONS
                     disp('Pid Roll W Cons');
-                    [R,consRollKpW,consRollKiW,consRollKdW,setpointRollTempW,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    [R,consRollKpW,consRollKiW,consRollKdW,setpointRollTempW,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
                     
                     % TODO get setpoint  
 
@@ -2262,7 +2264,7 @@ delete(instrfindall)
                     % Pid Pitch CONS
                     disp('Pid Pitch W Cons');
                     
-                    [R,consPitchKpW,consPitchKiW,consPitchKdW,setpointPitchTempW,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    [R,consPitchKpW,consPitchKiW,consPitchKdW,setpointPitchTempW,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
                     
                     if strcmp(pidModeStrategy,'0')
                         set(handles.pidKpSlider,'Value',consPitchKpW);
@@ -2273,7 +2275,7 @@ delete(instrfindall)
                 elseif tag == yawConsTagW(1) && mess(2) == yawConsTagW(2)
                     % Pid yaw CONS
                     disp('Pid yaw Cons');    
-                    [R,consYawKpW,consYawKiW,consYawKdW,setpointYawTempW,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    [R,consYawKpW,consYawKiW,consYawKdW,setpointYawTempW,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
                     
                     if strcmp(pidModeStrategy,'0')
                         set(handles.pidKpSlider,'Value',consYawKpW);
@@ -2288,11 +2290,14 @@ delete(instrfindall)
                     set(handles.filterVal,'Value',filterParam);
                     
                 elseif tag == pidToggleTag 
+                    mess(1)
                     if mess(1) == pidEnableTag
                         disp('Pid enabled');
+                        hoverAck = 1;
                         set(handles.hoverBtn,'String','iHoverPid');
                     elseif mess(1) == pidDisableTag
                         disp('Pid disabled');
+                        hoverAck = 0;
                         set(handles.hoverBtn,'String','NoPid');                            
                     end
                 elseif tag == takeOffAckTag 
@@ -2306,6 +2311,48 @@ delete(instrfindall)
                         set(handles.landBtn,'String','Landed'); 
                         set(handles.takeOffBtn,'String','Take Off');
                         takeOffAck = 0; 
+                elseif tag == tenzoStateID                   
+                    % Setting Tenzo State
+                    disp('Reading state');
+                    
+                    [R,takeOffAck,hoverAck,landAck,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    
+                    if takeOffAck == 1
+                        if speakCmd && vocalVerb>=1 
+                                %tts('Decollato',voice);
+                                tts('Tenzo is flying',voice);
+                        end
+                        set(handles.takeOffBtn,'String','Flying');
+                        set(handles.landBtn,'String','Land');
+                    else                            
+                        set(handles.takeOffBtn,'String','Take Off');
+                    end                      
+
+                    if landAck == 1    
+                        if speakCmd && vocalVerb>=1 
+                                %tts('Atterrato',voice);
+                                tts('Landed.',voice);
+                        end                       
+                        set(handles.landBtn,'String','Landed'); 
+                        set(handles.takeOffBtn,'String','Take Off');
+                        takeOffAck = 0;
+                    end
+                    if hoverAck == 1
+                        if speakCmd && vocalVerb>=2 
+                                %tts('Pid abilitato',voice);
+                                tts('PID enabled.',voice);
+                        end
+                        set(handles.hoverBtn,'String','NoPid');
+                        disp('Pid enabled');
+                    else    
+                        if speakCmd && vocalVerb>=2 
+                                %tts('pid disabilitato',voice);
+                                tts('PID disabled',voice);
+                        end                        
+                        set(handles.hoverBtn,'String','iHoverPid');
+                        disp('Unsafe hovering OR Landed');
+                    end
+                    sendStates();
                 end
             end            
         end        
