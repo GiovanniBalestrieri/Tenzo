@@ -912,9 +912,14 @@ delete(instrfindall)
         disp('Sending Request.');
         acceleration.s = s;
         timerArduino = timer('ExecutionMode','fixedRate','Period',0.1,'TimerFcn',{@storeSerial});    
-
         timerConnect = timer('ExecutionMode','fixedRate','Period',5,'TimerFcn',{@connectSerial});%,'StopFcn',{@stoppedCon});    
-        start(timerConnect);
+        try 
+            start(timerConnect);
+        catch
+            disp '******** InstrumentSubscription ERROR *********'
+            disp (exception.message);
+            disp '***********************************************'
+        end
     end
 
 
@@ -924,7 +929,13 @@ delete(instrfindall)
                 fwrite(acceleration.s,16); 
             end
             if (strcmp(get(timerArduino,'Running'),'off'))
-                start(timerArduino);    
+                try
+                    start(timerArduino);    
+                catch
+                    disp '******** InstrumentSubscription ERROR *********'
+                    disp (exception.message);
+                    disp '***********************************************'
+                end
             end
         end
     end
@@ -1661,9 +1672,16 @@ delete(instrfindall)
             magneto = false;
             accelero = false;
             gyrosco = true;
-            start(gyroTimer);
-            stop(angleTimer);
-            stop(accTimer);
+            try
+                start(gyroTimer);
+                stop(angleTimer);
+                stop(accTimer);
+            catch
+                disp '******** InstrumentSubscription ERROR *********'
+                disp (exception.message);
+                disp '***********************************************'
+            end
+                
         end
         
         % Accelerometer
@@ -1671,9 +1689,15 @@ delete(instrfindall)
             magneto = false;
             accelero = true;
             gyrosco = false;
-            stop(gyroTimer);
-            stop(angleTimer);
-            start(accTimer);                    
+            try
+                stop(gyroTimer);
+                stop(angleTimer);
+                start(accTimer);                    
+            catch
+                disp '******** InstrumentSubscription ERROR *********'
+                disp (exception.message);
+                disp '***********************************************'
+            end
         end
         
         % Magnetometer
@@ -1681,9 +1705,15 @@ delete(instrfindall)
             magneto = true;
             accelero = false;
             gyrosco = false;
-           stop(gyroTimer);
-           start(angleTimer);
-           stop(accTimer); 
+            try
+               stop(gyroTimer);
+               start(angleTimer);
+               stop(accTimer); 
+            catch
+                disp '******** InstrumentSubscription ERROR *********'
+                disp (exception.message);
+                disp '***********************************************'
+            end
         end
     end
     
@@ -1782,7 +1812,13 @@ delete(instrfindall)
 
             % Testing Wireless communication
             timerXbee = timer('ExecutionMode','FixedRate','Period',0.1,'TimerFcn',{@storeDataFromSerial});
-            start(timerXbee);  
+            try
+                start(timerXbee);  
+            catch
+                disp '******** InstrumentSubscription ERROR *********'
+                disp (exception.message);
+                disp '***********************************************'
+            end
             
             % variable tenzo defines the connection status
             tenzo = false;
