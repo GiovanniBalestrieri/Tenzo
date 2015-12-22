@@ -195,31 +195,21 @@ global yawAggTag;
 global pitchAggTag;
 global rollAggTag;
 global accFilterTag;
-
+global pidToggleTag;
+global pidEnableTag;
+global pidDisableTag;
 global stringPidToSend;
+global takeOffAckTag;
+global landAckTag;
 
 stringPidToSend = '';
-
-rollConsTag = 'rc';
-rollAggTag = 'ra';
-rollConsTagW = 'rcw';
-pitchConsTag = 'pc';
-pitchAggTag = 'pa';
-pitchConsTagW = 'pcw';
-yawConsTag = 'yc';
-yawAggTag = 'ya';
-yawConsTagW = 'ycw';
-
-% Filter
-
-accFilterTag = 'f';
 
 global timerSamples;
 % Version
 
-version = 2.25;
+version = 2.35;
 
-% Serial Protocol 2 - Bluetooth
+%% Serial Protocol 2 - Bluetooth
 
 accTag = 'a';
 gyroTag = 'o';
@@ -227,7 +217,26 @@ timerTag = 't';
 footerTag = 'z';
 throttleTag = 'm';
 estTag = 'e';
-% Data Acquisition vars
+pidToggleTag = 'c';
+pidEnableTag = 'e';
+pidDisableTag = 'd';
+accFilterTag = 'f';
+takeOffAckTag = 'i';
+landAckTag = 'L';
+
+% dynamic pid 
+rollConsTag = 'rc';
+rollAggTag = 'ra';
+rollConsTagW = 'rw';
+pitchConsTag = 'pc';
+pitchAggTag = 'pa';
+pitchConsTagW = 'pw';
+yawConsTag = 'yc';
+yawAggTag = 'ya';
+yawConsTagW = 'yw';
+
+
+%% Data Acquisition vars
 
 samplesNumMax = 1000;
 acceleration.s = 0;
@@ -637,6 +646,31 @@ delete(instrfindall)
     handles.pidKiTxt = uicontrol('Style','text','Visible','off',...
         'String','Integral: Ki','Position', [140 37 150 50],...
         'Parent', hTabs(4), 'FontSize',11);    
+    
+    function pidKpSliderCallBack(src,eventData)
+       set(handles.pidKpVal,'String',get(handles.pidKpSlider,'Value')); 
+       if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
+           
+       end
+    end
+
+    function pidKdSliderCallBack(src,eventData)
+       set(handles.pidKdVal,'String',get(handles.pidKdSlider,'Value'));
+%        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
+%        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',1,', ...
+%            num2str(get(handles.pidKpSlider,'Value')),',X']
+%        fprintf(xbee,'%s',strindToSend,'sync'); 
+%       end
+    end
+
+    function pidKiSliderCallBack(src,eventData)
+       set(handles.pidKiVal,'String',get(handles.pidKiSlider,'Value'));
+%        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
+%        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',2,', ...
+%            num2str(get(handles.pidKpSlider,'Value')),',X']
+%        fprintf(xbee,'%s',strindToSend,'sync'); 
+%        end
+    end
     
     %% Motors Ui Components
     
@@ -1070,12 +1104,13 @@ delete(instrfindall)
        %fprintf(xbee,'i');
        if tenzo == true
             if takeOffAck == 0
-                % Initialize the cmd array
-                cmd = zeros(8,4,'uint8');
-                cmd(1,1) = uint8(takeOffID);
-                %cmd(2,4) = uint8(defaultAlt);
-                bits = reshape(bitget(defaultAlt,32:-1:1),8,[]);
-                cmd(2,:) = weights2*bits;
+%                 % Initialize the cmd array
+%                 cmd = zeros(8,4,'uint8');
+%                 cmd(1,1) = uint8(takeOffID);
+%                 %cmd(2,4) = uint8(defaultAlt);
+%                 bits = reshape(bitget(defaultAlt,32:-1:1),8,[]);
+%                 cmd(2,:) = weights2*bits;
+                cmd = 'i';
                 sendMess(cmd);
                 if speakCmd && vocalVerb>=1 
                         %tts('Decollo programmato',voice);
@@ -1095,11 +1130,12 @@ delete(instrfindall)
        if tenzo == true
             if takeOffAck == 1
                 % Initialize the cmd array
-                cmd = zeros(8,4,'uint8');
-                cmd(1,1) = uint8(landID);
-                %cmd(2,4) = uint8(defaultAlt);
-                bits = reshape(bitget(landingSpeed,32:-1:1),8,[]);
-                cmd(2,:) = weights2*bits;
+%                 cmd = zeros(8,4,'uint8');
+%                 cmd(1,1) = uint8(landID);
+%                 %cmd(2,4) = uint8(defaultAlt);
+%                 bits = reshape(bitget(landingSpeed,32:-1:1),8,[]);
+%                 cmd(2,:) = weights2*bits;
+                cmd = 'r';
                 sendMess(cmd);
                 % wait for feedback from Tenzo and change state of btn
                 if speakCmd && vocalVerb>=1 
@@ -1120,11 +1156,12 @@ delete(instrfindall)
         if tenzo == true
             if takeOffAck == 1
                 % Initialize the cmd array
-                cmd = zeros(8,4,'uint8');
-                cmd(1,1) = uint8(landID);
-                %cmd(2,4) = uint8(defaultAlt);
-                bits = reshape(bitget(landingSpeed,32:-1:1),8,[]);
-                cmd(2,:) = weights2*bits;
+%                 cmd = zeros(8,4,'uint8');
+%                 cmd(1,1) = uint8(landID);
+%                 %cmd(2,4) = uint8(defaultAlt);
+%                 bits = reshape(bitget(landingSpeed,32:-1:1),8,[]);
+%                 cmd(2,:) = weights2*bits;
+                cmd = 'L';
                 sendMess(cmd);
                 % wait for feedback from Tenzo and change state of btn
                 if speakCmd && vocalVerb>=1 
@@ -1144,13 +1181,14 @@ delete(instrfindall)
     function takeOffCallback(src,eventData)
         if tenzo == true
             if takeOffAck == 0
-                % Initialize the cmd array
-                cmd = zeros(8,4,'uint8');
-                cmd(1,1) = uint8(takeOffID);
-                %cmd(2,4) = uint8(defaultAlt);
-                bits = reshape(bitget(defaultAlt,32:-1:1),8,[]);
-                cmd(2,:) = weights2*bits;
-                sendMess(cmd);
+%                 % Initialize the cmd array
+%                 cmd = zeros(8,4,'uint8');
+%                 cmd(1,1) = uint8(takeOffID);
+%                 %cmd(2,4) = uint8(defaultAlt);
+%                 bits = reshape(bitget(defaultAlt,32:-1:1),8,[]);
+%                 cmd(2,:) = weights2*bits;
+                cmd = 'i';
+                sendNMess(cmd);
                 if speakCmd && vocalVerb>=1 
                         %tts('Decollo programmato',voice);
                         tts('Starting take off protocol.',voice);
@@ -1173,27 +1211,31 @@ delete(instrfindall)
                             %tts('Abilitazione controllore pid',voice);
                             tts('Enabling pid.',voice);
                     end
-                    %warndlg('Enabling PID. Safe flight.','Report') 
+                    disp('Enabling PID'); 
+                    warndlg('Enabling PID. Safe flight.','Report') 
                     % Initialize the cmd array
-                    cmd = zeros(8,4,'uint8');
-                    cmd(1,1) = uint8(iHoverID);
-                    % Sends 1 to activate PID
-                    bits = reshape(bitget(1,32:-1:1),8,[]);
-                    cmd(2,:) = weights2*bits;
+%                     cmd = zeros(8,4,'uint8');
+%                     cmd(1,1) = uint8(iHoverID);
+%                     % Sends 1 to activate PID
+%                     bits = reshape(bitget(1,32:-1:1),8,[]);
+%                     cmd(2,:) = weights2*bits;
+                    cmd = 'p';
                     sendMess(cmd);
                     % wait for feedback from Tenzo and change state of btn
                 else
-                if speakCmd && vocalVerb>=2 
-                        %tts('Attenzione. Disabilitazione controllore pid.',voice);
-                        tts('Warning. Disabling PID.',voice);
-                end
-                   %warndlg('Desactivating PID','!! Warning !!') 
+                    if speakCmd && vocalVerb>=2 
+                            %tts('Attenzione. Disabilitazione controllore pid.',voice);
+                            tts('Warning. Disabling PID.',voice);
+                    end
+                    disp('Desactivating PID');
+                    %warndlg('Desactivating PID','!! Warning !!') 
                    % Initialize the cmd array
-                   cmd = zeros(8,4,'uint8');
-                   cmd(1,1) = uint8(iHoverID);
-                    % Sends 0 to disable PID
-                   bits = reshape(bitget(0,32:-1:1),8,[]);
-                   cmd(2,:) = weights2*bits;
+%                    cmd = zeros(8,4,'uint8');
+%                    cmd(1,1) = uint8(iHoverID);
+%                     % Sends 0 to disable PID
+%                    bits = reshape(bitget(0,32:-1:1),8,[]);
+%                    cmd(2,:) = weights2*bits;
+                   cmd = 'p';
                    sendMess(cmd); 
                    % you can start take off protocol automatically
                 end
@@ -1259,30 +1301,7 @@ delete(instrfindall)
        end 
     end
 
-    function pidKpSliderCallBack(src,eventData)
-       set(handles.pidKpVal,'String',get(handles.pidKpSlider,'Value')); 
-       if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
-           
-       end
-    end
-
-    function pidKdSliderCallBack(src,eventData)
-       set(handles.pidKdVal,'String',get(handles.pidKdSlider,'Value'));
-%        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
-%        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',1,', ...
-%            num2str(get(handles.pidKpSlider,'Value')),',X']
-%        fprintf(xbee,'%s',strindToSend,'sync'); 
-%       end
-    end
-
-    function pidKiSliderCallBack(src,eventData)
-       set(handles.pidKiVal,'String',get(handles.pidKiSlider,'Value'));
-%        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
-%        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',2,', ...
-%            num2str(get(handles.pidKpSlider,'Value')),',X']
-%        fprintf(xbee,'%s',strindToSend,'sync'); 
-%        end
-    end
+    
 
 %    function pidKpSliderCallBack(src,eventData)
 %        set(handles.pidKpVal,'String',get(handles.pidKpSlider,'Value')); 
@@ -1973,7 +1992,7 @@ delete(instrfindall)
         % Debug stuff
         %disp(count);
         %disp(mess);    
-        mess = deblank(mess);
+        mess = deblank(mess)
         
         if (tenzo == false)
             if (strcmp(mess,'K') && tenzoConnectionRequested)
@@ -2010,10 +2029,10 @@ delete(instrfindall)
             end
         elseif (tenzo)
             % Communication established
-            tag = mess(1);
             footer = mess(size(mess,2));
             % if message is correct
             if footer == footerTag
+            tag = mess(1);
                 if tag == accTag
                     %disp('Accelerations');
                     % Acc time serial
@@ -2253,8 +2272,7 @@ delete(instrfindall)
                     end
                 elseif tag == yawConsTagW(1) && mess(2) == yawConsTagW(2)
                     % Pid yaw CONS
-                    disp('Pid yaw Cons');
-    
+                    disp('Pid yaw Cons');    
                     [R,consYawKpW,consYawKiW,consYawKdW,setpointYawTempW,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
                     
                     if strcmp(pidModeStrategy,'0')
@@ -2266,10 +2284,27 @@ delete(instrfindall)
                  elseif tag == accFilterTag
                     % Pid yaw CONS
                     disp('Changing Filter parameter');
-    
                     [R,filterParam,N] = strread(mess,'%s%f%s',1,'delimiter',',');
-                    filterParam
                     set(handles.filterVal,'Value',filterParam);
+                    
+                elseif tag == pidToggleTag 
+                    if mess(1) == pidEnableTag
+                        disp('Pid enabled');
+                        set(handles.hoverBtn,'String','iHoverPid');
+                    elseif mess(1) == pidDisableTag
+                        disp('Pid disabled');
+                        set(handles.hoverBtn,'String','NoPid');                            
+                    end
+                elseif tag == takeOffAckTag 
+                        set(handles.takeOffBtn,'String','Flying');
+                        landAck = 0;
+                        disp('Changed landAck:');
+                        disp(landAck);
+                        set(handles.landBtn,'String','Land');
+                elseif tag == landAckTag                   
+                        set(handles.landBtn,'String','Landed'); 
+                        set(handles.takeOffBtn,'String','Take Off');
+                        takeOffAck = 0; 
                 end
             end            
         end        

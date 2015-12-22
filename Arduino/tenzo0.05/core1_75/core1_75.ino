@@ -40,7 +40,7 @@ int warning = 0;
  * VTOL settings
  */
  // Take Off settings
-int rampTill = 870;
+int rampTill = 1270;
 int idle = 1000;
 int motorRampDelayFast = 2;
 int motorRampDelayMedium = 5;
@@ -715,13 +715,13 @@ void SerialRoutine()
         //{
           //Serial.println(tenzoProp.getThrottle());
           Serial.println();
-          Serial.print("W - P|I|D: ");
+          Serial.print("V,W - P|I|D: ");
           Serial.print(consKpCascRollW);
           Serial.print(" | ");
           Serial.print(consKiCascRollW);
           Serial.print(" | ");
           Serial.println(consKdCascRollW);
-          Serial.print(" A - P|I|D: ");
+          Serial.print("V, A - P|I|D: ");
           Serial.print(consKpCascRoll);
           Serial.print(" | ");
           Serial.print(consKiCascRoll);
@@ -740,6 +740,7 @@ void SerialRoutine()
       else if (t == 'i')
       {
         initialize();
+        Serial.println("i,z");
       }
       else if (t == 'L')
       {
@@ -772,9 +773,9 @@ void SerialRoutine()
         enablePid = !enablePid;
         changePidState(enablePid);
         if (enablePid)
-          Serial.println("ce");
+          Serial.println("ce,z");
         else if (!enablePid)
-          Serial.println("cd");
+          Serial.println("cd,z");
       }
       else if (t == 'l')
       {
@@ -795,13 +796,13 @@ void SerialRoutine()
       else if (t == 't')
       {
         SetpointCascRoll = SetpointCascRoll - 1;
-        Serial.print("SetpointCascRoll:  ");
+        Serial.print("V,SetpointCascRoll:  ");
         Serial.println(SetpointCascRoll);
       }         
       else if (t == 'y')
       {
         SetpointCascRoll = SetpointCascRoll + 1;
-        Serial.print("SetpointCascRoll:  ");
+        Serial.print("V,SetpointCascRoll:  ");
         Serial.println(SetpointCascRoll);
       }    
       else if (t == 'd')
@@ -1157,7 +1158,7 @@ void printRoutine()
   
   if (sakura.getPrintMotorValsUs())
   {
-    Serial.print("                                                    ");
+    Serial.print("V,                                                    ");
     Serial.print(tenzoProp.getwUs1());
     Serial.print(" | ");
     Serial.print(tenzoProp.getwUs2());
@@ -1254,7 +1255,7 @@ void initializeFast()
   }
   else if (tenzoProp.getThrottle()<=rampTill)
   {
-   Serial.println("TODO: initialize FAST called unexpectedly");
+   Serial.println("V,TODO: initialize FAST called unexpectedly");
   }
   tenzoProp.setThrottle(rampTill);
 }
@@ -1265,7 +1266,7 @@ void initialize()
   if (!initialized)
   {
     if (!sakura.getProcessing())
-        Serial.println("Initializing");
+        Serial.println("V,Initializing");
     initializing = true;
     tenzoProp.resetMotors();
     delay(500);
@@ -1295,7 +1296,7 @@ void initialize()
   else
   {
     Serial.println();
-    Serial.print("First Land ortherwise Tenzo will crash");
+    Serial.print("V,First Land ortherwise Tenzo will crash");
     Serial.println();
   }
 }
@@ -1327,7 +1328,7 @@ void land()
     if(!sakura.getProcessing())
     {
       Serial.println();
-      Serial.print("Landing protocol started...");
+      Serial.print("V,Landing protocol started...");
       Serial.print(tenzoProp.getThrottle());
       Serial.print(" ");
     }
@@ -1354,11 +1355,12 @@ void land()
     landed=1;
     takeOff=0;
     hovering=0;
+    Serial.println("L,z");
   }
   else
   {
     Serial.println();
-    Serial.print("Land command received but Tenzo is not Flying   !! WARNING !!");
+    Serial.print("V,Land command received but Tenzo is not Flying   !! WARNING !!");
     Serial.println();
   }
 }
@@ -1374,7 +1376,7 @@ void protocol1()
     // if Tenzo has already been initialized for a timeToLand period, then land
     if (initialized && timerStart>=timeToLand)
     {
-      Serial.println("Time to Land my friend!");
+      Serial.println("V,Time to Land my friend!");
       land();
     }
   }
@@ -1547,7 +1549,7 @@ void removeBiasAndScale()
 void calcBias()
 {
   if (!sakura.getProcessing())
-    Serial.println("Decting Bias ...");
+    Serial.println("V,Decting Bias ...");
   int c = 500;
   for (int i = 0; i<c; i++)
   {
@@ -1692,7 +1694,7 @@ void control()
 
       if (sakura.getPrintPIDVals())
       { 
-        Serial.print("E:  ");
+        Serial.print("V,E:  ");
         Serial.print(errorPitch);
         Serial.print(" A:");
         Serial.print(OutputPitch);
@@ -1702,7 +1704,7 @@ void control()
     else
     {
       Serial.println();
-      Serial.println("SS Pitch");
+      Serial.println("V,SS Pitch");
       Serial.println();
       OutputPitch = 0;
     }
@@ -1770,7 +1772,7 @@ void controlCascade()
      
       if (sakura.getPrintPIDVals())
       {
-        Serial.print("I: ");
+        Serial.print("V,I: ");
         Serial.print(InputCascRoll);
         Serial.print(" O: ");
         Serial.print(OutputCascRoll);
@@ -1786,7 +1788,7 @@ void controlCascade()
     else
     {
       Serial.println();
-      Serial.println("Warning");
+      Serial.println("V,Warning");
       Serial.println();
       OutputRoll = 0;
     }
@@ -1853,7 +1855,7 @@ void controlCascade()
     else
     {                                     // Cambia outputPitch forse con w
       Serial.println();
-      Serial.println("Warning");
+      Serial.println("V,Warning");
       Serial.println();
       OutputPitch = 0;
     }
@@ -1879,7 +1881,7 @@ void controlW()
       
       if (sakura.getPrintPIDVals())
       { 
-        Serial.print("E:  ");
+        Serial.print("V,E:  ");
         Serial.print(errorWRoll);
         Serial.print(" A:");
         Serial.print(OutputWRoll);
