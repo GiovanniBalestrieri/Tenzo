@@ -1806,9 +1806,9 @@ void controlCascade()
     }
     else
     {
-      Serial.println();
-      Serial.println("V,Warning Roll");
-      Serial.println();
+      //Serial.println();
+      //Serial.println("V,Warning Roll");
+      //Serial.println();
       OutputRoll = 0;
     }
     if (enablePitchPid)
@@ -1873,9 +1873,9 @@ void controlCascade()
     }
     else
     {                                     // Cambia outputPitch forse con w
-      Serial.println();
-      Serial.println("V,Warning Pitch");
-      Serial.println();
+      //Serial.println();
+      //Serial.println("V,Warning Pitch");
+      //Serial.println();
       OutputPitch = 0;
     }
   }

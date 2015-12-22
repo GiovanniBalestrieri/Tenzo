@@ -1164,7 +1164,7 @@ delete(instrfindall)
 %                 bits = reshape(bitget(landingSpeed,32:-1:1),8,[]);
 %                 cmd(2,:) = weights2*bits;
                 cmd = 'L';
-                sendMess(cmd);
+                sendNMess(cmd);
                 % wait for feedback from Tenzo and change state of btn
                 if speakCmd && vocalVerb>=1 
                         %tts('atterraggio programmato',voice);
@@ -1214,15 +1214,13 @@ delete(instrfindall)
                             tts('Enabling pid.',voice);
                     end
                     disp('Enabling PID'); 
-                    warndlg('Enabling PID. Safe flight.','Report') 
+                    %warndlg('Enabling PID. Safe flight.','Report') 
                     % Initialize the cmd array
 %                     cmd = zeros(8,4,'uint8');
 %                     cmd(1,1) = uint8(iHoverID);
 %                     % Sends 1 to activate PID
 %                     bits = reshape(bitget(1,32:-1:1),8,[]);
 %                     cmd(2,:) = weights2*bits;
-                    cmd = 'p';
-                    sendNMess(cmd);
                     % wait for feedback from Tenzo and change state of btn
                 else
                     if speakCmd && vocalVerb>=2 
@@ -1237,10 +1235,11 @@ delete(instrfindall)
 %                     % Sends 0 to disable PID
 %                    bits = reshape(bitget(0,32:-1:1),8,[]);
 %                    cmd(2,:) = weights2*bits;
-                   cmd = 'p';
-                   sendNMess(cmd); 
                    % you can start take off protocol automatically
                 end
+                %  switch pid
+                cmd = 'p';
+                sendNMess(cmd); 
             else
                warndlg('Tenzo is not flying. First Take Off then try again. ','!! Warning !!') 
                % you can start take off protocol automatically
@@ -1584,16 +1583,17 @@ delete(instrfindall)
 
             %  Setting up serial communication
             % XBee expects the end of commands to be delineated by a carriage return.
+            %if (isempty(xbee))
+                xbee = serial(portUnix,'baudrate',xbeeBR,'tag',tag);
+                %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
 
-            xbee = serial(portUnix,'baudrate',xbeeBR,'tag',tag);
-            %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
-
-            % Max wait time
-            set(xbee, 'TimeOut', 10);  
-            % One message long buffer
-            set(xbee, 'InputBufferSize',inputBuffSize)
-            % Open the serial
-            fopen(xbee);    
+                % Max wait time
+                set(xbee, 'TimeOut', 10);  
+                % One message long buffer
+                set(xbee, 'InputBufferSize',inputBuffSize)
+                % Open the serial
+                fopen(xbee);    
+            %end
 
             % Testing Wireless communication
             timerXbee = timer('ExecutionMode','FixedRate','Period',0.1,'TimerFcn',{@storeDataFromSerial});
@@ -1993,10 +1993,13 @@ delete(instrfindall)
         %disp('Reading incoming buffer. Dimensions:');
         % Debug stuff
         %disp(count);
-        %disp(mess);    
-        mess = deblank(mess)
+        %disp(mess); 
+        count;
+        if count > 0
+            mess = deblank(mess);
+        end
         
-        if (tenzo == false)
+        if (tenzo == false) && ~strcmp(mess,'')
             if (strcmp(mess,'K') && tenzoConnectionRequested)
                 tenzo = true;
                 set(handles.connect,'String','Disconnect');
@@ -2029,330 +2032,332 @@ delete(instrfindall)
                 stop(timerXbee);
                 fclose(xbee);
             end
-        elseif (tenzo) && mess(1) ~= 'V'
-            % Communication established
-            footer = mess(size(mess,2));
-            % if message is correct
-            if footer == footerTag
-            tag = mess(1);
-                if tag == accTag
-                    %disp('Accelerations');
-                    % Acc time serial
-                    [R,accXr,accYr,accZr,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
-                     if accelero == true
-                        % Gets Accelerometer data
-                        axdata = [ axdata(2:end) ; double(accXr) ];
-                        aydata = [ aydata(2:end) ; double(accYr) ];
-                        azdata = [ azdata(2:end) ; double(accZr) ];  
-                     end
-                     
-                     %Plot the X magnitude
-                    h1 = subplot(3,1,1,'Parent',hTabs(3));
-                    if filterAcc
-                        plot(h1,index,axdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    else
-                        plot(h1,index,axdata,'r','LineWidth',2);
-                    end
-                    grid on;
-                    
-                    h2 = subplot(3,1,2,'Parent',hTabs(3));
-                    if filterAcc
-                        plot(h2,index,aydata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    else
-                        plot(h2,index,aydata,'b','LineWidth',2);
-                    end
-                    grid on;
-                    
-                    h3 = subplot(3,1,3,'Parent',hTabs(3));
-                    if filterAcc
-                        plot(h3,index,azdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    else
-                        plot(h3,index,azdata,'g','LineWidth',2);
-                    end
-                    grid on;
-                    accReceived = true;
-                    if asked
-                        % Write to file
-                        dlmwrite('accx.dat',[accXr accYr accZr],'-append', 'delimiter', ',');
-                    end
-                
-                elseif tag == gyroTag
-                    % Gyro                    
-                    [R,wXr,wYr,wZr,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
-                    if gyrosco == true
-                        if filterGyro
-                            % Filters gyro data and stores them
-                            gxFilt = (1 - alpha)*gxFilt + alpha*wXr;
-                            gyFilt = (1 - alpha)*gyFilt + alpha*wYr;
-                            gzFilt = (1 - alpha)*gzFilt + alpha*wZr;
-                        else
-                            gxFilt = wXr;
-                            gyFilt = wYr;
-                            gzFilt = wZr;
-                        end
-                            gxFdata = [ gxFdata(2:end) ; gxFilt ];
-                            gyFdata = [ gyFdata(2:end) ; gyFilt ];
-                            gzFdata = [ gzFdata(2:end) ; gzFilt ];                            
-                    end
+        elseif (tenzo)  && ~strcmp(mess,'')
+            if mess(1) ~= 'V'
+                % Communication established
+                footer = mess(size(mess,2));
+                % if message is correct
+                if footer == footerTag
+                tag = mess(1);
+                    if tag == accTag
+                        %disp('Accelerations');
+                        % Acc time serial
+                        [R,accXr,accYr,accZr,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                         if accelero == true
+                            % Gets Accelerometer data
+                            axdata = [ axdata(2:end) ; double(accXr) ];
+                            aydata = [ aydata(2:end) ; double(accYr) ];
+                            azdata = [ azdata(2:end) ; double(accZr) ];  
+                         end
 
-                    h1 = subplot(3,1,1,'Parent',hTabs(3));
-                    plot(h1,index,gxFdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    grid on;
-                    
-                    h2 = subplot(3,1,2,'Parent',hTabs(3));
-                    plot(h2,index,gyFdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    grid on;
-                   
-                    h3 = subplot(3,1,3,'Parent',hTabs(3));
-                    plot(h3,index,gzFdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    
-                    grid on;
-                    
-                    if asked
-                        % Save to File
-                        if filterGyro
-                            dlmwrite('gyrox.dat',[wXr wYr wZr],'-append', 'delimiter', ',');
+                         %Plot the X magnitude
+                        h1 = subplot(3,1,1,'Parent',hTabs(3));
+                        if filterAcc
+                            plot(h1,index,axdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                         else
-                            dlmwrite('gyrox.dat',[gxFilt gyFilt gzFilt],'-append', 'delimiter', ',');
+                            plot(h1,index,axdata,'r','LineWidth',2);
                         end
-                    end
-                    gyroReceived = true;
-                elseif tag == estTag
-                     % Magn
-                    %disp('Est');
-                    [R,rollM,pitchM,bearingM,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
-                    
-                    if magneto == true
-                        % Gets Magnetometer and Estimated angles
-                        if (rollM>90)
-                            rollM = rollM - 360;
+                        grid on;
+
+                        h2 = subplot(3,1,2,'Parent',hTabs(3));
+                        if filterAcc
+                            plot(h2,index,aydata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        else
+                            plot(h2,index,aydata,'b','LineWidth',2);
                         end
-                        if (pitchM > 90)
-                            pitchM =  pitchM - 360;
+                        grid on;
+
+                        h3 = subplot(3,1,3,'Parent',hTabs(3));
+                        if filterAcc
+                            plot(h3,index,azdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        else
+                            plot(h3,index,azdata,'g','LineWidth',2);
+                        end
+                        grid on;
+                        accReceived = true;
+                        if asked
+                            % Write to file
+                            dlmwrite('accx.dat',[accXr accYr accZr],'-append', 'delimiter', ',');
+                        end
+
+                    elseif tag == gyroTag
+                        % Gyro                    
+                        [R,wXr,wYr,wZr,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                        if gyrosco == true
+                            if filterGyro
+                                % Filters gyro data and stores them
+                                gxFilt = (1 - alpha)*gxFilt + alpha*wXr;
+                                gyFilt = (1 - alpha)*gyFilt + alpha*wYr;
+                                gzFilt = (1 - alpha)*gzFilt + alpha*wZr;
+                            else
+                                gxFilt = wXr;
+                                gyFilt = wYr;
+                                gzFilt = wZr;
+                            end
+                                gxFdata = [ gxFdata(2:end) ; gxFilt ];
+                                gyFdata = [ gyFdata(2:end) ; gyFilt ];
+                                gzFdata = [ gzFdata(2:end) ; gzFilt ];                            
+                        end
+
+                        h1 = subplot(3,1,1,'Parent',hTabs(3));
+                        plot(h1,index,gxFdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        grid on;
+
+                        h2 = subplot(3,1,2,'Parent',hTabs(3));
+                        plot(h2,index,gyFdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        grid on;
+
+                        h3 = subplot(3,1,3,'Parent',hTabs(3));
+                        plot(h3,index,gzFdata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+
+                        grid on;
+
+                        if asked
+                            % Save to File
+                            if filterGyro
+                                dlmwrite('gyrox.dat',[wXr wYr wZr],'-append', 'delimiter', ',');
+                            else
+                                dlmwrite('gyrox.dat',[gxFilt gyFilt gzFilt],'-append', 'delimiter', ',');
+                            end
+                        end
+                        gyroReceived = true;
+                    elseif tag == estTag
+                         % Magn
+                        %disp('Est');
+                        [R,rollM,pitchM,bearingM,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+
+                        if magneto == true
+                            % Gets Magnetometer and Estimated angles
+                            if (rollM>90)
+                                rollM = rollM - 360;
+                            end
+                            if (pitchM > 90)
+                                pitchM =  pitchM - 360;
+                            end 
+
+                            if filterMagn
+                                % Apply noise filtering
+                                TFilt = (1 - alpha)*TFilt + alpha*rollM
+                                PFilt = (1 - alpha)*PFilt + alpha*pitchM;
+                                YFilt = (1 - alpha)*YFilt + alpha*bearingM;
+
+                                Rdata = [ Rdata(2:end) ; TFilt ];
+                                Pdata = [ Pdata(2:end) ; PFilt ];
+                                Ydata = [ Ydata(2:end) ; YFilt ]; 
+                            else
+                                Rdata = [ Rdata(2:end) ; rollM ];
+                                Pdata = [ Pdata(2:end) ; pitchM ];
+                                Ydata = [ Ydata(2:end) ; bearingM]; 
+                            end
+                        else
+                            disp('Warning! Received magneto data but not requested');
+                        end
+
+                        %Plot the X magnitude
+                        h1 = subplot(3,1,1,'Parent',hTabs(3));
+                        plot(h1,index,Rdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        grid on;
+
+                        h2 = subplot(3,1,2,'Parent',hTabs(3));
+                        plot(h2,index,Pdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        grid on;
+
+                        h3 = subplot(3,1,3,'Parent',hTabs(3));
+                        grid on;
+                        plot(h3,index,Ydata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+
+                        if asked
+                            % Write to file
+                            if filterMagn
+                                dlmwrite('angx.dat',[TFilt PFilt YFilt],'-append', 'delimiter', ',');
+                            else
+                                dlmwrite('angx.dat',[rollM pitchM bearingM],'-append', 'delimiter', ',');
+                            end
+                        end
+                        magnReceived = true;
+                    elseif tag == throttleTag
+                        % TODO
+                        [R,throttleActualValue,N] = strread(mess,'%s%f%s',1,'delimiter',',');
+                        set(handles.throttleVal,'String',throttleActualValue);
+                    elseif tag == rollConsTag(1) && mess(2) == rollConsTag(2)
+                        % Pid Roll CONS
+                        disp('Pid Roll Cons');
+                        [R,consRollKp,consRollKi,consRollKd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
+
+                        % TODO get setpoint  
+
+                        if strcmp(pidModeStrategy,'0')
+                            set(handles.pidKpSlider,'Value',consRollKp);
+                            set(handles.pidKdSlider,'Value',consRollKd);
+                            set(handles.pidKiSlider,'Value',consRollKi);
+                            set(handles.referencePIDVal,'String',setpointRollTemp);
+                        end   
+                     elseif tag == rollAggTag(1) && mess(2) == rollAggTag(2)
+                        % Pid Roll CONS
+                        disp('Pid Roll Agg');
+                        [R,aggRollKp,aggRollKi,aggRollKd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
+
+                        if strcmp(pidModeStrategy,'0')
+                            set(handles.pidKpSlider,'Value',aggRollKp);
+                            set(handles.pidKdSlider,'Value',aggRollKd);
+                            set(handles.pidKiSlider,'Value',aggRollKi);
+                            set(handles.referencePIDVal,'String',setpointRollTemp);
+                        end   
+                      elseif tag == pitchConsTag(1) && mess(2) == pitchConsTag(2)
+                        % Pid Pitch CONS
+                        disp('Pid Pitch Cons');
+
+                        [R,consPitchKp,consPitchKi,consPitchKd,setpointPitchTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
+
+                        if strcmp(pidModeStrategy,'0')
+                            set(handles.pidKpSlider,'Value',consPitchKp);
+                            set(handles.pidKdSlider,'Value',consPitchKd);
+                            set(handles.pidKiSlider,'Value',consPitchKi);
+                            set(handles.referencePIDVal,'String',setpointPitchTemp);
+                        end   
+                     elseif tag == pitchAggTag(1) && mess(2) == pitchAggTag(2)
+                        % Pid Pitch Agg
+                        disp('Pid Pitch Agg');
+
+                        [R,aggPitchKp,aggPitchKi,aggPitchKd,setpointPitchTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
+
+                        if strcmp(pidModeStrategy,'0')
+                            set(handles.pidKpSlider,'Value',aggPitchKp);
+                            set(handles.pidKdSlider,'Value',aggPitchKd);
+                            set(handles.pidKiSlider,'Value',aggPitchKi);
+                            set(handles.referencePIDVal,'String',setpointPitchTemp);
+                        end  
+                      elseif tag == yawConsTag(1) && mess(2) == yawConsTag(2)
+                        % Pid yaw CONS
+                        disp('Pid yaw Cons');
+
+                        [R,consYawKp,consYawKi,consYawKd,setpointYawTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
+
+                        if strcmp(pidModeStrategy,'0')
+                            set(handles.pidKpSlider,'Value',consYawKp);
+                            set(handles.pidKdSlider,'Value',consYawKd);
+                            set(handles.pidKiSlider,'Value',consYawKi);
+                            set(handles.referencePIDVal,'String',setpointYawTemp);
+                        end   
+                     elseif tag == yawAggTag(1) && mess(2) == yawAggTag(2)
+                        % Pid Yaw Agg
+                        disp('Pid Yaw Agg');
+
+                        [R,aggYawKp,aggYawKi,aggYawKd,setpointYawTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
+
+                        if strcmp(pidModeStrategy,'0')
+                            set(handles.pidKpSlider,'Value',aggYawKp);
+                            set(handles.pidKdSlider,'Value',aggYawKd);
+                            set(handles.pidKiSlider,'Value',aggYawKi);
+                            set(handles.referencePIDVal,'String',setpointYawTemp);
                         end 
+                    elseif tag == rollConsTagW(1) && mess(2) == rollConsTagW(2)
+                        % Pid Roll CONS
+                        disp('Pid Roll W Cons');
+                        [R,consRollKpW,consRollKiW,consRollKdW,setpointRollTempW,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
 
-                        if filterMagn
-                            % Apply noise filtering
-                            TFilt = (1 - alpha)*TFilt + alpha*rollM
-                            PFilt = (1 - alpha)*PFilt + alpha*pitchM;
-                            YFilt = (1 - alpha)*YFilt + alpha*bearingM;
+                        % TODO get setpoint  
 
-                            Rdata = [ Rdata(2:end) ; TFilt ];
-                            Pdata = [ Pdata(2:end) ; PFilt ];
-                            Ydata = [ Ydata(2:end) ; YFilt ]; 
-                        else
-                            Rdata = [ Rdata(2:end) ; rollM ];
-                            Pdata = [ Pdata(2:end) ; pitchM ];
-                            Ydata = [ Ydata(2:end) ; bearingM]; 
+                        if strcmp(pidModeStrategy,'0')
+                            set(handles.pidKpSlider,'Value',consRollKpW);
+                            set(handles.pidKdSlider,'Value',consRollKdW);
+                            set(handles.pidKiSlider,'Value',consRollKiW);
+                            set(handles.referencePIDVal,'String',setpointRollTempW);
                         end
-                    else
-                        disp('Warning! Received magneto data but not requested');
-                    end
+                    elseif tag == pitchConsTagW(1) && mess(2) == pitchConsTagW(2)
+                        % Pid Pitch CONS
+                        disp('Pid Pitch W Cons');
 
-                    %Plot the X magnitude
-                    h1 = subplot(3,1,1,'Parent',hTabs(3));
-                    plot(h1,index,Rdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    grid on;
-                    
-                    h2 = subplot(3,1,2,'Parent',hTabs(3));
-                    plot(h2,index,Pdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    grid on;
-                    
-                    h3 = subplot(3,1,3,'Parent',hTabs(3));
-                    grid on;
-                    plot(h3,index,Ydata,'g','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                    
-                    if asked
-                        % Write to file
-                        if filterMagn
-                            dlmwrite('angx.dat',[TFilt PFilt YFilt],'-append', 'delimiter', ',');
-                        else
-                            dlmwrite('angx.dat',[rollM pitchM bearingM],'-append', 'delimiter', ',');
+                        [R,consPitchKpW,consPitchKiW,consPitchKdW,setpointPitchTempW,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
+
+                        if strcmp(pidModeStrategy,'0')
+                            set(handles.pidKpSlider,'Value',consPitchKpW);
+                            set(handles.pidKdSlider,'Value',consPitchKdW);
+                            set(handles.pidKiSlider,'Value',consPitchKiW);
+                            set(handles.referencePIDVal,'String',setpointPitchTempW);
                         end
-                    end
-                    magnReceived = true;
-                elseif tag == throttleTag
-                    % TODO
-                    [R,throttleActualValue,N] = strread(mess,'%s%f%s',1,'delimiter',',');
-                    set(handles.throttleVal,'String',throttleActualValue);
-                elseif tag == rollConsTag(1) && mess(2) == rollConsTag(2)
-                    % Pid Roll CONS
-                    disp('Pid Roll Cons');
-                    [R,consRollKp,consRollKi,consRollKd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
-                    
-                    % TODO get setpoint  
+                    elseif tag == yawConsTagW(1) && mess(2) == yawConsTagW(2)
+                        % Pid yaw CONS
+                        disp('Pid yaw Cons');    
+                        [R,consYawKpW,consYawKiW,consYawKdW,setpointYawTempW,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
 
-                    if strcmp(pidModeStrategy,'0')
-                        set(handles.pidKpSlider,'Value',consRollKp);
-                        set(handles.pidKdSlider,'Value',consRollKd);
-                        set(handles.pidKiSlider,'Value',consRollKi);
-                        set(handles.referencePIDVal,'String',setpointRollTemp);
-                    end   
-                 elseif tag == rollAggTag(1) && mess(2) == rollAggTag(2)
-                    % Pid Roll CONS
-                    disp('Pid Roll Agg');
-                    [R,aggRollKp,aggRollKi,aggRollKd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
-                    
-                    if strcmp(pidModeStrategy,'0')
-                        set(handles.pidKpSlider,'Value',aggRollKp);
-                        set(handles.pidKdSlider,'Value',aggRollKd);
-                        set(handles.pidKiSlider,'Value',aggRollKi);
-                        set(handles.referencePIDVal,'String',setpointRollTemp);
-                    end   
-                  elseif tag == pitchConsTag(1) && mess(2) == pitchConsTag(2)
-                    % Pid Pitch CONS
-                    disp('Pid Pitch Cons');
-                    
-                    [R,consPitchKp,consPitchKi,consPitchKd,setpointPitchTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
-                    
-                    if strcmp(pidModeStrategy,'0')
-                        set(handles.pidKpSlider,'Value',consPitchKp);
-                        set(handles.pidKdSlider,'Value',consPitchKd);
-                        set(handles.pidKiSlider,'Value',consPitchKi);
-                        set(handles.referencePIDVal,'String',setpointPitchTemp);
-                    end   
-                 elseif tag == pitchAggTag(1) && mess(2) == pitchAggTag(2)
-                    % Pid Pitch Agg
-                    disp('Pid Pitch Agg');
-                    
-                    [R,aggPitchKp,aggPitchKi,aggPitchKd,setpointPitchTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
-                    
-                    if strcmp(pidModeStrategy,'0')
-                        set(handles.pidKpSlider,'Value',aggPitchKp);
-                        set(handles.pidKdSlider,'Value',aggPitchKd);
-                        set(handles.pidKiSlider,'Value',aggPitchKi);
-                        set(handles.referencePIDVal,'String',setpointPitchTemp);
-                    end  
-                  elseif tag == yawConsTag(1) && mess(2) == yawConsTag(2)
-                    % Pid yaw CONS
-                    disp('Pid yaw Cons');
-    
-                    [R,consYawKp,consYawKi,consYawKd,setpointYawTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
-                    
-                    if strcmp(pidModeStrategy,'0')
-                        set(handles.pidKpSlider,'Value',consYawKp);
-                        set(handles.pidKdSlider,'Value',consYawKd);
-                        set(handles.pidKiSlider,'Value',consYawKi);
-                        set(handles.referencePIDVal,'String',setpointYawTemp);
-                    end   
-                 elseif tag == yawAggTag(1) && mess(2) == yawAggTag(2)
-                    % Pid Yaw Agg
-                    disp('Pid Yaw Agg');
+                        if strcmp(pidModeStrategy,'0')
+                            set(handles.pidKpSlider,'Value',consYawKpW);
+                            set(handles.pidKdSlider,'Value',consYawKdW);
+                            set(handles.pidKiSlider,'Value',consYawKiW);
+                            set(handles.referencePIDVal,'String',setpointYawTempW);
+                        end 
+                     elseif tag == accFilterTag
+                        % Pid yaw CONS
+                        disp('Changing Filter parameter');
+                        [R,filterParam,N] = strread(mess,'%s%f%s',1,'delimiter',',');
+                        set(handles.filterVal,'Value',filterParam);
 
-                    [R,aggYawKp,aggYawKi,aggYawKd,setpointYawTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
-                    
-                    if strcmp(pidModeStrategy,'0')
-                        set(handles.pidKpSlider,'Value',aggYawKp);
-                        set(handles.pidKdSlider,'Value',aggYawKd);
-                        set(handles.pidKiSlider,'Value',aggYawKi);
-                        set(handles.referencePIDVal,'String',setpointYawTemp);
-                    end 
-                elseif tag == rollConsTagW(1) && mess(2) == rollConsTagW(2)
-                    % Pid Roll CONS
-                    disp('Pid Roll W Cons');
-                    [R,consRollKpW,consRollKiW,consRollKdW,setpointRollTempW,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
-                    
-                    % TODO get setpoint  
-
-                    if strcmp(pidModeStrategy,'0')
-                        set(handles.pidKpSlider,'Value',consRollKpW);
-                        set(handles.pidKdSlider,'Value',consRollKdW);
-                        set(handles.pidKiSlider,'Value',consRollKiW);
-                        set(handles.referencePIDVal,'String',setpointRollTempW);
-                    end
-                elseif tag == pitchConsTagW(1) && mess(2) == pitchConsTagW(2)
-                    % Pid Pitch CONS
-                    disp('Pid Pitch W Cons');
-                    
-                    [R,consPitchKpW,consPitchKiW,consPitchKdW,setpointPitchTempW,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
-                    
-                    if strcmp(pidModeStrategy,'0')
-                        set(handles.pidKpSlider,'Value',consPitchKpW);
-                        set(handles.pidKdSlider,'Value',consPitchKdW);
-                        set(handles.pidKiSlider,'Value',consPitchKiW);
-                        set(handles.referencePIDVal,'String',setpointPitchTempW);
-                    end
-                elseif tag == yawConsTagW(1) && mess(2) == yawConsTagW(2)
-                    % Pid yaw CONS
-                    disp('Pid yaw Cons');    
-                    [R,consYawKpW,consYawKiW,consYawKdW,setpointYawTempW,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
-                    
-                    if strcmp(pidModeStrategy,'0')
-                        set(handles.pidKpSlider,'Value',consYawKpW);
-                        set(handles.pidKdSlider,'Value',consYawKdW);
-                        set(handles.pidKiSlider,'Value',consYawKiW);
-                        set(handles.referencePIDVal,'String',setpointYawTempW);
-                    end 
-                 elseif tag == accFilterTag
-                    % Pid yaw CONS
-                    disp('Changing Filter parameter');
-                    [R,filterParam,N] = strread(mess,'%s%f%s',1,'delimiter',',');
-                    set(handles.filterVal,'Value',filterParam);
-                    
-                elseif tag == pidToggleTag 
-                    if mess(2) == pidEnableTag
-                        disp('Pid enabled');
-                        hoverAck = 1;
-                        set(handles.hoverBtn,'String','iHoverPid');
-                    elseif mess(2) == pidDisableTag
-                        disp('Pid disabled');
-                        hoverAck = 0;
-                        set(handles.hoverBtn,'String','NoPid');                            
-                    end
-                elseif tag == takeOffAckTag 
-                        set(handles.takeOffBtn,'String','Flying');
-                        takeOffAck = 1;
-                        landAck = 0;
-                        disp('Changed landAck:');
-                        disp(landAck);
-                        set(handles.landBtn,'String','Land');
-                elseif tag == landAckTag                   
-                        set(handles.landBtn,'String','Landed'); 
-                        set(handles.takeOffBtn,'String','Take Off');
-                        takeOffAck = 0; 
-                elseif tag == tenzoStateID2                  
-                    % Setting Tenzo State
-                    disp('Reading state');
-                    
-                    [R,takeOffAck,hoverAck,landAck,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
-                    
-                    if takeOffAck == 1
-                        if speakCmd && vocalVerb>=1 
-                                %tts('Decollato',voice);
-                                tts('Tenzo is flying',voice);
+                    elseif tag == pidToggleTag 
+                        if mess(2) == pidEnableTag
+                            disp('Pid enabled');
+                            hoverAck = 1;
+                            set(handles.hoverBtn,'String','iHoverPid');
+                        elseif mess(2) == pidDisableTag
+                            disp('Pid disabled');
+                            hoverAck = 0;
+                            set(handles.hoverBtn,'String','NoPid');                            
                         end
-                        set(handles.takeOffBtn,'String','Flying');
-                        set(handles.landBtn,'String','Land');
-                    else                            
-                        set(handles.takeOffBtn,'String','Take Off');
-                        set(handles.landBtn,'String','Landed');
-                    end                      
+                    elseif tag == takeOffAckTag 
+                            set(handles.takeOffBtn,'String','Flying');
+                            takeOffAck = 1;
+                            landAck = 0;
+                            disp('Changed landAck:');
+                            disp(landAck);
+                            set(handles.landBtn,'String','Land');
+                    elseif tag == landAckTag                   
+                            set(handles.landBtn,'String','Landed'); 
+                            set(handles.takeOffBtn,'String','Take Off');
+                            takeOffAck = 0; 
+                    elseif tag == tenzoStateID2                  
+                        % Setting Tenzo State
+                        disp('Reading state');
 
-                    if landAck == 1    
-                        if speakCmd && vocalVerb>=1 
-                                %tts('Atterrato',voice);
-                                tts('Landed.',voice);
-                        end                       
-                        set(handles.landBtn,'String','Landed'); 
-                        set(handles.takeOffBtn,'String','Take Off');
-                        takeOffAck = 0;
-                    end
-                    if hoverAck == 1
-                        if speakCmd && vocalVerb>=2 
-                                %tts('Pid abilitato',voice);
-                                tts('PID enabled.',voice);
+                        [R,takeOffAck,hoverAck,landAck,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+
+                        if takeOffAck == 1
+                            if speakCmd && vocalVerb>=1 
+                                    %tts('Decollato',voice);
+                                    tts('Tenzo is flying',voice);
+                            end
+                            set(handles.takeOffBtn,'String','Flying');
+                            set(handles.landBtn,'String','Land');
+                        else                            
+                            set(handles.takeOffBtn,'String','Take Off');
+                            set(handles.landBtn,'String','Landed');
+                        end                      
+
+                        if landAck == 1    
+                            if speakCmd && vocalVerb>=1 
+                                    %tts('Atterrato',voice);
+                                    tts('Landed.',voice);
+                            end                       
+                            set(handles.landBtn,'String','Landed'); 
+                            set(handles.takeOffBtn,'String','Take Off');
+                            takeOffAck = 0;
                         end
-                        set(handles.hoverBtn,'String','NoPid');
-                        disp('Pid enabled');
-                    else    
-                        if speakCmd && vocalVerb>=2 
-                                %tts('pid disabilitato',voice);
-                                tts('PID disabled',voice);
-                        end                        
-                        set(handles.hoverBtn,'String','iHoverPid');
-                        disp('Landed');
+                        if hoverAck == 1
+                            if speakCmd && vocalVerb>=2 
+                                    %tts('Pid abilitato',voice);
+                                    tts('PID enabled.',voice);
+                            end
+                            set(handles.hoverBtn,'String','Stop Pid');
+                            disp('Pid enabled');
+                        else    
+                            if speakCmd && vocalVerb>=2 
+                                    %tts('pid disabilitato',voice);
+                                    tts('PID disabled',voice);
+                            end                        
+                            set(handles.hoverBtn,'String','iHoverPid');
+                            disp('Pid Disabled');
+                        end
+                        %sendStates();
                     end
-                    %sendStates();
                 end
             end            
         end        
