@@ -1994,7 +1994,7 @@ delete(instrfindall)
         % Debug stuff
         %disp(count);
         %disp(mess);    
-        mess = deblank(mess)
+        mess = deblank(mess);
         
         if (tenzo == false)
             if (strcmp(mess,'K') && tenzoConnectionRequested)
@@ -2029,9 +2029,10 @@ delete(instrfindall)
                 stop(timerXbee);
                 fclose(xbee);
             end
-        elseif (tenzo)
+        elseif (tenzo) && mess(1) ~= 'V'
             % Communication established
-            footer = mess(size(mess,2));size(mess,2)
+            mess
+            footer = mess(size(mess,2));
             % if message is correct
             if footer == footerTag
             tag = mess(1);
@@ -2311,7 +2312,7 @@ delete(instrfindall)
                         set(handles.landBtn,'String','Landed'); 
                         set(handles.takeOffBtn,'String','Take Off');
                         takeOffAck = 0; 
-                elseif tag == tenzoStateID                   
+                elseif tag == tenzoStateID2                  
                     % Setting Tenzo State
                     disp('Reading state');
                     
@@ -2350,7 +2351,7 @@ delete(instrfindall)
                                 tts('PID disabled',voice);
                         end                        
                         set(handles.hoverBtn,'String','iHoverPid');
-                        disp('Unsafe hovering OR Landed');
+                        disp('Landed');
                     end
                     %sendStates();
                 end

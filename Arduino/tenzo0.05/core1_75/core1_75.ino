@@ -747,6 +747,7 @@ void SerialRoutine()
       else if (t == 'L')
       {
         land();
+        sendStatesRemote = true;
       }
       else if (t == 'm')
       {
@@ -778,6 +779,7 @@ void SerialRoutine()
           Serial.println("ce,z");
         else if (!enablePid)
           Serial.println("cd,z");
+        sendStatesRemote = true;
       }
       else if (t == 'l')
       {
@@ -1159,7 +1161,7 @@ void printRoutine()
 {  
   if (sakura.getPrintMotorValsUs())
   {
-    Serial.print("V,                                                    ");
+    Serial.print("V,  ");
     Serial.print(tenzoProp.getwUs1());
     Serial.print(" | ");
     Serial.print(tenzoProp.getwUs2());
@@ -1303,8 +1305,7 @@ void initialize()
     else
     {
       changePidState(false);
-    }
-    
+    }    
     checkpoint = millis();
     initialized = true;    
     initializing = false;
@@ -1371,7 +1372,6 @@ void land()
     landed=1;
     takeOff=0;
     hovering=0;
-    Serial.println("L,z");
   }
   else
   {
