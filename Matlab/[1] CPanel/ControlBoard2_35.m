@@ -591,6 +591,15 @@ delete(instrfindall)
         'Position', [135 325 80 40],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',11,'FontWeight','normal');
     
+    
+    upRefBtn = uicontrol('Style','pushbutton', 'String','>', ...
+        'Position', [285 345 30 30],'Visible','off', ...
+        'Parent',hTabs(4), 'Callback',@upRefCallback);
+    
+    downRefBtn = uicontrol('Style','pushbutton', 'String','<', ...
+        'Position', [285 310 30 30],'Visible','off', ...
+        'Parent',hTabs(4), 'Callback',@downRefCallback);
+    
     sendPidValsBtn = uicontrol('Style','pushbutton', 'String','Send', ...
         'Position', [140 290 70 30],'Visible','off', ...
         'Parent',hTabs(4), 'Callback',@sendPidCallback);
@@ -652,7 +661,8 @@ delete(instrfindall)
     function pidKpSliderCallBack(src,eventData)
        set(handles.pidKpVal,'String',get(handles.pidKpSlider,'Value')); 
        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
-           
+           strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',0,', ...
+           num2str(get(handles.pidKpSlider,'Value')),',X']
        end
     end
 
@@ -1378,6 +1388,8 @@ delete(instrfindall)
             set(referencePIDTxt,'Visible','on');
             set(sendPidValsBtn,'Visible','on'); 
             set(readPidValsBtn,'Visible','on'); 
+            set(upRefBtn,'Visible','on'); 
+            set(downRefBtn,'Visible','on'); 
             set(pidModePopup,'Visible','on');
             set(framePidKpVal,'Visible','on');
             set(handles.pidKpVal,'Visible','on');
@@ -1398,6 +1410,8 @@ delete(instrfindall)
             set(handles.referencePIDVal,'Visible','off');
             set(sendPidValsBtn,'Visible','off');
             set(readPidValsBtn,'Visible','off');
+            set(upRefBtn,'Visible','off'); 
+            set(downRefBtn,'Visible','off'); 
             set(welcomeControl,'Visible','off');
             set(workInProgress,'Visible','off'); 
             set(pidModePopup,'Visible','off');
