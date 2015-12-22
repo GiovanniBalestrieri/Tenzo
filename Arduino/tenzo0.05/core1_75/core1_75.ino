@@ -1307,7 +1307,8 @@ void initialize()
     checkpoint = millis();
     initialized = true;    
     initializing = false;
-    hovering = false;
+    hovering = 0;
+    landed = 0;
   }
   else
   {
@@ -1330,7 +1331,7 @@ void resetMotorsPidOff()
   if (enablePid)
   {
     // Change only if PID is enabled 
-    // Tenzo has landed, no need of controls
+    // Tenzo has landed, no need to control
     changePidState(false);
   }
 } 
@@ -1806,7 +1807,7 @@ void controlCascade()
     else
     {
       Serial.println();
-      Serial.println("V,Warning");
+      Serial.println("V,Warning Roll");
       Serial.println();
       OutputRoll = 0;
     }
@@ -1873,7 +1874,7 @@ void controlCascade()
     else
     {                                     // Cambia outputPitch forse con w
       Serial.println();
-      Serial.println("V,Warning");
+      Serial.println("V,Warning Pitch");
       Serial.println();
       OutputPitch = 0;
     }
@@ -2013,7 +2014,7 @@ void changePidState(boolean cond)
     wyawPid.SetOutputLimits(-limitPidMax, limitPidMax);
 
     enablePid = true;
-    hovering = true;
+    hovering = 1;
   }
   else
   { 
@@ -2049,6 +2050,6 @@ void changePidState(boolean cond)
     OutputAltitude = 0;
     
     enablePid = false;
-    hovering = false;
+    hovering = 0;
   } 
 }
