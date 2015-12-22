@@ -1994,7 +1994,7 @@ delete(instrfindall)
         % Debug stuff
         %disp(count);
         %disp(mess);    
-        mess = deblank(mess);
+        mess = deblank(mess)
         
         if (tenzo == false)
             if (strcmp(mess,'K') && tenzoConnectionRequested)
@@ -2031,7 +2031,6 @@ delete(instrfindall)
             end
         elseif (tenzo) && mess(1) ~= 'V'
             % Communication established
-            mess
             footer = mess(size(mess,2));
             % if message is correct
             if footer == footerTag
@@ -2291,12 +2290,11 @@ delete(instrfindall)
                     set(handles.filterVal,'Value',filterParam);
                     
                 elseif tag == pidToggleTag 
-                    mess(1)
-                    if mess(1) == pidEnableTag
+                    if mess(2) == pidEnableTag
                         disp('Pid enabled');
                         hoverAck = 1;
                         set(handles.hoverBtn,'String','iHoverPid');
-                    elseif mess(1) == pidDisableTag
+                    elseif mess(2) == pidDisableTag
                         disp('Pid disabled');
                         hoverAck = 0;
                         set(handles.hoverBtn,'String','NoPid');                            
@@ -2327,6 +2325,7 @@ delete(instrfindall)
                         set(handles.landBtn,'String','Land');
                     else                            
                         set(handles.takeOffBtn,'String','Take Off');
+                        set(handles.landBtn,'String','Landed');
                     end                      
 
                     if landAck == 1    

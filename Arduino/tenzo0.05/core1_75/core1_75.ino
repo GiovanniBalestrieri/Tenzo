@@ -742,12 +742,10 @@ void SerialRoutine()
       else if (t == 'i')
       {
         initialize();
-        Serial.println("i,z");
       }
       else if (t == 'L')
       {
         land();
-        sendStatesRemote = true;
       }
       else if (t == 'm')
       {
@@ -775,10 +773,10 @@ void SerialRoutine()
       {
         enablePid = !enablePid;
         changePidState(enablePid);
-        if (enablePid)
-          Serial.println("ce,z");
-        else if (!enablePid)
-          Serial.println("cd,z");
+        //if (enablePid)
+          //Serial.println("ce,z");
+        //else if (!enablePid)
+          //Serial.println("cd,z");
         sendStatesRemote = true;
       }
       else if (t == 'l')
@@ -1309,6 +1307,7 @@ void initialize()
     checkpoint = millis();
     initialized = true;    
     initializing = false;
+    hovering = false;
   }
   else
   {
@@ -1316,6 +1315,7 @@ void initialize()
     Serial.print("V,First Land ortherwise Tenzo will crash");
     Serial.println();
   }
+  sendStatesRemote = true;
 }
 
 
@@ -1372,12 +1372,14 @@ void land()
     landed=1;
     takeOff=0;
     hovering=0;
+    sendStatesRemote = true;
   }
   else
   {
     Serial.println();
     Serial.print("V,Land command received but Tenzo is not Flying   !! WARNING !!");
     Serial.println();
+    sendStatesRemote = true;
   }
 }
 
@@ -2011,6 +2013,7 @@ void changePidState(boolean cond)
     wyawPid.SetOutputLimits(-limitPidMax, limitPidMax);
 
     enablePid = true;
+    hovering = true;
   }
   else
   { 
@@ -2046,5 +2049,6 @@ void changePidState(boolean cond)
     OutputAltitude = 0;
     
     enablePid = false;
+    hovering = false;
   } 
 }
