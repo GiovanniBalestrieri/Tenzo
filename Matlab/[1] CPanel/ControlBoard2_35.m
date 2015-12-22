@@ -1,4 +1,5 @@
 function ControlBoard()
+delete(timerfindall);
 clear all;
 clc;
 
@@ -194,6 +195,10 @@ global yawAggTag;
 global pitchAggTag;
 global rollAggTag;
 global accFilterTag;
+
+global stringPidToSend;
+
+stringPidToSend = '';
 
 rollConsTag = 'rc';
 rollAggTag = 'ra';
@@ -542,11 +547,12 @@ delete(instrfindall)
         'String','Work in Progress','Position', [260 157 150 50],...
         'Parent', hTabs(4), 'FontSize',15,'FontWeight','bold');
     
-    % Create the button group.
+    %% Create the button group.
+    
     controlGroup = uibuttongroup('Parent', hTabs(4),'visible','off','Position',[0 0 .2 1]);
     
     uicontrol('Style','text', 'String','Select Control', ...
-        'Position', [2 360 80 20],...
+        'Position', [2 340 80 30],...
         'Parent', hTabs(4), 'FontSize',9);
     
     % Create three radio buttons in the button group.
@@ -564,14 +570,14 @@ delete(instrfindall)
     % Pid Aggressive threshold value 
     
     frameThreshold = uicontrol('Style','frame','Visible','off', ...
-        'Parent',hTabs(4), 'Position',[ 222 323 50 50 ]);
+        'Parent',hTabs(4), 'Position',[ 221 320 50 50 ]);
     
     handles.referencePIDVal = uicontrol('Style','edit', 'String','0', ...
         'Position', [226 325 40 40],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',13,'FontWeight','normal');
     
     referencePIDTxt = uicontrol('Style','text', 'String','Reference', ...
-        'Position', [135 325 70 40],'Visible','off',...
+        'Position', [135 325 80 40],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',11,'FontWeight','normal');
     
     sendPidValsBtn = uicontrol('Style','pushbutton', 'String','Send', ...
@@ -588,22 +594,22 @@ delete(instrfindall)
         'Parent',hTabs(4), 'Position',[ 480 215 50 30 ]);
     
     handles.pidKpVal = uicontrol('Style','text', 'String','AS', ...
-        'Position', [484 218 40 25],'Visible','off',...
-        'Parent',hTabs(4), 'FontSize',13,'FontWeight','normal');
+        'Position', [484 220 40 15],'Visible','off',...
+        'Parent',hTabs(4), 'FontSize',10,'FontWeight','normal');
     
     framePidKdVal = uicontrol('Style','frame','Visible','off', ...
         'Parent',hTabs(4), 'Position',[ 480 140 50 30 ]);
     
     handles.pidKdVal = uicontrol('Style','text', 'String','AS', ...
-        'Position', [484 143 40 25],'Visible','off',...
-        'Parent',hTabs(4), 'FontSize',13,'FontWeight','normal');
+        'Position', [484 146 40 15],'Visible','off',...
+        'Parent',hTabs(4), 'FontSize',10,'FontWeight','normal');
     
     framePidKiVal = uicontrol('Style','frame','Visible','off', ...
         'Parent',hTabs(4), 'Position',[ 480 53 50 30 ]);
     
     handles.pidKiVal = uicontrol('Style','text', 'String','AS', ...
-        'Position', [484 56 40 25],'Visible','off',...
-        'Parent',hTabs(4), 'FontSize',13,'FontWeight','normal');
+        'Position', [484 58 40 15],'Visible','off',...
+        'Parent',hTabs(4), 'FontSize',10,'FontWeight','normal');
     
     handles.pidKpSlider = uicontrol('Style','slider','Visible','off',...
     'min',0,'max',1,'Callback',@(s,e) disp('KpSlider'),...
@@ -632,7 +638,7 @@ delete(instrfindall)
         'String','Integral: Ki','Position', [140 37 150 50],...
         'Parent', hTabs(4), 'FontSize',11);    
     
-    %# Motors Ui Components
+    %% Motors Ui Components
     
      uicontrol('Style','text', 'String','Motor Status', ...
         'Position', [260 157 150 50],...
@@ -747,7 +753,7 @@ delete(instrfindall)
     
     guidata(handles.hFig,handles);
     
-    % Start ACquisition
+    % Start Acquisition
     if (~exist('handles.start','var'))
         handles.sensorStart = uicontrol('Style','pushbutton', 'String','Rec', ...
             'Position', [20 320 30 30],...
@@ -817,7 +823,7 @@ delete(instrfindall)
         disp('Recording ...');
         asked = ~asked;
         asked
-%        delete(timerfindall);
+        
         if asked == true
             %timerSamples = 0
           
@@ -972,253 +978,12 @@ delete(instrfindall)
     end 
 
      function recordCallback(obj,event,handles)
-%         disp('Record Pressed');
-%         plotting = ~plotting
-%         if plotting
-%             while (serialFlag == 1 && abs(az) >= -0.5)               
-%                 % Request High Res data  
-%                 if isvalid(acceleration.s) == 1
-%                     fwrite(acceleration.s,84);
-%                 end
-%                 [ax ay az t,receiving] = readAcc1_05(acceleration);
-%                 %
-%                 if (receiving)
-%                     figure(4);
-% 
-%                     cla;
-% 
-%                     axdataDa = [ axdataDa(2:end) ; ax ];
-%                     aydataDa = [ aydataDa(2:end) ; ay ];
-%                     azdataDa = [ azdataDa(2:end) ; az ];    
-%                     time   = [time(2:end) ; t/1000];
-% 
-%                     deltaT = t - prevTimer;
-%                     prevTimer = t;
-%                     h11 = subplot(3,1,1);
-% 
-%                     title('Acc X');    
-%                     axis([1 buffLenDa -0.5 0.5]);
-%                     xlabel('time [ms]')
-%                     ylabel('Magnitude of X acc [m*s^-2]'); 
-%                     plot(h11,indexDa,axdataDa,'r');
-%                     grid on;
-% 
-%                     h12 = subplot(3,1,2);
-% 
-%                     title('Acc Y');      
-%                     axis([1 buffLenDa -0.5 0.5]);          
-%                     xlabel('time [ms]')
-%                     ylabel('Magnitude of Y acc [m*s^-2]');
-%                     plot(h12,indexDa,aydataDa,'r');
-%                     grid on;         
-% 
-%                     h13 = subplot(3,1,3);
-% 
-%                     title('Acc Z');
-%                     axis([1 buffLenDa -1.5 1.5]);                
-%                     xlabel('time [ms]')
-%                     ylabel('Magnitude of Z acc [m*s^-2]');
-%                     plot(h13,indexDa,azdataDa,'r');
-%                     grid on; 
-%                     
-%                     if ((time(1) >= 0) && (time(end)>0))
-%                         figure(6);       
-%                         title('Acc X');
-%                         axis([time(1) time(end) -1.5 1.5]);                
-%                         xlabel('time [ms]')
-%                         ylabel('Magnitude of X acc [m*s^-2]');
-%                         plot(time(1:end),axdataDa(1:end),'b');
-%                         grid on;        
-%                     end
-%                     drawnow;
-%                     if ~plotting                        
-%                         disp('saving samples to file');
-%                         accDataToWrite = [axdataDa,time];
-%                         csvwrite('accx.txt',accDataToWrite);
-%                         disp('saving file to structure');
-%                         dat.x = axdataDa;
-%                         dat.y = aydataDa;
-%                         dat.z = azdataDa;
-%                         dat.time = time;
-%                         save('AccSamples.mat','-struct','dat');
-%                         disp(deltaT);
-%                         
-%                         % Reset Arrays
-%                         AccX = zeros(buffLenDa,1);
-%                         AccY = zeros(buffLenDa,1);
-%                         AccZ = zeros(buffLenDa,1);
-%                         axdataDa = zeros(buffLenDa,1);
-%                         aydataDa = zeros(buffLenDa,1);
-%                         azdataDa = zeros(buffLenDa,1);
-%                         time  = zeros(buffLenDa,1);
-%                         break;
-%                     end
-%                 end
-%             end
-%         end
      end
      
      function recordCallback1(obj,event,handles)
-%         disp('Record Pressed');
-%         plotting = ~plotting
-%         serialFlag;
-%         if plotting == 1
-%             % waiting for the connection to be established
-%             %disp(abs(az));
-%             %disp(asked);     
-%             while (serialFlag == 1 && abs(az) >= -0.5)               
-%                 % Request High Res data 
-%                 fwrite(acceleration.s,84);
-%                 
-%                 [ax ay az t,receiving] = readAcc1_05(acceleration)
-%                 receiving
-%                 if (receiving)
-%                     figure(2);
-% 
-%                     cla;
-% 
-%                     axdata = [ axdata(2:end) ; ax ];
-%                     aydata = [ aydata(2:end) ; ay ];
-%                     azdata = [ azdata(2:end) ; az ];    
-%                     time   = [time(2:end) ; t/1000];
-% 
-%                     deltaT = t - prevTimer
-%                     prevTimer = t;
-%                     h11 = subplot(3,1,1);
-% 
-%                     title('Acc X');    
-%                     axis([1 buffLen -0.5 0.5]);
-%                     xlabel('time [ms]')
-%                     ylabel('Magnitude of X acc [m*s^-2]'); 
-%                     plot(h11,index,axdata(901:1000),'r');
-%                     grid on;
-% 
-%                     h12 = subplot(3,1,2);
-% 
-%                     title('Acc Y');      
-%                     axis([1 buffLen -0.5 0.5]);          
-%                     xlabel('time [ms]')
-%                     ylabel('Magnitude of Y acc [m*s^-2]');
-%                     plot(h12,index,aydata(901:1000),'r');
-%                     grid on;         
-% 
-%                     h13 = subplot(3,1,3);
-% 
-%                     title('Acc Z');
-%                     axis([1 buffLen -1.5 1.5]);                
-%                     xlabel('time [ms]')
-%                     ylabel('Magnitude of Z acc [m*s^-2]');
-%                     plot(h13,index,azdata(901:1000),'r');
-%                     grid on;         
-% 
-%                     if ((time(900) >= 0) && (time(1000)>0))
-%                         figure(3);       
-%                         title('Acc X');
-%                         axis([time(950) time(1000) -1.5 1.5]);                
-%                         xlabel('time [ms]')
-%                         ylabel('Magnitude of X acc [m*s^-2]');
-%                         plot (time(901:1000),axdata(901:1000),'b');
-%                         grid on;        
-%                     end
-%                     drawnow;
-%                 end
-%             end
-%         end
      end
      
      function rtCallback(obj,event,h)
-%         %disp('RT pressed');
-%         rt = ~rt;
-%     
-%         % waiting for the connection to be established
-%         disp('RT pressed');
-%         rt = ~rt
-%         disp(serialFlag);
-%         while (serialFlag == 1 && abs(az) >= -0.5)               
-%             % Request High Res data             
-%             if rt
-%                 if isvalid(acceleration.s) == 1
-%                     fwrite(acceleration.s,82);
-%                 end
-%                 [ax ay az t,firing] = readAcc1_05(acceleration);
-%                 firing
-%                 while (firing && ax+ay+az ~= 0 && rt)
-%                     
-%                     figure(4);
-%                     cla;
-% 
-%                     axdataDa = [ axdataDa(2:end) ; ax ];
-%                     aydataDa = [ aydataDa(2:end) ; ay ];
-%                     azdataDa = [ azdataDa(2:end) ; az ];    
-%                     time   = [time(2:end) ; t/1000];
-% 
-%                     deltaT = t - prevTimer;
-%                     prevTimer = t;
-%                     h11 = subplot(3,1,1);
-% 
-%                     title('Acc X');    
-%                     axis([1 buffLenDa -0.5 0.5]);
-%                     xlabel('time [ms]')
-%                     ylabel('Magnitude of X acc [m*s^-2]'); 
-%                     plot(h11,indexDa,axdataDa,'r');
-%                     grid on;
-% 
-%                     h12 = subplot(3,1,2);
-% 
-%                     title('Acc Y');      
-%                     axis([1 buffLenDa -0.5 0.5]);          
-%                     xlabel('time [ms]')
-%                     ylabel('Magnitude of Y acc [m*s^-2]');
-%                     plot(h12,indexDa,aydataDa,'r');
-%                     grid on;         
-% 
-%                     h13 = subplot(3,1,3);
-% 
-%                     title('Acc Z');
-%                     axis([1 buffLenDa -1.5 1.5]);                
-%                     xlabel('time [ms]')
-%                     ylabel('Magnitude of Z acc [m*s^-2]');
-%                     plot(h13,indexDa,azdataDa,'r');
-%                     grid on;         
-% 
-%                     if ((time(1) >= 0) && (time(end)>0))
-%                         figure(6);       
-%                         title('Acc X');
-%                         axis([time(1) time(end) -1.5 1.5]);                
-%                         xlabel('time [ms]')
-%                         ylabel('Magnitude of X acc [m*s^-2]');
-%                         plot(time(1:end),axdataDa(1:end),'b');
-%                         grid on;        
-%                     end
-%                     drawnow;                    
-%                     [ax ay az t,rt,contSamples] = readAcc1_10(acceleration,contSamples);
-%                     contSamples
-%                 end
-%             end
-%             if ~rt
-%                 disp('saving samples to file');
-%                 accDataToWrite = [axdataDa,time];
-%                 csvwrite('accx.txt',accDataToWrite);
-%                 disp('saving file to structure');
-%                 dat.x = axdataDa;
-%                 dat.y = aydataDa;
-%                 dat.z = azdataDa;
-%                 dat.time = time;
-%                 save('AccSamples.mat','-struct','dat');
-%                 disp('Sample time:');
-%                 disp(deltaT); 
-%                 
-%                 % Reset Arrays
-%                 AccX = zeros(buffLenDa,1);
-%                 AccY = zeros(buffLenDa,1);
-%                 AccZ = zeros(buffLenDa,1);
-%                 axdataDa = zeros(buffLenDa,1);
-%                 aydataDa = zeros(buffLenDa,1);
-%                 azdataDa = zeros(buffLenDa,1);
-%                 time  = zeros(buffLenDa,1);
-%                 break;
-%             end
-%         end
      end
     
     
@@ -1327,7 +1092,6 @@ delete(instrfindall)
     end
 
     function resetCallback(src,eventData)
-       %fprintf(xbee,'r');
        if tenzo == true
             if takeOffAck == 1
                 % Initialize the cmd array
@@ -1496,14 +1260,14 @@ delete(instrfindall)
     end
 
     function pidKpSliderCallBack(src,eventData)
-       %set(handles.pidKpVal,'String',get(handles.pidKpSlider,'Value')); 
-       %if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
+       set(handles.pidKpVal,'String',get(handles.pidKpSlider,'Value')); 
+       if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
            
-       %end
+       end
     end
 
     function pidKdSliderCallBack(src,eventData)
-       %set(handles.pidKdVal,'String',get(handles.pidKdSlider,'Value'));
+       set(handles.pidKdVal,'String',get(handles.pidKdSlider,'Value'));
 %        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
 %        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',1,', ...
 %            num2str(get(handles.pidKpSlider,'Value')),',X']
@@ -1512,7 +1276,7 @@ delete(instrfindall)
     end
 
     function pidKiSliderCallBack(src,eventData)
-       %set(handles.pidKiVal,'String',get(handles.pidKiSlider,'Value'));
+       set(handles.pidKiVal,'String',get(handles.pidKiSlider,'Value'));
 %        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
 %        strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',2,', ...
 %            num2str(get(handles.pidKpSlider,'Value')),',X']
@@ -2390,7 +2154,7 @@ delete(instrfindall)
                     % TODO
                     [R,throttleActualValue,N] = strread(mess,'%s%f%s',1,'delimiter',',');
                     set(handles.throttleVal,'String',throttleActualValue);
-                elseif tag == rollConsTag
+                elseif tag == rollConsTag(1) && mess(2) == rollConsTag(2)
                     % Pid Roll CONS
                     disp('Pid Roll Cons');
                     [R,consRollKp,consRollKi,consRollKd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
@@ -2403,7 +2167,7 @@ delete(instrfindall)
                         set(handles.pidKiSlider,'Value',consRollKi);
                         set(handles.referencePIDVal,'String',setpointRollTemp);
                     end   
-                 elseif tag == rollAggTag
+                 elseif tag == rollAggTag(1) && mess(2) == rollAggTag(2)
                     % Pid Roll CONS
                     disp('Pid Roll Agg');
                     [R,aggRollKp,aggRollKi,aggRollKd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
@@ -2414,7 +2178,7 @@ delete(instrfindall)
                         set(handles.pidKiSlider,'Value',aggRollKi);
                         set(handles.referencePIDVal,'String',setpointRollTemp);
                     end   
-                  elseif tag == pitchConsTag
+                  elseif tag == pitchConsTag(1) && mess(2) == pitchConsTag(2)
                     % Pid Pitch CONS
                     disp('Pid Pitch Cons');
                     
@@ -2426,7 +2190,7 @@ delete(instrfindall)
                         set(handles.pidKiSlider,'Value',consPitchKi);
                         set(handles.referencePIDVal,'String',setpointPitchTemp);
                     end   
-                 elseif tag == pitchAggTag
+                 elseif tag == pitchAggTag(1) && mess(2) == pitchAggTag(2)
                     % Pid Pitch Agg
                     disp('Pid Pitch Agg');
                     
@@ -2438,7 +2202,7 @@ delete(instrfindall)
                         set(handles.pidKiSlider,'Value',aggPitchKi);
                         set(handles.referencePIDVal,'String',setpointPitchTemp);
                     end  
-                  elseif tag == yawConsTag
+                  elseif tag == yawConsTag(1) && mess(2) == yawConsTag(2)
                     % Pid yaw CONS
                     disp('Pid yaw Cons');
     
@@ -2450,7 +2214,7 @@ delete(instrfindall)
                         set(handles.pidKiSlider,'Value',consYawKi);
                         set(handles.referencePIDVal,'String',setpointYawTemp);
                     end   
-                 elseif tag == yawAggTag
+                 elseif tag == yawAggTag(1) && mess(2) == yawAggTag(2)
                     % Pid Yaw Agg
                     disp('Pid Yaw Agg');
 
@@ -2462,7 +2226,7 @@ delete(instrfindall)
                         set(handles.pidKiSlider,'Value',aggYawKi);
                         set(handles.referencePIDVal,'String',setpointYawTemp);
                     end 
-                elseif tag == rollConsTagW
+                elseif tag == rollConsTagW(1) && mess(2) == rollConsTagW(2)
                     % Pid Roll CONS
                     disp('Pid Roll W Cons');
                     [R,consRollKpW,consRollKiW,consRollKdW,setpointRollTempW,N] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
@@ -2475,7 +2239,7 @@ delete(instrfindall)
                         set(handles.pidKiSlider,'Value',consRollKiW);
                         set(handles.referencePIDVal,'String',setpointRollTempW);
                     end
-                elseif tag == pitchConsTagW
+                elseif tag == pitchConsTagW(1) && mess(2) == pitchConsTagW(2)
                     % Pid Pitch CONS
                     disp('Pid Pitch W Cons');
                     
@@ -2487,7 +2251,7 @@ delete(instrfindall)
                         set(handles.pidKiSlider,'Value',consPitchKiW);
                         set(handles.referencePIDVal,'String',setpointPitchTempW);
                     end
-                elseif tag == yawConsTagW
+                elseif tag == yawConsTagW(1) && mess(2) == yawConsTagW(2)
                     % Pid yaw CONS
                     disp('Pid yaw Cons');
     
@@ -2507,10 +2271,7 @@ delete(instrfindall)
                     filterParam
                     set(handles.filterVal,'Value',filterParam);
                 end
-            end
-            
-        end
-        
+            end            
+        end        
     end
-
 end
