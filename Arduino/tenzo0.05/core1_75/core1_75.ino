@@ -711,6 +711,18 @@ void SerialRoutine()
           Serial.println(",z");
         }
       }
+      else if (t == 'à')
+      { // TODO
+         char  kk = Serial.read();
+         if (kk == '')
+         {
+           // TODO
+         }
+         else if (kk == '')
+         {
+           // TODO
+         }
+      }
       else if (t == 'v')
       {        
         //if (!sakura.getProcessing())
@@ -794,7 +806,20 @@ void SerialRoutine()
       else if (t == ',')
       {
         sakura.setPrintMotorValsUs(!sakura.getPrintMotorValsUs());
+      }
+      else if (t == 'ò')
+      {
+        // request pid val
+        SetpointCascRoll = SetpointCascRoll - 1;
+        Serial.print("V,SetpointCascRoll:  ");
+        Serial.println(SetpointCascRoll);
       }      
+      else if (t == 'à')
+      {
+        SetpointCascRoll = SetpointCascRoll - 1;
+        Serial.print("V,SetpointCascRoll:  ");
+        Serial.println(SetpointCascRoll);
+      }               
       else if (t == 't')
       {
         SetpointCascRoll = SetpointCascRoll - 1;

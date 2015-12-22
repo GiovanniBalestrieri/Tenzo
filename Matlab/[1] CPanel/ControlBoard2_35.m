@@ -45,6 +45,17 @@ global rARPID;
 global rAPPID;
 global rAYPID;
 global rAAPID;
+global rCRPID2;
+global rCPPID2;
+global rCYPID2;
+global rWRPID2;
+global rWPPID2;
+global rWYPID2;
+global rCAPID2;
+global rARPID2;
+global rAPPID2;
+global rAYPID2;
+global rAAPID2;
 global tenzoStateID;
 global tenzoStateID2;
 global connID;
@@ -236,6 +247,20 @@ pitchConsTagW = 'pw';
 yawConsTag = 'yc';
 yawAggTag = 'ya';
 yawConsTagW = 'yw';
+
+% PREDISPOSTO Collega a arduino
+rCRPID2 = 1;
+rCPPID2 = 2;
+rCYPID2 = 3;
+rCAPID2 = 4;
+rARPID2 = 5;
+rAPPID2 = 6;
+rAYPID2 = 7;
+%rAAPID2 = 8;
+% W
+rWRPID2 = 9;
+rWPPID2 = 0;
+rWYPID2 = 8;
 
 
 %% Data Acquisition vars
@@ -613,6 +638,14 @@ delete(instrfindall)
     framePidKpVal = uicontrol('Style','frame','Visible','off', ...
         'Parent',hTabs(4), 'Position',[ 480 215 50 30 ]);
     
+    upPidKpBtn = uicontrol('Style','pushbutton', 'String','>', ...
+        'Position', [444 220 40 15],'Visible','off', ...
+        'Parent',hTabs(4), 'Callback',@upPidKpCallback);
+    
+    downPidKpBtn = uicontrol('Style','pushbutton', 'String','<', ...
+        'Position', [414 220 40 15],'Visible','off', ...
+        'Parent',hTabs(4), 'Callback',@downPidKpCallback);
+    
     handles.pidKpVal = uicontrol('Style','text', 'String','AS', ...
         'Position', [484 220 40 15],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',10,'FontWeight','normal');
@@ -620,12 +653,29 @@ delete(instrfindall)
     framePidKdVal = uicontrol('Style','frame','Visible','off', ...
         'Parent',hTabs(4), 'Position',[ 480 140 50 30 ]);
     
+    upPidKdBtn = uicontrol('Style','pushbutton', 'String','>', ...
+        'Position', [444 146 40 15],'Visible','off', ...
+        'Parent',hTabs(4), 'Callback',@upPidKdCallback);
+    
+    downPidKdBtn = uicontrol('Style','pushbutton', 'String','<', ...
+        'Position', [414 146 40 15],'Visible','off', ...
+        'Parent',hTabs(4), 'Callback',@downPidKdCallback);
+    
     handles.pidKdVal = uicontrol('Style','text', 'String','AS', ...
         'Position', [484 146 40 15],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',10,'FontWeight','normal');
     
     framePidKiVal = uicontrol('Style','frame','Visible','off', ...
-        'Parent',hTabs(4), 'Position',[ 480 53 50 30 ]);
+        'Parent',hTabs(4), 'Position',[ 480 53 50 30 ]);    
+    
+    
+    upPidKiBtn = uicontrol('Style','pushbutton', 'String','>', ...
+        'Position', [444 58 40 15],'Visible','off', ...
+        'Parent',hTabs(4), 'Callback',@upPidKiCallback);
+    
+    downPidKiBtn = uicontrol('Style','pushbutton', 'String','<', ...
+        'Position', [414 58 40 15],'Visible','off', ...
+        'Parent',hTabs(4), 'Callback',@downPidKiCallback);
     
     handles.pidKiVal = uicontrol('Style','text', 'String','AS', ...
         'Position', [484 58 40 15],'Visible','off',...
@@ -1390,6 +1440,12 @@ delete(instrfindall)
             set(readPidValsBtn,'Visible','on'); 
             set(upRefBtn,'Visible','on'); 
             set(downRefBtn,'Visible','on'); 
+            set(upPidKpBtn,'Visible','on'); 
+            set(downPidKpBtn,'Visible','on'); 
+            set(upPidKiBtn,'Visible','on'); 
+            set(downPidKiBtn,'Visible','on'); 
+            set(upPidKdBtn,'Visible','on'); 
+            set(downPidKdBtn,'Visible','on'); 
             set(pidModePopup,'Visible','on');
             set(framePidKpVal,'Visible','on');
             set(handles.pidKpVal,'Visible','on');
@@ -1842,11 +1898,13 @@ delete(instrfindall)
                                 bits = reshape(bitget(double(round(0.5*1000)),32:-1:1),8,[]);
                             end
                             %bits = reshape(bitget(double(round(get(handles.pidKiSlider,'Value')*1000)),32:-1:1,'int32'),8,[]);
+                            
+                            %% MODIFICA
                             cmd(4,:) = weights2*bits;
                             bits = reshape(bitget(str2double(get(handles.referencePIDVal,'String')),32:-1:1,'int32'),8,[]);
                             cmd(5,:) = weights2*bits;
                             disp('sending');
-                            sendMess(cmd);
+                            %sendMess(cmd);
                        else
                            warndlg('Please select correct mode from Popo menus','!! Warning !!')
                        end  
@@ -1864,6 +1922,18 @@ delete(instrfindall)
         end
     end
 
+    function upRefCallback(obj,event)
+        disp('Reference + 1 ...');
+        cmd = 't';
+        sendNMess(cmd);        
+    end
+
+
+    function downRefCallback(obj,event)
+        disp('Reference + 1 ...');
+        cmd = 'y';
+        sendNMess(cmd);  
+    end
 
     %% Handles Pid input topics
     function readPidCallback(obj,event)
@@ -1905,10 +1975,12 @@ delete(instrfindall)
                         disp('cmdtype');
                         disp(cmdtype);
                         disp('cmdtype');
-                        %Initialize the cmd array
-                        cmd = zeros(8,4,'uint8');
-                        cmd(1,1) = uint8(cmdtype);
-                        sendMess(cmd);
+                        %% MODIFICA
+%                         %Initialize the cmd array
+%                         cmd = zeros(8,4,'uint8');
+%                         cmd(1,1) = uint8(cmdtype);
+                        cmd = ['à' cmdtype ];
+                        %sendNMess(cmd);
                    else
                        warndlg('Please select correct mode from Popo menus','!! Warning !!')
                    end  
