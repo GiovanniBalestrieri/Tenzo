@@ -2352,7 +2352,7 @@ delete(instrfindall)
                         set(handles.hoverBtn,'String','iHoverPid');
                         disp('Unsafe hovering OR Landed');
                     end
-                    sendStates();
+                    %sendStates();
                 end
             end            
         end        

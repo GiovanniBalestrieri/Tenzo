@@ -60,6 +60,7 @@ unsigned long checkpoint;
 // Keep track of the state
 boolean initializing = false;
 boolean initialized = false;
+boolean sendStatesRemote = false;
 
 /** 
  ** Control
@@ -680,6 +681,7 @@ void SerialRoutine()
       {
         // Serial communication        
         Serial.println("K");
+        sendStatesRemote = true;
       }      
       if (t == 'X')
       {
@@ -1154,8 +1156,7 @@ void printTimers()
 }
 
 void printRoutine()
-{
-  
+{  
   if (sakura.getPrintMotorValsUs())
   {
     Serial.print("V,                                                    ");
@@ -1179,9 +1180,23 @@ void printRoutine()
    //printSerialAngleNew();
   }
   
+  if (sendStatesRemote)
+    sendStates();
   //printT();
 }
 
+void sendStates()
+{
+  Serial.print("S,");
+  Serial.print(initialized);
+  Serial.print(",");
+  Serial.print(hovering);
+  Serial.print(",");
+  Serial.print(landed);
+  Serial.println(",z");
+  
+  sendStatesRemote = false;
+}
 
 void landFast()
 {
@@ -1193,6 +1208,7 @@ void landFast()
     delay(motorRampDelayFast);
   }  
   tenzoProp.idle();
+  landed = 0;
 }
 
 void getCompassValues()
