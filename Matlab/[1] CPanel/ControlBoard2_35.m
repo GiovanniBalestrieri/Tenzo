@@ -1220,7 +1220,7 @@ delete(instrfindall)
 %                     bits = reshape(bitget(1,32:-1:1),8,[]);
 %                     cmd(2,:) = weights2*bits;
                     cmd = 'p';
-                    sendMess(cmd);
+                    sendNMess(cmd);
                     % wait for feedback from Tenzo and change state of btn
                 else
                     if speakCmd && vocalVerb>=2 
@@ -1236,7 +1236,7 @@ delete(instrfindall)
 %                    bits = reshape(bitget(0,32:-1:1),8,[]);
 %                    cmd(2,:) = weights2*bits;
                    cmd = 'p';
-                   sendMess(cmd); 
+                   sendNMess(cmd); 
                    % you can start take off protocol automatically
                 end
             else
@@ -2029,7 +2029,7 @@ delete(instrfindall)
             end
         elseif (tenzo)
             % Communication established
-            footer = mess(size(mess,2));
+            footer = mess(size(mess,2));size(mess,2)
             % if message is correct
             if footer == footerTag
             tag = mess(1);
@@ -2297,6 +2297,7 @@ delete(instrfindall)
                     end
                 elseif tag == takeOffAckTag 
                         set(handles.takeOffBtn,'String','Flying');
+                        takeOffAck = 1;
                         landAck = 0;
                         disp('Changed landAck:');
                         disp(landAck);
