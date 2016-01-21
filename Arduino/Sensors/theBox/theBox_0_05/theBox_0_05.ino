@@ -1,5 +1,26 @@
-// Example testing sketch for various DHT humidity/temperature sensors
-// Written by ladyada, public domain
+/*********************************************************************/
+/*                             - TheBox -                            */
+/*                                                                   */
+/*             DHT22 - Temperature and humidity sensor               */
+/*                       uSD reader logging sys                      */
+/*                                Lux                                */
+/*                                                                   */
+/*             Contacts:                                             */
+/*                      Alessio Cavone Aka Champion                  */
+/*                         Ivan B  Aka KillerBM                      */
+/*                            Gepp Aka UserK                         */
+/*                                                                   */
+/*             PinOUT  SD CARD                                       */
+/*                        Vcc  - 3.3                                 */
+/*                     Miso/DO - 12                                  */
+/*                     Mosi/DI - 11                                  */
+/*                         SCK - 13                                  */
+/*                          CS - 4                                   */
+/*             PinOUT  DHT22                                         */
+/*                        Vcc  - 5 V                                 */
+/*                         DATA - 2                                  */
+/*                                                                   */
+/*********************************************************************/
 
 #include "DHT.h"
 #include <SPI.h>
