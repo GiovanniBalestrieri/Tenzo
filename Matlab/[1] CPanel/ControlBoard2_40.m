@@ -216,10 +216,19 @@ global landAckTag;
 
 stringPidToSend = '';
 
+% Text to Speech
+global rateVoice;
+global pitchVoice;
+global volumeVoice;
+global langEn;
+global langIta;
+global girls;
+global guys;
+
 global timerSamples;
 % Version
 
-version = 2.35;
+version = 2.40;
 
 %% Serial Protocol 2 - Bluetooth
 
@@ -389,13 +398,23 @@ time = 0;
 % Disable vocal acks: speakCmd = false
 % Set default voice: voice = it
 % Set verbosity level: vocalVerb: 1 = max -> n = min;
-speakCmd = false;
+speakCmd = true;
 uk = 'Microsoft Hazel Desktop - English (Great Britain)';
 it = 'Microsoft Elsa Desktop - Italian (Italy)';
 us = 'Microsoft Zira Desktop - English (United States)';
 voice = uk;
 vocalVerb = 2;
-% Plot variables
+
+% Speak engine
+guys = 'male2';
+girls = 'child_female';
+pitchVoice = 20;
+volumeVoice = -30;
+rateVoice = 10;
+langEn = 'en';
+langIta = 'en';
+
+%% Plot variables
 
 buf_len = 100;
 index = 1:buf_len;
@@ -1176,7 +1195,8 @@ delete(instrfindall)
                 sendMess(cmd);
                 if speakCmd && vocalVerb>=1 
                         %tts('Decollo programmato',voice);
-                        tts('Starting take off protocol.',voice);
+                        %tts('Starting take off protocol.',voice);
+                        Speak('Starting take off protocol..',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                 end
             else
                warndlg('Tenzo already out in space. Connection blocked. Protocol 1','!! DANGER !!') 
@@ -1202,7 +1222,8 @@ delete(instrfindall)
                 % wait for feedback from Tenzo and change state of btn
                 if speakCmd && vocalVerb>=1 
                         %tts('atterraggio programmato',voice);
-                        tts('Starting land protocol.',voice);
+                        %tts('Starting land protocol.',voice);
+                        Speak('Starting land protocol',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                 end
             else
                warndlg('Tenzo is not in hovering mode. First Take Off then try again. ','!! Warning !!') 
@@ -1228,7 +1249,8 @@ delete(instrfindall)
                 % wait for feedback from Tenzo and change state of btn
                 if speakCmd && vocalVerb>=1 
                         %tts('atterraggio programmato',voice);
-                        tts('Starting land protocol.',voice);
+                        %tts('Starting land protocol.',voice);
+                        Speak('Starting land protocol.',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                 end
             else
                warndlg('Tenzo is not in hovering mode. First Take Off then try again. ','!! Warning !!') 
@@ -1253,7 +1275,8 @@ delete(instrfindall)
                 sendNMess(cmd);
                 if speakCmd && vocalVerb>=1 
                         %tts('Decollo programmato',voice);
-                        tts('Starting take off protocol.',voice);
+                        %tts('Starting take off protocol.',voice);
+                        Speak('Starting take off protocol.',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                 end
             else
                warndlg('Tenzo already out in space. Connection blocked. Protocol 1','!! DANGER !!') 
@@ -1271,7 +1294,8 @@ delete(instrfindall)
                 if hoverAck == 0
                     if speakCmd && vocalVerb>=2 
                             %tts('Abilitazione controllore pid',voice);
-                            tts('Enabling pid.',voice);
+                            %tts('Enabling pid.',voice);
+                            Speak('Enabling pid.',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                     end
                     disp('Enabling PID'); 
                     %warndlg('Enabling PID. Safe flight.','Report') 
@@ -1285,7 +1309,8 @@ delete(instrfindall)
                 else
                     if speakCmd && vocalVerb>=2 
                             %tts('Attenzione. Disabilitazione controllore pid.',voice);
-                            tts('Warning. Disabling PID.',voice);
+                            %tts('Warning. Disabling PID.',voice);
+                            Speak('Warning. Disabling PID.',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                     end
                     disp('Desactivating PID');
                     %warndlg('Desactivating PID','!! Warning !!') 
@@ -2409,7 +2434,8 @@ delete(instrfindall)
                         if takeOffAck == 1
                             if speakCmd && vocalVerb>=1 
                                     %tts('Decollato',voice);
-                                    tts('Tenzo is flying',voice);
+                                    %tts('Tenzo is flying',voice);
+                                    Speak('Tenzo is flying',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                             end
                             set(handles.takeOffBtn,'String','Flying');
                             set(handles.landBtn,'String','Land');
@@ -2421,7 +2447,8 @@ delete(instrfindall)
                         if landAck == 1    
                             if speakCmd && vocalVerb>=1 
                                     %tts('Atterrato',voice);
-                                    tts('Landed.',voice);
+                                    %tts('Landed.',voice);
+                                    Speak('Landed.',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                             end                       
                             set(handles.landBtn,'String','Landed'); 
                             set(handles.takeOffBtn,'String','Take Off');
@@ -2430,14 +2457,16 @@ delete(instrfindall)
                         if hoverAck == 1
                             if speakCmd && vocalVerb>=2 
                                     %tts('Pid abilitato',voice);
-                                    tts('PID enabled.',voice);
+                                    %tts('PID enabled.',voice);
+                                    Speak('Attention PID enabled.',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                             end
                             set(handles.hoverBtn,'String','Stop Pid');
                             disp('Pid enabled');
                         else    
                             if speakCmd && vocalVerb>=2 
                                     %tts('pid disabilitato',voice);
-                                    tts('PID disabled',voice);
+                                    %tts('PID disabled',voice);
+                                    Speak('PID disabled.',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                             end                        
                             set(handles.hoverBtn,'String','iHoverPid');
                             disp('Pid Disabled');
