@@ -1295,7 +1295,7 @@ delete(instrfindall)
                     if speakCmd && vocalVerb>=2 
                             %tts('Abilitazione controllore pid',voice);
                             %tts('Enabling pid.',voice);
-                            Speak('Enabling pid.',girls,rateVoice,volumeVoice,pitchVoice,langEn);
+                            %Speak('Enabling pid.',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                     end
                     disp('Enabling PID'); 
                     %warndlg('Enabling PID. Safe flight.','Report') 
