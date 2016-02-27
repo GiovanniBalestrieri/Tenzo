@@ -711,8 +711,8 @@ void SerialRoutine()
           Serial.println(",z");
         }
       }
-      else if (t == 'à')
-      { // TODO
+      else if (t == 'u')
+      { // TODO Pid values requested
          char  kk = Serial.read();
          if (kk == '')
          {

@@ -1963,7 +1963,7 @@ delete(instrfindall)
     %% Handles Pid input topics
     function readPidCallback(obj,event)
         if tenzo == true
-            if takeOffAck == 1
+            %if takeOffAck == 1
                 %if hoverAck == 1
                    if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
                        pidRead = true;
@@ -2000,11 +2000,13 @@ delete(instrfindall)
                         disp('cmdtype');
                         disp(cmdtype);
                         disp('cmdtype');
-                        %% MODIFICA
-%                         %Initialize the cmd array
-%                         cmd = zeros(8,4,'uint8');
-%                         cmd(1,1) = uint8(cmdtype);
-                        cmd = ['à' cmdtype ];
+                        
+%                       %Initialize the cmd array
+%                       cmd = zeros(8,4,'uint8');
+%                       cmd(1,1) = uint8(cmdtype);
+                        cmd = ['u,' str2num(cmdtype) ',z'];
+                        
+                        % Uncomment senNmess
                         %sendNMess(cmd);
                    else
                        warndlg('Please select correct mode from Popo menus','!! Warning !!')
@@ -2012,9 +2014,9 @@ delete(instrfindall)
                 %else
                  %   warndlg('Pid not active, Activate iHover function','!! Warning !!')
                 %end
-            else
-                warndlg('Tenzo is not flying. First Take Off then try again. ','!! Warning !!')
-            end
+            %else
+            %    warndlg('Tenzo is not flying. First Take Off then try again. ','!! Warning !!')
+            %end
         else
             warndlg('Please connect first ','!! Warning !!')     
         end
