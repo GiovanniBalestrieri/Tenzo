@@ -480,20 +480,20 @@ disp('Welcome to the CPanel');
 % Delete all serial connections
 delete(instrfindall)
 
-    %% create tabbed GUI
-    handles.hFig = figure('Menubar','none');
-    s = warning('off', 'MATLAB:uitabgroup:OldVersion');
-    
-    hTabGroup = uitabgroup('Parent',handles.hFig);
-    warning(s);
-    hTabs(1) = uitab('Parent',hTabGroup, 'Title','Home');
-    hTabs(2) = uitab('Parent',hTabGroup, 'Title','Motors');
-    hTabs(3) = uitab('Parent',hTabGroup, 'Title','Sensors');
-    hTabs(4) = uitab('Parent',hTabGroup, 'Title','Control');
-    hTabs(5) = uitab('Parent',hTabGroup, 'Title','Acquisition');
-    set(hTabGroup, 'SelectedTab',hTabs(1));
-    Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
-    
+%% create tabbed GUI
+handles.hFig = figure('Menubar','none');
+s = warning('off', 'MATLAB:uitabgroup:OldVersion');
+
+hTabGroup = uitabgroup('Parent',handles.hFig);
+warning(s);
+hTabs(1) = uitab('Parent',hTabGroup, 'Title','Home');
+hTabs(2) = uitab('Parent',hTabGroup, 'Title','Motors');
+hTabs(3) = uitab('Parent',hTabGroup, 'Title','Sensors');
+hTabs(4) = uitab('Parent',hTabGroup, 'Title','Control');
+hTabs(5) = uitab('Parent',hTabGroup, 'Title','Acquisition');
+set(hTabGroup, 'SelectedTab',hTabs(1));
+Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
+
 %     if get(hTabGroup,'SelectedTab') == hTabs(1)
 %         disp('Tab1 selected');
 %     end
