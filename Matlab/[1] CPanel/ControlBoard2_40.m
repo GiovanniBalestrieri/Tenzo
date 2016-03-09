@@ -1,5 +1,4 @@
 function ControlBoard()
-delete(timerfindall);
 clear all;
 clc;
 
@@ -477,7 +476,13 @@ weights2 = 2.^([7:-1:0]);
 bufferSend = zeros(1, outputBuffSize);
   
 disp('Welcome to the CPanel');
-% Delete all serial connections
+
+
+%% Stop and Delete all timers
+stop(timerfindall);
+delete(timerfindall);
+
+%% Delete all serial connections
 delete(instrfindall)
 
 %% create tabbed GUI
