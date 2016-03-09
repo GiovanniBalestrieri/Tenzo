@@ -379,6 +379,9 @@ int loWord,hiWord;
 int printBlueAngleCounter = 0;
 int printBlueAngleSkip = 5;
 
+String inString = "";
+String inComingString = "";
+
 
 
 // Volatile vars
@@ -713,11 +716,45 @@ void SerialRoutine()
         }
       }
       else if (t == 'u')
-      { // TODO Pid values requested
+      { 
+         // TODO Pid values requested
          char  kk = Serial.read();
-         if (kk == '')
+         // Read Pid values Requested
+         if (kk == '2')
          {
-           // TODO
+           char  k2 = Serial.read();
+           if (k2 == '1')
+           {
+             // show roll Cons
+           }
+           else if (k2 == '2')
+           {
+             // show pitch cons             
+           }
+           else if (k2 == '3')
+           {
+             // yaw cons
+           }
+           else if (k2 == '4')
+           {
+             // show alt cons
+           }
+           else if (k2 == '5')
+           {
+             // show roll agg             
+           }
+           else if (k2 == '6')
+           {
+             // pitch agg
+           }
+           else if (k2 == '7')
+           {
+             // yaw agg
+           }
+           else if (k2 == '8')
+           {
+             // alt agg
+           }            
          }
          else if (kk == '')
          {
@@ -2079,3 +2116,136 @@ void changePidState(boolean cond)
     hovering = 0;
   } 
 }
+
+void analyzeIncomingString(String cmd)
+{
+  // Panic cmd '^'
+    if(cmd[0] != 94)
+    {
+      if (cmd[0] == 's')
+      {       
+        boolean m1 = false,m2 = false;
+        
+        if (verboseSerialAnalyze)
+        {
+         Serial.println("Motor CMD");
+        }
+        char val2 = cmd[1];
+        
+        if (verboseSerialAnalyze)
+        {
+         Serial.print("read: ");
+         Serial.println((int) val2);
+         Serial.println(val2);
+        }
+        if ((int) val2 == 44)
+        {  
+          boolean neg1 = false, neg2 = false;
+          int readC = 0;
+          int i = 1;
+          while( readC != 44 && (1+i) <= cmd.length())
+          {
+            if (verboseSerialAnalyze)
+            {
+              Serial.print("Dentro 1:  ");
+              Serial.print(cmd[1+i]);
+              Serial.print("  i: ");
+              Serial.println(i);
+            }
+            readC = cmd[1+i];
+            if (readC == 45)
+            {
+              neg1 = true;
+            }
+            if (isDigit(readC))
+            {
+              inString += (char) readC;
+            }
+            i++;
+          }
+          double Candidate1;
+          if (neg1)
+            Candidate1 = - (inString.toInt());
+          else            
+            Candidate1 = (inString.toInt());
+          /*if (verboseSerialAnalyze)
+          {
+            Serial.print("cmd 1: ");
+            Serial.println(Candidate1);
+          }*/
+          if (readC == 44)
+            m1 = true;
+          // readC is now a comma, asci 44
+           inString = "";
+          readC = 0;
+          int j  = 0;
+          while( readC != 44 && (1+i+j) <= cmd.length())
+          {
+            if (verboseSerialAnalyze)
+            {
+              Serial.print("Dentro 2:  ");
+              Serial.print(cmd[1+i+j]);
+              Serial.print("   j:  ");
+              Serial.println(j);
+            }
+            readC = cmd[1+i+j];
+            if (readC == 45)
+              neg2 = true;
+            if (isDigit(readC))
+            {
+              inString += (char) readC;
+            }
+            if (readC == 10)
+              break;
+            j++;
+          }
+          if (readC == 44)
+            m2 = true;
+          double speed2Candidate;
+          if (neg2)
+            speed2Candidate = -(inString.toInt());
+          else
+            speed2Candidate = inString.toInt();
+          if (verboseSerialAnalyze)
+          {
+            Serial.print("cmd  2: ");
+            Serial.println(speed2Candidate);
+          }
+          //Serial.println(readC); 
+          inString = "";
+          i=0;
+          j=0;    
+          neg1 = false;
+          neg2 = false;
+          
+          if (m1 && m2)
+          {
+            if (Candidate1>999)
+              speed1=999;
+            else if (Candidate1<-999)
+              speed1=-999;
+            else
+              speed1=Candidate1;
+            
+            if (speed2Candidate>999)
+              speed2=999;
+            else if (speed2Candidate<-999)
+              speed2=-999;
+            else 
+              speed2=speed2Candidate;
+          }
+        }
+        else
+        {
+          Serial.println("Warning command corrupted");
+        }       
+      }
+    }
+    else 
+    {
+      // If cmd received = '^' then stop
+      Serial.println("STOP");
+    }     
+}
+
+
