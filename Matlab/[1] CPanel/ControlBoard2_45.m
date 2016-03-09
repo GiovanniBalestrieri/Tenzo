@@ -484,6 +484,7 @@ delete(timerfindall);
 
 %% Delete all serial connections
 delete(instrfindall)
+clear('xbee');
 
 %% create tabbed GUI
 handles.hFig = figure('Menubar','none');
@@ -1683,7 +1684,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
             %  Setting up serial communication
             % XBee expects the end of commands to be delineated by a carriage return.
-            %if (isempty(xbee))
+            if (~exist('xbee','var') || isempty(xbee))
                 xbee = serial(portUnix,'baudrate',xbeeBR,'tag',tag);
                 %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
 
@@ -1693,7 +1694,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 set(xbee, 'InputBufferSize',inputBuffSize)
                 % Open the serial
                 fopen(xbee);    
-            %end
+            end
 
             % Testing Wireless communication
             timerXbee = timer('ExecutionMode','FixedRate','Period',0.1,'TimerFcn',{@storeDataFromSerial});
@@ -1726,13 +1727,12 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
         if get(handles.connect,'Value') == 0
             disp ('Disconnecting...');             
-            tenzo = false;
-            
+            tenzo = false;           
             
             if (serial1 || serial0)
                 % Initialize the cmd array
                 cmd = zeros(8,4,'uint8');
-                cmd(1,1) = uint8(connID);
+                cmd(1,1) = uint8(connID);F
                 bits = reshape(bitget(0,32:-1:1),8,[]);
                 cmd(2,:) = weights2*bits;
                 sendMess(cmd);
@@ -2111,7 +2111,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         %disp('Reading incoming buffer. Dimensions:');
         % Debug stuff
         %disp(count);
-        %disp(mess); 
+        disp(mess); 
         count;
         if count > 0
             mess = deblank(mess);
@@ -2125,7 +2125,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 disp ('Connection established. Rock & Roll!'); 
                 if speakCmd && vocalVerb>=1 
                         %tts('Connessione eseguita',voice);
-                        tts('Connection Established',voice);
+                        %tts('Connection Established',voice);
+                        Speak('Connection Established',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                 end
                 tenzoConnectionRequested = false;
             elseif (~strcmp(mess,'K') &&  tenzoConnectionRequested)
@@ -2133,8 +2134,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 set(handles.connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
                 set(handles.conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
                 if speakCmd && vocalVerb>=1 
-                    %    tts('Problema di connessione',voice);
-                        tts('Connection problem',voice);
+                        %tts('Problema di connessione',voice);
+                        %tts('Connection problem',voice);
+                        Speak('Connection problem',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                 end
                 disp ('Communication problem. Check Hardware and retry.');            
             elseif (strcmp(mess,'X'))
@@ -2145,12 +2147,29 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 set(handles.conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
                 disp('Connection closed...');
                 if speakCmd && vocalVerb>=1 
-                    tts('Connection closed',voice);
+                    %tts('Connection closed',voice);
+                    Speak('Connection closed',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                 end
                 stop(timerXbee);
                 fclose(xbee);
+                clear('xbee');
             end
         elseif (tenzo)  && ~strcmp(mess,'')
+            if (strcmp(mess,'X'))
+                tenzo = false;
+                %delete(timerXbee);
+                %set(connect,'String','Connect');
+                set(handles.connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
+                set(handles.conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
+                disp('Connection closed...');
+                if speakCmd && vocalVerb>=1 
+                    %tts('Connection closed',voice);
+                    Speak('Connection closed',girls,rateVoice,volumeVoice,pitchVoice,langEn);
+                end
+                stop(timerXbee);
+                fclose(xbee);
+                clear(xbee);
+            end
             if mess(1) ~= 'V'
                 % Communication established
                 footer = mess(size(mess,2));

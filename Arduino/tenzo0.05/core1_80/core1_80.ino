@@ -687,6 +687,7 @@ void SerialRoutine()
       {
         // Serial communication        
         Serial.println("X");
+        sendStatesRemote = true;
       } 
       else if (t == 'r')
         tenzoProp.resetMotors();
