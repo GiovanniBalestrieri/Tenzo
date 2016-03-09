@@ -115,6 +115,7 @@ global filterGyro;
 
 % pidState
 global pidStrategy;
+global pidCascStrategy;
 global pidModeStrategy;
 global pidRead;
 
@@ -259,19 +260,20 @@ yawConsTag = 'yc';
 yawAggTag = 'ya';
 yawConsTagW = 'yw';
 
-% PREDISPOSTO Collega a arduino
-rCRPID2 = 1;
-rCPPID2 = 2;
-rCYPID2 = 3;
-rCAPID2 = 4;
-rARPID2 = 5;
-rAPPID2 = 6;
-rAYPID2 = 7;
+% Cascade Pid
+rCRAngPID = 31;
+rCPAngPID = 34;
+rCYAngPID = 37;
+rARAngPID = 32;
+rAPAngPID = 35;
+rAYAngPID = 38;
+%rAYPID2 = 7;
 %rAAPID2 = 8;
+
 % W
-rWRPID2 = 9;
-rWPPID2 = 0;
-rWYPID2 = 8;
+rRwPID = 33;
+rPwPID = 36;
+rYwPID = 39;
 
 
 %% Data Acquisition vars
@@ -457,6 +459,7 @@ filterGyro = false;
 rt = false;
 
 pidStrategy ='U';
+pidCascStrategy ='U';
 pidModeStrategy = 'U';
 pidRead = 0;
 
@@ -595,12 +598,17 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     
     %# Control Ui Components
     
-    pidPopup = uicontrol('Style','popupmenu','Position', [370 325 150 30],... 
-        'String','Select|Roll|Pitch|Yaw|Altitude','visible','off', ...
+    pidPopup = uicontrol('Style','popupmenu','Position', [370 335 150 30],... 
+        'String','Pid|Roll|Pitch|Yaw|Altitude','visible','off', ...
         'Parent',hTabs(4), 'Callback',@pidPopupCallback);
     
-    pidModePopup = uicontrol('Style','popupmenu','Position', [370 280 150 30],... 
-        'String','Select|Conservative|Aggressive','visible','off', ...
+    
+    pidCascPopup = uicontrol('Style','popupmenu','Position', [370 295 150 30],... 
+        'String','Solo|Angle|Rate','visible','off', ...
+        'Parent',hTabs(4), 'Callback',@pidCascPopupCallback);
+    
+    pidModePopup = uicontrol('Style','popupmenu','Position', [370 255 150 30],... 
+        'String','Mode|Conservative|Aggressive','visible','off', ...
         'Parent',hTabs(4), 'Callback',@pidModePopupCallback);
     
     welcomeControl = uicontrol('Style','text', 'String','Control Strategies', ...
@@ -738,7 +746,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     
     function pidKpSliderCallBack(src,eventData)
        set(handles.pidKpVal,'String',get(handles.pidKpSlider,'Value')); 
-       if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
+       if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U') 
            strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',0,', ...
            num2str(get(handles.pidKpSlider,'Value')),',X']
        end
@@ -1493,7 +1501,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             set(handles.pidKiVal,'Visible','on');
             set(handles.pidKiTxt,'Visible','on');
             set(handles.pidKiSlider,'Visible','on');
-            set(pidPopup,'Visible','on');             
+            set(pidPopup,'Visible','on');            
+            set(pidCascPopup,'Visible','on');             
         else                        
             set(frameThreshold,'Visible','off');
             set(referencePIDTxt,'Visible','off');
@@ -1517,7 +1526,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             set(handles.pidKiVal,'Visible','off');
             set(handles.pidKiTxt,'Visible','off');
             set(handles.pidKiSlider,'Visible','off');
-            set(pidPopup,'Visible','off');        
+            set(pidPopup,'Visible','off');             
+            set(pidCascPopup,'Visible','off');    
         end
         
         % If Test is selected toggle visibility btns
@@ -1640,8 +1650,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
            %disp('Alt');
         end
     end
-    
-    %# drop-down pid Mode menu callback
+
+%# drop-down pid Mode menu callback
     function pidModePopupCallback(src,~)
         %# update plot color
         val = get(src,'Value');
@@ -1661,6 +1671,30 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         if val == 3
            pidModeStrategy = '1'; 
            %disp('Agg');
+        end
+    end
+
+    %# drop-down pid menu callback
+    function pidCascPopupCallback(src,~)
+        %# update plot color       
+        val = get(src,'Value');
+        
+        % Selected
+        if val == 1
+           pidCascStrategy = 'U';
+           %disp('Unset');
+        end
+        
+        % Roll Pid Selected
+        if val == 2
+           pidCascStrategy = '0';
+           disp('Angle');
+        end
+        
+        % Roll Pid Selected
+        if val == 3
+           pidCascStrategy = '1';
+           disp('Angular Velocity');
         end
     end
     
@@ -1987,13 +2021,15 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             %if takeOffAck == 1
                 %if hoverAck == 1
                 pidStrategy
+                pidCascStrategy
                 pidModeStrategy
-                   if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
+                   if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U') ...
+                           && strcmp(pidCascStrategy,'U') 
                        pidRead = true;
                        if strcmp(pidStrategy,'0') && strcmp(pidModeStrategy,'0')
                            % R C
                            cmdtype = rCRPID;
-                           disp('dovrebbe eessre 21');
+                           disp('dovrebbe essere 21');
                        elseif strcmp(pidStrategy,'0') && strcmp(pidModeStrategy,'1')
                            % R A        
                            cmdtype = rARPID;
@@ -2013,26 +2049,69 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                            % A C
                            cmdtype = rCAPID;
                        elseif strcmp(pidStrategy,'3') && strcmp(pidModeStrategy,'1')
-                           % A A  (american Airlines -> Allin                        
+                           % A A  (american Airlines -> Allin )                     
                            cmdtype = rAAPID;
                        end
+                   end  
+                   % Choose Casc Angle pid
+                   if ~strcmp(pidStrategy,'U') && ~strcmp(pidCascStrategy,'U') ...
+                           && ~strcmp(pidModeStrategy,'U')
+                        if strcmp(pidStrategy,'0') && strcmp(pidCascStrategy,'0') ...
+                                && strcmp(pidModeStrategy,'0')
+                           % R Ang C      31                           
+                           cmdtype = rCRAngPID;
+                        elseif strcmp(pidStrategy,'0') && strcmp(pidCascStrategy,'0') ...
+                                && strcmp(pidModeStrategy,'1')
+                           % R Ang A      32                          
+                           cmdtype = rARAngPID;
+                        elseif strcmp(pidStrategy,'1') && strcmp(pidCascStrategy,'0') ...
+                                && strcmp(pidModeStrategy,'0')
+                           % P Ang C      34                           
+                           cmdtype = rCPAngPID;
+                        elseif strcmp(pidStrategy,'1') && strcmp(pidCascStrategy,'0') ...
+                                && strcmp(pidModeStrategy,'1')
+                           % P Ang A      35                          
+                           cmdtype = rAPAngPID;
+                        elseif strcmp(pidStrategy,'2') && strcmp(pidCascStrategy,'0') ...
+                                && strcmp(pidModeStrategy,'0')
+                           % Y Ang C       37                          
+                           cmdtype = rCYAngPID;
+                        elseif strcmp(pidStrategy,'2') && strcmp(pidCascStrategy,'0') ...
+                                && strcmp(pidModeStrategy,'1')
+                           % Y Ang A       38                          
+                           cmdtype = rAYAngPID;
+                        end
+                   end
+                       
+                   % Choose Casc ANGULAR VEL pid
+                   if ~strcmp(pidStrategy,'U') && ~strcmp(pidCascStrategy,'U') ...
+                           && strcmp(pidModeStrategy,'U')                              
+                        if strcmp(pidStrategy,'0') && strcmp(pidCascStrategy,'1')
+                           % R w Casc -> 33                                
+                           cmdtype = rRwPID; 
+                        elseif strcmp(pidStrategy,'1') && strcmp(pidCascStrategy,'1') 
+                           % P w Casc -> 36                               
+                           cmdtype = rPwPID;
+                        elseif strcmp(pidStrategy,'2') && strcmp(pidCascStrategy,'1')
+                           % Y w Casc -> 39                            
+                           cmdtype = rYwPID;
+                        end
+                   end
+                       
                        % Send 'X,opt1,opt2,opt3,val,X'
 %                            strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',0,',...
 %                            num2str(get(handles.pidKpSlider,'Value')),',X']
 %                            fprintf(xbee,'%s',strindToSend,'sync');  
-                        disp('cmdtype');
-                        disp(cmdtype);
+                    disp('cmdtype');
+                    disp(cmdtype);
                         
 %                       %Initialize the cmd array
 %                       cmd = zeros(8,4,'uint8');
 %                       cmd(1,1) = uint8(cmdtype);
                         cmd = ['u,' num2str(cmdtype) ',z'];
-                        cmd
+                        
                         % Uncomment senNmess
-                        %sendNMess(cmd);
-                   else
-                       warndlg('Please select correct mode from Popo menus','!! Warning !!')
-                   end  
+                        sendNMess(cmd);
                 %else
                  %   warndlg('Pid not active, Activate iHover function','!! Warning !!')
                 %end
