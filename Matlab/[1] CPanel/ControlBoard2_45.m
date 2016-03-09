@@ -120,7 +120,10 @@ global pidRead;
 
 % Timers
 global timerXbee;
-global gyroTimer;
+
+global gyroTimer;       
+global accTimer;
+global angleTimer;
 
 % Pid Tuning
 global aggAltKp;
@@ -355,14 +358,7 @@ outputBuffSize = 31;
 terminator = 'CR';
 tag = 'Quad';
 
-gyroTimer = timer('ExecutionMode','FixedRate','Period',0.01,'TimerFcn',{@graphGyro});
-
-global angleTimer;
-angleTimer = timer('ExecutionMode','FixedRate','Period',0.02,'TimerFcn',{@graphAngles});
-                          
-global accTimer;
-accTimer = timer('ExecutionMode','FixedRate','Period',0.01,'TimerFcn',{@graphAcc});
-          
+        
 % Complementary and Kalman Filert values
 global KalmanRoll;
 global kr;
@@ -481,6 +477,13 @@ disp('Welcome to the CPanel');
 %% Stop and Delete all timers
 stop(timerfindall);
 delete(timerfindall);
+
+gyroTimer = timer('ExecutionMode','FixedRate','Period',0.01,'TimerFcn',{@graphGyro});
+
+angleTimer = timer('ExecutionMode','FixedRate','Period',0.02,'TimerFcn',{@graphAngles});
+                   
+accTimer = timer('ExecutionMode','FixedRate','Period',0.01,'TimerFcn',{@graphAcc});
+  
 
 %% Delete all serial connections
 delete(instrfindall)
@@ -1561,7 +1564,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 start(gyroTimer);
                 stop(angleTimer);
                 stop(accTimer);
-            catch
+            catch exception
                 disp '******** InstrumentSubscription ERROR *********'
                 disp (exception.message);
                 disp '***********************************************'
@@ -1578,7 +1581,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 stop(gyroTimer);
                 stop(angleTimer);
                 start(accTimer);                    
-            catch
+            catch exception
                 disp '******** InstrumentSubscription ERROR *********'
                 disp (exception.message);
                 disp '***********************************************'
@@ -1594,7 +1597,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                stop(gyroTimer);
                start(angleTimer);
                stop(accTimer); 
-            catch
+            catch exception
                 disp '******** InstrumentSubscription ERROR *********'
                 disp (exception.message);
                 disp '***********************************************'
@@ -1604,7 +1607,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     
     %# drop-down pid menu callback
     function pidPopupCallback(src,~)
-        %# update plot color
+        %# update plot color       
         val = get(src,'Value');
         
         % Selected
@@ -1868,6 +1871,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     end
 
     %% Handles pid output topics
+    % #pid
     function sendPidCallback(obj,event)
         if tenzo == true
             if takeOffAck == 1
@@ -1977,10 +1981,13 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     end
 
     %% Handles Pid input topics
+    % #pid 
     function readPidCallback(obj,event)
         if tenzo == true
             %if takeOffAck == 1
                 %if hoverAck == 1
+                pidStrategy
+                pidModeStrategy
                    if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
                        pidRead = true;
                        if strcmp(pidStrategy,'0') && strcmp(pidModeStrategy,'0')
@@ -2015,13 +2022,12 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 %                            fprintf(xbee,'%s',strindToSend,'sync');  
                         disp('cmdtype');
                         disp(cmdtype);
-                        disp('cmdtype');
                         
 %                       %Initialize the cmd array
 %                       cmd = zeros(8,4,'uint8');
 %                       cmd(1,1) = uint8(cmdtype);
-                        cmd = ['u,' str2num(cmdtype) ',z'];
-                        
+                        cmd = ['u,' num2str(cmdtype) ',z'];
+                        cmd
                         % Uncomment senNmess
                         %sendNMess(cmd);
                    else
