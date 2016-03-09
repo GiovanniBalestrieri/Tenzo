@@ -1672,7 +1672,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             % Check to see if there are existing serial objects 
             % (instrfind) whos 'Port' property is set to 'COM3'
 
-            oldSerial = instrfind('Port', portUnix); 
+            oldSerial = instrfind('Port', portUnix)
             % can also use instrfind() with no input arguments to find 
             % ALL existing serial objects
 
@@ -1683,8 +1683,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             end
 
             %  Setting up serial communication
-            % XBee expects the end of commands to be delineated by a carriage return.
-            if (~exist('xbee','var') || isempty(xbee))
+            %  If the xbee variable existes but it is empty recreate it
+            if (exist('xbee','var') || isempty(xbee))
                 xbee = serial(portUnix,'baudrate',xbeeBR,'tag',tag);
                 %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
 
@@ -2152,13 +2152,11 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 end
                 stop(timerXbee);
                 fclose(xbee);
-                clear('xbee');
+                %clear('xbee');
             end
         elseif (tenzo)  && ~strcmp(mess,'')
             if (strcmp(mess,'X'))
                 tenzo = false;
-                %delete(timerXbee);
-                %set(connect,'String','Connect');
                 set(handles.connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
                 set(handles.conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
                 disp('Connection closed...');
