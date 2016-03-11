@@ -726,6 +726,7 @@ void SerialRoutine()
            if (k2 == '1')
            {
              // show roll Cons
+             
            }
            else if (k2 == '2')
            {
@@ -756,7 +757,7 @@ void SerialRoutine()
              // alt agg
            }            
          }
-         else if (kk == '')
+         else if (kk == 'x')
          {
            // TODO
          }
