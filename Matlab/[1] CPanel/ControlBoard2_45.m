@@ -2105,13 +2105,13 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                     disp('cmdtype');
                     disp(cmdtype);
                         
-%                       %Initialize the cmd array
-%                       cmd = zeros(8,4,'uint8');
-%                       cmd(1,1) = uint8(cmdtype);
-                        cmd = ['u,' num2str(cmdtype) ',z'];
-                        
-                        % Uncomment senNmess
-                        sendNMess(cmd);
+%                   %Initialize the cmd array
+%                   cmd = zeros(8,4,'uint8');
+%                   cmd(1,1) = uint8(cmdtype);
+                    cmd = ['u,' num2str(cmdtype) ',z'];
+
+                    % Uncomment senNmess
+                    sendNMess(cmd);
                 %else
                  %   warndlg('Pid not active, Activate iHover function','!! Warning !!')
                 %end

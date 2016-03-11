@@ -2119,25 +2119,29 @@ void changePidState(boolean cond)
 
 void analyzeIncomingString(String cmd)
 {
+  int speed1, speed2;
   // Panic cmd '^'
     if(cmd[0] != 94)
     {
       if (cmd[0] == 's')
       {       
         boolean m1 = false,m2 = false;
-        
+        /*
         if (verboseSerialAnalyze)
         {
          Serial.println("Motor CMD");
         }
+        */
         char val2 = cmd[1];
         
+        /*
         if (verboseSerialAnalyze)
         {
          Serial.print("read: ");
          Serial.println((int) val2);
          Serial.println(val2);
         }
+        */
         if ((int) val2 == 44)
         {  
           boolean neg1 = false, neg2 = false;
@@ -2145,6 +2149,7 @@ void analyzeIncomingString(String cmd)
           int i = 1;
           while( readC != 44 && (1+i) <= cmd.length())
           {
+            /*
             if (verboseSerialAnalyze)
             {
               Serial.print("Dentro 1:  ");
@@ -2152,6 +2157,7 @@ void analyzeIncomingString(String cmd)
               Serial.print("  i: ");
               Serial.println(i);
             }
+            */
             readC = cmd[1+i];
             if (readC == 45)
             {
@@ -2181,6 +2187,7 @@ void analyzeIncomingString(String cmd)
           int j  = 0;
           while( readC != 44 && (1+i+j) <= cmd.length())
           {
+            /*
             if (verboseSerialAnalyze)
             {
               Serial.print("Dentro 2:  ");
@@ -2188,6 +2195,7 @@ void analyzeIncomingString(String cmd)
               Serial.print("   j:  ");
               Serial.println(j);
             }
+            */
             readC = cmd[1+i+j];
             if (readC == 45)
               neg2 = true;
@@ -2206,11 +2214,13 @@ void analyzeIncomingString(String cmd)
             speed2Candidate = -(inString.toInt());
           else
             speed2Candidate = inString.toInt();
+          /*
           if (verboseSerialAnalyze)
           {
             Serial.print("cmd  2: ");
             Serial.println(speed2Candidate);
           }
+          */
           //Serial.println(readC); 
           inString = "";
           i=0;
@@ -2221,7 +2231,7 @@ void analyzeIncomingString(String cmd)
           if (m1 && m2)
           {
             if (Candidate1>999)
-              speed1=999;
+               speed1=999;
             else if (Candidate1<-999)
               speed1=-999;
             else
