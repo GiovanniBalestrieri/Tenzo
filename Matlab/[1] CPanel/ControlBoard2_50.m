@@ -2063,8 +2063,6 @@ rYwPID = 39;
 
                            cmd = ['u,4,' num2str(cmdtype) ',' num2str(kpTemp) ',' num2str(kiTemp) ',' num2str(kdTemp) ',' num2str(setPointTemp) ',z'];
                            
-                           disp('Sending cmd:');
-                           disp(cmd);
                            % Send request for pid values
                            sendNMess(cmd);
                    %else

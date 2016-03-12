@@ -771,7 +771,7 @@ void SerialRoutine()
            } 
            // Setting pid values from remote #pid #remote
            // u,4,kp,ki,kd,set,z
-           if (k2 == 4)
+           else if (k2 == 4)
            {
              char kk;
              int k3;
@@ -780,37 +780,58 @@ void SerialRoutine()
              kk = Serial.read();
              if (kk == 44)
              {
+               //Serial.println("KODIO");
                // read mode
                k3 = Serial.parseInt();
+               //Serial.println(k3);
                
                kk = Serial.read();
                if (kk == 44)
                {
                  // read kp
                  p = Serial.parseFloat();
+               //Serial.println(p);
                  
                  kk = Serial.read();
                  if (kk == 44)
                  {
                    // read ki
                    i = Serial.parseFloat();
+               //Serial.println(i);
                    
                    kk = Serial.read();
                    if (kk == 44)
                    {
                      // read kd
                      d = Serial.parseFloat();
+               //Serial.println(d);
                      
                      kk = Serial.read();
                      if (kk == 44)
                      {
                        // read new SetPoint
                        set = Serial.parseFloat();
+               //Serial.println(set);
                      }
                    }
                  }
                }
-           
+               
+               // Security Check [ IMPORTANT ]
+               if (p>2)
+                  p=2;
+               if (p<0)
+                  p=0;
+               if (d>2)
+                  d=2;
+               if (d<0)
+                  d=0;
+               if (i>2)
+                  i=2;
+               if (i<0)
+                  i=0;
+                  // ADD setpoint check pensaci un po'
+              
                if (k3 == 31)
                {
                  // show roll Cons
@@ -822,7 +843,7 @@ void SerialRoutine()
                  // Send actual Vals     
                  sendPidVal(0,0);           
                }
-               else if (k2 == 32)
+               else if (k3 == 32)
                {
                  // show roll agg  
                  aggKpCascRoll = p;
@@ -833,7 +854,7 @@ void SerialRoutine()
                  // Send actual Vals            
                  sendPidVal(0,1);              
                }
-               else if (k2 == 33)
+               else if (k3 == 33)
                {
                  // w Roll cons
                  consKpCascRollW = p;
@@ -844,7 +865,7 @@ void SerialRoutine()
                  // Send actual Vals  
                  sendPidVal(3,0);  
                } 
-               else if (k2 == 34)
+               else if (k3 == 34)
                {
                  // show pitch cons  
                  consKpCascPitch = p;
@@ -855,7 +876,7 @@ void SerialRoutine()
                  // Send actual Vals 
                  sendPidVal(1,0);              
                }
-               else if (k2 == 35)
+               else if (k3 == 35)
                {
                  // pitch agg 
                  aggKpCascPitch = p;
@@ -866,7 +887,7 @@ void SerialRoutine()
                  // Send actual Vals        
                  sendPidVal(1,1);      
                }
-               else if (k2 == 36)
+               else if (k3 == 36)
                {           
                  // w pitch cons 
                  consKpCascPitchW = p;
@@ -877,7 +898,7 @@ void SerialRoutine()
                  // Send actual Vals 
                  sendPidVal(4,0); 
                }  
-               else if (k2 == 37)
+               else if (k3 == 37)
                {
                  // yaw cons
                  consKpCascYaw = p;
@@ -888,7 +909,7 @@ void SerialRoutine()
                  // Send actual Vals 
                  sendPidVal(2,0);   
                }
-               else if (k2 == 38)
+               else if (k3 == 38)
                {
                  // yaw agg  
                  aggKpCascYaw = p;
@@ -897,7 +918,7 @@ void SerialRoutine()
                  SetpointCascYaw = set;      
                  sendPidVal(2,1);      
                }
-               else if (k2 == 39)
+               else if (k3 == 39)
                {
                  // w yaw cons 
                  consKpCascYawW = p;
