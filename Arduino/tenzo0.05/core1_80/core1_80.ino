@@ -726,15 +726,17 @@ void SerialRoutine()
            if (k2 == '1')
            {
              // show roll Cons
-             
+             sendPidVal(0,0);           
            }
            else if (k2 == '2')
            {
-             // show pitch cons             
+             // show pitch cons  
+             sendPidVal(1,0);              
            }
            else if (k2 == '3')
            {
              // yaw cons
+             sendPidVal(2,0);   
            }
            else if (k2 == '4')
            {
@@ -742,20 +744,34 @@ void SerialRoutine()
            }
            else if (k2 == '5')
            {
-             // show roll agg             
+             // show roll agg              
+             sendPidVal(0,1);              
            }
            else if (k2 == '6')
            {
-             // pitch agg
+             // pitch agg        
+             sendPidVal(1,1);      
            }
            else if (k2 == '7')
            {
-             // yaw agg
+             // yaw agg        
+             sendPidVal(2,1);      
            }
            else if (k2 == '8')
            {
-             // alt agg
-           }            
+             // w Roll cons 
+             sendPidVal(3,0);  
+           } 
+           else if (k2 == '0')
+           {           
+             // w pitch cons 
+             sendPidVal(2,0); 
+           }  
+           else if (k2 == '9')
+           {
+             // w yaw cons
+             sendPidVal(3,0); 
+           }   
          }
          else if (kk == 'x')
          {
@@ -1069,6 +1085,9 @@ void sendPidVal(int which,int mode)
    * Roll = 0
    * Pitch = 1 
    * Yaw = 2
+   * W Roll = 3
+   * W Pitch = 4 
+   * W Yaw = 5
    *           MODE
    * Cons = 0
    * Agg = 1
