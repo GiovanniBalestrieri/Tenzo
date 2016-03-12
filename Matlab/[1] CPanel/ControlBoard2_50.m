@@ -745,9 +745,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         'Parent', hTabs(4), 'FontSize',11);    
     
     % #temp
-    function upPidKpCallback(src,eventData)       
+    function upPidKpCallback(src,eventData)  
+       % Toggle verbosity needed for pid
        cmd = 'm';
-       % Send request for pid values
        sendNMess(cmd);
     end
     
