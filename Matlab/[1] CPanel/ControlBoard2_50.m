@@ -2,6 +2,10 @@ function ControlBoard()
 clear all;
 clc;
 
+% Version
+global version;
+version = 2.45;
+
 global xbee;
 global portWin;
 global portUnix;
@@ -14,7 +18,6 @@ global tenzo;
 global matlabAdd;
 global arduinoAdd;
 global versionProtocol;
-global version;
 global headerLength;
 global cmdLength;
 global iHoverID;
@@ -229,9 +232,6 @@ global girls;
 global guys;
 
 global timerSamples;
-% Version
-
-version = 2.45;
 
 %% Serial Protocol 2 - Bluetooth
 
@@ -478,7 +478,7 @@ disp('Welcome to the CPanel');
 
 
 %% Stop and Delete all timers
-stop(timerfindall);
+%stop(timerfindall);
 delete(timerfindall);
 
 gyroTimer = timer('ExecutionMode','FixedRate','Period',0.01,'TimerFcn',{@graphGyro});
@@ -2483,7 +2483,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                             set(handles.referencePIDVal,'String',setpointYawTemp);
                         end 
                     elseif tag == rollConsTagW(1) && mess(2) == rollConsTagW(2)
-                        % Pid Roll CONS
+                        % Pid Roll CONS W
                         disp('Pid Roll W Cons');
                         [R,consRollKpW,consRollKiW,consRollKdW,setpointRollTempW,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
 

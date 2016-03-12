@@ -1177,7 +1177,7 @@ void sendPidVal(int which,int mode)
   {
     if (mode == 0)
     {
-      Serial.print("rcw,");
+      Serial.print("rw,");
       Serial.print(consKpCascRollW);
       Serial.print(",");
       Serial.print(consKiCascRollW);
@@ -1192,7 +1192,7 @@ void sendPidVal(int which,int mode)
   {
     if (mode == 0)
     {
-      Serial.print("pcw,");
+      Serial.print("pw,");
       Serial.print(consKpCascPitchW);
       Serial.print(",");
       Serial.print(consKiCascPitchW);
@@ -1207,7 +1207,7 @@ void sendPidVal(int which,int mode)
   {
     if (mode == 0)
     {
-      Serial.print("ycw,");
+      Serial.print("yw,");
       Serial.print(consKpCascYawW);
       Serial.print(",");
       Serial.print(consKiCascYawW);
@@ -1240,6 +1240,7 @@ void printTimers()
 
 void printRoutine()
 {  
+  /*  // doing
   if (sakura.getPrintMotorValsUs())
   {
     Serial.print("V,  ");
@@ -1251,6 +1252,7 @@ void printRoutine()
     Serial.print(" | ");
     Serial.println(tenzoProp.getwUs4());
   }
+  */
     
   if (sakura.getPrintAccs())
     printAcc();
