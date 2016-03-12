@@ -178,7 +178,7 @@ boolean verboseFilterAccMatlab = true;
         double SetpointCascPitch = 0, InputCascPitch, errorCascPitch;       
         double SetpointCascPitchW = 0, InputCascPitchW, errorCascPitchW;
         double SetpointCascYaw = 180, InputCascYaw, errorCascYaw;
-        double SetpointCascYawW = 180, InputCascYawW, errorCascYawW;
+        double SetpointCascYawW = 0, InputCascYawW, errorCascYawW;
         double SetpointCascAlt = 1, InputCascAlt, errorCascAlt, OutputCascAlt = 0;    
         
         
