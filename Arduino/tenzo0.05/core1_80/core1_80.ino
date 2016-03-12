@@ -718,61 +718,63 @@ void SerialRoutine()
       else if (t == 'u')
       { 
          // TODO Pid values requested
+         
          char  kk = Serial.read();
          // Read Pid values Requested
-         if (kk == '3')
+         if (kk == 44)
          {
-           char  k2 = Serial.read();
-           if (k2 == '1')
+           int  k2 = Serial.parseInt();
+           
+           if (k2 == 31)
            {
              // show roll Cons
              sendPidVal(0,0);           
            }
-           else if (k2 == '2')
+           else if (k2 == 32)
            {
              // show roll agg              
              sendPidVal(0,1);              
            }
-           else if (k2 == '3')
+           else if (k2 == 33)
            {
              // w Roll cons 
              sendPidVal(3,0);  
            } 
-           else if (k2 == '4')
+           else if (k2 == 34)
            {
              // show pitch cons  
              sendPidVal(1,0);              
            }
-           else if (k2 == '5')
+           else if (k2 == 35)
            {
              // pitch agg        
              sendPidVal(1,1);      
            }
-           else if (k2 == '6')
+           else if (k2 == 36)
            {           
              // w pitch cons 
              sendPidVal(4,0); 
            }  
-           else if (k2 == '7')
+           else if (k2 == 37)
            {
              // yaw cons
              sendPidVal(2,0);   
            }
-           else if (k2 == '8')
+           else if (k2 == 38)
            {
              // yaw agg        
              sendPidVal(2,1);      
            }
-           else if (k2 == '9')
+           else if (k2 == 39)
            {
              // w yaw cons
              sendPidVal(5,0); 
            } 
          }
-         else if (kk == 'x')
-         {
+         //else if (kk == 'x')
+         //{
            // TODO
-         }
+         //}
       }
       else if (t == 'v')
       {        

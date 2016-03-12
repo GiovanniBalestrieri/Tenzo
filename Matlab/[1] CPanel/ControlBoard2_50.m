@@ -718,17 +718,17 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         'Parent',hTabs(4), 'FontSize',10,'FontWeight','normal');
     
     handles.pidKpSlider = uicontrol('Style','slider','Visible','off',...
-    'min',0,'max',1,'Callback',@(s,e) disp('KpSlider'),...
+    'min',0,'max',2,'Callback',@(s,e) disp('KpSlider'),...
     'SliderStep',[0.01 0.05],'Position', [140 185 350 20]);
     KpListener = addlistener(handles.pidKpSlider,'Value','PostSet',@pidKpSliderCallBack);
     
     handles.pidKdSlider = uicontrol('Style','slider','Visible','off',...
-    'min',0,'max',0.5,'Callback',@(s,e) disp('KdSlider'),...
+    'min',0,'max',2,'Callback',@(s,e) disp('KdSlider'),...
     'SliderStep',[0.01 0.05],'Position', [140 110 350 20]);
     KdListener = addlistener(handles.pidKdSlider,'Value','PostSet',@pidKdSliderCallBack);
     
     handles.pidKiSlider = uicontrol('Style','slider','Visible','off',...
-    'min',0,'max',0.5,'Callback',@(s,e) disp('KiSlider'),...
+    'min',0,'max',2,'Callback',@(s,e) disp('KiSlider'),...
     'SliderStep',[0.01 0.05],'Position',[140 30 350 20]);
     KiListener = addlistener(handles.pidKiSlider,'Value','PostSet',@pidKiSliderCallBack);
     
@@ -1795,9 +1795,11 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
     %% Send topics
     function sendNMess(obj)
-        fprintf(xbee,obj);        
-        %disp('Tot bytes sent');
-        %xbee.ValuesSent
+        fprintf(xbee,obj);    
+        disp('Sending: ');
+        disp(obj);
+        disp('Tot bytes sent');
+        xbee.ValuesSent
     end
 
     %% Send topics
