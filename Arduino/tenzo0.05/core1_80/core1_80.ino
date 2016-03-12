@@ -1396,6 +1396,7 @@ void printTimers()
 void printRoutine()
 {  
   /*  // doing
+  */
   if (sakura.getPrintMotorValsUs())
   {
     Serial.print("V,  ");
@@ -1407,7 +1408,6 @@ void printRoutine()
     Serial.print(" | ");
     Serial.println(tenzoProp.getwUs4());
   }
-  */
     
   if (sakura.getPrintAccs())
     printAcc();
