@@ -717,10 +717,8 @@ void SerialRoutine()
       }
       else if (t == 'u')
       { 
-         // TODO Pid values requested
-         
          char  kk = Serial.read();
-         // Read Pid values Requested
+         // Read Pid values Requested csv format
          if (kk == 44)
          {
            int  k2 = Serial.parseInt();

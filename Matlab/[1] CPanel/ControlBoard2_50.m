@@ -4,7 +4,7 @@ clc;
 
 % Version
 global version;
-version = 2.45;
+version = 2.50;
 
 global xbee;
 global portWin;
@@ -478,8 +478,8 @@ disp('Welcome to the CPanel');
 
 
 %% Stop and Delete all timers
-stop(timerfindall);
 delete(timerfindall);
+%stop(timerfindall);
 
 gyroTimer = timer('ExecutionMode','FixedRate','Period',0.01,'TimerFcn',{@graphGyro});
 
@@ -682,7 +682,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         'Position', [414 220 40 15],'Visible','off', ...
         'Parent',hTabs(4), 'Callback',@downPidKpCallback);
     
-    handles.pidKpVal = uicontrol('Style','text', 'String','AS', ...
+    handles.pidKpVal = uicontrol('Style','text', 'String','0', ...
         'Position', [484 220 40 15],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',10,'FontWeight','normal');
     
@@ -697,7 +697,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         'Position', [414 146 40 15],'Visible','off', ...
         'Parent',hTabs(4), 'Callback',@downPidKdCallback);
     
-    handles.pidKdVal = uicontrol('Style','text', 'String','AS', ...
+    handles.pidKdVal = uicontrol('Style','text', 'String','0', ...
         'Position', [484 146 40 15],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',10,'FontWeight','normal');
     
@@ -713,7 +713,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         'Position', [414 58 40 15],'Visible','off', ...
         'Parent',hTabs(4), 'Callback',@downPidKiCallback);
     
-    handles.pidKiVal = uicontrol('Style','text', 'String','AS', ...
+    handles.pidKiVal = uicontrol('Style','text', 'String','0', ...
         'Position', [484 58 40 15],'Visible','off',...
         'Parent',hTabs(4), 'FontSize',10,'FontWeight','normal');
     
@@ -1037,7 +1037,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         % if the set of such objects is not(~) empty
         if (~isempty(oldSerial))  
             disp('WARNING:  Port in use.  Closing.')
-            delete(oldSerial)
+            delete(oldSerial);
         end
         s = serial(comPort);
 
@@ -1053,7 +1053,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         timerConnect = timer('ExecutionMode','fixedRate','Period',5,'TimerFcn',{@connectSerial});%,'StopFcn',{@stoppedCon});    
         try 
             start(timerConnect);
-        catch
+        catch exception
             disp '******** InstrumentSubscription ERROR *********'
             disp (exception.message);
             disp '***********************************************'
@@ -1069,7 +1069,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             if (strcmp(get(timerArduino,'Running'),'off'))
                 try
                     start(timerArduino);    
-                catch
+                catch exception
                     disp '******** InstrumentSubscription ERROR *********'
                     disp (exception.message);
                     disp '***********************************************'
@@ -1709,7 +1709,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             % Check to see if there are existing serial objects 
             % (instrfind) whos 'Port' property is set to 'COM3'
 
-            oldSerial = instrfind('Port', portUnix)
+            oldSerial = instrfind('Port', portUnix);
             % can also use instrfind() with no input arguments to find 
             % ALL existing serial objects
 
@@ -1798,8 +1798,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         fprintf(xbee,obj);    
         disp('Sending: ');
         disp(obj);
-        disp('Tot bytes sent');
-        xbee.ValuesSent
+        %disp('Tot bytes sent');
+        %xbee.ValuesSent
     end
 
     %% Send topics
@@ -1947,7 +1947,6 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                             %Initialize the cmd array
                             cmd = zeros(8,4,'uint8');
                             % You can send 
-                            % cmd(1,1) = uint8(magnID); OR
                             cmd(1,1) = uint8(cmdtype);
                             % Sends 1 to activate PID
                             disp('ref value:');
@@ -2082,13 +2081,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                                 && strcmp(pidModeStrategy,'1')
                            % Y Ang A       38                          
                            cmdtype = rAYAngPID;
-                        end
-                   end
-                       
-                   % Choose Casc ANGULAR VEL pid
-                   if ~strcmp(pidStrategy,'U') && ~strcmp(pidCascStrategy,'U') ...
-                           && strcmp(pidModeStrategy,'U')                              
-                        if strcmp(pidStrategy,'0') && strcmp(pidCascStrategy,'1')
+                        % Angular velocity Pid
+                        elseif strcmp(pidStrategy,'0') && strcmp(pidCascStrategy,'1')
                            % R w Casc -> 33                                
                            cmdtype = rRwPID; 
                         elseif strcmp(pidStrategy,'1') && strcmp(pidCascStrategy,'1') 
@@ -2098,6 +2092,12 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                            % Y w Casc -> 39                            
                            cmdtype = rYwPID;
                         end
+                   end
+                       
+                   % Choose Casc ANGULAR VEL pid
+                   if ~strcmp(pidStrategy,'U') && ~strcmp(pidCascStrategy,'U') ...
+                           && strcmp(pidModeStrategy,'U')                              
+                        
                    end
                        
                        % Send 'X,opt1,opt2,opt3,val,X'
@@ -2114,6 +2114,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
                     % Send request for pid values
                     sendNMess(cmd);
+                    
+                    % IMPORTANT! reset cmdtype
+                    cmdtype = '';
                 %else
                  %   warndlg('Pid not active, Activate iHover function','!! Warning !!')
                 %end
@@ -2424,7 +2427,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                             set(handles.pidKdSlider,'Value',consRollKd);
                             set(handles.pidKiSlider,'Value',consRollKi);
                             set(handles.referencePIDVal,'String',setpointRollTemp);
-                        end   
+                        end
                      elseif tag == rollAggTag(1) && mess(2) == rollAggTag(2)
                         % Pid Roll CONS
                         disp('Pid Roll Agg');
@@ -2435,7 +2438,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                             set(handles.pidKdSlider,'Value',aggRollKd);
                             set(handles.pidKiSlider,'Value',aggRollKi);
                             set(handles.referencePIDVal,'String',setpointRollTemp);
-                        end   
+                        end  
                       elseif tag == pitchConsTag(1) && mess(2) == pitchConsTag(2)
                         % Pid Pitch CONS
                         disp('Pid Pitch Cons');
