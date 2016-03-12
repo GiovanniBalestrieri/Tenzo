@@ -720,7 +720,7 @@ void SerialRoutine()
          // TODO Pid values requested
          char  kk = Serial.read();
          // Read Pid values Requested
-         if (kk == '2')
+         if (kk == '3')
          {
            char  k2 = Serial.read();
            if (k2 == '1')
@@ -730,48 +730,44 @@ void SerialRoutine()
            }
            else if (k2 == '2')
            {
-             // show pitch cons  
-             sendPidVal(1,0);              
-           }
-           else if (k2 == '3')
-           {
-             // yaw cons
-             sendPidVal(2,0);   
-           }
-           else if (k2 == '4')
-           {
-             // show alt cons
-           }
-           else if (k2 == '5')
-           {
              // show roll agg              
              sendPidVal(0,1);              
            }
-           else if (k2 == '6')
-           {
-             // pitch agg        
-             sendPidVal(1,1);      
-           }
-           else if (k2 == '7')
-           {
-             // yaw agg        
-             sendPidVal(2,1);      
-           }
-           else if (k2 == '8')
+           else if (k2 == '3')
            {
              // w Roll cons 
              sendPidVal(3,0);  
            } 
-           else if (k2 == '0')
+           else if (k2 == '4')
+           {
+             // show pitch cons  
+             sendPidVal(1,0);              
+           }
+           else if (k2 == '5')
+           {
+             // pitch agg        
+             sendPidVal(1,1);      
+           }
+           else if (k2 == '6')
            {           
              // w pitch cons 
-             sendPidVal(2,0); 
+             sendPidVal(4,0); 
            }  
+           else if (k2 == '7')
+           {
+             // yaw cons
+             sendPidVal(2,0);   
+           }
+           else if (k2 == '8')
+           {
+             // yaw agg        
+             sendPidVal(2,1);      
+           }
            else if (k2 == '9')
            {
              // w yaw cons
-             sendPidVal(3,0); 
-           }   
+             sendPidVal(5,0); 
+           } 
          }
          else if (kk == 'x')
          {

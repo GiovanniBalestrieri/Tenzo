@@ -478,7 +478,7 @@ disp('Welcome to the CPanel');
 
 
 %% Stop and Delete all timers
-%stop(timerfindall);
+stop(timerfindall);
 delete(timerfindall);
 
 gyroTimer = timer('ExecutionMode','FixedRate','Period',0.01,'TimerFcn',{@graphGyro});
@@ -2110,7 +2110,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 %                   cmd(1,1) = uint8(cmdtype);
                     cmd = ['u,' num2str(cmdtype) ',z'];
 
-                    % Uncomment senNmess
+                    % Send request for pid values
                     sendNMess(cmd);
                 %else
                  %   warndlg('Pid not active, Activate iHover function','!! Warning !!')
