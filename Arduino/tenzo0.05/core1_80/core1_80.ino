@@ -1339,7 +1339,7 @@ void sendPidVal(int which,int mode)
       Serial.print(",");
       Serial.print(consKdCascRollW);
       Serial.print(",");
-      Serial.print(SetpointCascRoll);
+      Serial.print(SetpointCascRollW);
       Serial.println(",z");
     }     
   }
@@ -1354,7 +1354,7 @@ void sendPidVal(int which,int mode)
       Serial.print(",");
       Serial.print(consKdCascPitchW);
       Serial.print(",");
-      Serial.print(SetpointCascPitch);
+      Serial.print(SetpointCascPitchW);
       Serial.println(",z");
     } 
   }
@@ -1369,7 +1369,7 @@ void sendPidVal(int which,int mode)
       Serial.print(",");
       Serial.print(consKdCascYawW);
       Serial.print(",");
-      Serial.print(SetpointCascYaw);
+      Serial.print(SetpointCascYawW);
       Serial.println(",z");
     } 
   }
