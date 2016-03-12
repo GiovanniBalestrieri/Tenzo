@@ -1913,24 +1913,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             %if takeOffAck == 1
              %   if hoverAck == 1
               %      if pidRead == 1
-              
-              
-% Cascade Pid
-rCRAngPID = 31;
-rCPAngPID = 34;
-rCYAngPID = 37;
-rARAngPID = 32;
-rAPAngPID = 35;
-rAYAngPID = 38;
-%rAYPID2 = 7;
-%rAAPID2 = 8;
-
-% W
-rRwPID = 33;
-rPwPID = 36;
-rYwPID = 39;
-
-                       % Sending Casc Angle pid
+                      % Sending Casc Angle pid
                        if ~strcmp(pidStrategy,'U') && ~strcmp(pidCascStrategy,'U') ...
                                && ~strcmp(pidModeStrategy,'U')
                             if strcmp(pidStrategy,'0') && strcmp(pidCascStrategy,'0') ...
