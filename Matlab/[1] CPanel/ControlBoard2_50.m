@@ -1910,93 +1910,172 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     % #pid
     function sendPidCallback(obj,event)
         if tenzo == true
-            if takeOffAck == 1
-                if hoverAck == 1
-                    if pidRead == 1
-                       if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
-                           if strcmp(pidStrategy,'0') && strcmp(pidModeStrategy,'0')
-                               % R C
-                               cmdtype = rollConsID;
-                           elseif strcmp(pidStrategy,'0') && strcmp(pidModeStrategy,'1')
-                               % R A        
-                               cmdtype = rollAggID;
-                           elseif strcmp(pidStrategy,'1') && strcmp(pidModeStrategy,'0')
-                               % P C
-                               cmdtype = pitchConsID;
-                           elseif strcmp(pidStrategy,'1') && strcmp(pidModeStrategy,'1')
-                               % P A                                 
-                               cmdtype = pitchAggID;
-                           elseif strcmp(pidStrategy,'2') && strcmp(pidModeStrategy,'0')
-                               % Y C
-                               cmdtype = yawConsID;
-                           elseif strcmp(pidStrategy,'2') && strcmp(pidModeStrategy,'1')
-                               % Y A                                 
-                               cmdtype = yawAggID;
-                           elseif strcmp(pidStrategy,'3') && strcmp(pidModeStrategy,'0')
-                               % A C
-                               cmdtype = altitudeConsID;
-                           elseif strcmp(pidStrategy,'3') && strcmp(pidModeStrategy,'1')
-                               % A A  (american Airlines -> Allin                        
-                               cmdtype = altitudeAggID;
-                           end
+            %if takeOffAck == 1
+             %   if hoverAck == 1
+              %      if pidRead == 1
+              
+              
+% Cascade Pid
+rCRAngPID = 31;
+rCPAngPID = 34;
+rCYAngPID = 37;
+rARAngPID = 32;
+rAPAngPID = 35;
+rAYAngPID = 38;
+%rAYPID2 = 7;
+%rAAPID2 = 8;
+
+% W
+rRwPID = 33;
+rPwPID = 36;
+rYwPID = 39;
+
+                       % Sending Casc Angle pid
+                       if ~strcmp(pidStrategy,'U') && ~strcmp(pidCascStrategy,'U') ...
+                               && ~strcmp(pidModeStrategy,'U')
+                            if strcmp(pidStrategy,'0') && strcmp(pidCascStrategy,'0') ...
+                                    && strcmp(pidModeStrategy,'0')
+                               % R Ang C      31                           
+                               cmdtype = rCRAngPID;
+                            elseif strcmp(pidStrategy,'0') && strcmp(pidCascStrategy,'0') ...
+                                    && strcmp(pidModeStrategy,'1')
+                               % R Ang A      32                          
+                               cmdtype = rARAngPID;
+                            elseif strcmp(pidStrategy,'1') && strcmp(pidCascStrategy,'0') ...
+                                    && strcmp(pidModeStrategy,'0')
+                               % P Ang C      34                           
+                               cmdtype = rCPAngPID;
+                            elseif strcmp(pidStrategy,'1') && strcmp(pidCascStrategy,'0') ...
+                                    && strcmp(pidModeStrategy,'1')
+                               % P Ang A      35                          
+                               cmdtype = rAPAngPID;
+                            elseif strcmp(pidStrategy,'2') && strcmp(pidCascStrategy,'0') ...
+                                    && strcmp(pidModeStrategy,'0')
+                               % Y Ang C       37                          
+                               cmdtype = rCYAngPID;
+                            elseif strcmp(pidStrategy,'2') && strcmp(pidCascStrategy,'0') ...
+                                    && strcmp(pidModeStrategy,'1')
+                               % Y Ang A       38                          
+                               cmdtype = rAYAngPID;
+                            % Angular velocity Pid
+                            elseif strcmp(pidStrategy,'0') && strcmp(pidCascStrategy,'1')
+                               % R w Casc -> 33                                
+                               cmdtype = rRwPID; 
+                            elseif strcmp(pidStrategy,'1') && strcmp(pidCascStrategy,'1') 
+                               % P w Casc -> 36                               
+                               cmdtype = rPwPID;
+                            elseif strcmp(pidStrategy,'2') && strcmp(pidCascStrategy,'1')
+                               % Y w Casc -> 39                            
+                               cmdtype = rYwPID;
+                            end                       
+                       else
+                           warndlg('Please select correct mode from Popo menus','!! Warning !!')
+                       end 
+                   
+
+%                        if ~strcmp(pidStrategy,'U') && ~strcmp(pidModeStrategy,'U')
+%                            if strcmp(pidStrategy,'0') && strcmp(pidModeStrategy,'0')
+%                                % R C ang
+%                                cmdtype = rCRAngPID;
+%                            elseif strcmp(pidStrategy,'0') && strcmp(pidModeStrategy,'1')
+%                                % R A        
+%                                cmdtype = rCRAngPID;
+%                            elseif strcmp(pidStrategy,'0') && strcmp(pidModeStrategy,'1')
+%                                % R w c/a        
+%                                cmdtype = rRwPID;
+%                                %% piddone
+%                            elseif strcmp(pidStrategy,'1') && strcmp(pidModeStrategy,'0')
+%                                % P C
+%                                cmdtype = pitchConsID;
+%                            elseif strcmp(pidStrategy,'1') && strcmp(pidModeStrategy,'1')
+%                                % P A                                 
+%                                cmdtype = pitchAggID;
+%                            elseif strcmp(pidStrategy,'2') && strcmp(pidModeStrategy,'0')
+%                                % Y C
+%                                cmdtype = yawConsID;
+%                            elseif strcmp(pidStrategy,'2') && strcmp(pidModeStrategy,'1')
+%                                % Y A                                 
+%                                cmdtype = yawAggID;
+%                            elseif strcmp(pidStrategy,'3') && strcmp(pidModeStrategy,'0')
+%                                % A C
+%                                cmdtype = altitudeConsID;
+%                            elseif strcmp(pidStrategy,'3') && strcmp(pidModeStrategy,'1')
+%                                % A A  (american Airlines -> Allin                        
+%                                cmdtype = altitudeAggID;
+%                            end
+                           
                            % Send 'X,opt1,opt2,opt3,val,X'
 %                            strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',0,',...
 %                            num2str(get(handles.pidKpSlider,'Value')),',X']
 %                            fprintf(xbee,'%s',strindToSend,'sync');  
 
                             %Initialize the cmd array
-                            cmd = zeros(8,4,'uint8');
+                            %cmd = zeros(8,4,'uint8');
                             % You can send 
-                            cmd(1,1) = uint8(cmdtype);
+                            %cmd(1,1) = uint8(cmdtype);
                             % Sends 1 to activate PID
                             disp('ref value:');
-                            disp(get(handles.referencePIDVal,'String'));
-                            disp('Kp val');
-                            disp(get(handles.pidKpSlider,'Value'));
-                            disp('Rounded Kp val');
-                            disp(double(round(get(handles.pidKpSlider,'Value')*1000)));
-                            disp('Rounded Kd val');
-                            disp(double(round(get(handles.pidKdSlider,'Value')*1000)));
-                            disp('Rounded Ki val');
-                            disp(double(round(get(handles.pidKiSlider,'Value')*1000)));
-                            if get(handles.pidKpSlider,'Value')<=0.5
-                                bits = reshape(bitget(double(round(get(handles.pidKpSlider,'Value')*1000)),32:-1:1),8,[]);
-                            else
-                                bits = reshape(bitget(double(round(0.5*1000)),32:-1:1),8,[]);
-                            end
-                            cmd(2,:) = weights2*bits;
-                            if get(handles.pidKdSlider,'Value')<=0.5
-                                bits = reshape(bitget(double(round(get(handles.pidKdSlider,'Value')*1000)),32:-1:1),8,[]);
-                            else
-                                bits = reshape(bitget(double(round(0.5*1000)),32:-1:1),8,[]);
-                            end
+                            setPointTemp = get(handles.referencePIDVal,'String');
+                            disp(setPointTemp);
+                            
+                            disp('Rounded Kp val:');
+                            %disp(double(round(get(handles.pidKpSlider,'Value')*1000)));
+                            kpTemp = double(get(handles.pidKpSlider,'Value'))
+                            disp(kpTemp);
+                            
+                            disp('Rounded Kd val:');
+                            %disp(double(round(get(handles.pidKdSlider,'Value')*1000)));
+                            kdTemp = double(get(handles.pidKdSlider,'Value'));
+                            disp(kdTemp);
+                            
+                            disp('Rounded Ki val:');
+                            kiTemp = double(get(handles.pidKiSlider,'Value'));
+                            %disp(double(round(get(handles.pidKiSlider,'Value')*1000)));
+                            disp(kiTemp);
+                            
+                            
+                            %if get(handles.pidKpSlider,'Value')<=0.5
+                            %    bits = reshape(bitget(double(round(get(handles.pidKpSlider,'Value')*1000)),32:-1:1),8,[]);
+                            %else
+                            %    bits = reshape(bitget(double(round(0.5*1000)),32:-1:1),8,[]);
+                            %end
+                            %cmd(2,:) = weights2*bits;
+                            %if get(handles.pidKdSlider,'Value')<=0.5
+                            %    bits = reshape(bitget(double(round(get(handles.pidKdSlider,'Value')*1000)),32:-1:1),8,[]);
+                            %else
+                            %    bits = reshape(bitget(double(round(0.5*1000)),32:-1:1),8,[]);
+                            %end
                             %bits = reshape(bitget(double(round(get(handles.pidKdSlider,'Value')*1000)),32:-1:1,'int32'),8,[]);
-                            cmd(3,:) = weights2*bits;
-                            if get(handles.pidKiSlider,'Value')<=0.5
-                                bits = reshape(bitget(double(round(get(handles.pidKiSlider,'Value')*1000)),32:-1:1),8,[]);
-                            else
-                                bits = reshape(bitget(double(round(0.5*1000)),32:-1:1),8,[]);
-                            end
+                            %cmd(3,:) = weights2*bits;
+                            %if get(handles.pidKiSlider,'Value')<=0.5
+                            %    bits = reshape(bitget(double(round(get(handles.pidKiSlider,'Value')*1000)),32:-1:1),8,[]);
+                            %else
+                            %   bits = reshape(bitget(double(round(0.5*1000)),32:-1:1),8,[]);
+                            %end
                             %bits = reshape(bitget(double(round(get(handles.pidKiSlider,'Value')*1000)),32:-1:1,'int32'),8,[]);
                             
                             %% MODIFICA
-                            cmd(4,:) = weights2*bits;
-                            bits = reshape(bitget(str2double(get(handles.referencePIDVal,'String')),32:-1:1,'int32'),8,[]);
-                            cmd(5,:) = weights2*bits;
-                            disp('sending');
-                            %sendMess(cmd);
-                       else
-                           warndlg('Please select correct mode from Popo menus','!! Warning !!')
-                       end  
-                   else
-                       warndlg('Read actual values first','!! Warning !!')
-                   end
-                else
-                    warndlg('Pid not active, Activate iHover function','!! Warning !!')
-                end
-            else
-                warndlg('Tenzo is not flying. First Take Off then try again. ','!! Warning !!')
-            end
+%                             cmd(4,:) = weights2*bits;
+%                             bits = reshape(bitget(str2double(get(handles.referencePIDVal,'String')),32:-1:1,'int32'),8,[]);
+%                             cmd(5,:) = weights2*bits;
+%                             disp('sending');
+
+
+                           cmd = ['u,4,' num2str(cmdtype) ',' num2str(kpTemp) ',' num2str(kiTemp) ',' num2str(kdTemp) ',' num2str(setPointTemp) ',z'];
+                           
+                           disp('Sending cmd:');
+                           disp(cmd);
+                           % Send request for pid values
+                           sendNMess(cmd);
+                   %else
+                    %   warndlg('Read actual values first','!! Warning !!')
+                   %end
+                %else
+                %    warndlg('Pid not active, Activate iHover function','!! Warning !!')
+                %end
+            %else
+            %    warndlg('Tenzo is not flying. First Take Off then try again. ','!! Warning !!')
+            %end
         else
             warndlg('Please connect first ','!! Warning !!')     
         end
@@ -2093,30 +2172,20 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                            cmdtype = rYwPID;
                         end
                    end
-                       
-                   % Choose Casc ANGULAR VEL pid
-                   if ~strcmp(pidStrategy,'U') && ~strcmp(pidCascStrategy,'U') ...
-                           && strcmp(pidModeStrategy,'U')                              
+                   
+                   disp('cmdtype');
+                   disp(cmdtype);
                         
-                   end
-                       
-                       % Send 'X,opt1,opt2,opt3,val,X'
-%                            strindToSend = ['X,',pidStrategy,',',pidModeStrategy,',0,',...
-%                            num2str(get(handles.pidKpSlider,'Value')),',X']
-%                            fprintf(xbee,'%s',strindToSend,'sync');  
-                    disp('cmdtype');
-                    disp(cmdtype);
-                        
-%                   %Initialize the cmd array
-%                   cmd = zeros(8,4,'uint8');
-%                   cmd(1,1) = uint8(cmdtype);
-                    cmd = ['u,' num2str(cmdtype) ',z'];
+%                  %Initialize the cmd array
+%                  cmd = zeros(8,4,'uint8');
+%                  cmd(1,1) = uint8(cmdtype);
+                   cmd = ['u,' num2str(cmdtype) ',z'];
 
-                    % Send request for pid values
-                    sendNMess(cmd);
+                   % Send request for pid values
+                   sendNMess(cmd);
                     
-                    % IMPORTANT! reset cmdtype
-                    cmdtype = '';
+                   % IMPORTANT! reset cmdtype
+                   cmdtype = '';
                 %else
                  %   warndlg('Pid not active, Activate iHover function','!! Warning !!')
                 %end

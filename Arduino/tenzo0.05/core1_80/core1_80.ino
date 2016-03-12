@@ -678,8 +678,8 @@ void SerialRoutine()
   {
       char t = Serial.read();
       
-      if (t == '1')
-        tenzoProp.stopAll();      
+      //if (t == '1')
+      //  tenzoProp.stopAll();      
       if (t == 'c')
       {
         // Serial communication        
@@ -715,6 +715,7 @@ void SerialRoutine()
           Serial.println(",z");
         }
       }
+      // PID values modification from remote
       else if (t == 'u')
       { 
          char  kk = Serial.read();
@@ -768,11 +769,148 @@ void SerialRoutine()
              // w yaw cons
              sendPidVal(5,0); 
            } 
+           // Setting pid values from remote #pid #remote
+           // u,4,kp,ki,kd,set,z
+           if (k2 == 4)
+           {
+             char kk;
+             int k3;
+             float p,i,d,set;
+             // comma
+             kk = Serial.read();
+             if (kk == 44)
+             {
+               // read mode
+               k3 = Serial.parseInt();
+               
+               kk = Serial.read();
+               if (kk == 44)
+               {
+                 // read kp
+                 p = Serial.parseFloat();
+                 
+                 kk = Serial.read();
+                 if (kk == 44)
+                 {
+                   // read ki
+                   i = Serial.parseFloat();
+                   
+                   kk = Serial.read();
+                   if (kk == 44)
+                   {
+                     // read kd
+                     d = Serial.parseFloat();
+                     
+                     kk = Serial.read();
+                     if (kk == 44)
+                     {
+                       // read new SetPoint
+                       set = Serial.parseFloat();
+                     }
+                   }
+                 }
+               }
+           
+               if (k3 == 31)
+               {
+                 // show roll Cons
+                 consKpCascRoll = p;
+                 consKdCascRoll = d;
+                 consKiCascRoll = i;
+                 SetpointCascRoll = set;
+                 
+                 // Send actual Vals     
+                 sendPidVal(0,0);           
+               }
+               else if (k2 == 32)
+               {
+                 // show roll agg  
+                 aggKpCascRoll = p;
+                 aggKdCascRoll = d;
+                 aggKiCascRoll = i;
+                 SetpointCascRoll = set;
+                 
+                 // Send actual Vals            
+                 sendPidVal(0,1);              
+               }
+               else if (k2 == 33)
+               {
+                 // w Roll cons
+                 consKpCascRollW = p;
+                 consKdCascRollW = d;
+                 consKiCascRollW = i;
+                 SetpointCascRollW = set;
+                 
+                 // Send actual Vals  
+                 sendPidVal(3,0);  
+               } 
+               else if (k2 == 34)
+               {
+                 // show pitch cons  
+                 consKpCascPitch = p;
+                 consKdCascPitch = d;
+                 consKiCascPitch = i;
+                 SetpointCascPitch = set;
+                 
+                 // Send actual Vals 
+                 sendPidVal(1,0);              
+               }
+               else if (k2 == 35)
+               {
+                 // pitch agg 
+                 aggKpCascPitch = p;
+                 aggKdCascPitch = d;
+                 aggKiCascPitch = i;
+                 SetpointCascPitch = set;
+                 
+                 // Send actual Vals        
+                 sendPidVal(1,1);      
+               }
+               else if (k2 == 36)
+               {           
+                 // w pitch cons 
+                 consKpCascPitchW = p;
+                 consKdCascPitchW = d;
+                 consKiCascPitchW = i;
+                 SetpointCascPitchW = set;
+                 
+                 // Send actual Vals 
+                 sendPidVal(4,0); 
+               }  
+               else if (k2 == 37)
+               {
+                 // yaw cons
+                 consKpCascYaw = p;
+                 consKdCascYaw = d;
+                 consKiCascYaw = i;
+                 SetpointCascYaw = set;
+                 
+                 // Send actual Vals 
+                 sendPidVal(2,0);   
+               }
+               else if (k2 == 38)
+               {
+                 // yaw agg  
+                 aggKpCascYaw = p;
+                 aggKdCascYaw = d;
+                 aggKiCascYaw = i;
+                 SetpointCascYaw = set;      
+                 sendPidVal(2,1);      
+               }
+               else if (k2 == 39)
+               {
+                 // w yaw cons 
+                 consKpCascYawW = p;
+                 consKdCascYawW = d;
+                 consKiCascYawW = i;
+                 SetpointCascYawW = set;
+                 
+                 // Send actual Vals
+                 sendPidVal(5,0); 
+               }
+             }             
+           }
          }
-         //else if (kk == 'x')
-         //{
-           // TODO
-         //}
       }
       else if (t == 'v')
       {        
