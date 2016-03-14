@@ -23,6 +23,7 @@ float deltaT = 15;
 char readAnswer, readChar, readCh;
 
 // REMOVE
+int tempM1,tempM2,tempM3,tempM4;
 
 byte modeS;
 
@@ -1427,6 +1428,7 @@ void printRoutine()
   */
   if (sakura.getPrintMotorValsUs())
   {
+    /*
     Serial.print("V,  ");
     Serial.print(tenzoProp.getwUs1());
     Serial.print(" | ");
@@ -1435,6 +1437,17 @@ void printRoutine()
     Serial.print(tenzoProp.getwUs3());
     Serial.print(" | ");
     Serial.println(tenzoProp.getwUs4());
+    */
+    
+    
+    tenzoProp.wUs1 = tenzoProp.getwUs1();
+    tenzoProp.wUs2 = tenzoProp.getwUs2();
+    tenzoProp.wUs3 = tenzoProp.getwUs3();
+    tenzoProp.wUs4 = tenzoProp.getwUs4();
+    */
+    
+    //Serial.println("V,  ");
+    
   }
     
   if (sakura.getPrintAccs())

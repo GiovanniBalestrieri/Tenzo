@@ -121,10 +121,10 @@ void Propulsion::setSpeeds(int throttle, float rollpid, float pitchpid, float ya
   //3 //wUs1 = getwUs1();
   
   
-//  touchwUs1();
-//  touchwUs2();
-//  touchwUs3();
-//  touchwUs4();
+  //  touchwUs1();
+  //  touchwUs2();
+  //  touchwUs3();
+  //  touchwUs4();
   
   // send input to motors
   servo1.writeMicroseconds(wUs1);
