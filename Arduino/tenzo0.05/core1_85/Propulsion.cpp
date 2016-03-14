@@ -106,13 +106,31 @@ void Propulsion::setSpeeds(int throttle, float rollpid, float pitchpid, float ya
     wUs3 = MIN_SIGNAL;
   if (wUs4<MIN_SIGNAL)
     wUs4 = MIN_SIGNAL;
+   
+  /*   */
+  Serial.print("V,  ");
+  Serial.print(getwUs1());
+  Serial.print(" | ");
+  Serial.print(getwUs2());
+  Serial.print(" | ");
+  Serial.print(getwUs3());
+  Serial.print(" | ");
+  Serial.println(getwUs4());
+
+  //2//Serial.println("a");
+  //3 //wUs1 = getwUs1();
+  
+  
+//  touchwUs1();
+//  touchwUs2();
+//  touchwUs3();
+//  touchwUs4();
   
   // send input to motors
   servo1.writeMicroseconds(wUs1);
   servo2.writeMicroseconds(wUs2);
   servo3.writeMicroseconds(wUs3);
-  servo4.writeMicroseconds(wUs4);
-    	
+  servo4.writeMicroseconds(wUs4);    	
 }
 
 void Propulsion::test()
@@ -221,6 +239,8 @@ int Propulsion::getwUs1() {
     return wUs1;
 }
 
+
+
 int Propulsion::getwUs2() {
     return wUs2;
 }
@@ -231,4 +251,20 @@ int Propulsion::getwUs3() {
 
 int Propulsion::getwUs4() {
     return wUs4;
+}
+
+void Propulsion::touchwUs1() {
+    wUs1 = wUs1;
+}
+
+void Propulsion::touchwUs2() {
+    wUs2 = wUs2;
+}
+
+void Propulsion::touchwUs3() {
+    wUs3 = wUs3;
+}
+
+void Propulsion::touchwUs4() {
+    wUs4 = wUs4;
 }

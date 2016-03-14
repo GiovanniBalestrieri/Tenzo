@@ -10,8 +10,8 @@
 Ux::Ux()
 {
    _baudrate = baudRate;
-   _printMotorsVals = printMotorsVals;
-   _printMotorsValsUs = printMotorsValsUs;
+   printMotorsVals = printMotorsVals;
+   printMotorsValsUs = printMotorsValsUs;
    _printMotorsPid = _printMotorsPid;
    _processing = processing;
    _printPIDVals = printPIDVals;
@@ -61,12 +61,12 @@ int Ux::getM(int i)
 // Get Methods
 boolean Ux::getPrintMotorVals()
 {
-  return _printMotorsVals;
+  return printMotorsVals;
 }
 
 boolean Ux::getPrintMotorValsUs()
 {
-  return _printMotorsValsUs;
+  return printMotorsValsUs;
 }
 
 boolean  Ux::getPrintMotorPid()
@@ -137,12 +137,12 @@ boolean  Ux::getPrintPIDVals()
  
 void Ux::setPrintMotorVals(boolean state)
 {
-  _printMotorsVals = state;
+  printMotorsVals = state;
 }
 
 void Ux::setPrintMotorValsUs(boolean state)
 {
-  _printMotorsValsUs = state;
+  printMotorsValsUs = state;
 }
 
 void  Ux::setPrintMotorPid(boolean state)

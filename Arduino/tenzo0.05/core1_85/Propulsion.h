@@ -37,6 +37,11 @@ class Propulsion
         int getwUs2();
         int getwUs3();
         int getwUs4();
+        
+        void touchwUs1();
+        void touchwUs2();
+        void touchwUs3();
+        void touchwUs4();
 
 
         int getThrottle();

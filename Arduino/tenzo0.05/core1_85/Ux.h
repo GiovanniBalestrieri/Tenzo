@@ -38,6 +38,9 @@ class Ux
         boolean getPrintVerboseSerial();
         int getBaudRate();
         
+        boolean printMotorsVals;
+        boolean printMotorsValsUs;
+        
         void setPrintMotorVals(boolean);
         void setPrintMotorValsUs(boolean);
         void setPrintMotorPid(boolean);
@@ -56,8 +59,6 @@ class Ux
         
         
  private:
-       boolean _printMotorsVals;
-       boolean _printMotorsValsUs;
        boolean _printMotorsPid;
        boolean _processing;
        boolean _printPIDVals;
