@@ -4,7 +4,7 @@ clc;
 
 % Version
 global version;
-version = 2.50;
+version = 2.55;
 
 global xbee;
 global portWin;
