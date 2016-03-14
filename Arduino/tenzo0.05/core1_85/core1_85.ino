@@ -123,8 +123,7 @@ boolean verboseFilterAccMatlab = true;
         // W Roll
         float aggKpWRoll=0.02, aggKiWRoll=0.2, aggKdWRoll=0.00;
         
-        float consKpWRoll=0, consKiWRoll=10, consKdWRoll=0.13;  //50 HZ
-        //float consKpWRoll=0.95, consKiWRoll=1.2, consKdWRoll=0.13;  //50 HZ
+        float consKpWRoll=0.95, consKiWRoll=0.8, consKdWRoll=0;  //50 HZ
         //float consKpWRoll=0.50, consKiWRoll=0.80, consKdWRoll=0.14;    
         float farKpWRoll=0.05, farKiWRoll=0.06, farKdWRoll=0.03;
         
