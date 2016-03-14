@@ -123,7 +123,7 @@ boolean verboseFilterAccMatlab = true;
         // W Roll
         float aggKpWRoll=0.02, aggKiWRoll=0.2, aggKdWRoll=0.00;
         
-        float consKpWRoll=0, consKiWRoll=30, consKdWRoll=0.13;  //50 HZ
+        float consKpWRoll=0, consKiWRoll=10, consKdWRoll=0.13;  //50 HZ
         //float consKpWRoll=0.95, consKiWRoll=1.2, consKdWRoll=0.13;  //50 HZ
         //float consKpWRoll=0.50, consKiWRoll=0.80, consKdWRoll=0.14;    
         float farKpWRoll=0.05, farKiWRoll=0.06, farKdWRoll=0.03;
@@ -1017,15 +1017,27 @@ void SerialRoutine()
       }         
       else if (t == ',')
       {
-        consKiWRoll = consKpWRoll + 1;
+        consKpWRoll = consKpWRoll + 1;
+        Serial.print("             ");
+        Serial.println(consKpWRoll);
+      }         
+      else if (t == ';')
+      {
+        consKpWRoll = consKpWRoll - 1;
         Serial.print("             ");
         Serial.println(consKpWRoll);
       }         
       else if (t == '.')
       {
-        consKiWRoll = consKpWRoll - 1;
+        consKiWRoll = consKiWRoll + 1;
         Serial.print("             ");
-        Serial.println(consKpWRoll);
+        Serial.println(consKiWRoll);
+      }         
+      else if (t == ':')
+      {
+        consKiWRoll = consKiWRoll - 1;
+        Serial.print("             ");
+        Serial.println(consKiWRoll);
       }
       else if (t == 'ò')
       {
@@ -1408,7 +1420,8 @@ void printTimers()
 
 void printRoutine()
 {  
-  /*  // #doing
+  /*  // #doing 
+  */
   if (sakura.getPrintMotorValsUs())
   {
     Serial.print("V,  ");
@@ -1420,7 +1433,6 @@ void printRoutine()
     Serial.print(" | ");
     Serial.println(tenzoProp.getwUs4());
   }
-  */
     
   if (sakura.getPrintAccs())
     printAcc();

@@ -107,7 +107,7 @@ void Propulsion::setSpeeds(int throttle, float rollpid, float pitchpid, float ya
   if (wUs4<MIN_SIGNAL)
     wUs4 = MIN_SIGNAL;
    
-  /*   */
+  /*   
   Serial.print("V,  ");
   Serial.print(getwUs1());
   Serial.print(" | ");
@@ -116,7 +116,7 @@ void Propulsion::setSpeeds(int throttle, float rollpid, float pitchpid, float ya
   Serial.print(getwUs3());
   Serial.print(" | ");
   Serial.println(getwUs4());
-
+*/
   //2//Serial.println("a");
   //3 //wUs1 = getwUs1();
   
