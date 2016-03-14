@@ -1017,25 +1017,29 @@ void SerialRoutine()
       }         
       else if (t == ',')
       {
-        consKpWRoll = consKpWRoll + 1;
+        consKpWRoll = consKpWRoll + 0.05;
         Serial.print("             ");
         Serial.println(consKpWRoll);
       }         
       else if (t == ';')
       {
-        consKpWRoll = consKpWRoll - 1;
+        consKpWRoll = consKpWRoll - 0.05;
+        if (consKpWRoll<=0)
+          consKpWRoll = 0;
         Serial.print("             ");
         Serial.println(consKpWRoll);
       }         
       else if (t == '.')
       {
-        consKiWRoll = consKiWRoll + 1;
+        consKiWRoll = consKiWRoll + 0.05;
         Serial.print("             ");
         Serial.println(consKiWRoll);
       }         
       else if (t == ':')
       {
-        consKiWRoll = consKiWRoll - 1;
+        consKiWRoll = consKiWRoll - 0.05;
+        if (consKiWRoll<=0)
+          consKiWRoll = 0;
         Serial.print("             ");
         Serial.println(consKiWRoll);
       }
