@@ -1428,7 +1428,7 @@ void printRoutine()
   */
   if (sakura.getPrintMotorValsUs())
   {
-    /*
+    
     Serial.print("V,  ");
     Serial.print(tenzoProp.getwUs1());
     Serial.print(" | ");
@@ -1437,13 +1437,13 @@ void printRoutine()
     Serial.print(tenzoProp.getwUs3());
     Serial.print(" | ");
     Serial.println(tenzoProp.getwUs4());
-    */
     
-    
+    /*
     tempM1 = tenzoProp.getwUs1();
     tempM2 = tenzoProp.getwUs2();
     tempM3 = tenzoProp.getwUs3();
     tempM4 = tenzoProp.getwUs4();
+    */
     
     //Serial.println("V,  ");
     
