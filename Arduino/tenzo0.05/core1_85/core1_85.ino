@@ -124,7 +124,7 @@ boolean verboseFilterAccMatlab = true;
         // W Roll
         float aggKpWRoll=0.02, aggKiWRoll=0.2, aggKdWRoll=0.00;
         
-        float consKpWRoll=0.95, consKiWRoll=0.8, consKdWRoll=0;  //50 HZ
+        float consKpWRoll=1.09, consKiWRoll=1.30, consKdWRoll=0.08;  //50 HZ
         //float consKpWRoll=0.50, consKiWRoll=0.80, consKdWRoll=0.14;    
         float farKpWRoll=0.05, farKiWRoll=0.06, farKdWRoll=0.03;
         
@@ -149,7 +149,7 @@ boolean verboseFilterAccMatlab = true;
         float consKpCascRoll=1.1, consKiCascRoll=0.00, consKdCascRoll=0.00; //1.5 / 3.2 0.6 0.4
         
         // W part   
-        float consKpCascRollW=0.90, consKiCascRollW=1.65, consKdCascRollW=0.20;   
+        float consKpCascRollW=1.09, consKiCascRollW=1.30, consKdCascRollW=0.10;   
         
         // Pitch
         
@@ -1017,13 +1017,13 @@ void SerialRoutine()
       }         
       else if (t == ',')
       {
-        consKpWRoll = consKpWRoll + 0.05;
+        consKpWRoll = consKpWRoll + 0.02;
         Serial.print("             ");
         Serial.println(consKpWRoll);
       }         
       else if (t == ';')
       {
-        consKpWRoll = consKpWRoll - 0.05;
+        consKpWRoll = consKpWRoll - 0.02;
         if (consKpWRoll<=0)
           consKpWRoll = 0;
         Serial.print("             ");
@@ -1042,6 +1042,20 @@ void SerialRoutine()
           consKiWRoll = 0;
         Serial.print("             ");
         Serial.println(consKiWRoll);
+      }         
+      else if (t == '-')
+      {
+        consKdWRoll = consKdWRoll + 0.02;
+        Serial.print("\t\t\t\t\t\t\t\t\t");
+        Serial.println(consKdWRoll);
+      }         
+      else if (t == '_')
+      {
+        consKdWRoll = consKdWRoll - 0.02;
+        if (consKdWRoll<=0)
+          consKdWRoll = 0;
+        Serial.print("\t\t\t\t\t\t\t\t\t");
+        Serial.println(consKdWRoll);
       }
       else if (t == 'ò')
       {
@@ -1235,13 +1249,10 @@ void SerialRoutine()
     {
       count = 0;
       
-      //control();  
-      //controlCascade();
-      //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
-      
-      
-      controlW();
-      tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
+      //control();
+    
+      controlCascade();
+      //controlW();
       
       
       countCtrlAction++;
@@ -1947,6 +1958,11 @@ int setupL3G4200D(int scale)
 }
 
 
+/* 
+ *
+ *     SAKURA:   Deprecated
+ *
+ */
 void control()
 {
   if (enablePid)
@@ -2019,6 +2035,8 @@ void control()
     OutputPitch = 0;    
     OutputYaw = 0;
   }
+  
+  
 }
 
 void controlCascade()
@@ -2159,6 +2177,9 @@ void controlCascade()
       OutputPitch = 0;
     }
   }
+  
+  // Set computed speed
+  tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
 }
 
 void controlW()
@@ -2242,6 +2263,9 @@ void controlW()
     OutputWPitch = 0;    
     OutputWYaw = 0;
   }
+  
+  // Set computed speed
+  tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
 }
 
 void changePidState(boolean cond)
