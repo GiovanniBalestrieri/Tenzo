@@ -1066,15 +1066,13 @@ void SerialRoutine()
       }      
       else if (t == 'à')
       {
-        SetpointCascRoll = SetpointCascRoll - 1;
+        SetpointCascRoll = SetpointCascRoll + 1;
         Serial.print("V,SetpointCascRoll:  ");
         Serial.println(SetpointCascRoll);
       }               
       else if (t == 't')
       {
-        SetpointCascRoll = SetpointCascRoll - 1;
-        Serial.print("V,SetpointCascRoll:  ");
-        Serial.println(SetpointCascRoll);
+        Serial.println("\t\t\tPorco Dia ");
       }         
       else if (t == 'y')
       {
@@ -1251,8 +1249,8 @@ void SerialRoutine()
       
       //control();
     
-      controlCascade();
-      //controlW();
+      //controlCascade();
+      controlW();
       
       
       countCtrlAction++;
