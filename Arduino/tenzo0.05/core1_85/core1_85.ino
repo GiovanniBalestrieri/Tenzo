@@ -1440,11 +1440,10 @@ void printRoutine()
     */
     
     
-    tenzoProp.wUs1 = tenzoProp.getwUs1();
-    tenzoProp.wUs2 = tenzoProp.getwUs2();
-    tenzoProp.wUs3 = tenzoProp.getwUs3();
-    tenzoProp.wUs4 = tenzoProp.getwUs4();
-    */
+    tempM1 = tenzoProp.getwUs1();
+    tempM2 = tenzoProp.getwUs2();
+    tempM3 = tenzoProp.getwUs3();
+    tempM4 = tenzoProp.getwUs4();
     
     //Serial.println("V,  ");
     
