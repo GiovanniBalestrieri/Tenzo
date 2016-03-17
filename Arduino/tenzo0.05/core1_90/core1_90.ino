@@ -41,7 +41,7 @@ int warning = 0;
  * VTOL settings
  */
  // Take Off settings
-int rampTill = 1270;
+int rampTill = 1100; // rampTill = 1270;
 int idle = 1000;
 int motorRampDelayFast = 2;
 int motorRampDelayMedium = 5;
@@ -389,7 +389,7 @@ String inComingString = "";
 // Volatile vars
 volatile int cont = 0;
 int countCtrlAction = 0;
-volatile int contSamples=0;
+volatile int contGyroSamples=0;
 volatile int contCalc=0;
 
 volatile float thetaOLD = 0;
@@ -471,8 +471,9 @@ void setupGyro()
     Serial.print("      Bias est: [us] ");
     Serial.print(biasCalcTime);
     Serial.print("      Samples: ");
-    Serial.println(contSamples);
+    Serial.println(contGyroSamples);
   }
+
   if (!sakura.getProcessing())
   {
     Serial.println("[ OK ] Init Gyro");
@@ -553,7 +554,6 @@ void setup() {
 
 void loop() {  
   SerialRoutine();
-  tenzoProp.setSpeedWUs(tenzoProp.getThrottle());
 }
 
 void getAcc() //ISR
@@ -1224,14 +1224,15 @@ void SerialRoutine()
       }       
   }
   timerSec = micros()-secRoutine;
-  lastTimeToRead = micros();
+  //lastTimeToRead = micros();
    
+  // Runs @ 1 Hz
   if (timerSec >= 1000000)
   {
     secRoutine = micros();
     printTimers();
-    cont=0;      
-    contSamples=0;      
+    //cont=0;      
+    contGyroSamples=0;      
     contCalc=0; 
     countCtrlAction=0;
   }
@@ -1242,16 +1243,15 @@ void SerialRoutine()
   if (timerRoutine >= deltaT*1000) 
   {      
     kMRoutine = micros();    
-    count += 1;
-    if (count >= 1)
-    {
-      count = 0;
-      
-      //control();
     
-      //controlCascade();
-      controlW();
+    //count += 1;
+    //if (count >= 1)
+    //{
+      //count = 0;      
       
+      //control();    
+      //controlCascade();
+      controlW();      
       
       countCtrlAction++;
       printRoutine();
@@ -1259,7 +1259,7 @@ void SerialRoutine()
       // Updates counters
       servoTime = micros();
       servoTime = micros() - servoTime;
-    }
+    //}
   }
 }
 
@@ -1419,10 +1419,10 @@ void printTimers()
     {
       // Print Samples rate: [sample/sec] 
       Serial.print("t,");
-      Serial.print(contSamples);
+      Serial.print(contGyroSamples);
       // Print     ControlInput: 
       Serial.print(",");
-      Serial.println(countCtrlAction);
+      Serial.print(countCtrlAction);
       // Print    timeservo: 
       Serial.print(",");
       Serial.print(servoTime);
@@ -1727,7 +1727,7 @@ void getGyroValues()
     removeBiasAndScale();
 
   samplingTime = micros()- samplingTime;
-  contSamples++;
+  contGyroSamples++;
 }
 
 
