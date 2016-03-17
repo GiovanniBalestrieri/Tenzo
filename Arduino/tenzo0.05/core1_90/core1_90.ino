@@ -234,22 +234,19 @@ PID altitudePid(&InputAltitude, &OutputAltitude, &SetpointAltitude, consKpAltitu
 
 
 //Specify the links and initial tuning parameters
-PID wrollPid(&InputWRoll, &OutputWRoll, &SetpointWRoll, consKpWRoll, consKiWRoll, consKdWRoll, DIRECT);
-PID wpitchPid(&InputWPitch, &OutputWPitch, &SetpointWPitch, consKpWPitch, consKiWPitch, consKdWPitch, DIRECT);
+PID wrollPid(&InputWRoll, &OutputWRoll, &SetpointWRoll, consKpCascRollW, consKiCascRollW, consKdCascRollW, DIRECT);
+PID wpitchPid(&InputWPitch, &OutputWPitch, &SetpointWPitch, consKpCascPitchW, consKiCascPitchW, consKdCascPitchW, DIRECT);
 PID wyawPid(&InputWYaw, &OutputWYaw, &SetpointWYaw, consKpWYaw, consKiWYaw, consKdWYaw, DIRECT);
 
 // Control Pid Cascade
 PID cascadeRollPid(&InputCascRoll, &OutputCascRoll, &SetpointCascRoll, consKpCascRoll, consKiCascRoll, consKdCascRoll, DIRECT);
 PID cascadeRollPidW(&InputCascRollW, &OutputCascRollW, &SetpointCascRollW, consKpCascRollW, consKiCascRollW, consKdCascRollW, DIRECT);
 
-
 PID cascadePitchPid(&InputCascPitch, &OutputCascPitch, &SetpointCascPitch, consKpCascPitch, consKiCascPitch, consKdCascPitch, DIRECT);
 PID cascadePitchPidW(&InputCascPitchW, &OutputCascPitchW, &SetpointCascPitchW, consKpCascPitchW, consKiCascPitchW, consKdCascPitchW, DIRECT);
 
-
 PID cascadeYawPid(&InputCascYaw, &OutputCascYaw, &SetpointCascYaw, consKpCascYaw, consKiCascYaw, consKdCascYaw, DIRECT);
 PID cascadeYawPidW(&InputCascYawW, &OutputCascYawW, &SetpointCascYawW, consKpCascYawW, consKiCascYawW, consKdCascYawW, DIRECT);
-
 
 PID cascadeAltPid(&InputCascAlt, &OutputCascAlt, &SetpointCascAlt, consKpCascAlt, consKiCascAlt, consKdCascAlt, DIRECT);
         
@@ -2032,9 +2029,7 @@ void control()
     OutputRoll = 0;
     OutputPitch = 0;    
     OutputYaw = 0;
-  }
-  
-  
+  }  
 }
 
 void controlCascade()
@@ -2192,7 +2187,7 @@ void controlW()
       InputWRoll = x;
       errorWRoll = SetpointWRoll - x; 
       
-      wrollPid.SetTunings(consKpWRoll, consKiWRoll, consKdWRoll);
+      wrollPid.SetTunings(consKpCascRollW, consKiCascRollW, consKdCascRollW);
 
       wrollPid.Compute();
       
@@ -2218,7 +2213,7 @@ void controlW()
       InputWPitch = y;
       errorWPitch = abs(SetpointWPitch - y);
 
-      wpitchPid.SetTunings(consKpWPitch,consKiWPitch, consKdWPitch);
+      wpitchPid.SetTunings(consKpCascPitchW,consKiCascPitchW, consKdCascPitchW);
 
       wpitchPid.Compute();
     }  
