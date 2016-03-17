@@ -124,7 +124,7 @@ boolean verboseFilterAccMatlab = true;
         // W Roll
         float aggKpWRoll=0.02, aggKiWRoll=0.2, aggKdWRoll=0.00;
         
-        float consKpWRoll=1.09, consKiWRoll=1.30, consKdWRoll=0.10;  //50 HZ
+        float consKpWRoll=1.28, consKiWRoll=1.30, consKdWRoll=0.10;  //50 HZ
         //float consKpWRoll=0.50, consKiWRoll=0.80, consKdWRoll=0.14;    
         float farKpWRoll=0.05, farKiWRoll=0.06, farKdWRoll=0.03;
         
@@ -149,7 +149,7 @@ boolean verboseFilterAccMatlab = true;
         float consKpCascRoll=1.1, consKiCascRoll=0.00, consKdCascRoll=0.00; //1.5 / 3.2 0.6 0.4
         
         // W part   
-        float consKpCascRollW=1.09, consKiCascRollW=1.30, consKdCascRollW=0.10;   
+        float consKpCascRollW=1.28, consKiCascRollW=1.30, consKdCascRollW=0.10;   
         
         // Pitch
         
@@ -191,22 +191,6 @@ boolean verboseFilterAccMatlab = true;
         double OutputCascRollW = 0;
         double OutputCascPitchW = 0;
         double OutputCascYawW = 0;
-        
-         
-
-        PID cascadeRollPid(&InputCascRoll, &OutputCascRoll, &SetpointCascRoll, consKpCascRoll, consKiCascRoll, consKdCascRoll, DIRECT);
-        PID cascadeRollPidW(&InputCascRollW, &OutputCascRollW, &SetpointCascRollW, consKpCascRollW, consKiCascRollW, consKdCascRollW, DIRECT);
-        
-        
-        PID cascadePitchPid(&InputCascPitch, &OutputCascPitch, &SetpointCascPitch, consKpCascPitch, consKiCascPitch, consKdCascPitch, DIRECT);
-        PID cascadePitchPidW(&InputCascPitchW, &OutputCascPitchW, &SetpointCascPitchW, consKpCascPitchW, consKiCascPitchW, consKdCascPitchW, DIRECT);
-        
-        
-        PID cascadeYawPid(&InputCascYaw, &OutputCascYaw, &SetpointCascYaw, consKpCascYaw, consKiCascYaw, consKdCascYaw, DIRECT);
-        PID cascadeYawPidW(&InputCascYawW, &OutputCascYawW, &SetpointCascYawW, consKpCascYawW, consKiCascYawW, consKdCascYawW, DIRECT);
-        
-        
-        PID cascadeAltPid(&InputCascAlt, &OutputCascAlt, &SetpointCascAlt, consKpCascAlt, consKiCascAlt, consKdCascAlt, DIRECT);
         
         
         // Define IO and setpoint for control
@@ -254,6 +238,21 @@ PID wrollPid(&InputWRoll, &OutputWRoll, &SetpointWRoll, consKpWRoll, consKiWRoll
 PID wpitchPid(&InputWPitch, &OutputWPitch, &SetpointWPitch, consKpWPitch, consKiWPitch, consKdWPitch, DIRECT);
 PID wyawPid(&InputWYaw, &OutputWYaw, &SetpointWYaw, consKpWYaw, consKiWYaw, consKdWYaw, DIRECT);
 
+// Control Pid Cascade
+PID cascadeRollPid(&InputCascRoll, &OutputCascRoll, &SetpointCascRoll, consKpCascRoll, consKiCascRoll, consKdCascRoll, DIRECT);
+PID cascadeRollPidW(&InputCascRollW, &OutputCascRollW, &SetpointCascRollW, consKpCascRollW, consKiCascRollW, consKdCascRollW, DIRECT);
+
+
+PID cascadePitchPid(&InputCascPitch, &OutputCascPitch, &SetpointCascPitch, consKpCascPitch, consKiCascPitch, consKdCascPitch, DIRECT);
+PID cascadePitchPidW(&InputCascPitchW, &OutputCascPitchW, &SetpointCascPitchW, consKpCascPitchW, consKiCascPitchW, consKdCascPitchW, DIRECT);
+
+
+PID cascadeYawPid(&InputCascYaw, &OutputCascYaw, &SetpointCascYaw, consKpCascYaw, consKiCascYaw, consKdCascYaw, DIRECT);
+PID cascadeYawPidW(&InputCascYawW, &OutputCascYawW, &SetpointCascYawW, consKpCascYawW, consKiCascYawW, consKdCascYawW, DIRECT);
+
+
+PID cascadeAltPid(&InputCascAlt, &OutputCascAlt, &SetpointCascAlt, consKpCascAlt, consKiCascAlt, consKdCascAlt, DIRECT);
+        
 /**
  * Compass
  */
@@ -1250,8 +1249,8 @@ void SerialRoutine()
       //count = 0;      
       
       //control();    
-      //controlCascade();
-      controlW();      
+      controlCascade();
+      //controlW();      
       
       countCtrlAction++;
       printRoutine();
