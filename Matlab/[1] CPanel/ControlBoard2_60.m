@@ -413,6 +413,13 @@ langIta = 'en';
 
 %% Plot variables
 
+% Samples frequency
+gyroFreq = 0.01;
+accFreq = 0.01;
+angleFreq = 0.1;
+
+
+
 buf_len = 100;
 index = 1:buf_len;
 
@@ -481,11 +488,11 @@ disp('Welcome to the CPanel');
 delete(timerfindall);
 %stop(timerfindall);
 
-gyroTimer = timer('ExecutionMode','FixedRate','Period',0.01,'TimerFcn',{@graphGyro});
+gyroTimer = timer('ExecutionMode','FixedRate','Period',gyroFreq,'TimerFcn',{@graphGyro});
 
-angleTimer = timer('ExecutionMode','FixedRate','Period',0.02,'TimerFcn',{@graphAngles});
+angleTimer = timer('ExecutionMode','FixedRate','Period',angleFreq,'TimerFcn',{@graphAngles});
                    
-accTimer = timer('ExecutionMode','FixedRate','Period',0.01,'TimerFcn',{@graphAcc});
+accTimer = timer('ExecutionMode','FixedRate','Period',accFreq,'TimerFcn',{@graphAcc});
   
 
 %% Delete all serial connections
