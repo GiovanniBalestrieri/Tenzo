@@ -1230,8 +1230,8 @@ void SerialRoutine()
       //count = 0;      
       
       //control();    
-      //controlCascade();
-      controlW();      
+      controlCascade();
+      //controlW();      
       
       countCtrlAction++;
       printRoutine();
