@@ -2056,7 +2056,7 @@ void controlCascade()
       InputCascRollW = x;
       SetpointCascRollW = -OutputCascRoll;
       //////////////////////////////////////
-      SetpointCascRollW = 0;
+      //SetpointCascRollW = 0;
       errorCascRollW = SetpointCascRollW - x; 
 
       cascadeRollPidW.SetTunings(consKpCascRollW, consKiCascRollW, consKdCascRollW);
