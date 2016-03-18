@@ -149,7 +149,8 @@ boolean verboseFilterAccMatlab = true;
         float consKpCascRoll=1.1, consKiCascRoll=0.00, consKdCascRoll=0.00; //1.5 / 3.2 0.6 0.4
         
         // W part   
-        float consKpCascRollW=1.28, consKiCascRollW=1.30, consKdCascRollW=0.10;   
+        //float consKpCascRollW=1.28, consKiCascRollW=1.30, consKdCascRollW=0.10;  // Expensive 
+        float consKpCascRollW=0.75, consKiCascRollW=0.70, consKdCascRollW=0.10;  // Expensive 
         
         // Pitch
         
