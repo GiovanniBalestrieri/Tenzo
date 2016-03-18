@@ -152,8 +152,7 @@ boolean verboseFilterAccMatlab = true;
         //float consKpCascRollW=1.28, consKiCascRollW=1.30, consKdCascRollW=0.10;  // Expensive 
         float consKpCascRollW=0.75, consKiCascRollW=0.70, consKdCascRollW=0.10;  // Expensive 
         
-        // Pitch
-        
+        // Pitch        
         
         // Aggressive settings theta >= thre     
         float aggKpCascPitch=1.1, aggKiCascPitch=0.00, aggKdCascPitch=0.00;
