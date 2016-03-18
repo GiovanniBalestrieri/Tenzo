@@ -1080,8 +1080,6 @@ void SerialRoutine()
           consKpCascRoll = 0;
         if (verbosePidValuesFeedback)
         {
-          //Serial.print("consKpCascRoll:  ");
-          //Serial.println(consKpCascRoll);
           sendPidVal(0,0);
         }          
       }         
@@ -1090,8 +1088,6 @@ void SerialRoutine()
         consKpCascRoll = consKpCascRoll + 0.05;
         if (verbosePidValuesFeedback)
         {
-          //Serial.print("consKpCascRoll:  ");
-          //Serial.println(consKpCascRoll);
           sendPidVal(0,0);
         }
       }     
@@ -1102,8 +1098,6 @@ void SerialRoutine()
           consKiCascRoll = 0;
         if (verbosePidValuesFeedback)
         {
-          //Serial.print("consKICascRoll:  ");
-          //Serial.println(consKiCascRoll);
           sendPidVal(0,0); 
         }
       }         
@@ -1112,8 +1106,6 @@ void SerialRoutine()
         consKiCascRoll = consKiCascRoll + 0.05;
         if (verbosePidValuesFeedback)
         {
-          //Serial.print("consKiCascRoll:  ");
-          //Serial.println(consKiCascRoll);
           sendPidVal(0,0);
         }
       }     
@@ -1124,8 +1116,6 @@ void SerialRoutine()
           consKdCascRoll = 0;
         if (verbosePidValuesFeedback)
         {
-          //Serial.print("consKDCascRoll:  ");
-        //Serial.println(consKdCascRoll);
           sendPidVal(0,0);
         }
       }         
@@ -1134,8 +1124,6 @@ void SerialRoutine()
         consKdCascRoll = consKdCascRoll + 0.05;
         if (verbosePidValuesFeedback)
         {
-          ///Serial.print("consKDCascRoll:  ");
-          //Serial.println(consKdCascRoll);
            sendPidVal(0,0); 
         }
       }    
@@ -1146,8 +1134,6 @@ void SerialRoutine()
           consKpCascRollW = 0;
         if (verbosePidValuesFeedback)
         {
-          //Serial.print("consKpCascRoll W:  ");
-          //Serial.println(consKpCascRollW);
           sendPidVal(3,0);
         } 
       }         
