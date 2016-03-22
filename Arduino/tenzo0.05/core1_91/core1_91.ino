@@ -144,9 +144,9 @@ boolean verboseFilterAccMatlab = true;
         // Roll
 
         // Aggressive settings theta >= thre     
-        float aggKpCascRoll=1.1, aggKiCascRoll=0.00, aggKdCascRoll=0.00;
+        float aggKpCascRoll=0.6, aggKiCascRoll=0.00, aggKdCascRoll=0.3;
         // Conservative settings theta < thre
-        float consKpCascRoll=1.1, consKiCascRoll=0.00, consKdCascRoll=0.00; //1.5 / 3.2 0.6 0.4
+        float consKpCascRoll=1, consKiCascRoll=0.00, consKdCascRoll=0.00; //1.5 / 3.2 0.6 0.4
         
         // W part   
         //float consKpCascRollW=1.28, consKiCascRollW=1.30, consKdCascRollW=0.10;  // Expensive 
@@ -417,7 +417,7 @@ volatile float angleYAccF;
 
 volatile float aax,aay,aaz;
 volatile float axm1,aym1,azm1;
-volatile float alphaA= 0.995, alphaW = 0.8;
+volatile float alphaA= 0.998, alphaW = 0.8;
 volatile float estXAngle = 0, estYAngle = 0, estZAngle = 0;
 volatile float kG = 0.975, kA = 0.025, kGZ=0.60, kAZ = 0.40;
 
