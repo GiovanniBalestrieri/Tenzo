@@ -1,17 +1,17 @@
 clc 
 clear all
 
-XMin = -100;
-XMax = 100;
-YMin = -100;
-YMax = 100;
+XMin = -20;
+XMax = 20;
+YMin = -20;
+YMax = 20;
 addpath('Reference/c2xyz/');
 addpath('Reference/export/');
 
 %% Random Radial Basis functions in space 
 disp('3D case with random path - 10 rbf:');
 N = 5 % number of random functions
-stepMesh = 0.1;
+stepMesh = 0.5;
 Z = zeros((XMax-XMin)/stepMesh+1,(XMax-XMin)/stepMesh+1);
 [X,Y] = meshgrid(XMin:stepMesh:XMax);
 % random variance in [a;b] = [0.3;1.5]
@@ -43,7 +43,7 @@ surf(X,Y,Z)
 % Contour[Required]
 
 figure(2)
- cl = contour(X,Y,Z);
+cl = contour(X,Y,Z);
 [x1,y1,z1] = C2xyz(cl);
 
 %% isaolate regions of interest
@@ -168,26 +168,26 @@ CH = bwconvhull(BW);
 imshow(CH);
 
 %% Scaling sectors up by a factor of K
-
-k=1
-%figure(9)
-% For each sector
-figure(4)
-for i=1:sector.numberOfZones-1
-    % for each point of the sector
-    for j=1:size(sector.zones(i).x,2)-1        
-        plot(sector.zones(i).x(1,j),sector.zones(i).y(1,j),'-b','LineWidth',3)
-        v=[sector.zones(i).x(1,j) - stats(i).Centroid(1); sector.zones(i).y(1,j) - stats(i).Centroid(2)];
-        sector.zone(i).x(1,j) = sector.zones(i).x(1,j) + k*v(1) ;
-        sector.zone(i).y(1,j) = sector.zones(i).y(1,j) + k*v(2) ;
-        hold on
-        %plot(sector.zone(i).x(1,j),sector.zone(i).y(1,j),'-r','LineWidth',3)
-    end
-    
-    %plot(centroids(i,1),centroids(i,2), 'r*')
-    %hold on
-end
-hold off
+% 
+% k=1
+% %figure(9)
+% % For each sector
+% figure(4)
+% for i=1:sector.numberOfZones-1
+%     % for each point of the sector
+%     for j=1:size(sector.zones(i).x,2)-1        
+%         plot(sector.zones(i).x(1,j),sector.zones(i).y(1,j),'-b','LineWidth',3)
+%         v=[sector.zones(i).x(1,j) - stats(i).Centroid(1); sector.zones(i).y(1,j) - stats(i).Centroid(2)];
+%         sector.zone(i).x(1,j) = sector.zones(i).x(1,j) + k*v(1) ;
+%         sector.zone(i).y(1,j) = sector.zones(i).y(1,j) + k*v(2) ;
+%         hold on
+%         %plot(sector.zone(i).x(1,j),sector.zone(i).y(1,j),'-r','LineWidth',3)
+%     end
+%     
+%     %plot(centroids(i,1),centroids(i,2), 'r*')
+%     %hold on
+% end
+% hold off
 %% Calculate sectors
 
 set(0,'CurrentFigure',h);
