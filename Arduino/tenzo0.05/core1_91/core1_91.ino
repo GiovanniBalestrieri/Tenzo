@@ -1183,6 +1183,16 @@ void SerialRoutine()
       }  
       else if (t == 'w')
       {
+        alphaA = alphaA + 0.001;
+        if (alphaA>=1)
+          alphaA = 1;
+        if (verboseFilterAccMatlab)
+        {
+          sendAlphaAcc();
+        } 
+      }     
+      else if (t == 'W')
+      {
         alphaA = alphaA + 0.01;
         if (alphaA>=1)
           alphaA = 1;
@@ -1192,6 +1202,16 @@ void SerialRoutine()
         } 
       }     
       else if (t == 's')
+      {
+        alphaA = alphaA - 0.001;
+        if (alphaA<=0)
+          alphaA = 0;
+        if (verboseFilterAccMatlab)
+        {
+          sendAlphaAcc();
+        } 
+      }             
+      else if (t == 'S')
       {
         alphaA = alphaA - 0.01;
         if (alphaA<=0)
