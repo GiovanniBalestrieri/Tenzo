@@ -2,7 +2,7 @@ fileID = fopen('~/acc.csv');
 C = textscan(fileID, '%s %f %f %f %d %s','delimiter', ',', 'EmptyValue', -Inf)
 
 
-N=90;
+N=200;
 
 acc.X = zeros(N,1);
 acc.Y = zeros(N,1);

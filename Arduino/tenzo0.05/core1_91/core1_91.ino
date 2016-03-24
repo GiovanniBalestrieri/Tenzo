@@ -813,16 +813,16 @@ void SerialRoutine()
                }
                
                // Security Check [ IMPORTANT ]
-               if (p>2)
-                  p=2;
+               if (p>3)
+                  p=3;
                if (p<0)
                   p=0;
-               if (d>2)
-                  d=2;
+               if (d>3)
+                  d=3;
                if (d<0)
                   d=0;
-               if (i>2)
-                  i=2;
+               if (i>3)
+                  i=3;
                if (i<0)
                   i=0;
                   // ADD setpoint check pensaci un po'
