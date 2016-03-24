@@ -40,21 +40,33 @@ ylabel(ax3,'Raw Z');
 xlabel(ax3,'Sample');
 
 figure(2)
-plot(acc.t,acc.Z)
-title('Acc along Z axis');
-ylabel('Raw Z');
-xlabel('Sample');
+ax1 = subplot(3,1,1); % top subplot
+ax2 = subplot(3,1,2); % bottom subplot
+ax3 = subplot(3,1,3); % bottom subplot
 
-%% Post processing
 
-cross = 0;
+maxX = max(acc.X)
+minX = min(acc.X)
+tolX = abs(maxX-minX)/2
+plot(ax1,acc.t,unwrap(acc.X,tolX))
+title(ax1,'Acc along X axis');
+ylabel(ax1,'Raw X');
+xlabel(ax1,'Sample');
+
+
+maxY = max(acc.Y)
+minY = min(acc.Y)
+tolY = abs(maxY-minY)/2
+plot(ax2,acc.t,unwrap(acc.Y,tolY))
+title(ax2,'Acc along Y axis');
+ylabel(ax2,'Raw Y');
+xlabel(ax2,'Sample');
+
 
 maxZ = max(acc.Z)
 minZ = min(acc.Z)
-
-for i=1:N
-    if 
-    if cross>0  
-        acc.Z(i) = minZ - cross*(maxZ - acc.Z(i))
-    end
-end
+tolZ = abs(maxZ-minZ)/2
+plot(ax3,acc.t,unwrap(acc.Z,tolZ))
+title(ax3,'Acc along Z axis');
+ylabel(ax3,'Raw Z');
+xlabel(ax3,'Sample');
