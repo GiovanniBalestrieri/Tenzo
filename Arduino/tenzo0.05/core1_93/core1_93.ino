@@ -144,13 +144,13 @@ boolean verboseFilterAccMatlab = true;
         // Roll
 
         // Aggressive settings theta >= thre     
-        float aggKpCascRoll=1.06, aggKiCascRoll=0.00, aggKdCascRoll=0.0;
+        float aggKpCascRoll=1.19, aggKiCascRoll=1.11, aggKdCascRoll=0.93;
         // Conservative settings theta < thre
-        float consKpCascRoll=1.07, consKiCascRoll=0.06, consKdCascRoll=0.10; //1.5 / 3.2 0.6 0.4
+        float consKpCascRoll=4.63, consKiCascRoll=1.01, consKdCascRoll=0.93; //1.5 / 3.2 0.6 0.4
         
         // W part   
         //float consKpCascRollW=1.28, consKiCascRollW=1.30, consKdCascRollW=0.10;  // Expensive 
-        float consKpCascRollW=0.75, consKiCascRollW=0.70, consKdCascRollW=0.10;  // Expensive 
+        float consKpCascRollW=0.75, consKiCascRollW=0.30, consKdCascRollW=0.10;  // Expensive 
         
         // Pitch        
         
@@ -813,8 +813,8 @@ void SerialRoutine()
                }
                
                // Security Check [ IMPORTANT ]
-               if (p>10)
-                  p=10;
+               if (p>20)
+                  p=20;
                if (p<0)
                   p=0;
                if (d>6)
