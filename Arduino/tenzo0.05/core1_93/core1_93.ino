@@ -813,8 +813,8 @@ void SerialRoutine()
                }
                
                // Security Check [ IMPORTANT ]
-               if (p>6)
-                  p=6;
+               if (p>10)
+                  p=10;
                if (p<0)
                   p=0;
                if (d>6)
