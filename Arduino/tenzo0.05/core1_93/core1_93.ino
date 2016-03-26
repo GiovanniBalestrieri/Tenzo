@@ -194,7 +194,7 @@ boolean verboseFilterAccMatlab = true;
         
         
         // Define IO and setpoint for control
-        double SetpointRoll = -1, InputRoll, errorRoll;        
+        double SetpointRoll = 0, InputRoll, errorRoll;        
         double SetpointPitch = 0, InputPitch, errorPitch;
         double SetpointYaw = 180, InputYaw, errorYaw;
         double SetpointAltitude = 1, InputAltitude, errorAltitude;                
