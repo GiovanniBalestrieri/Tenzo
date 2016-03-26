@@ -2494,11 +2494,11 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                             set(handles.referencePIDVal,'String',setpointRollTemp);
                         end
                      elseif tag == rollAggTag(1) && mess(2) == rollAggTag(2)
-                        % Pid Roll CONS
+                        % Pid Roll Agg
                         disp('Pid Roll Agg');
                         [R,aggRollKp,aggRollKi,aggRollKd,setpointRollTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
 
-                        if strcmp(pidModeStrategy,'0')
+                        if strcmp(pidModeStrategy,'1')
                             set(handles.pidKpSlider,'Value',aggRollKp);
                             set(handles.pidKdSlider,'Value',aggRollKd);
                             set(handles.pidKiSlider,'Value',aggRollKi);
@@ -2522,7 +2522,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
                         [R,aggPitchKp,aggPitchKi,aggPitchKd,setpointPitchTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
 
-                        if strcmp(pidModeStrategy,'0')
+                        if strcmp(pidModeStrategy,'1')
                             set(handles.pidKpSlider,'Value',aggPitchKp);
                             set(handles.pidKdSlider,'Value',aggPitchKd);
                             set(handles.pidKiSlider,'Value',aggPitchKi);
@@ -2546,7 +2546,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
                         [R,aggYawKp,aggYawKi,aggYawKd,setpointYawTemp,N] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
 
-                        if strcmp(pidModeStrategy,'0')
+                        if strcmp(pidModeStrategy,'1')
                             set(handles.pidKpSlider,'Value',aggYawKp);
                             set(handles.pidKdSlider,'Value',aggYawKd);
                             set(handles.pidKiSlider,'Value',aggYawKi);
