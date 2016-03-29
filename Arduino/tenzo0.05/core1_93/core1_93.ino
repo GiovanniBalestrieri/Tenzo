@@ -417,7 +417,7 @@ volatile float angleYAccF;
 
 volatile float aax,aay,aaz;
 volatile float axm1,aym1,azm1;
-volatile float alphaA= 0.997, alphaW = 0.8;
+volatile float alphaA= 0.993, alphaW = 0.8;
 volatile float estXAngle = 0, estYAngle = 0, estZAngle = 0;
 volatile float kG = 0.975, kA = 0.025, kGZ=0.60, kAZ = 0.40;
 
