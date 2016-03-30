@@ -144,10 +144,10 @@ boolean verboseFilterAccMatlab = true;
         // Roll
 
         // Aggressive settings theta >= thre     
-        // Rise time: 1.2 s
-        // Overshoot < 3%
-        // Settling time 1.6s
-        // Steady state error: 2%
+        // Rise time: 2.0 s
+        // Overshoot: 0%
+        // Settling time 2.0s
+        // Steady state error: 2°
         float aggKpCascRoll=1.52, aggKiCascRoll=0, aggKdCascRoll=0.72;
         // Conservative settings theta < thre
         float consKpCascRoll=3.77, consKiCascRoll=0.52, consKdCascRoll=1.15; //1.5 / 3.2 0.6 0.4
