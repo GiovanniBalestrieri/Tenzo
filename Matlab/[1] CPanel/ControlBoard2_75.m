@@ -552,29 +552,95 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
     %% Data Acquisition panel
 
+      %# Create the button group.
+      
+    welcomeAcq = uicontrol('Style','text', 'String','Data Acquisition Panel', ...
+        'Position', [140 180 350 90],...
+        'Parent', hTabs(5), 'FontSize',15,'FontWeight','bold');
+       
+    
+    acquisitionSensorGroup = uibuttongroup('Parent', hTabs(5),'visible','off',...
+        'Position',[0 0 .17 1]);
+    
+    uicontrol('Style','text', 'String','Select Data', ...
+        'Position', [2 340 80 30],...
+        'Parent', hTabs(5), 'FontSize',9);
+    
+    % Create three radio buttons in the button group.
+    accRad = uicontrol('Style','Radio','String','Accel',...
+        'pos',[10 250 80 30],'parent',acquisitionSensorGroup,'HandleVisibility','off');
+    gyroRad = uicontrol('Style','Radio','String','Gyro',...
+        'pos',[10 150 80 30],'parent',acquisitionSensorGroup,'HandleVisibility','off');
+    % Initialize some button group properties. 
+    set(acquisitionSensorGroup,'SelectionChangeFcn',@selAcqControl);
+    set(acquisitionSensorGroup,'SelectedObject',[]);  % No selection
+    set(acquisitionSensorGroup,'Visible','on');
+    
     if (~exist('handles.plot','var'))
         handles.record = uicontrol('Style','togglebutton', 'String','Record', ...
-            'Position', [110 90 120 30],...
+            'Position', [160 90 120 30],...
             'Parent',hTabs(5),'Callback',@recordCallback);
     end
     
     if (~exist('handles.plot','var'))
         handles.realTime = uicontrol('Style','togglebutton', 'String','Real time', ...
-            'Position', [310 90 120 30],...
+            'Position', [360 90 120 30],...
             'Parent',hTabs(5),'Callback',@rtCallback);
     end
     
     if (~exist('handles.start','var'))
         handles.start = uicontrol('Style','pushbutton', 'String','Start', ...
-            'Position', [110 20 120 30],...
+            'Position', [160 20 120 30],...
             'Parent',hTabs(5), 'Callback',@startCallback);
     end
     
     if (~exist('handles.stop','var'))
         handles.stop = uicontrol('Style','pushbutton', 'String','Stop', ...
-            'Position', [310 20 120 30],...
+            'Position', [360 20 120 30],...
             'Parent',hTabs(5), 'Callback',@stopCallback);
     end
+    
+    
+     % Pid Reference value 
+    
+    frameAlphaA = uicontrol('Style','frame','Visible','off', ...
+        'Parent',hTabs(5), 'Position',[ 221 320 50 50 ]);
+    
+    handles.alphaAVal = uicontrol('Style','edit', 'String','0', ...
+        'Position', [226 325 40 40],'Visible','off',...
+        'Parent',hTabs(5), 'FontSize',13,'FontWeight','normal');
+    
+    alphaATxt = uicontrol('Style','text', 'String','AlphaA: ', ...
+        'Position', [135 325 80 40],'Visible','off',...
+        'Parent',hTabs(5), 'FontSize',11,'FontWeight','normal');
+    
+    frameWindowMedian = uicontrol('Style','frame','Visible','off', ...
+        'Parent',hTabs(5), 'Position',[ 221 320 50 50 ]);
+    
+    handles.winMedianVal = uicontrol('Style','edit', 'String','0', ...
+        'Position', [226 325 40 40],'Visible','off',...
+        'Parent',hTabs(5), 'FontSize',13,'FontWeight','normal');
+    
+    winMedianTxt = uicontrol('Style','text', 'String','Window: ', ...
+        'Position', [135 325 80 40],'Visible','off',...
+        'Parent',hTabs(5), 'FontSize',11,'FontWeight','normal');
+    
+    sendAlphaBtn = uicontrol('Style','pushbutton', 'String','Send', ...
+        'Position', [140 290 70 30],'Visible','off', ...
+        'Parent',hTabs(5), 'Callback',@sendPidCallback);
+    
+    readAlphaBtn = uicontrol('Style','pushbutton', 'String','Read', ...
+        'Position', [140 250 70 30],'Visible','off', ...
+        'Parent',hTabs(5), 'Callback',@readPidCallback);
+    
+    sendMedianBtn = uicontrol('Style','pushbutton', 'String','Send', ...
+        'Position', [140 290 70 30],'Visible','off', ...
+        'Parent',hTabs(5), 'Callback',@sendPidCallback);
+    
+    readMedianBtn = uicontrol('Style','pushbutton', 'String','Read', ...
+        'Position', [140 250 70 30],'Visible','off', ...
+        'Parent',hTabs(5), 'Callback',@readPidCallback);
+    
     
     %% Home UI components
     uicontrol('Style','text', 'String','Tenzo Control Panel', ...
@@ -630,7 +696,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     
     %# Create the button group.
     
-    controlGroup = uibuttongroup('Parent', hTabs(4),'visible','off','Position',[0 0 .2 1]);
+    controlGroup = uibuttongroup('Parent', hTabs(4),'visible','off',...
+        'Position',[0 0 .2 1]);
     
     uicontrol('Style','text', 'String','Select Control', ...
         'Position', [2 340 80 30],...
@@ -648,7 +715,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     set(controlGroup,'SelectedObject',[]);  % No selection
     set(controlGroup,'Visible','on');
     
-    % Pid Aggressive threshold value 
+    % Pid Reference value 
     
     frameThreshold = uicontrol('Style','frame','Visible','off', ...
         'Parent',hTabs(4), 'Position',[ 221 320 50 50 ]);
@@ -733,7 +800,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     
     handles.pidKdSlider = uicontrol('Style','slider','Visible','off',...
     'min',0,'max',6,'Callback',@(s,e) disp('KdSlider'),...
-    'SliderStep',[0.01 0.05],'Position', [140 110 350 20]);
+    'SliderStep',[0.001 0.005],'Position', [140 110 350 20]);
     KdListener = addlistener(handles.pidKdSlider,'Value','PostSet',@pidKdSliderCallBack);
     
     handles.pidKiSlider = uicontrol('Style','slider','Visible','off',...
@@ -1556,6 +1623,53 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             set(sendPidValsBtn,'Visible','off');
         else
             
+        end
+    end
+
+
+    function selAcqControl(source,eventdata)
+        disp(['You are in ',get(get(source,'SelectedObject'),'String'),' mode ']);
+        
+        % If Manual mode is seleceted toggle visibility of up/dw
+        if get(accRad,'Value') == 1
+            set(welcomeAcq,'Visible','off');
+            set(frameAlphaA,'Visible','on');
+            set(handles.alphaAVal,'Visible','on');
+            set(alphaATxt,'Visible','on');
+            
+            set(frameWindowMedian,'Visible','off');
+            set(handles.winMedianVal,'Visible','off');
+            set(winMedianTxt,'Visible','off');
+        else                        
+            set(frameAlphaA,'Visible','off');
+            set(alphaATxt,'Visible','off');
+            set(handles.alphaAVal,'Visible','off');
+            
+            set(frameWindowMedian,'Visible','off');
+            set(handles.winMedianVal,'Visible','off');
+            set(winMedianTxt,'Visible','off');
+        end
+        
+        % If Test is selected toggle visibility btns
+        if get(gyroRad,'Value') == 1      
+            set(welcomeAcq,'Visible','off');
+            set(frameAlphaA,'Visible','off');
+            set(handles.alphaAVal,'Visible','off');
+            set(alphaATxt,'Visible','off');
+            
+            set(frameWindowMedian,'Visible','on');
+            set(handles.winMedianVal,'Visible','on');
+            set(winMedianTxt,'Visible','on');
+        else
+        end
+        
+        if get(HInfRad,'Value') == 1            
+            set(workInProgress,'Visible','on');
+            set(frameThreshold,'Visible','off');
+            set(handles.referencePIDVal,'Visible','off');
+            set(referencePIDTxt,'Visible','off');
+            set(sendPidValsBtn,'Visible','off');
+        else            
         end
     end
     
