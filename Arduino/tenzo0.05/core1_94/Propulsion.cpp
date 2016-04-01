@@ -107,25 +107,6 @@ void Propulsion::setSpeeds(int throttle, float rollpid, float pitchpid, float ya
   if (wUs4<MIN_SIGNAL)
     wUs4 = MIN_SIGNAL;
    
-  /*   
-  Serial.print("V,  ");
-  Serial.print(getwUs1());
-  Serial.print(" | ");
-  Serial.print(getwUs2());
-  Serial.print(" | ");
-  Serial.print(getwUs3());
-  Serial.print(" | ");
-  Serial.println(getwUs4());
-*/
-  //2//Serial.println("a");
-  //3 //wUs1 = getwUs1();
-  
-  
-  //  touchwUs1();
-  //  touchwUs2();
-  //  touchwUs3();
-  //  touchwUs4();
-  
   // send input to motors
   servo1.writeMicroseconds(wUs1);
   servo2.writeMicroseconds(wUs2);
