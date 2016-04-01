@@ -145,8 +145,8 @@ boolean verboseFilterAccMatlab = true;
 
         // Aggressive settings theta >= thre     
         // Rise time: 2.0 s
-        // Overshoot: 0%
-        // Settling time 2.0s
+        // Overshoot: 0 %
+        // Settling time 2.0 s
         // Steady state error: 2°
         float aggKpCascRoll=1.72, aggKiCascRoll=0, aggKdCascRoll=0.81;
         // Conservative settings theta < thre

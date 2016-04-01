@@ -606,6 +606,24 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     frameAlphaA = uicontrol('Style','frame','Visible','off', ...
         'Parent',hTabs(5), 'Position',[ 221 320 50 50 ]);
     
+    FilterConstantTxt = uicontrol('Style','text', 'String','Filter Constant: ', ...
+        'Position', [235 225 150 40],'Visible','off',...
+        'Parent',hTabs(5), 'FontSize',11,'FontWeight','normal');
+    
+    
+    StateAccTxt = uicontrol('Style','text', 'String','State: ', ...
+        'Position', [235 125 150 40],'Visible','off',...
+        'Parent',hTabs(5), 'FontSize',11,'FontWeight','normal');
+    
+    WindowTxt = uicontrol('Style','text', 'String','Window size: ', ...
+        'Position', [235 225 150 40],'Visible','off',...
+        'Parent',hTabs(5), 'FontSize',11,'FontWeight','normal');
+    
+    
+    StateGyroTxt = uicontrol('Style','text', 'String','State: ', ...
+        'Position', [235 125 150 40],'Visible','off',...
+        'Parent',hTabs(5), 'FontSize',11,'FontWeight','normal');
+    
     handles.alphaAVal = uicontrol('Style','edit', 'String','0', ...
         'Position', [226 325 40 40],'Visible','off',...
         'Parent',hTabs(5), 'FontSize',13,'FontWeight','normal');
@@ -1635,7 +1653,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             set(welcomeAcq,'Visible','off');
             set(frameAlphaA,'Visible','on');
             set(handles.alphaAVal,'Visible','on');
-            set(alphaATxt,'Visible','on');
+            set(alphaATxt,'Visible','on');            
+            set(StateAccTxt,'Visible','on');    
+            set(FilterConstantTxt,'Visible','on');
             
             set(frameWindowMedian,'Visible','off');
             set(handles.winMedianVal,'Visible','off');
@@ -1643,7 +1663,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         else                        
             set(frameAlphaA,'Visible','off');
             set(alphaATxt,'Visible','off');
-            set(handles.alphaAVal,'Visible','off');
+            set(handles.alphaAVal,'Visible','off'); 
+            set(StateAccTxt,'Visible','off');    
+            set(FilterConstantTxt,'Visible','off');
             
             set(frameWindowMedian,'Visible','off');
             set(handles.winMedianVal,'Visible','off');
@@ -1656,6 +1678,10 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             set(frameAlphaA,'Visible','off');
             set(handles.alphaAVal,'Visible','off');
             set(alphaATxt,'Visible','off');
+            set(StateAccTxt,'Visible','off');    
+            set(FilterConstantTxt,'Visible','off');
+            set(StateGyroTxt,'Visible','off');   
+            set(WindowTxt,'Visible','off');
             
             set(frameWindowMedian,'Visible','on');
             set(handles.winMedianVal,'Visible','on');
