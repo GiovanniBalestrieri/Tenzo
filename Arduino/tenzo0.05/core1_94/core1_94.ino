@@ -1833,7 +1833,7 @@ void printOmega()
   
     Serial.print(",");
     Serial.print(wF[2]);
-    Serial.print(",z");
+    Serial.println(",z");
   }
   else
   {
