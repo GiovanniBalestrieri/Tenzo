@@ -414,18 +414,16 @@ langIta = 'en';
 %% Plot variables
 
 % Samples frequency
-gyroFreq = 0.01;
-accFreq = 0.01;
+gyroFreq = 0.1;
+accFreq = 0.1;
 angleFreq = 0.1;
-
-
 
 buf_len = 100;
 index = 1:buf_len;
 
 % create variables for the Xaxis
 gxdata = zeros(buf_len,1);
-gydata = zeros(buf_len,1);
+gydata = zeros(buf_len,1); 
 gzdata = zeros(buf_len,1);
 
 gxFdata = zeros(buf_len,1);

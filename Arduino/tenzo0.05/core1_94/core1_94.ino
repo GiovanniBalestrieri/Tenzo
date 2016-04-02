@@ -404,9 +404,9 @@ volatile int rawAy = 0;
 volatile int rawAz = 0;
 volatile int dt=0;
 
-volatile float wF[3];
+volatile float wF[3] = {0,0,0};
 volatile float aF[3] = {0,0,0};
-volatile boolean filterGyro = false;
+volatile boolean filterGyro = true;
 volatile boolean filterAcc = true;
 volatile boolean initializedSetup = false;
 volatile boolean initializedGyroCalib = false;
@@ -421,6 +421,7 @@ volatile float angleYAccF;
 
 volatile float aax,aay,aaz;
 volatile float axm1,aym1,azm1;
+volatile float wxm1,wym1,wzm1;
 volatile float alphaA= 0.993, alphaW = 0.8;
 volatile float estXAngle = 0, estYAngle = 0, estZAngle = 0;
 volatile float kG = 0.975, kA = 0.025, kGZ=0.60, kAZ = 0.40;
@@ -663,9 +664,13 @@ void estAngle() // ISR
 
 void wFilter(volatile float val[])
 {
-  val[0] = (1-alphaW)*x + alphaW*val[0];
-  val[1] = (1-alphaW)*y + alphaW*val[1];
-  val[2] = (1-alphaW)*z + alphaW*val[2];
+  val[0] = (1-alphaW)*val[0] + alphaW*wxm1;
+  val[1] = (1-alphaW)*val[1] + alphaW*wym1;
+  val[2] = (1-alphaW)*val[2] + alphaW*wzm1;
+  
+  wxm1 = val[0];
+  wym1 = val[1];
+  wzm1 = val[2];
 }
 
 void aFilter(volatile float val[])
@@ -1212,6 +1217,47 @@ void SerialRoutine()
       }  
       else if (t == 'w')
       {
+        alphaW = alphaW + 0.05;
+        if (alphaW>=1)
+          alphaW = 1;
+        if (verboseFilterAccMatlab)
+        {
+          sendAlphaW();
+        } 
+      }     
+      else if (t == 'W')
+      {
+        alphaW = alphaW + 0.01;
+        if (alphaW>=1)
+          alphaW = 1;
+        if (verboseFilterAccMatlab)
+        {
+          sendAlphaW();
+        } 
+      }     
+      else if (t == 's')
+      {
+        alphaW = alphaW - 0.05;
+        if (alphaW<=0)
+          alphaW = 0;
+        if (verboseFilterAccMatlab)
+        {
+          sendAlphaW();
+        } 
+      }             
+      else if (t == 'S')
+      {
+        alphaW = alphaW - 0.01;
+        if (alphaW<=0)
+          alphaW = 0;
+        if (verboseFilterAccMatlab)
+        {
+          sendAlphaW();
+        } 
+      }       
+      /*      
+      else if (t == 'w')
+      {
         alphaA = alphaA + 0.001;
         if (alphaA>=1)
           alphaA = 1;
@@ -1250,6 +1296,7 @@ void SerialRoutine()
           sendAlphaAcc();
         } 
       }       
+      */
   }
   timerSec = micros()-secRoutine;
   //lastTimeToRead = micros();
@@ -1299,6 +1346,13 @@ void sendAlphaAcc()
   Serial.println(",z");
 }
 
+// Send gyro filter value to Matlab for dynamic change
+void sendAlphaW()
+{
+  Serial.print("f,");
+  Serial.print(alphaW);
+  Serial.println(",z");
+}
 // Send pid value feedback to App
 void sendPidVal(int which,int mode)
 {
@@ -1753,6 +1807,14 @@ void getGyroValues()
   
   if (initializedGyroCalib)
     removeBiasAndScale();
+    
+   if (filterGyro)
+   {
+      wF[0] = x;
+      wF[1] = y;
+      wF[2] = z;
+      wFilter(wF);
+   }
 
   samplingTime = micros()- samplingTime;
   contGyroSamples++;
