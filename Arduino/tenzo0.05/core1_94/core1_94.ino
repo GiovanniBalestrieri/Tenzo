@@ -148,13 +148,13 @@ boolean verboseFilterAccMatlab = true;
         // Overshoot: 0 %
         // Settling time 2.0 s
         // Steady state error: 2°
-        float aggKpCascRoll=1.72, aggKiCascRoll=0, aggKdCascRoll=0.81;
+        float aggKpCascRoll=1.68, aggKiCascRoll=0, aggKdCascRoll=0.75;
         // Conservative settings theta < thre
-        float consKpCascRoll=3.77, consKiCascRoll=0.52, consKdCascRoll=1.15; //1.5 / 3.2 0.6 0.4
+        float consKpCascRoll=3.31, consKiCascRoll=0.54, consKdCascRoll=0.04; //1.5 / 3.2 0.6 0.4
         
         // W part   
         //float consKpCascRollW=1.28, consKiCascRollW=1.30, consKdCascRollW=0.10;  // Expensive 
-        float consKpCascRollW=0.75, consKiCascRollW=0.30, consKdCascRollW=0.10;  // Expensive 
+        float consKpCascRollW=0.69, consKiCascRollW=0.0, consKdCascRollW=0.009;  // Expensive 
         
         // Pitch        
         
