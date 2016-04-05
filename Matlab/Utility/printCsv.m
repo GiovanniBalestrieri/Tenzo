@@ -1,4 +1,4 @@
-fileID = fopen('~/acc.csv');
+fileID = fopen('~/acc11Raw.csv');
 C = textscan(fileID, '%s %f %f %f %d %s','delimiter', ',', 'EmptyValue', -Inf)
 
 
