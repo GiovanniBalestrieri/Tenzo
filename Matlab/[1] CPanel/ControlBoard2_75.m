@@ -2,6 +2,7 @@ function ControlBoard()
 clear all;
 clc;
 
+
 % Version
 global version;
 version = 2.70;
@@ -414,9 +415,9 @@ langIta = 'en';
 %% Plot variables
 
 % Samples frequency
-gyroFreq = 0.1;
-accFreq = 0.1;
-angleFreq = 0.1;
+gyroFreq = 0.2;
+accFreq = 0.2;
+angleFreq = 0.2;
 
 buf_len = 100;
 index = 1:buf_len;
