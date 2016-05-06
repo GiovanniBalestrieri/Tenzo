@@ -3,12 +3,13 @@
 #include <FIMU_ADXL345.h>
 #include <FIMU_ITG3200.h>
 #include <HMC5883L.h> 
+#include <BMP085.h>
  
 float angles[3];
 float heading;
 
-short temperature;
-long pressure;
+BMP085 dps = BMP085();
+long Temperature = 0, Pressure = 0, Altitude = 0;
  
 // Set the FreeSixIMU object
 FreeSixIMU sixDOF = FreeSixIMU();
@@ -19,7 +20,7 @@ int error = 0;
  
 void setup(){
  
-  Serial.begin(9600);
+  Serial.begin(115200);
   Wire.begin();
  
   delay(5);
@@ -31,8 +32,9 @@ void setup(){
   error = compass.SetMeasurementMode(Measurement_Continuous); // Set the measurement mode to Continuous  
   if(error != 0) // If there is an error, print it out.
     Serial.println(compass.GetErrorText(error));
- 
-  bmp085Calibration(); // init barometric pressure sensor
+   
+  dps.init();
+  dps.dumpCalData();
  
 }
  
@@ -40,8 +42,10 @@ void loop(){
    
   sixDOF.getEuler(angles);
    
-  temperature = bmp085GetTemperature(bmp085ReadUT());
-  pressure = bmp085GetPressure(bmp085ReadUP());
+  dps.getTemperature(&Temperature);
+  dps.getPressure(&Pressure);
+  dps.getAltitude(&Altitude);
+  
  
   getHeading();
   PrintData();
@@ -89,7 +93,10 @@ void PrintData()
   Serial.print(heading);
   Serial.print("  ");
   Serial.print("Pressure: ");
-  Serial.print(pressure, DEC);
-  Serial.println(" Pa");
+  Serial.print(Pressure);
+  Serial.print(" Pa");
+  Serial.print("  ");
+  Serial.print("Temp: ");
+  Serial.println(Temperature);
    
 }
