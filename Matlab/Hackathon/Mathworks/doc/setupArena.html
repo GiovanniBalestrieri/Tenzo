@@ -1,0 +1,185 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>setupArena: Fonction de positionnement des cibles et des obstacles</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-03-27"><meta name="DC.source" content="setupArena.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>setupArena: Fonction de positionnement des cibles et des obstacles</h1><!--introduction--><!--/introduction--><h2>Sommaire</h2><div><ul><li><a href="#1">Introduction</a></li><li><a href="#2">Importer la configuration courante</a></li><li><a href="#3">D&eacute;placement de cibles/obstacles</a></li><li><a href="#4">Ajout de cibles/obstacles</a></li><li><a href="#5">Suppression de cibles/obstacles</a></li><li><a href="#6">Exporter une configuration comme sc&eacute;nario courant</a></li><li><a href="#7">Importer un sc&eacute;nario de base</a></li><li><a href="#8">Cr&eacute;er un nouveau sc&eacute;nario</a></li><li><a href="#9">Sauvegarder une configuration dans un fichier</a></li><li><a href="#10">Charger un fichier personnel</a></li><li><a href="#11">Ouverture du mod&egrave;le Simulink</a></li></ul></div><h2>Introduction<a name="1"></a></h2><p>La fonction <b>setupArena</b> permet de g&eacute;rer des configurations d'ar&egrave;ne (position des cibles et des obstacles), afin de pouvoir les utiliser lors de simulations.</p><h2>Importer la configuration courante<a name="2"></a></h2><p>L'importation de la configuration courante de l'ar&egrave;ne peut se faire de deux fa&ccedil;ons :</p><div><ul><li>En allant dans le menu <b>Import</b> <img src="setupArena_resources/setupArena_eq11499031656375046629.png" alt="$\rightarrow$"> <b>From Workspace</b></li><li>En cliquant sur le bouton correspondant dans la barre d'outils</li></ul></div><p><img vspace="5" hspace="5" src="setupArena_resources/ImportFromWorkspace.PNG" alt=""> </p><h2>D&eacute;placement de cibles/obstacles<a name="3"></a></h2><p>Le d&eacute;placement des cibles et des obstacles se fait tout simplement en cliquant-glissant les &eacute;l&eacute;ments dans l'ar&egrave;ne. Il est important de ne pas laisser d'&eacute;l&eacute;ments superpos&eacute;s, ce qui pourrait entra&icirc;ner des comportements non pr&eacute;vus lors de la simulation.</p><p><img vspace="5" hspace="5" src="setupArena_resources/moveObstacle.GIF" alt=""> </p><h2>Ajout de cibles/obstacles<a name="4"></a></h2><p>L'ajout de cibles et d'obstacles peut se faire de deux fa&ccedil;ons :</p><div><ul><li>En allant dans le menu <b>Edit</b> <img src="setupArena_resources/setupArena_eq11499031656375046629.png" alt="$\rightarrow$"> <b>Add Target</b> ou <b>Add Obstacle</b></li><li>En acc&eacute;dant au menu contextuel de l'ar&egrave;ne (clic-droit sur l'image de fond) et en s&eacute;lectionnant <b>Add Target</b> ou <b>Add Obstacle</b></li></ul></div><p><img vspace="5" hspace="5" src="setupArena_resources/AddTargetObstacle.PNG" alt=""> </p><h2>Suppression de cibles/obstacles<a name="5"></a></h2><p>La suppression de cibles et d'obstacles peut se faire de deux fa&ccedil;ons :</p><div><ul><li>En s&eacute;lectionnant une cible ou un obstacle (clic souris), puis an allant dans le menu <b>Edit</b> <img src="setupArena_resources/setupArena_eq11499031656375046629.png" alt="$\rightarrow$"> <b>Delete Target/Obstacle</b></li><li>En acc&eacute;dant au menu contextuel de la cible ou de l'obstacle (clic-droit) et en s&eacute;lectionnant <b>Delete Target</b> ou <b>Delete Obstacle</b> respectivement</li></ul></div><p><img vspace="5" hspace="5" src="setupArena_resources/DeleteTargetObstacle.PNG" alt=""> </p><h2>Exporter une configuration comme sc&eacute;nario courant<a name="6"></a></h2><p>Exporter la configuration actuelle comme sc&eacute;nario courant (c'est-&agrave;-dire pour l'utiliser en simulation) peut se faire de deux fa&ccedil;ons :</p><div><ul><li>En allant dans le menu <b>Export</b> <img src="setupArena_resources/setupArena_eq11499031656375046629.png" alt="$\rightarrow$"> <b>To Workspace</b></li><li>En cliquant sur le bouton correspondant dans la barre d'outils</li></ul></div><p><img vspace="5" hspace="5" src="setupArena_resources/ExportToWorkspace.PNG" alt=""> </p><h2>Importer un sc&eacute;nario de base<a name="7"></a></h2><p>Importer un des sc&eacute;narios de base fournis avec le package se fait simplement en allant dans le menu <b>Import</b> <img src="setupArena_resources/setupArena_eq11499031656375046629.png" alt="$\rightarrow$"> <b>Scenario X</b> :</p><p><img vspace="5" hspace="5" src="setupArena_resources/ImportScenario.PNG" alt=""> </p><h2>Cr&eacute;er un nouveau sc&eacute;nario<a name="8"></a></h2><p>Cr&eacute;er un nouveau sc&eacute;nario &agrave; partir de rien se fait de deux fa&ccedil;ons :</p><div><ul><li>En allant dans le menu <b>File</b> <img src="setupArena_resources/setupArena_eq11499031656375046629.png" alt="$\rightarrow$"> <b>New</b></li><li>En cliquant sur le bouton correspondant dans la barre d'outils</li></ul></div><p>Dans tous les cas une nouvelle fen&ecirc;tre s'ouvre demandant le nombre de cibles et d'obstacles &agrave; ajouter</p><p><img vspace="5" hspace="5" src="setupArena_resources/NewArena.PNG" alt=""> </p><h2>Sauvegarder une configuration dans un fichier<a name="9"></a></h2><p>Sauvegarder une configuration dans un fichier afin de pouvoir la r&eacute;utiliser se fait de deux fa&ccedil;ons :</p><div><ul><li>En allant dans le menu <b>File</b> <img src="setupArena_resources/setupArena_eq11499031656375046629.png" alt="$\rightarrow$"> <b>Save</b> ou <b>SaveAs...</b></li><li>En cliquant sur le bouton correspondant dans la barre d'outils</li></ul></div><p><img vspace="5" hspace="5" src="setupArena_resources/SaveConfiguration.PNG" alt=""> </p><h2>Charger un fichier personnel<a name="10"></a></h2><p>Charger une configuration pr&eacute;c&eacute;demment enregistr&eacute;e peut se faire de deux fa&ccedil;ons :</p><div><ul><li>En allant dans le menu <b>File</b> <img src="setupArena_resources/setupArena_eq11499031656375046629.png" alt="$\rightarrow$"> <b>Open</b></li><li>En cliquant sur le bouton correspondant dans la barre d'outils</li></ul></div><p><img vspace="5" hspace="5" src="setupArena_resources/OpenConfiguration.PNG" alt=""> </p><h2>Ouverture du mod&egrave;le Simulink<a name="11"></a></h2><p>Il est possible d'ouvrir le mod&egrave;le Simulink de simulation (SimulationModel.slx) :</p><p><img vspace="5" hspace="5" src="setupArena_resources/OpenModel.PNG" alt=""> </p><p class="footer">Copyright 2015 The MathWorks, Inc.<br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% setupArena: Fonction de positionnement des cibles et des obstacles
+% Copyright 2015 The MathWorks, Inc.
+
+%% Introduction
+% La fonction *setupArena* permet de gérer des configurations d'arène
+% (position des cibles et des obstacles), afin de pouvoir les utiliser lors
+% de simulations.
+
+%% Importer la configuration courante
+% L'importation de la configuration courante de l'arène peut se faire de
+% deux façons :
+%
+% * En allant dans le menu *Import* $\rightarrow$ *From Workspace*
+% * En cliquant sur le bouton correspondant dans la barre d'outils
+%
+% <<setupArena_resources/ImportFromWorkspace.PNG>>
+
+%% Déplacement de cibles/obstacles
+% Le déplacement des cibles et des obstacles se fait tout simplement en
+% cliquant-glissant les éléments dans l'arène. Il est important de ne pas
+% laisser d'éléments superposés, ce qui pourrait entraîner des
+% comportements non prévus lors de la simulation.
+%
+% <<setupArena_resources/moveObstacle.GIF>>
+
+
+%% Ajout de cibles/obstacles
+% L'ajout de cibles et d'obstacles peut se faire de deux façons :
+%
+% * En allant dans le menu *Edit* $\rightarrow$ *Add Target* ou *Add Obstacle*
+% * En accédant au menu contextuel de l'arène (clic-droit sur l'image de
+% fond) et en sélectionnant *Add Target* ou *Add Obstacle*
+%
+% <<setupArena_resources/AddTargetObstacle.PNG>>
+
+%% Suppression de cibles/obstacles
+% La suppression de cibles et d'obstacles peut se faire de deux façons :
+%
+% * En sélectionnant une cible ou un obstacle (clic souris), puis an allant
+% dans le menu *Edit* $\rightarrow$ *Delete Target/Obstacle*
+% * En accédant au menu contextuel de la cible ou de l'obstacle
+% (clic-droit) et en sélectionnant *Delete Target* ou *Delete Obstacle*
+% respectivement
+%
+% <<setupArena_resources/DeleteTargetObstacle.PNG>>
+
+%% Exporter une configuration comme scénario courant
+% Exporter la configuration actuelle comme scénario courant (c'est-à-dire
+% pour l'utiliser en simulation) peut se faire de deux façons :
+% 
+% * En allant dans le menu *Export* $\rightarrow$ *To Workspace*
+% * En cliquant sur le bouton correspondant dans la barre d'outils
+%
+% <<setupArena_resources/ExportToWorkspace.PNG>>
+
+%% Importer un scénario de base
+% Importer un des scénarios de base fournis avec le package se fait
+% simplement en allant dans le menu *Import* $\rightarrow$ *Scenario X* :
+%
+% <<setupArena_resources/ImportScenario.PNG>>
+
+%% Créer un nouveau scénario
+% Créer un nouveau scénario à partir de rien se fait de deux façons :
+%
+% * En allant dans le menu *File* $\rightarrow$ *New*
+% * En cliquant sur le bouton correspondant dans la barre d'outils
+%
+% Dans tous les cas une nouvelle fenêtre s'ouvre demandant le nombre de
+% cibles et d'obstacles à ajouter
+%
+% <<setupArena_resources/NewArena.PNG>>
+
+%% Sauvegarder une configuration dans un fichier
+% Sauvegarder une configuration dans un fichier afin de pouvoir la
+% réutiliser se fait de deux façons :
+%
+% * En allant dans le menu *File* $\rightarrow$ *Save* ou *SaveAs...*
+% * En cliquant sur le bouton correspondant dans la barre d'outils
+%
+% <<setupArena_resources/SaveConfiguration.PNG>>
+
+%% Charger un fichier personnel
+% Charger une configuration précédemment enregistrée peut se faire de
+% deux façons :
+%
+% * En allant dans le menu *File* $\rightarrow$ *Open*
+% * En cliquant sur le bouton correspondant dans la barre d'outils
+%
+% <<setupArena_resources/OpenConfiguration.PNG>>
+
+%% Ouverture du modèle Simulink
+% Il est possible d'ouvrir le modèle Simulink de simulation
+% (SimulationModel.slx) :
+%
+% <<setupArena_resources/OpenModel.PNG>>
+
+function [f, model] = setupArena()
+
+scrSz = get(groot, 'ScreenSize');
+screenCenter = scrSz(3:4)/2;
+
+f = figure('DockControls', 'off',...
+    'MenuBar', 'none',...
+    'Name', 'Arena Setup',...
+    'NumberTitle', 'off', ...
+    'ToolBar', 'none', ...
+    'Position', [[-250 -250]+screenCenter 500 500],...
+    'HandleVisibility', 'off');
+
+model = ArenaModel();
+view = ArenaView(model, 'Parent', f);
+ArenaController(model, view);
+%ax = view.graphic_objects.axes;
+##### SOURCE END #####
+--></body></html>
