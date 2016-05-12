@@ -291,7 +291,8 @@ unsigned long accTimer;
 unsigned long lastAccTimer;
 unsigned long timeToRead = 0;
 unsigned long lastTimeToRead = 0;
-unsigned long servoTime = 0;
+volatile long servoTime = 0;
+volatile long servoTimeTot = 0;
 
 
 
@@ -521,10 +522,15 @@ void aFilter(volatile float val[])
 
 ISR(TIMER3_COMPB_vect)
 {  
-  sei();
-    //read values
-    sixDOF.getEuler(angles);
-    calcAngle();
+  
+  sei();    
+      
+    // [max] 8700 us [avg] 4450 us
+    sixDOF.getEuler(angles); 
+      
+    contGyroSamples++;
+    
+    //calcAngle();
     //estAngle();
   cont++;
 }
@@ -1142,11 +1148,17 @@ void SerialRoutine()
   if (timerSec >= 1000000)
   {
     secRoutine = micros();
+    
+    // Compute average imu readings time
+    servoTimeTot = servoTimeTot/countCtrlAction;
+    
     printTimers();
-    //cont=0;      
-    contGyroSamples=0;      
+    //cont=0;         
     contCalc=0; 
     countCtrlAction=0;
+    
+    contGyroSamples=0;   
+    servoTimeTot = 0;
   }
 
   timerRoutine = micros()-kMRoutine;
@@ -1161,14 +1173,19 @@ void SerialRoutine()
     //{
       //count = 0;      
       
+      // Updates counters
+      servoTime = micros();
+      
+      // [max] 8700 us [avg] 4450 us      
       controlCascade();
+      
+      servoTime = micros() - servoTime;
+      servoTimeTot = servoTimeTot + servoTime;
+      
       countCtrlAction++;
  
       printRoutine();
      
-      // Updates counters
-      servoTime = micros();
-      servoTime = micros() - servoTime;
     //}
   }
 }
@@ -1343,7 +1360,7 @@ void printTimers()
       Serial.print(countCtrlAction);
       // Print    timeservo: 
       Serial.print(",");
-      Serial.print(servoTime);
+      Serial.print(servoTimeTot);
       Serial.println(",z");
       Serial.println();
     }

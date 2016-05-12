@@ -21,7 +21,7 @@
   boolean printMotorsValsUs = false;
   boolean printPIDVals = false;
   boolean printSerialInfo = false;
-  boolean printTimers = false; 
+  boolean printTimers = true; 
   boolean printAccs = false;
   boolean printMotorsPid = false;
   boolean printOmegas = false;
