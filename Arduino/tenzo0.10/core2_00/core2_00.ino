@@ -105,44 +105,6 @@ boolean verboseFilterAccMatlab = true;
 //double SetpointRoll = 0, InputRoll, errorRoll;
 // Define the aggressive and conservative Tuning Parameters
         
-        
-        // Angular position
-        float aggKpRoll=1.0, aggKiRoll=0, aggKdRoll=0.00; 
-        float consKpRoll=2.5, consKiRoll=1.4, consKdRoll=0.4;
-//        float consKpRoll=3.00, consKiRoll=2, consKdRoll=0.03;
-        float farKpRoll=0.5, farKiRoll=0.17, farKdRoll=0.00;
-        
-        // Angle Pitch
-        float aggKpPitch=0.07, aggKiPitch=0.06, aggKdPitch=0.04;
-        float consKpPitch=2.00, consKiPitch=3.00, consKdPitch=0.00;
-        float farKpPitch=0.02, farKiPitch=0.09,  farKdPitch=0.02;
-        
-        // Angle Yaw
-        double aggKpYaw=0.3, aggKiYaw=0.0, aggKdYaw=0.1;
-        double consKpYaw=0.3, consKiYaw=0, consKdYaw=0.0;
-        
-        
-        // Altitude  
-        double aggKpAltitude=0.2, aggKiAltitude=0.0, aggKdAltitude=0.1;
-        double consKpAltitude=0.1, consKiAltitude=0, consKdAltitude=0.1;
-        
-        ///////////////////////  WWWWWWWWWWWWWWW  //////////////////////
-        
-        // W Roll
-        float aggKpWRoll=0.02, aggKiWRoll=0.2, aggKdWRoll=0.00;
-        
-        float consKpWRoll=1.28, consKiWRoll=1.30, consKdWRoll=0.10;  //50 HZ
-        //float consKpWRoll=0.50, consKiWRoll=0.80, consKdWRoll=0.14;    
-        float farKpWRoll=0.05, farKiWRoll=0.06, farKdWRoll=0.03;
-        
-        // W Pitch
-        float aggKpWPitch=0.07, aggKiWPitch=0.06, aggKdWPitch=0.04;
-        float consKpWPitch=1, consKiWPitch=2, consKdWPitch=0.0;
-        float farKpWPitch=0.02, farKiWPitch=0.09,  farKdWPitch=0.02;
-        
-        // W Yaw
-        double aggKpWYaw=0.3, aggKiWYaw=0.0, aggKdWYaw=0.1;
-        double consKpWYaw=0.3, consKiWYaw=0, consKdWYaw=0.0;
            
         /*
          * Cascade Pid & settings
@@ -203,25 +165,6 @@ boolean verboseFilterAccMatlab = true;
         double OutputCascPitchW = 0;
         double OutputCascYawW = 0;
         
-        
-        // Define IO and setpoint for control
-        double SetpointRoll = 0, InputRoll, errorRoll;        
-        double SetpointPitch = 0, InputPitch, errorPitch;
-        double SetpointYaw = 180, InputYaw, errorYaw;
-        double SetpointAltitude = 1, InputAltitude, errorAltitude;                
-        // Define IO and setpoint for control -----------  W
-        double SetpointWRoll = 0, InputWRoll = 0, errorWRoll;
-        double SetpointWPitch = 0, InputWPitch = 0, errorWPitch;
-        double SetpointWYaw = 180, InputWYaw = 0, errorWYaw;
-        
-        double OutputRoll = 0;
-        double OutputPitch = 0;
-        double OutputYaw = 0;
-        double OutputAltitude = 0;
-        double OutputWRoll = 0;
-        double OutputWPitch = 0;
-        double OutputWYaw = 0;
-
 
 
 // Threshold
@@ -237,17 +180,6 @@ volatile int rollPID = 0;
 volatile int pitchPID = 0;
 volatile int yawPID = 0;
 
-//Specify the links and initial tuning parameters
-PID rollPid(&InputRoll, &OutputRoll, &SetpointRoll, consKpRoll, consKiRoll, consKdRoll, DIRECT);
-PID pitchPid(&InputPitch, &OutputPitch, &SetpointPitch, consKpPitch, consKiPitch, consKdPitch, DIRECT);
-PID yawPid(&InputYaw, &OutputYaw, &SetpointYaw, consKpYaw, consKiYaw, consKdYaw, DIRECT);
-PID altitudePid(&InputAltitude, &OutputAltitude, &SetpointAltitude, consKpAltitude, consKiAltitude, consKdAltitude, DIRECT);
-
-
-//Specify the links and initial tuning parameters
-PID wrollPid(&InputWRoll, &OutputWRoll, &SetpointWRoll, consKpCascRollW, consKiCascRollW, consKdCascRollW, DIRECT);
-PID wpitchPid(&InputWPitch, &OutputWPitch, &SetpointWPitch, consKpCascPitchW, consKiCascPitchW, consKdCascPitchW, DIRECT);
-PID wyawPid(&InputWYaw, &OutputWYaw, &SetpointWYaw, consKpWYaw, consKiWYaw, consKdWYaw, DIRECT);
 
 // Control Pid Cascade
 PID cascadeRollPid(&InputCascRoll, &OutputCascRoll, &SetpointCascRoll, consKpCascRoll, consKiCascRoll, consKdCascRoll, DIRECT);
@@ -434,20 +366,6 @@ volatile float estXAngle = 0, estYAngle = 0, estZAngle = 0;
 volatile float kG = 0.975, kA = 0.025, kGZ=0.60, kAZ = 0.40;
 
 
-// Moved from in function to global
-
-// read Gyro 
-volatile byte statusflag;
-byte xMSB;
-byte xLSB;
-int xC;
-byte yMSB;
-byte yLSB;
-int yC;
-byte zMSB;
-byte zLSB;
-int zC;
-
 // Serial remote gains PID change
 
 char kReadChar;
@@ -455,66 +373,6 @@ char k1ReadChar;
 int k3ReadInt;
 float readPropVal,readIntVal,readDerVal,readSetVal;
 int readChar2;
-
-// Read Acc Routine
-volatile float xAccScaled;
-volatile float yAccScaled;
-volatile float zAccScaled;
-
-void setupAcceleromter()
-{
-  pinMode(xaxis,INPUT);
-  pinMode(yaxis,INPUT);
-  pinMode(zaxis,INPUT);
-  
-//  #ifdef MMA7820Q
-//    XError =  AccelAdjust(xaxis);
-//    YError =  AccelAdjust(yaxis);
-//    ZError =  AccelAdjust(zaxis);
-//    ZError = ZError - ZOUT_1G;
-//  #endif
-  if (!sakura.getProcessing())
-  {
-    Serial.println("[OK] Initializing accelerometer");
-  }
-}
-
-/** 
- ** Servo initialization
- **/
- 
-
-void setupGyro()
-{
-  if (!sakura.getProcessing())
-  {
-    Serial.println("       Init Gyro");
-  }
-  
-  // Configure L3G4200  - 250, 500 or 2000 deg/sec
-  setupL3G4200D(2000); 
-  //wait for the sensor to be ready   
-  delay(1500); 
-  
-  biasCalcTime = micros();
-  calcBias();
-  biasCalcTime = micros() - biasCalcTime;
-  
-  if (!sakura.getProcessing())
-  {
-    Serial.print("Readings: [us] ");
-    Serial.print(samplingTime);
-    Serial.print("      Bias est: [us] ");
-    Serial.print(biasCalcTime);
-    Serial.print("      Samples: ");
-    Serial.println(contGyroSamples);
-  }
-
-  if (!sakura.getProcessing())
-  {
-    Serial.println("[ OK ] Init Gyro");
-  }
-}
 
 void setupTimerInterrupt()
 {
@@ -600,40 +458,6 @@ void loop() {
   SerialRoutine();
 }
 
-void getAcc() //ISR
-{
-   rawAx=analogRead(xaxis);
-   rawAy=analogRead(yaxis);
-   rawAz=analogRead(zaxis);
-  
-// OLD con MMA7260Q
-// aax = (((rawAx*5000.0)/1023.0)-XError)/RESOLUTION;
-// aay = (((rawAy*5000.0)/1023.0)-YError)/RESOLUTION;
-// aaz = (((rawAz*5000.0)/1023.0)-ZError)/RESOLUTION;
-
-  xAccScaled = map(rawAx, xRawMin, xRawMax, -1000, 1000);
-  yAccScaled = map(rawAy, yRawMin, yRawMax, -1000, 1000);
-  zAccScaled = map(rawAz, zRawMin, zRawMax, -1000, 1000);
-  
-  //float zScaled = zm;
-  
-  // re-scale to fractional Gs
-  aax = xAccScaled / 1000.0;
-  aay = yAccScaled / 1000.0;
-  aaz = zAccScaled / 1000.0;
-   
-   if (filterAcc)
-   {
-      aF[0] = aax;
-      aF[1] = aay;
-      aF[2] = aaz;
-      aFilter(aF);
-   }
-   // gets the value sample time
-   accTimer = micros() - lastAccTimer;
-   // updates last reading timer
-   lastAccTimer = micros();  
-}
 
 void calcAngle() //ISR
 {
@@ -672,14 +496,6 @@ void calcAngle() //ISR
   k=micros();  
 }
 
-void estAngle() // ISR
-{
-  estXAngle = (estXAngle + x*(float)dt/1000000.0)*kG + angleXAcc*kA;
-  estYAngle = (estYAngle + y*(float)dt/1000000.0)*kG + angleYAcc*kA;
-  //estZAngle = (estZAngle + z*(float)dt/1000000.0)*0.02 + bearing1*0.98;
-  //psi*KG + yaw*KA;
-}
-
 void wFilter(volatile float val[])
 {
   val[0] = (1-alphaW)*val[0] + alphaW*wxm1;
@@ -705,21 +521,11 @@ void aFilter(volatile float val[])
 
 ISR(TIMER3_COMPB_vect)
 {  
-  // Mettilo altrimenti non funziona
   sei();
-  
-  statusflag = readRegister(L3G4200D_Address, STATUS_REG);
-  while(!(statusflag & ZDA_REG) && (statusflag & ZOR_REG)&&!(statusflag & YDA_REG) && (statusflag & YOR_REG)&& !(statusflag & XDA_REG) && (statusflag & XOR_REG)) 
-  {
-    statusflag = readRegister(L3G4200D_Address, STATUS_REG);
-  }
-  //read values
-  getGyroValues(); 
-  getAcc();
-  getCompassValues();
-  calcAngle();
-  sixDOF.getEuler(angles);
-  //estAngle();
+    //read values
+    sixDOF.getEuler(angles);
+    calcAngle();
+    //estAngle();
   cont++;
 }
 
@@ -1063,45 +869,57 @@ void SerialRoutine()
       }         
       else if (t == ',')
       {
+        /*
         consKpWRoll = consKpWRoll + 0.02;
         Serial.print("\t\t\t\t\t\t\t\t\t");
         Serial.println(consKpWRoll);
+        */
       }         
       else if (t == ';')
       {
+        /*
         consKpWRoll = consKpWRoll - 0.02;
         if (consKpWRoll<=0)
           consKpWRoll = 0;
         Serial.print("\t\t\t\t\t\t\t\t\t");
         Serial.println(consKpWRoll);
+        */
       }         
       else if (t == '.')
       {
+        /*
         consKiWRoll = consKiWRoll + 0.05;
         Serial.print("\t\t\t\t\t\t\t\t\t");
         Serial.println(consKiWRoll);
+        */
       }         
       else if (t == ':')
       {
+        /*
         consKiWRoll = consKiWRoll - 0.05;
         if (consKiWRoll<=0)
           consKiWRoll = 0;
         Serial.print("\t\t\t\t\t\t\t\t\t");
         Serial.println(consKiWRoll);
+        */
       }         
       else if (t == '-')
       {
+        /*
         consKdWRoll = consKdWRoll + 0.02;
         Serial.print("\t\t\t\t\t\t\t\t\t");
         Serial.println(consKdWRoll);
+        */
       }         
       else if (t == '_')
       {
+        /*
         consKdWRoll = consKdWRoll - 0.02;
         if (consKdWRoll<=0)
           consKdWRoll = 0;
         Serial.print("\t\t\t\t\t\t\t\t\t");
         Serial.println(consKdWRoll);
+        */
       }
       else if (t == 'ò')
       {
@@ -1343,13 +1161,11 @@ void SerialRoutine()
     //{
       //count = 0;      
       
-      //control();    
       controlCascade();
-      //controlW();      
-      
       countCtrlAction++;
+ 
       printRoutine();
-      
+     
       // Updates counters
       servoTime = micros();
       servoTime = micros() - servoTime;
@@ -1372,6 +1188,7 @@ void sendAlphaW()
   Serial.print(alphaW);
   Serial.println(",z");
 }
+
 // Send pid value feedback to App
 void sendPidVal(int which,int mode)
 {
@@ -1538,7 +1355,6 @@ void printRoutine()
   */
   if (sakura.getPrintMotorValsUs())
   {
-    
     Serial.print("V,  ");
     Serial.print(tenzoProp.getwUs1());
     Serial.print(" | ");
@@ -1547,17 +1363,6 @@ void printRoutine()
     Serial.print(tenzoProp.getwUs3());
     Serial.print(" | ");
     Serial.println(tenzoProp.getwUs4());
-    
-    /*
-    tempM1 = tenzoProp.getwUs1();
-    tempM2 = tenzoProp.getwUs2();
-    tempM3 = tenzoProp.getwUs3();
-    tempM4 = tenzoProp.getwUs4();
-    
-    */
-    
-    //Serial.println("V,  ");
-    
   }
     
   if (sakura.getPrintAccs())
@@ -1602,44 +1407,6 @@ void landFast()
   landed = 0;
 }
 
-void getCompassValues()
-{
-  requestCompassData();
-  getCompassData();
-  // bearing1 =  my_compass.bearing();
-  bearing1 = (float) -(bearing + fine*0.10);
-  // workaround
-  bearing1 = -bearing1;
-}
-
-void requestCompassData()
-{
-   //starts communication with CMPS10
-   Wire.beginTransmission(ADDRESS); 
-   //Sends the register we wish to start reading from   
-   Wire.write(2);                 
-   Wire.endTransmission();             
-
-   // Request 4 bytes from CMPS10
-   Wire.requestFrom(ADDRESS, 4); 
-   // Wait for bytes to become available   
-   while(Wire.available() < 4);              
-   highByte = Wire.read();           
-   lowByte = Wire.read();            
-   pitch = Wire.read();              
-   roll = Wire.read();               
-}
-
-void getCompassData()
-{
-   // Calculate full bearing
-   bearing = ((highByte<<8)+lowByte)/10;  
-
-   // Calculate decimal place of bearing   
-   fine = ((highByte<<8)+lowByte)%10;   
-}
-
-
 void initializeFast()
 {
   if (tenzoProp.getThrottle() == MIN_SIGNAL)
@@ -1679,9 +1446,9 @@ void initialize()
     delay(500);
     for (int j=MIN_SIGNAL; j<rampTill;j++)
     {
-      tenzoProp.setSpeeds(j, OutputPitch, OutputRoll, OutputYaw, OutputAltitude);
+      tenzoProp.setSpeeds(j, OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
       //motorSpeed(j);
-      //if (!processing)
+      if (!sakura.getProcessing())
         Serial.println(j);
       delay(motorRampDelayMedium); 
     }
@@ -1744,7 +1511,7 @@ void land()
     for (int j=tenzoProp.getThrottle(); j>MIN_SIGNAL ;j--)
     //for (int j=throttle; j>0 ;j--)
     {      
-      tenzoProp.setSpeeds(j, OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
+      tenzoProp.setSpeeds(j, OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
       //motorSpeed(j);
       Serial.println(j);
       // Kind or brutal land
@@ -1791,54 +1558,6 @@ void protocol1()
     }
   }
 }
-
-
-void getGyroValues()
-{  
-  // Get Data if available
-  statusflag = readRegister(L3G4200D_Address, STATUS_REG);
-  while(!(statusflag & ZDA_REG) && (statusflag & ZOR_REG)&&!(statusflag & YDA_REG) && (statusflag & YOR_REG)&& !(statusflag & XDA_REG) && (statusflag & XOR_REG)) 
-  {
-    statusflag = readRegister(L3G4200D_Address, STATUS_REG);
-  }
-  
-  //starting samplingTimer
-  samplingTime = micros();
-
-  xMSB = readRegister(L3G4200D_Address, 0x29);
-  xLSB = readRegister(L3G4200D_Address, 0x28);
-  xC = ((xMSB << 8) | xLSB);
-  medianGyroX.in(xC);
-  x = medianGyroX.out();    
-  //x = ((xMSB << 8) | xLSB);
-
-  yMSB = readRegister(L3G4200D_Address, 0x2B);
-  yLSB = readRegister(L3G4200D_Address, 0x2A);
-  yC = ((yMSB << 8) | yLSB);
-  medianGyroY.in(yC);
-  y = medianGyroY.out();    
-
-  zMSB = readRegister(L3G4200D_Address, 0x2D);
-  zLSB = readRegister(L3G4200D_Address, 0x2C);
-  zC = ((zMSB << 8) | zLSB);
-  medianGyroZ.in(zC);
-  z = medianGyroZ.out();    
-  
-  if (initializedGyroCalib)
-    removeBiasAndScale();
-    
-   if (filterGyro)
-   {
-      wF[0] = x;
-      wF[1] = y;
-      wF[2] = z;
-      wFilter(wF);
-   }
-
-  samplingTime = micros()- samplingTime;
-  contGyroSamples++;
-}
-
 
 void printOmega()
 {
@@ -1949,200 +1668,12 @@ void printSerialAngleFus()
 {
   Serial.print("e");
   Serial.print(",");
-  Serial.print(estXAngle);
+  Serial.print(angles[0]);
   Serial.print(",");
-  Serial.print(estYAngle);
+  Serial.print(angles[1]);
   Serial.print(",");
-  Serial.print(bearing1);
+  Serial.print(angles[2]);
   Serial.println(",z");
-}
-
-void removeBiasAndScale()
-{
-  x = (x - bx)*scale2000/1000;
-  y = (y - by)*scale2000/1000;
-  z = (z - bz)*scale2000/1000;
-} 
-
-void calcBias()
-{
-  if (!sakura.getProcessing())
-    Serial.println("V,Decting Bias ...");
-  int c = 500;
-  for (int i = 0; i<c; i++)
-  {
-    delay(5);
-    getGyroValues(); 
-    bxS = bxS + x;
-    byS = byS + y;
-    bzS = bzS + z;
-    //Serial.println(i);
-  }
-
-  bx = bxS / c;
-  by = byS / c;
-  bz = bzS / c;
-
-  if (!sakura.getProcessing())
-  {
-    Serial.println(bx);
-    Serial.println(by);
-    Serial.println(bz);
-  }  
-  initializedGyroCalib = true;
-}
-
-void writeRegister(int deviceAddress, byte address, byte val) 
-{
-  Wire.beginTransmission(deviceAddress); // start transmission to device 
-  Wire.write(address);       // send register address
-  Wire.write(val);         // send value to write
-  Wire.endTransmission();     // end transmission
-}
-
-int readRegister(int deviceAddress, byte address)
-{
-  int v;
-  Wire.beginTransmission(deviceAddress);
-  Wire.write(address); // register to read
-  Wire.endTransmission();
-
-  Wire.requestFrom(deviceAddress, 1); // read a byte
-
-  while(!Wire.available()) 
-  {
-    // waiting
-    // Serial.println("No Data");
-  }
-
-  v = Wire.read();
-  return v;
-}
-
-int setupL3G4200D(int scale)
-{
-  //From  Jim Lindblom of Sparkfun's code
-
-    // Enable x, y, z and turn off power down:
-  //writeRegister(L3G4200D_Address, CTRL_REG1, 0b00001111);
-  // 400Hz and 1Hz cutoff frq of the HPF
-  //writeRegister(L3G4200D_Address, CTRL_REG1, 0b01011111);
-  // 200Hz 
-  writeRegister(L3G4200D_Address, CTRL_REG1, 0b01001111);
-
-  // If you'd like to adjust/use the HPF:
-  // High pass filter cut off frecuency configuration
-  // ODR 200Hz, cutoff 0.02Hz 1001
-  //writeRegister(L3G4200D_Address, CTRL_REG2, 0b00001001);
-  // ODR 200Hz, cutoff 1 Hz 0100
-  //writeRegister(L3G4200D_Address, CTRL_REG2, 0b00000100);
-  // ODR 200Hz, cutoff 0.02Hz 1001
-  writeRegister(L3G4200D_Address, CTRL_REG2, 0b00001001);
-
-  // Configure CTRL_REG3 to generate data ready interrupt on INT2
-  // No interrupts used on INT1, if you'd like to configure INT1
-  // or INT2 otherwise, consult the datasheet:
-  //writeRegister(L3G4200D_Address, CTRL_REG3, 0b00001000);
-
-  // CTRL_REG4 controls the full-scale range, among other things:
-
-  if(scale == 250)
-  {
-    writeRegister(L3G4200D_Address, CTRL_REG4, 0b00000000);
-  }
-  else if(scale == 500)
-  {
-    writeRegister(L3G4200D_Address, CTRL_REG4, 0b00010000);
-  }
-  else
-  {
-    writeRegister(L3G4200D_Address, CTRL_REG4, 0b00110000);
-  }
-
-  // CTRL_REG5 controls high-pass filtering of outputs, use it
-  // if you'd like:
-  writeRegister(L3G4200D_Address, CTRL_REG5, 0b00010000);
-  //writeRegister(L3G4200D_Address, CTRL_REG5, 0b00000000);
-}
-
-
-/* 
- *
- *     SAKURA:   Deprecated
- *
- */
-void control()
-{
-  if (enablePid)
-  {
-    // Roll PID
-    if (enableRollPid)
-    {
-      //Serial.println("    ZAK ");
-      InputRoll = estXAngle;
-      //Serial.println("    ZAK ");
-      errorRoll = abs(SetpointRoll - estXAngle); //distance away from setpoint
-      
-        rollPid.SetTunings(consKpRoll, consKiRoll, consKdRoll);
-        
-      rollPid.Compute(); // Computes outputRoll
-
-      if (sakura.getPrintPIDVals())
-      {
-        Serial.println();
-        Serial.print("INPUT ");
-        Serial.print(InputRoll);
-        Serial.print("ErrorRoll:");
-        Serial.print(errorRoll);
-        Serial.print("Roll PID: ");
-        Serial.print(OutputRoll);
-        Serial.println();
-      }
-    }
-    else
-    {
-      Serial.println();
-      Serial.println("Roll SS");
-      Serial.println();
-      OutputRoll = 0;
-    }
-
-    // Pitch PID1
-    if (enablePitchPid)
-    {
-      InputPitch = estYAngle;
-      errorPitch = abs(SetpointPitch - estYAngle); //distance away from setpoint
-      pitchPid.SetTunings(consKpPitch, consKiPitch, consKdPitch);
-      pitchPid.Compute(); // Computes outputPitch
-
-      if (sakura.getPrintPIDVals())
-      { 
-        Serial.print("V,E:  ");
-        Serial.print(errorPitch);
-        Serial.print(" A:");
-        Serial.print(OutputPitch);
-        Serial.println();
-      }
-    }  
-    else
-    {
-      Serial.println();
-      Serial.println("V,SS Pitch");
-      Serial.println();
-      OutputPitch = 0;
-    }
-
-    if (sakura.getPrintPIDVals())
-    {
-      Serial.println();      
-    }
-  }
-  else
-  {
-    OutputRoll = 0;
-    OutputPitch = 0;    
-    OutputYaw = 0;
-  }  
 }
 
 void controlCascade()
@@ -2213,7 +1744,7 @@ void controlCascade()
       //Serial.println();
       //Serial.println("V,Warning Roll");
       //Serial.println();
-      OutputRoll = 0;
+      OutputCascRollW = 0;
     }
     if (enablePitchPid)
     {
@@ -2270,17 +1801,17 @@ void controlCascade()
         Serial.print(" Ew: ");
         Serial.print(errorCascRollW);
         Serial.print(" O: ");
-        Serial.print(OutputCascRollW);
+        Serial.print(OutputCascPitchW);
         Serial.println();
       }
       */
     }
     else
-    {                                     // Cambia outputPitch forse con w
+    {                                    
       //Serial.println();
       //Serial.println("V,Warning Pitch");
       //Serial.println();
-      OutputPitch = 0;
+      OutputCascPitchW = 0;
     }
   }
   
@@ -2288,91 +1819,6 @@ void controlCascade()
   tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
 }
 
-void controlW()
-{
-  //Serial.println("K1");
-  if (enablePid)
-  {
-    //Serial.println("K2");
-    // Roll W PID
-    if (enableWRollPid)
-    {
-      InputWRoll = x;
-      errorWRoll = SetpointWRoll - x; 
-      
-      wrollPid.SetTunings(consKpCascRollW, consKiCascRollW, consKdCascRollW);
-
-      wrollPid.Compute();
-      
-
-      if (sakura.getPrintPIDVals())
-      { 
-        Serial.print("V,E:  ");
-        Serial.print(errorWRoll);
-        Serial.print(" A:");
-        Serial.print(OutputWRoll);
-        Serial.println();
-      }
-    }
-    else
-    {
-      OutputWRoll = 0;
-    }
-    
-
-    // Pitch PID1
-    if (enableWPitchPid)
-    {
-      InputWPitch = y;
-      errorWPitch = abs(SetpointWPitch - y);
-
-      wpitchPid.SetTunings(consKpCascPitchW,consKiCascPitchW, consKdCascPitchW);
-
-      wpitchPid.Compute();
-    }  
-    else
-    {
-      OutputWPitch = 0;
-    }
-
-    /*
-    // Yaw PID
-     if (enableWYawPid)
-     {
-     if (filterAng == 1)
-     {
-     InputWYaw = z;
-     errorWYaw = abs(SetpointWYaw - z); //distance away from setpoint
-     }
-     
-     if(errorYaw<thresholdYaw)
-     {
-     //we're close to setpoint, use conservative tuning parameters
-     wyawPid.SetTunings(Kw*consKpWYaw, Kw*consKiWYaw, Kw*consKdWYaw);
-     }   
-     wyawPid.Compute(); 
-     
-     }
-     else
-     {
-     OutputYaw=0;
-     }
-     */
-    //if (printPIDVals)
-    //{
-      //Serial.println();      
-    //}
-  }
-  else
-  {
-    OutputWRoll = 0;
-    OutputWPitch = 0;    
-    OutputWYaw = 0;
-  }
-  
-  // Set computed speed
-  tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputWPitch, OutputWRoll, OutputWYaw, OutputAltitude);
-}
 
 void changePidState(boolean cond)
 {
@@ -2395,33 +1841,9 @@ void changePidState(boolean cond)
     cascadeYawPidW.SetMode(AUTOMATIC);
     cascadeYawPidW.SetOutputLimits(-limitPidMax, limitPidMax);
     
-    
     cascadeAltPid.SetMode(AUTOMATIC);
     cascadeAltPid.SetOutputLimits(-limitPidMax, limitPidMax);
     
-    // MONO
-    rollPid.SetMode(AUTOMATIC);
-    rollPid.SetOutputLimits(-limitPidMax, limitPidMax);
-
-    // Pitch
-    pitchPid.SetMode(AUTOMATIC);
-    pitchPid.SetOutputLimits(-limitPidMax, limitPidMax);
-
-    // Yaw
-    yawPid.SetMode(AUTOMATIC);
-    yawPid.SetOutputLimits(-limitPidMax, limitPidMax);
-
-    // Enable Pid Actions
-    wrollPid.SetMode(AUTOMATIC);
-    wrollPid.SetOutputLimits(-limitPidMax, limitPidMax);
-
-    // Pitch
-    wpitchPid.SetMode(AUTOMATIC);
-    wpitchPid.SetOutputLimits(-limitPidMax, limitPidMax);
-
-    // Yaw
-    wyawPid.SetMode(AUTOMATIC);
-    wyawPid.SetOutputLimits(-limitPidMax, limitPidMax);
 
     enablePid = true;
     hovering = 1;
@@ -2441,23 +1863,6 @@ void changePidState(boolean cond)
     OutputCascRoll = 0, OutputCascRollW = 0;
     OutputCascYaw = 0, OutputCascYawW = 0;
     OutputCascAlt = 0;
-    
-    
-    // Mono
-    rollPid.SetMode(MANUAL);
-    pitchPid.SetMode(MANUAL);
-    yawPid.SetMode(MANUAL);
-    wrollPid.SetMode(MANUAL);
-    wpitchPid.SetMode(MANUAL);
-    wyawPid.SetMode(MANUAL);
-    
-    OutputWPitch = 0;
-    OutputWRoll = 0;
-    OutputWYaw = 0;
-    OutputPitch = 0;
-    OutputRoll = 0;
-    OutputYaw = 0;
-    OutputAltitude = 0;
     
     enablePid = false;
     hovering = 0;
