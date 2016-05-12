@@ -8,7 +8,6 @@ R = 1;
 rank(ctrb(A,B))
 K = lqr(A,B,Q,R)
 
-
   %%  Ex2
   
   A = [-1 0 -1;0 -1 0; -1 -1  -1]
@@ -28,3 +27,7 @@ K = lqr(A,B,Q,R)
   eig(A)
   p = [-1 -1]
   place (A,B,p)
+  
+  %% 
+  
+  
