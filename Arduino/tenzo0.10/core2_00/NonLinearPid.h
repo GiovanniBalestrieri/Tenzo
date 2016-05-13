@@ -19,11 +19,15 @@ class NonLinearPid
     volatile float  integrale;
     volatile float  derivativo;
     volatile float  error_old;
+    volatile float  outMax;
+    volatile float  outMin;
     volatile bool   on;
  
   public:
     NonLinearPid(volatile float kp,volatile float ki,volatile float kd);
-    int compute(volatile float riferimento,volatile float out);
+    int Compute(volatile float riferimento,volatile float out);
+    void SetTunings(volatile float kp,volatile float ki,volatile float kd);
+    void SetOutputLimits(volatile float Min,volatile float Max);
     void change_kp(volatile float kp);
     void change_kd(volatile float kd);
     void change_ki(volatile float ki);

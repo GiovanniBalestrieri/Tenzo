@@ -177,8 +177,16 @@ volatile int rollPID = 0;
 volatile int pitchPID = 0;
 volatile int yawPID = 0;
 
+NonLinearPid cascadeRollPid(consKpCascRoll, consKiCascRoll, consKdCascRoll);
+NonLinearPid cascadeRollPidW(consKpCascRollW, consKiCascRollW, consKdCascRollW);
+NonLinearPid cascadePitchPid(consKpCascPitch, consKiCascPitch, consKdCascPitch);
+NonLinearPid cascadePitchPidW(consKpCascPitchW, consKiCascPitchW, consKdCascPitchW);
+NonLinearPid cascadeYawPid(consKpCascYaw, consKiCascYaw, consKdCascYaw);
+NonLinearPid cascadeYawPidW(consKpCascYawW, consKiCascYawW, consKdCascYawW);
+NonLinearPid cascadeAltPid(consKpCascAlt, consKiCascAlt, consKdCascAlt);
 
 // Control Pid Cascade
+/*
 PID cascadeRollPid(&InputCascRoll, &OutputCascRoll, &SetpointCascRoll, consKpCascRoll, consKiCascRoll, consKdCascRoll, DIRECT);
 PID cascadeRollPidW(&InputCascRollW, &OutputCascRollW, &SetpointCascRollW, consKpCascRollW, consKiCascRollW, consKdCascRollW, DIRECT);
 
@@ -189,6 +197,7 @@ PID cascadeYawPid(&InputCascYaw, &OutputCascYaw, &SetpointCascYaw, consKpCascYaw
 PID cascadeYawPidW(&InputCascYawW, &OutputCascYawW, &SetpointCascYawW, consKpCascYawW, consKiCascYawW, consKdCascYawW, DIRECT);
 
 PID cascadeAltPid(&InputCascAlt, &OutputCascAlt, &SetpointCascAlt, consKpCascAlt, consKiCascAlt, consKdCascAlt, DIRECT);
+/*
         
 /**
  * Compass
@@ -1730,7 +1739,7 @@ void controlCascade()
         }
       }
       
-      cascadeRollPid.Compute(); 
+      OutputCascRoll = cascadeRollPid.Compute(SetpointCascRoll,InputCascRoll); 
       
       InputCascRollW = x;
       SetpointCascRollW = OutputCascRoll;
@@ -1740,7 +1749,7 @@ void controlCascade()
 
       cascadeRollPidW.SetTunings(consKpCascRollW, consKiCascRollW, consKdCascRollW);
 
-      cascadeRollPidW.Compute();     
+      OutputCascRollW = cascadeRollPidW.Compute(SetpointCascRollW,InputCascRollW);     
      
       if (sakura.getPrintPIDVals())
       {
@@ -1799,16 +1808,16 @@ void controlCascade()
         }
       }
       
-      cascadePitchPid.Compute(); 
+      OutputCascPitch = cascadePitchPid.Compute(SetpointCascPitch,InputCascPitch); 
       
       InputCascPitchW = y;
-      //SetpointCascPitchW = - OutputCascPitch;
-      SetpointCascPitchW = 0;
+      SetpointCascPitchW = OutputCascPitch;
+      //SetpointCascPitchW = 0;
       errorCascPitchW = SetpointCascPitchW - y; 
 
       cascadePitchPidW.SetTunings(consKpCascPitchW, consKiCascPitchW, consKdCascPitchW);
 
-      cascadePitchPidW.Compute();     
+      OutputCascPitchW = cascadePitchPidW.Compute(SetpointCascPitchW,InputCascPitchW);     
       
       /*
       if (sakura.getPrintPIDVals())
@@ -1843,23 +1852,23 @@ void changePidState(boolean cond)
   if (cond)
   {
     // Enable Cascade
-    cascadeRollPid.SetMode(AUTOMATIC);
+    cascadeRollPid.restart();
     cascadeRollPid.SetOutputLimits(-limitPidMax, limitPidMax);
-    cascadeRollPidW.SetMode(AUTOMATIC);
+    cascadeRollPidW.restart();
     cascadeRollPidW.SetOutputLimits(-limitPidMax, limitPidMax);
     
-    cascadePitchPid.SetMode(AUTOMATIC);
+    cascadePitchPid.restart();
     cascadePitchPid.SetOutputLimits(-limitPidMax, limitPidMax);
-    cascadePitchPidW.SetMode(AUTOMATIC);
+    cascadePitchPidW.restart();
     cascadePitchPidW.SetOutputLimits(-limitPidMax, limitPidMax);
     
     
-    cascadeYawPid.SetMode(AUTOMATIC);
+    cascadeYawPid.restart();
     cascadeYawPid.SetOutputLimits(-limitPidMax, limitPidMax);
-    cascadeYawPidW.SetMode(AUTOMATIC);
+    cascadeYawPidW.restart();
     cascadeYawPidW.SetOutputLimits(-limitPidMax, limitPidMax);
     
-    cascadeAltPid.SetMode(AUTOMATIC);
+    cascadeAltPid.restart();
     cascadeAltPid.SetOutputLimits(-limitPidMax, limitPidMax);
     
 
@@ -1869,13 +1878,13 @@ void changePidState(boolean cond)
   else
   { 
     // Cascade
-    cascadeRollPid.SetMode(MANUAL);
-    cascadeRollPidW.SetMode(MANUAL);
-    cascadePitchPid.SetMode(MANUAL);
-    cascadePitchPidW.SetMode(MANUAL);
-    cascadeYawPid.SetMode(MANUAL);
-    cascadeYawPidW.SetMode(MANUAL);
-    cascadeAltPid.SetMode(MANUAL);
+    cascadeRollPid.pause();
+    cascadeRollPidW.pause();
+    cascadePitchPid.pause();
+    cascadePitchPidW.pause();
+    cascadeYawPid.pause();
+    cascadeYawPidW.pause();
+    cascadeAltPid.pause();
     
     OutputCascPitch = 0,OutputCascPitchW = 0;
     OutputCascRoll = 0, OutputCascRollW = 0;
