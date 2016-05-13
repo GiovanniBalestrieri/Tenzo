@@ -4,43 +4,36 @@
   Created by Giovanni Balestrieri - UserK, August 28, 2015.
 */
 #ifndef NonLinearPid_h
-#define NonLinearPid_h
+  #define NonLinearPid_h
 
-#include "Arduino.h"
 #include "Propulsion.h"
-#include "PID_v2.h"
+#include "Arduino.h"
 
 class NonLinearPid
 {
-  public:
-        NonLinearPid(float, float, float, float);
-        
-//        PID rollPid( double*,  double*,  double*, double,  double,  double, int);
-//        PID pitchPid( double*,  double*,  double*, double,  double,  double, int);
-//        PID yawPid( double*,  double*,  double*, double,  double,  double, int);
-//        PID wrollPid( double*,  double*,  double*, double,  double,  double, int);
-//        PID wpitchPid( double*,  double*,  double*, double,  double,  double, int);
-//        PID wyawPid( double*,  double*,  double*, double,  double,  double, int);
-//        PID altitudePid( double*,  double*,  double*, double,  double,  double, int);
-        
-        void changePidState(boolean);
-        
-        void init();
-	void setAutoPid(boolean);
-        void setEnablePid(boolean);
-	void setEnablePitch(boolean);
-        void setEnableRoll(boolean);
-	void setEnableWPitch(boolean);
-        void setEnableWRoll(boolean);
-        void setEnableAltitude(boolean);
-        
-        //void setSpeedradS(int);
-        
   private:
-        //int getThrottle();
+    volatile float  kp;
+    volatile float  ki;
+    volatile float  kd;
+    volatile float  proporzionale;
+    volatile float  integrale;
+    volatile float  derivativo;
+    volatile float  error_old;
+    volatile bool   on;
+ 
+  public:
+    Pid(float kp,float ki,float kd);
+    int get_u(float riferimento, float out);
+    void change_kp(float kp);
+    void change_kd(float kd);
+    void change_ki(float ki);
+    float get_prop();
+    float get_deriv();
+    float get_integ();
+    float get_error();
+    void reset();
+    void pause();
+    void restart();
 };
-     
-        
-
 
 #endif
