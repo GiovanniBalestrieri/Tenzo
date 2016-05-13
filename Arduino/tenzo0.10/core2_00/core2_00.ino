@@ -1155,8 +1155,7 @@ void SerialRoutine()
     printTimers();
     //cont=0;         
     contCalc=0; 
-    countCtrlAction=0;
-    
+    countCtrlAction=0;    
     contGyroSamples=0;   
     servoTimeTot = 0;
   }
@@ -1697,10 +1696,15 @@ void controlCascade()
 {
   if (enablePid)
   {
+    /*
+     *
+     *  Cascade Roll 
+     *
+     */
     if (enableRollPid)
     {
-      InputCascRoll = estXAngle;
-      errorCascRoll = abs(SetpointCascRoll - estXAngle);
+      InputCascRoll = angles[0];
+      errorCascRoll = abs(SetpointCascRoll - angles[0]);
       
       if (inConsRoll)
       {
@@ -1758,15 +1762,18 @@ void controlCascade()
     }
     else
     {
-      //Serial.println();
-      //Serial.println("V,Warning Roll");
-      //Serial.println();
       OutputCascRollW = 0;
     }
+    
+    /*
+     *
+     *  Cascade Pitch 
+     *
+     */
     if (enablePitchPid)
     {
-      InputCascPitch = estYAngle;
-      errorCascPitch = abs(SetpointCascPitch - estYAngle);
+      InputCascPitch = angles[1];
+      errorCascPitch = abs(SetpointCascPitch - angles[1]);
       
       if (inConsPitch)
       {
@@ -1824,10 +1831,7 @@ void controlCascade()
       */
     }
     else
-    {                                    
-      //Serial.println();
-      //Serial.println("V,Warning Pitch");
-      //Serial.println();
+    {                        
       OutputCascPitchW = 0;
     }
   }
