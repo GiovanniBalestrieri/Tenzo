@@ -22,11 +22,11 @@ class NonLinearPid
     volatile bool   on;
  
   public:
-    Pid(float kp,float ki,float kd);
-    int get_u(float riferimento, float out);
-    void change_kp(float kp);
-    void change_kd(float kd);
-    void change_ki(float ki);
+    NonLinearPid(volatile float kp,volatile float ki,volatile float kd);
+    int compute(volatile float riferimento,volatile float out);
+    void change_kp(volatile float kp);
+    void change_kd(volatile float kd);
+    void change_ki(volatile float ki);
     float get_prop();
     float get_deriv();
     float get_integ();

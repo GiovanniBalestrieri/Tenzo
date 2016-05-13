@@ -5,7 +5,7 @@
 */
 #include "NonLinearPid.h"
 
-Pid::Pid(float kp_,float ki_,float kd_)
+NonLinearPid::NonLinearPid(volatile float kp_,volatile float ki_,volatile float kd_)
 {
   kp = kp_;
   ki = ki_;
@@ -15,10 +15,10 @@ Pid::Pid(float kp_,float ki_,float kd_)
   on = true;
 }
 
-int Pid::get_u(float riferimento, float out)
+int NonLinearPid::compute(volatile float riferimento,volatile float out)
 {
-  int u = 0;
-  float error = riferimento - out ;
+  volatile int u = 0;
+  volatile float error = riferimento - out ;
   proporzionale = kp*error;
   integrale = integrale + ki*error;
   derivativo = kd*(error-error_old);
@@ -27,58 +27,58 @@ int Pid::get_u(float riferimento, float out)
   return u;//(on? u:0);
 }
 
-float Pid::get_error()
+float NonLinearPid::get_error()
 {
   return error_old;
 }
 
-void Pid::pause()
+void NonLinearPid::pause()
 {
   reset();
   on = false;
 }
 
-void Pid::restart()
+void NonLinearPid::restart()
 {
   reset();
   on = true;
 }
 
-void Pid::reset()
+void NonLinearPid::reset()
 {
   integrale = 0.0;
   error_old = 0.0;
 }
 
-void Pid::change_kp(float k_prop)
+void NonLinearPid::change_kp(volatile float k_prop)
 {
   kp = k_prop;
   return;
 }
 
-void Pid::change_kd(float k_der)
+void NonLinearPid::change_kd(volatile float k_der)
 {
   kd = k_der;
   return;
 }
 
-void Pid::change_ki(float k_int)
+void NonLinearPid::change_ki(volatile float k_int)
 {
   ki = k_int;
   return;
 }
 
-float Pid::get_prop()
+float NonLinearPid::get_prop()
 {
   return proporzionale;
 }
 
-float Pid::get_integ()
+float NonLinearPid::get_integ()
 {
   return integrale;
 }
 
-float Pid::get_deriv()
+float NonLinearPid::get_deriv()
 {
   return derivativo;
 }

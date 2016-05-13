@@ -29,9 +29,6 @@ float deltaT = 15;
 
 char readAnswer, readChar, readCh;
 
-// REMOVE
-int tempM1,tempM2,tempM3,tempM4;
-
 byte modeS;
 
 /**
