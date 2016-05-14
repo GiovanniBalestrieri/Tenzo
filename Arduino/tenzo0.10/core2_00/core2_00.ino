@@ -80,19 +80,19 @@ float Kmy = 1;
 // Rimesso - check validity
  
 boolean autoEnablePid = true;
-boolean enablePid = false;
+volatile boolean enablePid = false;
 
 // theta
-boolean enableRollPid = true;
-boolean enablePitchPid = true;
-boolean enableYawPid = false;
+volatile boolean enableRollPid = true;
+volatile boolean enablePitchPid = true;
+volatile boolean enableYawPid = false;
 // w
-boolean enableWRollPid = true;
-boolean enableWPitchPid = false;
-boolean enableWYawPid = false;
-boolean enableAltitudePid = false;
+volatile boolean enableWRollPid = true;
+volatile boolean enableWPitchPid = false;
+volatile boolean enableWYawPid = false;
+volatile boolean enableAltitudePid = false;
 
-int limitPidMax = 250;
+volatile int limitPidMax = 750;
  
 boolean inConsRoll = false; 
 boolean inConsPitch = false;
@@ -114,53 +114,53 @@ boolean verboseFilterAccMatlab = true;
         // Overshoot: 0 %
         // Settling time 2.0 s
         // Steady state error: 2°
-        float aggKpCascRoll=1.68, aggKiCascRoll=0, aggKdCascRoll=0.75;
+        volatile float aggKpCascRoll=1.68, aggKiCascRoll=0, aggKdCascRoll=0.75;
         // Conservative settings theta < thre
-        float consKpCascRoll=3.31, consKiCascRoll=0.54, consKdCascRoll=0.04; //1.5 / 3.2 0.6 0.4
+        volatile float consKpCascRoll=3.31, consKiCascRoll=0.54, consKdCascRoll=0.04; //1.5 / 3.2 0.6 0.4
         
         // W part   
         //float consKpCascRollW=1.28, consKiCascRollW=1.30, consKdCascRollW=0.10;  // Expensive 
-        float consKpCascRollW=0.69, consKiCascRollW=0.0, consKdCascRollW=0.009;  // Expensive 
+        volatile float consKpCascRollW=0.69, consKiCascRollW=0.0, consKdCascRollW=0.009;  // Expensive 
         
         // Pitch        
         
         // Aggressive settings theta >= thre     
-        float aggKpCascPitch=1.1, aggKiCascPitch=0.00, aggKdCascPitch=0.00;
+        volatile float aggKpCascPitch=1.1, aggKiCascPitch=0.00, aggKdCascPitch=0.00;
         // Conservative settings theta < thre
-        float consKpCascPitch=1.1, consKiCascPitch=0.00, consKdCascPitch=0.00; //1.5 / 3.2 0.6 0.4
+        volatile float consKpCascPitch=1.1, consKiCascPitch=0.00, consKdCascPitch=0.00; //1.5 / 3.2 0.6 0.4
         
         // W part   
-        float consKpCascPitchW=0.9, consKiCascPitchW=1.65, consKdCascPitchW=0.3;   
+        volatile float consKpCascPitchW=0.9, consKiCascPitchW=1.65, consKdCascPitchW=0.3;   
         
         // Yaw
         
         // Aggressive settings theta >= thre     
-        float aggKpCascYaw=0, aggKiCascYaw=0.00, aggKdCascYaw=0.00;
+        volatile float aggKpCascYaw=0, aggKiCascYaw=0.00, aggKdCascYaw=0.00;
         // Conservative settings theta < thre
-        float consKpCascYaw=0, consKiCascYaw=0.00, consKdCascYaw=0.00; //1.5 / 3.2 0.6 0.4
+        volatile float consKpCascYaw=0, consKiCascYaw=0.00, consKdCascYaw=0.00; //1.5 / 3.2 0.6 0.4
         
         // W part   
-        float consKpCascYawW=0.7, consKiCascYawW=0.01, consKdCascYawW=0.5; 
+        volatile float consKpCascYawW=0.7, consKiCascYawW=0.01, consKdCascYawW=0.5; 
         
         // Aggressive settings theta >= thre     
-        float consKpCascAlt=2.5, consKiCascAlt=0.00, consKdCascAlt=0.00;
+        volatile float consKpCascAlt=2.5, consKiCascAlt=0.00, consKdCascAlt=0.00;
                  
-        double SetpointCascRoll = 0, InputCascRoll, errorCascRoll;
-        double SetpointCascRollW = 0, InputCascRollW, errorCascRollW;        
-        double SetpointCascPitch = 0, InputCascPitch, errorCascPitch;       
-        double SetpointCascPitchW = 0, InputCascPitchW, errorCascPitchW;
-        double SetpointCascYaw = 180, InputCascYaw, errorCascYaw;
-        double SetpointCascYawW = 0, InputCascYawW, errorCascYawW;
-        double SetpointCascAlt = 1, InputCascAlt, errorCascAlt, OutputCascAlt = 0;    
+        volatile double SetpointCascRoll = 0, InputCascRoll, errorCascRoll;
+        volatile double SetpointCascRollW = 0, InputCascRollW, errorCascRollW;        
+        volatile double SetpointCascPitch = 0, InputCascPitch, errorCascPitch;       
+        volatile double SetpointCascPitchW = 0, InputCascPitchW, errorCascPitchW;
+        volatile double SetpointCascYaw = 180, InputCascYaw, errorCascYaw;
+        volatile double SetpointCascYawW = 0, InputCascYawW, errorCascYawW;
+        volatile double SetpointCascAlt = 1, InputCascAlt, errorCascAlt, OutputCascAlt = 0;    
         
         
-        double OutputCascRoll = 0;
-        double OutputCascPitch = 0;
-        double OutputCascYaw = 0;
-        double OutputCascAltitude = 0;
-        double OutputCascRollW = 0;
-        double OutputCascPitchW = 0;
-        double OutputCascYawW = 0;
+        volatile double OutputCascRoll = 0;
+        volatile double OutputCascPitch = 0;
+        volatile double OutputCascYaw = 0;
+        volatile double OutputCascAltitude = 0;
+        volatile double OutputCascRollW = 0;
+        volatile double OutputCascPitchW = 0;
+        volatile double OutputCascYawW = 0;
         
 
 
@@ -334,7 +334,7 @@ String inComingString = "";
 
 // Volatile vars
 volatile int cont = 0;
-int countCtrlAction = 0;
+volatile int countCtrlAction = 0;
 volatile int contGyroSamples=0;
 volatile int contCalc=0;
 
@@ -529,12 +529,22 @@ void aFilter(volatile float val[])
 ISR(TIMER3_COMPB_vect)
 {  
   
-  sei();    
-      
+  sei();          
     // [max] 8700 us [avg] 4450 us
-    sixDOF.getEuler(angles); 
-      
+    sixDOF.getYawPitchRoll(angles);       
     contGyroSamples++;
+    
+    
+    // Updates counters
+    servoTime = micros();
+    
+    // [max] 5000 us [avg] 3000 us      
+    controlCascade();
+    
+    servoTime = micros() - servoTime;
+    servoTimeTot = servoTimeTot + servoTime;
+    
+    countCtrlAction++;
     
     //calcAngle();
     //estAngle();
@@ -1178,16 +1188,6 @@ void SerialRoutine()
     //{
       //count = 0;      
       
-      // Updates counters
-      servoTime = micros();
-      
-      // [max] 8700 us [avg] 4450 us      
-      controlCascade();
-      
-      servoTime = micros() - servoTime;
-      servoTimeTot = servoTimeTot + servoTime;
-      
-      countCtrlAction++;
  
       printRoutine();
      
