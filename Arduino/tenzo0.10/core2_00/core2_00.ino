@@ -345,6 +345,7 @@ volatile float psi=0;
 volatile int x=0;
 volatile int y = 0;
 volatile int z= 0;
+volatile float wVal[3] = {0,0,0};
 volatile int rawAx = 0;
 volatile int rawAy = 0;
 volatile int rawAz = 0;
@@ -352,7 +353,7 @@ volatile int dt=0;
 
 volatile float wF[3] = {0,0,0};
 volatile float aF[3] = {0,0,0};
-volatile boolean filterGyro = true;
+volatile boolean filterGyro = false;
 volatile boolean filterAcc = true;
 volatile boolean initializedSetup = false;
 volatile boolean initializedGyroCalib = false;
@@ -392,7 +393,8 @@ void setupTimerInterrupt()
   // Set compare match register to the desired timer count
   //OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
   //OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
-  OCR3A=103; //16*10^6/(150Hz*1024)-1 = 103 -> 150 Hz 
+  //OCR3A=103; //16*10^6/(150Hz*1024)-1 = 103 -> 150 Hz 
+  OCR3A=143; //16*10^6/(150Hz*1024)-1 = 143 -> 109 Hz 
   //OCR3A=780; //16*10^6/(20Hz*1024)-1 = 780 -> 20 Hz 
   //OCR3A=50; //16*10^6/(308Hz*1024)-1 = 50 -> 308 Hz 
 
@@ -527,28 +529,30 @@ void aFilter(volatile float val[])
 
 
 ISR(TIMER3_COMPB_vect)
-{  
+{ 
+  // Updates counters
+  servoTime = micros();
   
   sei();          
-    // [max] 8700 us [avg] 4450 us
-    sixDOF.getYawPitchRoll(angles);       
-    contGyroSamples++;
+  
+  // [max] 8700 us [avg] 4450 us
+  sixDOF.getYawPitchRoll(angles);     
+  sixDOF.getGyroValues(wVal);       
+  contGyroSamples++;    
     
+  // [max] 5000 us [avg] 3000 us      
+  controlCascade();   
+  countCtrlAction++;
     
-    // Updates counters
-    servoTime = micros();
-    
-    // [max] 5000 us [avg] 3000 us      
-    controlCascade();
-    
-    servoTime = micros() - servoTime;
-    servoTimeTot = servoTimeTot + servoTime;
-    
-    countCtrlAction++;
-    
-    //calcAngle();
-    //estAngle();
-  cont++;
+  //calcAngle();
+  //estAngle();
+  
+  cont++;  
+  
+  // Compute isr duration
+  servoTime = micros() - servoTime;
+  servoTimeTot = servoTimeTot + servoTime;
+  cli();
 }
 
 void SerialRoutine()
@@ -1598,11 +1602,11 @@ void printOmega()
   else
   {
     Serial.print("o,");
-    Serial.print(x);
+    Serial.print(wVal[0]);
     Serial.print(",");
-    Serial.print(y);
+    Serial.print(wVal[1]);
     Serial.print(",");
-    Serial.print(z);
+    Serial.print(wVal[2]);
     Serial.println(",z");
   }
 }
