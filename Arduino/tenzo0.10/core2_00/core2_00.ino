@@ -541,8 +541,7 @@ ISR(TIMER3_COMPB_vect)
   contGyroSamples++;    
     
   // [max] 5000 us [avg] 3000 us      
-  controlCascade();   
-  countCtrlAction++;
+  controlCascade();  
     
   //calcAngle();
   //estAngle();
@@ -1850,6 +1849,8 @@ void controlCascade()  // ISR
   
   // Set computed speed
   tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
+  // update counter control  
+  countCtrlAction++;
 }
 
 
