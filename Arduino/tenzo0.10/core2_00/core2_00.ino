@@ -17,7 +17,7 @@ Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4)
 // Set the FreeSixIMU object
 FreeSixIMU sixDOF = FreeSixIMU();
  
-float angles[3];
+volatile float angles[3];
 
 /*
  * deltaT : Control loop frequency (Verbose_motors /NonVerbose)
