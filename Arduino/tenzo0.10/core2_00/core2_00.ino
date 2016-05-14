@@ -84,7 +84,7 @@ boolean enablePid = false;
 
 // theta
 boolean enableRollPid = true;
-boolean enablePitchPid = false;
+boolean enablePitchPid = true;
 boolean enableYawPid = false;
 // w
 boolean enableWRollPid = true;
@@ -433,7 +433,7 @@ void setupCommunication()
   //Serial.begin(sakura.getBaudRate()); 
   if (!sakura.getProcessing())
   {
-    Serial.println("[Ok] InitCOM ");
+    Serial.println("[ Ok ] InitCOM ");
   }
 }
 
@@ -443,7 +443,7 @@ void setupIMU()
   delay(5);
   if (!sakura.getProcessing())
   {
-    Serial.println("[Ok] IMU ");
+    Serial.println("[ Ok ] IMU ");
   }
 }
 
@@ -1750,7 +1750,7 @@ void controlCascade()
       cascadeRollPidW.SetTunings(consKpCascRollW, consKiCascRollW, consKdCascRollW);
 
       OutputCascRollW = cascadeRollPidW.Compute(SetpointCascRollW,InputCascRollW);     
-     
+      /*
       if (sakura.getPrintPIDVals())
       {
         Serial.print("V,I: ");
@@ -1765,6 +1765,7 @@ void controlCascade()
         Serial.print(OutputCascRollW);
         Serial.println();
       }
+      */
     }
     else
     {
