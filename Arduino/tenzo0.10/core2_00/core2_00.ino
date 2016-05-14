@@ -353,7 +353,7 @@ volatile int dt=0;
 
 volatile float wF[3] = {0,0,0};
 volatile float aF[3] = {0,0,0};
-volatile boolean filterGyro = false;
+volatile boolean filterGyro = true;
 volatile boolean filterAcc = true;
 volatile boolean initializedSetup = false;
 volatile boolean initializedGyroCalib = false;
@@ -536,8 +536,8 @@ ISR(TIMER3_COMPB_vect)
   sei();          
   
   // [max] 8700 us [avg] 4450 us
-  sixDOF.getYawPitchRoll(angles);     
-  sixDOF.getGyroValues(wVal);       
+  sixDOF.getYawPitchRoll(angles);  
+  acquireGyro();
   contGyroSamples++;    
     
   // [max] 5000 us [avg] 3000 us      
@@ -552,7 +552,23 @@ ISR(TIMER3_COMPB_vect)
   // Compute isr duration
   servoTime = micros() - servoTime;
   servoTimeTot = servoTimeTot + servoTime;
-  cli();
+  //cli();
+}
+
+void acquireGyro() // ISR
+{     
+  sixDOF.getGyroValues(wVal);
+  if (filterGyro)
+  {    
+    medianGyroX.in(wVal[0]);
+    wVal[0] = medianGyroX.out();   
+   
+    medianGyroY.in(wVal[1]);
+    wVal[1] = medianGyroY.out();   
+   
+    medianGyroZ.in(wVal[2]);
+    wVal[2] = medianGyroZ.out();    
+  }  
 }
 
 void SerialRoutine()
@@ -1587,28 +1603,13 @@ void protocol1()
 
 void printOmega()
 {
-  if (filterGyro)
-  {
-    Serial.print("o,");
-    Serial.print(wF[0]);
-  
-    Serial.print(",");
-    Serial.print(wF[1]);
-  
-    Serial.print(",");
-    Serial.print(wF[2]);
-    Serial.println(",z");
-  }
-  else
-  {
-    Serial.print("o,");
-    Serial.print(wVal[0]);
-    Serial.print(",");
-    Serial.print(wVal[1]);
-    Serial.print(",");
-    Serial.print(wVal[2]);
-    Serial.println(",z");
-  }
+  Serial.print("o,");
+  Serial.print(wVal[0]);
+  Serial.print(",");
+  Serial.print(wVal[1]);
+  Serial.print(",");
+  Serial.print(wVal[2]);
+  Serial.println(",z");
 }
 
 void printAcc()
@@ -1702,7 +1703,7 @@ void printSerialAngleFus()
   Serial.println(",z");
 }
 
-void controlCascade()
+void controlCascade()  // ISR
 {
   if (enablePid)
   {
