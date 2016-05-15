@@ -1197,20 +1197,12 @@ void SerialRoutine()
 
   timerRoutine = micros()-kMRoutine;
   
-  // The following loop runs every 1ms
+  // The following loop runs every 1s
   if (timerRoutine >= deltaT*1000) 
   {      
     kMRoutine = micros();    
     
-    //count += 1;
-    //if (count >= 1)
-    //{
-      //count = 0;      
-      
- 
-      printRoutine();
-     
-    //}
+    printRoutine();
   }
 }
 
