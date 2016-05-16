@@ -1741,11 +1741,11 @@ void controlCascade()  // ISR
       
       OutputCascRoll = cascadeRollPid.Compute(SetpointCascRoll,InputCascRoll); 
       
-      InputCascRollW = x;
+      InputCascRollW = wVal[0];
       SetpointCascRollW = OutputCascRoll;
       //////////////////////////////////////
       //qSetpointCascRollW = 0;
-      errorCascRollW = SetpointCascRollW - x; 
+      errorCascRollW = SetpointCascRollW - wVal[0]; 
 
       cascadeRollPidW.SetTunings(consKpCascRollW, consKiCascRollW, consKdCascRollW);
 
@@ -1811,10 +1811,10 @@ void controlCascade()  // ISR
       
       OutputCascPitch = cascadePitchPid.Compute(SetpointCascPitch,InputCascPitch); 
       
-      InputCascPitchW = y;
+      InputCascPitchW = wVal[1];
       SetpointCascPitchW = OutputCascPitch;
       //SetpointCascPitchW = 0;
-      errorCascPitchW = SetpointCascPitchW - y; 
+      errorCascPitchW = SetpointCascPitchW - wVal[1]; 
 
       cascadePitchPidW.SetTunings(consKpCascPitchW, consKiCascPitchW, consKdCascPitchW);
 
