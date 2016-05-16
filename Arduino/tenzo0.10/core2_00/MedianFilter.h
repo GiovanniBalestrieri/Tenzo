@@ -8,21 +8,21 @@ class MedianFilter
 {
 public:
 	MedianFilter(byte size, int seed);
-	int in(int value);
+	int in( volatile int value);
 	int out(); 
-	void printData();		// used for debugging
+	//void printData();		// used for debugging
 	
 private:
-	int filterShift;
-	byte medFilterWin;		// number of samples in sliding median filter window - usually odd #
-	byte medDataPointer;	// mid point of window
-	int * sortedData;		// array pointer for data sorted by size
-	byte * historyMap;		// array pointer for locations of history data in sorted list
-	byte * locationMap;		// array pointer for data locations in history map
-	int ODP;				// oldest data point in accelRawHistory
-	int tempData;			// temp data storage while swapping data locations
-	byte tempMap;			// temp map storage while swapping data locations
-	boolean dataMoved;
+	volatile int filterShift;
+	volatile byte medFilterWin;		// number of samples in sliding median filter window - usually odd #
+	volatile byte medDataPointer;	// mid point of window
+	volatile int * sortedData;		// array pointer for data sorted by size
+	volatile byte * historyMap;		// array pointer for locations of history data in sorted list
+	volatile byte * locationMap;		// array pointer for data locations in history map
+	volatile int ODP;				// oldest data point in accelRawHistory
+	volatile int tempData;			// temp data storage while swapping data locations
+	volatile byte tempMap;			// temp map storage while swapping data locations
+	volatile boolean dataMoved;
 };
 
 #endif

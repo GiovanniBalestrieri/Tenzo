@@ -24,6 +24,8 @@ Ux::Ux()
    _sendBlueAngle = sendBlueAngle;
    _serialByteProtocol = serialByteProtocol;
    _printVerboseSerial = printVerboseSerial;
+   _filterGyro = filterGyro;
+   _filterAcc = filterAcc;
 }
 
 void Ux::welcome()
@@ -200,7 +202,28 @@ void  Ux::setPrintPIDVals(boolean state)
   _printPIDVals = state;
 }
 
+
+void Ux::setGyroFilterFlag(volatile boolean filterGyro)
+{
+ _filterGyro = filterGyro;
+}
+
+void Ux::setAccFilterFlag(volatile boolean filterAcc)
+{
+ _filterAcc = filterAcc; 
+}
+
 int Ux::getBaudRate()
 {
  return _baudrate; 
+}
+
+boolean Ux::getGyroFilterFlag()
+{
+ return _filterGyro; 
+}
+
+boolean Ux::getAccFilterFlag()
+{
+ return _filterAcc; 
 }

@@ -353,8 +353,12 @@ volatile int dt=0;
 
 volatile float wF[3] = {0,0,0};
 volatile float aF[3] = {0,0,0};
-volatile boolean filterGyro = true;
-volatile boolean filterAcc = true;
+
+// Moved to UX
+//volatile boolean filterGyro = true;
+//volatile boolean filterAcc = true;
+
+
 volatile boolean initializedSetup = false;
 volatile boolean initializedGyroCalib = false;
 
@@ -472,7 +476,7 @@ void calcAngle() //ISR
 {
   // From Gyro
   dt = micros()-k;
-  if (!filterGyro)
+  if (!sakura.getGyroFilterFlag())
   {
     phi=phi+(float) x*(float)dt/1000000.0;
     
@@ -481,7 +485,7 @@ void calcAngle() //ISR
 
     psi=psi+(float) z*(float) dt/1000000.0; 
   }
-  else if (filterGyro)
+  else if (sakura.getGyroFilterFlag())
   {  
     phi=phi+wF[0]*(float)dt/1000000.0;
 
@@ -490,8 +494,8 @@ void calcAngle() //ISR
 
     psi=psi+wF[2]*(float) dt/1000000.0;  
   }
-  
-  if (filterAcc)
+   
+  if (sakura.getAccFilterFlag())
   {
     angleXAcc = (atan2(-aF[0],-aF[2])) * RAD_TO_DEG;
     angleYAcc = (atan2(-aF[1],-aF[2])) * RAD_TO_DEG;
@@ -557,7 +561,7 @@ ISR(TIMER3_COMPB_vect)
 void acquireGyro() // ISR
 {     
   sixDOF.getGyroValues(wVal);
-  if (filterGyro)
+  if (sakura.getGyroFilterFlag())
   {    
     medianGyroX.in(wVal[0]);
     wVal[0] = medianGyroX.out();   
@@ -1605,7 +1609,7 @@ void printOmega()
 
 void printAcc()
 {
-  if (!filterAcc)
+  if (!sakura.getAccFilterFlag())
   {
     Serial.print("a,");
     Serial.print(aax);

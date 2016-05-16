@@ -36,6 +36,8 @@ class Ux
         boolean getSendBlueAngle();
         boolean getSerialByteProtocol();
         boolean getPrintVerboseSerial();
+        boolean getGyroFilterFlag();
+        boolean getAccFilterFlag();
         int getBaudRate();
         
         boolean printMotorsVals;
@@ -55,6 +57,8 @@ class Ux
         void setSendBlueAngle(boolean);
         void setSerialByteProtocol(boolean);
         void setPrintVerboseSerial(boolean);
+        void setGyroFilterFlag(volatile boolean);
+        void setAccFilterFlag(volatile boolean);
         
         
         
@@ -71,6 +75,8 @@ class Ux
        boolean _sendBlueAngle;
        boolean _serialByteProtocol;
        boolean _printVerboseSerial;
+       volatile boolean _filterAcc;
+       volatile boolean _filterGyro;
        int _baudrate;
 };
 #endif

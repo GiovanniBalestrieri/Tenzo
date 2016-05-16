@@ -106,7 +106,7 @@ int MedianFilter::out() // return the value of the median data sample
 	return  sortedData[medDataPointer];     
 }
 
-
+/*
 void MedianFilter::printData() // display sorting data for debugging
 {
 	for(int i=0; i<medFilterWin; i++)
@@ -135,5 +135,5 @@ void MedianFilter::printData() // display sorting data for debugging
 	Serial.println("");
 }  
 
-
+*/
 

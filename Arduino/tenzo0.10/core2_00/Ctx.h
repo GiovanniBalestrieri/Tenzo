@@ -29,8 +29,12 @@
   boolean serialByteProtocol = false;
   boolean printVerboseSerial = true;
   
+  
   // Filters
   boolean removeSpikesNumerically = false;
+  // ISR
+  volatile boolean filterGyro = true;
+  volatile boolean filterAcc = true;
   
   //const double baudRate = 57600;
   const double baudRate = 115200;
