@@ -15,7 +15,6 @@ void setup()
 }
 
 
-
 void loop(){
   //if (SX_Enc_BSet)
     Serial.println(SX_Enc_Ticks);
