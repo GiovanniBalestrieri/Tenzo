@@ -3,6 +3,8 @@
   #define ControlPid_h
 
 
+volatile float angles[3];
+
 boolean autoEnablePid = true;
 volatile boolean enablePid = false;
 

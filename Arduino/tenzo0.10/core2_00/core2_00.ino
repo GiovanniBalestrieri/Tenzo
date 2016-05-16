@@ -11,18 +11,16 @@
 #include <FIMU_ADXL345.h>
 #include <FIMU_ITG3200.h>
 
+
 Ux sakura;
 Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4));
-
-//NonLinearPid controlCascade(SetpointRoll,SetpointPitch,SetpointYaw,SetpointAltitude);
 
 // Set the FreeSixIMU object
 FreeSixIMU sixDOF = FreeSixIMU();
 
-volatile float angles[3];
 
 /*
- * deltaT : Control loop frequency (Verbose_motors /NonVerbose)
+ * deltaT : loop routine frequency (Verbose_motors /NonVerbose)
  * 15: 50Hz
  * 8 : 75HZ/44Hz
  * 7 : 110Hz/56Hz
@@ -61,7 +59,6 @@ unsigned long timeToRead = 0;
 unsigned long lastTimeToRead = 0;
 volatile long servoTime = 0;
 volatile long servoTimeTot = 0;
-
 
 
 float timerLoop = 0, timerReading = 0, timerSec = 0;
