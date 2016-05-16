@@ -7,6 +7,7 @@ volatile boolean SX_Enc_BSet2;
 volatile boolean SX_Enc_BSet3;
 volatile int lastEncoded = 0;
 
+
 const byte interruptPin2 = 2; // digital pin 0
 const byte interruptPin3 = 3; // digital pin 1
 
