@@ -3,6 +3,20 @@
   #define ControlPid_h
 
 
+boolean autoEnablePid = true;
+volatile boolean enablePid = false;
+
+// theta
+volatile boolean enableRollPid = true;
+volatile boolean enablePitchPid = true;
+volatile boolean enableYawPid = false;
+// w
+volatile boolean enableWRollPid = true;
+volatile boolean enableWPitchPid = false;
+volatile boolean enableWYawPid = false;
+volatile boolean enableAltitudePid = false;
+
+
 /*
  * Cascade Pid & settings
  */

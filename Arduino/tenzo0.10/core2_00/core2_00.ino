@@ -33,45 +33,12 @@ char readAnswer, readChar, readCh;
 
 byte modeS;
 
-
-
-
-/** 
- ** Control
- **/
- 
-// W constant (necessary?)
-float Kmy = 1;
-/**
- * Pid Controller 
- */
- 
-// Rimesso - check validity
- 
-boolean autoEnablePid = true;
-volatile boolean enablePid = false;
-
-// theta
-volatile boolean enableRollPid = true;
-volatile boolean enablePitchPid = true;
-volatile boolean enableYawPid = false;
-// w
-volatile boolean enableWRollPid = true;
-volatile boolean enableWPitchPid = false;
-volatile boolean enableWYawPid = false;
-volatile boolean enableAltitudePid = false;
-
 volatile int limitPidMax = 750;
  
 boolean inConsRoll = false; 
 boolean inConsPitch = false;
 boolean verbosePidValuesFeedback = true;
-boolean verboseFilterAccMatlab = true;
-// Define IO and setpoint for control
-//double SetpointRoll = 0, InputRoll, errorRoll;
-// Define the aggressive and conservative Tuning Parameters
-        
-           
+boolean verboseFilterAccMatlab = true;           
         
 NonLinearPid cascadeRollPid(consKpCascRoll, consKiCascRoll, consKdCascRoll);
 NonLinearPid cascadeRollPidW(consKpCascRollW, consKiCascRollW, consKdCascRollW);
@@ -81,87 +48,11 @@ NonLinearPid cascadeYawPid(consKpCascYaw, consKiCascYaw, consKdCascYaw);
 NonLinearPid cascadeYawPidW(consKpCascYawW, consKiCascYawW, consKdCascYawW);
 NonLinearPid cascadeAltPid(consKpCascAlt, consKiCascAlt, consKdCascAlt);
 
-// Control Pid Cascade
-/*
-PID cascadeRollPid(&InputCascRoll, &OutputCascRoll, &SetpointCascRoll, consKpCascRoll, consKiCascRoll, consKdCascRoll, DIRECT);
-PID cascadeRollPidW(&InputCascRollW, &OutputCascRollW, &SetpointCascRollW, consKpCascRollW, consKiCascRollW, consKdCascRollW, DIRECT);
-
-PID cascadePitchPid(&InputCascPitch, &OutputCascPitch, &SetpointCascPitch, consKpCascPitch, consKiCascPitch, consKdCascPitch, DIRECT);
-PID cascadePitchPidW(&InputCascPitchW, &OutputCascPitchW, &SetpointCascPitchW, consKpCascPitchW, consKiCascPitchW, consKdCascPitchW, DIRECT);
-
-PID cascadeYawPid(&InputCascYaw, &OutputCascYaw, &SetpointCascYaw, consKpCascYaw, consKiCascYaw, consKdCascYaw, DIRECT);
-PID cascadeYawPidW(&InputCascYawW, &OutputCascYawW, &SetpointCascYawW, consKpCascYawW, consKiCascYawW, consKdCascYawW, DIRECT);
-
-PID cascadeAltPid(&InputCascAlt, &OutputCascAlt, &SetpointCascAlt, consKpCascAlt, consKiCascAlt, consKdCascAlt, DIRECT);
-/*
         
-/**
- * Compass
- */
-
-// Defines address of CMPS10
-#define ADDRESS 0x60      
-//CMPS10 my_compass;
-float angPosFilter[3];
-int pitch1;
-int roll1;
-int filterAng = 0;
-
-
-byte highByte, lowByte, fine;    
-char pitch, roll;                
-int bearing;   
-
-int scale2000 = 70;
-
-float bx= 0,by=0,bz=0;
-long bxS,byS,bzS;
-
-unsigned long biasCalcTime = 0;
-
 // Median Filter
 MedianFilter medianGyroX(3,0);
 MedianFilter medianGyroY(3,0);
 MedianFilter medianGyroZ(3,0);
-
-/**
- ** Acc 
- **/
-
-const float RESOLUTION=800; //0.8 v/g -> resolucion de 1.5g -> 800mV/g
-const float VOLTAGE=3.3;  //voltage al que está conectado el acelerómetro
-
-const float ZOUT_1G = 850;   // mv Voltage en Zout a 1G
-
-const int NADJ  = 50;        // Número de lecturas para calcular el error
-
-// Define accelerometer's pins
-const int xaxis = 0;
-const int yaxis = 1;
-const int zaxis = 2;
-
-// 3.3 Fully loaded Tenzo V2.1
-//int xRawMin = 425;
-//int xRawMax = 280;
-//// 
-//int yRawMin = 410;
-//int yRawMax = 275;
-//// 
-//int zRawMin = 428;
-//int zRawMax = 289;
-
-
-// 3.3 Fully loaded Tenzo V2.2
-int xRawMin = 409;
-int xRawMax = 278;
-// 
-int yRawMin = 404;
-int yRawMax = 272;
-// 
-int zRawMin = 419;
-int zRawMax = 288;
-
-float XError,YError,ZError;
 
 // Acc Timers
 unsigned long accTimer;
