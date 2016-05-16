@@ -1896,5 +1896,5 @@ void changePidState(boolean cond)
     
     enablePid = false;
     hovering = 0;
-  } 
+  }
 }
