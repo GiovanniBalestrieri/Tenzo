@@ -157,9 +157,9 @@ void setupTimerInterrupt()
   //OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
   //OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
   //OCR3A=103; //16*10^6/(150Hz*1024)-1 = 103 -> 150 Hz 
-  //OCR3A=143; //16*10^6/(150Hz*1024)-1 = 143 -> 109 Hz 
+  OCR3A=143; //16*10^6/(150Hz*1024)-1 = 143 -> 109 Hz 
   //OCR3A=780; //16*10^6/(20Hz*1024)-1 = 780 -> 20 Hz 
-  OCR3A=2000; //16*10^6/(20Hz*1024)-1 = 780 -> 8 Hz 
+  //OCR3A=2000; //16*10^6/(20Hz*1024)-1 = 780 -> 8 Hz 
   //OCR3A=50; //16*10^6/(308Hz*1024)-1 = 50 -> 308 Hz 
 
   TCCR3B |= (1 << WGM32);
@@ -308,14 +308,14 @@ ISR(TIMER3_COMPB_vect)
 { 
   // Updates counters
   
-  digitalWrite(pinEnd, LOW);
+  //digitalWrite(pinEnd, LOW);
   digitalWrite(pinInit, HIGH);
   servoTime = micros();
   
   sei();          
   
   // [max] 8700 us [avg] 4450 us
-  sixDOF.getYawPitchRoll(angles);  
+  sixDOF.getYawPitchRoll(angles);  //[Ok]
   acquireGyro();
   contGyroSamples++;    
     
@@ -333,7 +333,7 @@ ISR(TIMER3_COMPB_vect)
   
   
   digitalWrite(pinInit, LOW);
-  digitalWrite(pinEnd, HIGH);
+  //digitalWrite(pinEnd, HIGH);
   //cli();
 }
 
