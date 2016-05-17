@@ -157,8 +157,9 @@ void setupTimerInterrupt()
   //OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
   //OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
   //OCR3A=103; //16*10^6/(150Hz*1024)-1 = 103 -> 150 Hz 
-  OCR3A=143; //16*10^6/(150Hz*1024)-1 = 143 -> 109 Hz 
+  //OCR3A=143; //16*10^6/(150Hz*1024)-1 = 143 -> 109 Hz 
   //OCR3A=780; //16*10^6/(20Hz*1024)-1 = 780 -> 20 Hz 
+  OCR3A=2000; //16*10^6/(20Hz*1024)-1 = 780 -> 8 Hz 
   //OCR3A=50; //16*10^6/(308Hz*1024)-1 = 50 -> 308 Hz 
 
   TCCR3B |= (1 << WGM32);
@@ -212,9 +213,21 @@ void setupIMU()
   }
 }
 
+volatile int pinInit = 4;
+volatile int pinEnd = 5;
+
+void setupPinOut()
+{
+  pinMode(pinInit, OUTPUT); 
+  pinMode(pinEnd, OUTPUT);
+  digitalWrite(pinInit, LOW);  
+  digitalWrite(pinEnd, LOW);
+}
+
 /// TILL HERE
 
 void setup() {
+  setupPinOut();
   setupCommunication();
   setupIMU();
 //  setupAcceleromter();
@@ -294,6 +307,9 @@ void aFilter(volatile float val[])
 ISR(TIMER3_COMPB_vect)
 { 
   // Updates counters
+  
+  digitalWrite(pinEnd, LOW);
+  digitalWrite(pinInit, HIGH);
   servoTime = micros();
   
   sei();          
@@ -314,6 +330,10 @@ ISR(TIMER3_COMPB_vect)
   // Compute isr duration
   servoTime = micros() - servoTime;
   servoTimeTot = servoTimeTot + servoTime;
+  
+  
+  digitalWrite(pinInit, LOW);
+  digitalWrite(pinEnd, HIGH);
   //cli();
 }
 
