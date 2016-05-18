@@ -149,7 +149,7 @@ void setupTimerInterrupt()
 {
   // Timer settings
   // Initialize Timer
-  cli();
+  noInterrupts();
   TCCR3A = 0;
   TCCR3B = 0;
 
@@ -157,9 +157,9 @@ void setupTimerInterrupt()
   //OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
   //OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
   //OCR3A=103; //16*10^6/(150Hz*1024)-1 = 103 -> 150 Hz 
-  OCR3A=143; //16*10^6/(150Hz*1024)-1 = 143 -> 109 Hz 
+  OCR3A=143; //16*10^6/(109Hz*1024)-1 = 143 -> 109 Hz 
   //OCR3A=780; //16*10^6/(20Hz*1024)-1 = 780 -> 20 Hz 
-  //OCR3A=2000; //16*10^6/(20Hz*1024)-1 = 780 -> 8 Hz 
+  //OCR3A=2000; //16*10^6/(8Hz*1024)-1 = 780 -> 8 Hz 
   //OCR3A=50; //16*10^6/(308Hz*1024)-1 = 50 -> 308 Hz 
 
   TCCR3B |= (1 << WGM32);
@@ -169,13 +169,8 @@ void setupTimerInterrupt()
   TIMSK3 |= (1 << OCIE3B);
 
   // enable global interrupts:
-  sei(); 
+  interrupts();
  
-  // ADC Tuning
-  ADCSRA &= ~PS_128;  // remove bits set by Arduino library
-  // you can choose a prescaler from above.
-  // PS_16, PS_32, PS_64 or PS_128
-  ADCSRA |= PS_32;    // set our own prescaler to 64 
   if (!sakura.getProcessing())
   {
      Serial.println("[ OK ] Init Timers"); 
@@ -312,15 +307,20 @@ ISR(TIMER3_COMPB_vect)
   digitalWrite(pinInit, HIGH);
   servoTime = micros();
   
-  sei();          
+  //sei();          
   
   // [max] 8700 us [avg] 4450 us
-  sixDOF.getYawPitchRoll(angles);  //[Ok]
-  acquireGyro();
+  //sixDOF.getYawPitchRoll(angles);  
+  //acquireGyro();
   contGyroSamples++;    
     
   // [max] 5000 us [avg] 3000 us      
-  controlCascade();  
+  controlCascade();                  // [OK]
+
+    // Set computed speed   // [OK]
+  tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
+    // update counter control  
+  countCtrlAction++;  
     
   //calcAngle();
   //estAngle();
@@ -340,6 +340,7 @@ ISR(TIMER3_COMPB_vect)
 void acquireGyro() // ISR
 {     
   sixDOF.getGyroValues(wVal);
+  
   if (sakura.getGyroFilterFlag())
   {    
     medianGyroX.in(wVal[0]);
@@ -350,7 +351,8 @@ void acquireGyro() // ISR
    
     medianGyroZ.in(wVal[2]);
     wVal[2] = medianGyroZ.out();    
-  }  
+  } 
+  
 }
 
 void SerialRoutine()
@@ -1622,10 +1624,6 @@ void controlCascade()  // ISR
     }
   }
   
-  // Set computed speed
-  tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
-  // update counter control  
-  countCtrlAction++;
 }
 
 
