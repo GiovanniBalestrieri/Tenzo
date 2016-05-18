@@ -45,19 +45,19 @@ class Propulsion
 
 
         int getThrottle();
-        void setThrottle(int);	 
+        void setThrottle(volatile int);	 
 
         Servo servo1;
 	Servo servo2;
 	Servo servo3;
 	Servo servo4;
 
-        int wUs1;
-        int wUs2;
-        int wUs3;
-        int wUs4;
+        volatile int wUs1;
+        volatile int wUs2;
+        volatile int wUs3;
+        volatile int wUs4;
 
-	int throttle = MIN_SIGNAL;
+	volatile int throttle = MIN_SIGNAL;
   private:
         int _pinM1;
         int _pinM2;

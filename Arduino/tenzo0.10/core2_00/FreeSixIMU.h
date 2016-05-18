@@ -22,11 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <Wire.h>
-#include "Arduino.h"
+#include <Arduino.h>
 
-#include <FIMU_ADXL345.h>
+#include "FIMU_ADXL345.h"
 #define FIMU_ACC_ADDR ADXL345_ADDR_ALT_LOW // SDO connected to GND
-#include <FIMU_ITG3200.h>
+#include "FIMU_ITG3200.h"
 
 
 #ifndef FreeSixIMU_h
@@ -61,25 +61,25 @@ class FreeSixIMU
     void getAngles( volatile float * angles);
     
     
-	ADXL345 acc;
+    ADXL345 acc;
     ITG3200 gyro;
     
-    int* raw_acc, raw_gyro, raw_magn;
+    volatile int* raw_acc, raw_gyro, raw_magn;
     
   private:
-    void AHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz);
+    void AHRSupdate(volatile float gx, volatile float gy,volatile float gz,volatile float ax,volatile float ay,volatile float az, volatile float mx,volatile float my,volatile float mz);
     //float q0, q1, q2, q3; // quaternion elements representing the estimated orientation
-    float iq0, iq1, iq2, iq3;
-    float exInt, eyInt, ezInt;  // scaled integral error
+    volatile float iq0, iq1, iq2, iq3;
+    volatile float exInt, eyInt, ezInt;  // scaled integral error
     volatile float twoKp;      // 2 * proportional gain (Kp)
     volatile float twoKi;      // 2 * integral gain (Ki)
     volatile float q0, q1, q2, q3; // quaternion of sensor frame relative to auxiliary frame
     volatile float integralFBx,  integralFBy, integralFBz;
-    unsigned long lastUpdate, now; // sample period expressed in milliseconds
-    float sampleFreq; // half the sample period expressed in seconds
-    int startLoopTime;
+    volatile unsigned long lastUpdate, now; // sample period expressed in milliseconds
+    volatile float sampleFreq; // half the sample period expressed in seconds
+    volatile int startLoopTime;
 };
 
-float invSqrt(float number);
+float invSqrt(volatile float number);
 
 #endif // FreeSixIMU_h

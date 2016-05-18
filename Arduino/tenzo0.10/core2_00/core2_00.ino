@@ -7,9 +7,9 @@
 #include "ControlPid.h"
 #include "FlightParams.h"
 #include "MedianFilter.h"
-#include <FreeSixIMU.h>
-#include <FIMU_ADXL345.h>
-#include <FIMU_ITG3200.h>
+#include "FreeSixIMU.h"
+#include "FIMU_ADXL345.h"
+#include "FIMU_ITG3200.h"
 
 
 Ux sakura;
@@ -307,11 +307,10 @@ ISR(TIMER3_COMPB_vect)
   digitalWrite(pinInit, HIGH);
   servoTime = micros();
   
-  //sei();          
-  
+  sei();            
   // [max] 8700 us [avg] 4450 us
-  //sixDOF.getYawPitchRoll(angles);  
-  //acquireGyro();
+  sixDOF.getYawPitchRoll(angles);  
+  acquireGyro();
   contGyroSamples++;    
     
   // [max] 5000 us [avg] 3000 us      
@@ -321,7 +320,7 @@ ISR(TIMER3_COMPB_vect)
   tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
     // update counter control  
   countCtrlAction++;  
-    
+  
   //calcAngle();
   //estAngle();
   
@@ -334,7 +333,6 @@ ISR(TIMER3_COMPB_vect)
   
   digitalWrite(pinInit, LOW);
   //digitalWrite(pinEnd, HIGH);
-  //cli();
 }
 
 void acquireGyro() // ISR
@@ -963,7 +961,7 @@ void SerialRoutine()
   }
   timerSec = micros()-secRoutine;
   //lastTimeToRead = micros();
-   
+      
   // Runs @ 1 Hz
   if (timerSec >= 1000000)
   {
@@ -1160,10 +1158,23 @@ void printTimers()
       Serial.print(",");
       Serial.print(countCtrlAction);
       // Print    timeservo: 
+      
+      Serial.print(",\t");
+      
+      Serial.print(OutputCascRollW);
+      // Print    timeservo: 
+      Serial.print(",\t");
+      
+      Serial.print(OutputCascPitchW);
+      // Print    timeservo: 
+      Serial.print(",");
+      
       Serial.print(",");
       Serial.print(servoTimeTot);
       Serial.println(",z");
       Serial.println();
+      
+      
     }
 }
 

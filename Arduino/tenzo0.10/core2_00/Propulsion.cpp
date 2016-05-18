@@ -30,7 +30,7 @@ int Propulsion::getThrottle()
   return  this->throttle;
 }
 
-void Propulsion::setThrottle(int t)
+void Propulsion::setThrottle(volatile int t)
 {
   if (t<=MIN_SIGNAL)
     this->throttle = MIN_SIGNAL;
