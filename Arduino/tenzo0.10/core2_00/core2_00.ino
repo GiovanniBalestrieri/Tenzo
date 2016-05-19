@@ -11,6 +11,12 @@
 #include "FIMU_ADXL345.h"
 #include "FIMU_ITG3200.h"
 
+// Se fai operazioni sui float o double su una variabile utilizzata come contatore
+// aggiornato in una ISR -> usa una variabile d'appoggio tipo cont_safe usa:
+// sei()
+// cont_safe = cont
+// cli()
+
 
 Ux sakura;
 Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4));
