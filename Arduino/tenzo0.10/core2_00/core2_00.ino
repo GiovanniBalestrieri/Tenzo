@@ -88,10 +88,6 @@ String inComingString = "";
 
 
 // Volatile vars
-volatile int cont = 0;
-volatile int countCtrlAction = 0;
-volatile int contGyroSamples=0;
-volatile int contCalc=0;
 
 volatile float thetaOLD = 0;
 volatile float phi=0;
@@ -262,6 +258,12 @@ void loop() {
     
     // Compute average imu readings time
     servoTimeTot = servoTimeTot/countCtrlAction;
+        
+    // Compute average imu readings time
+    eulerTimeTot = eulerTimeTot/countCtrlAction;
+     
+    // Compute average imu readings time
+    gyroTimeTot = gyroTimeTot/countCtrlAction;
     
     printTimers();
     printRoutine();
@@ -271,6 +273,8 @@ void loop() {
     countCtrlAction=0;    
     contGyroSamples=0;   
     servoTimeTot = 0;
+    eulerTimeTot = 0;
+    gyroTimeTot = 0;
   }
 
   timerRoutine = micros()-kMRoutine;
@@ -351,24 +355,45 @@ ISR(TIMER3_COMPB_vect)
   
   //digitalWrite(pinEnd, LOW);
   digitalWrite(pinInit, HIGH);
-  servoTime = micros();
+  isrTimer = micros();
   
-  // Preemptable section
-  sei();            
-    // [max] 8700 us [avg] 4450 us
-    sixDOF.getYawPitchRoll(angles);  
-    acquireGyro();
-  cli();
+    eulerTimer = micros();
   
-  contGyroSamples++;    
+    // Preemptable section
+    sei();            
+      // [max] 8700 us [avg] 4450 us
+      sixDOF.getYawPitchRoll(angles);  
+    cli();
     
+    contEulerSamples++; 
+    eulerTimer = micros() - eulerTimer;
+    eulerTimeTot = eulerTimeTot + eulerTimer;
+  
+    gyroTimer = micros();
+    sei();            
+      // [max]  us [avg]  us
+      acquireGyro();
+    cli();
+    contGyroSamples++;    
+    
+    gyroTimer = micros() - gyroTimer;
+    gyroTimeTot = gyroTimeTot + gyroTimer;
+    
+    
+  controlTimer = micros();
   // [max] 5000 us [avg] 3000 us      
-  controlCascade();                  // [OK]
+  controlCascade();  // [OK]
+  
+  controlTimer = micros() - controlTimer;
+  controlTimeTot = controlTimeTot + controlTimer;
 
-    // Set computed speed   // [OK]
+  
+  servoTimer = micros(); 
   tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
-    // update counter control  
+  // update counter control  
   countCtrlAction++;  
+  servoTimer = micros() - servoTimer;
+  servoTimeTot = servoTimeTot + servoTimer;
   
   //calcAngle();
   //estAngle();
@@ -376,8 +401,8 @@ ISR(TIMER3_COMPB_vect)
   cont++;  
   
   // Compute isr duration
-  servoTime = micros() - servoTime;
-  servoTimeTot = servoTimeTot + servoTime;
+  isrTimer = micros() - isrTimer;
+  isrTimeTot = isrTimeTot + isrTimer;
   
   
   digitalWrite(pinInit, LOW);
@@ -1190,8 +1215,12 @@ void printTimers()
       // Print    timeservo: 
       Serial.print(",");
       
-      Serial.print(",");
+      Serial.print(",Servo");
       Serial.print(servoTimeTot);
+      Serial.print(",Euler");
+      Serial.print(eulerTimeTot);
+      Serial.print(",Gyro");
+      Serial.print(gyroTimeTot);
       Serial.println(",z");
       Serial.println();
       

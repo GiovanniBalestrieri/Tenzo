@@ -31,14 +31,31 @@ volatile unsigned long lastTimeToRead = 0;
 
 volatile unsigned long eulerTimer = 0;
 volatile unsigned long eulerTimeTot = 0;
+
 volatile unsigned long gyroTimer = 0;
 volatile unsigned long gyroTimeTot = 0;
 
-volatile unsigned long servoTime = 0;
+volatile unsigned long servoTimer = 0;
 volatile unsigned long servoTimeTot = 0;
 
+
+volatile unsigned long controlTimer = 0;
+volatile unsigned long controlTimeTot = 0;
+
+volatile unsigned long isrTimer = 0;
+volatile unsigned long isrTimeTot = 0;
+
+/*** */
 float timerLoop = 0, timerReading = 0, timerSec = 0;
 float timerRoutine = 0, count = 0;
 float redingTime = 0, samplingTime = 0, calcTime =0, printTime = 0;
+/** **/
+
+volatile int cont = 0;
+volatile int countCtrlAction = 0;
+volatile int contGyroSamples=0;
+volatile int contEulerSamples=0;
+volatile int contSerialRoutine=0; // boh
+volatile int contCalc=0;
 
 #endif
