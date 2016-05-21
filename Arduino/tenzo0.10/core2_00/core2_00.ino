@@ -245,6 +245,7 @@ void setup() {
 void loop() {  
   float a = micros();
   ticks = a*period_sched;
+  
   SerialRoutine();
   
   timerSec = micros()-secRoutine;
@@ -253,11 +254,13 @@ void loop() {
   // Tasks (80 ticks,wcetSerial) : (Period,execTime) -> 1 Hz
   //freq_sched = 1/period_sched;
   if (fmod(ticks,freq_sched) == 0.00)
-  {    
+  { 
+    /* 
     Serial.print("Ticks=");
     Serial.println(ticks);
     Serial.print("fmod?= ");
     Serial.println(fmod(ticks,freq_sched));
+    */
   }
   
   if (timerSec >= 1000000)
@@ -273,6 +276,8 @@ void loop() {
     servoTimeTot = servoTimeTot/countCtrlAction;
     
     printTimers();
+    printRoutine();
+    
     //cont=0;         
     contCalc=0; 
     countCtrlAction=0;    
@@ -287,7 +292,6 @@ void loop() {
   {      
     kMRoutine = micros();    
     
-    printRoutine();
   }
   
 }
@@ -361,10 +365,13 @@ ISR(TIMER3_COMPB_vect)
   digitalWrite(pinInit, HIGH);
   servoTime = micros();
   
+  // Preemptable section
   sei();            
-  // [max] 8700 us [avg] 4450 us
-  sixDOF.getYawPitchRoll(angles);  
-  acquireGyro();
+    // [max] 8700 us [avg] 4450 us
+    sixDOF.getYawPitchRoll(angles);  
+    acquireGyro();
+  cli();
+  
   contGyroSamples++;    
     
   // [max] 5000 us [avg] 3000 us      
