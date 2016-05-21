@@ -45,6 +45,9 @@ volatile unsigned long controlTimeTot = 0;
 volatile unsigned long isrTimer = 0;
 volatile unsigned long isrTimeTot = 0;
 
+volatile unsigned long serialTimer = 0;
+volatile unsigned long serialTimeTot = 0;
+
 /*** */
 float timerLoop = 0, timerReading = 0, timerSec = 0;
 float timerRoutine = 0, count = 0;

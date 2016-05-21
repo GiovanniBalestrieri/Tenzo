@@ -283,8 +283,7 @@ void loop() {
   
   // Task 1
   getAngVelYPR();
-  
-  
+    
   // Task 2
   SerialRoutine();
   
@@ -330,6 +329,9 @@ void computeAverageExecTime()
     
     // Compute average isr readings time
     isrTimeTot = isrTimeTot/countISR;
+    
+    // Compute average SerialRoutine time
+    serialTimeTot = serialTimeTot/contSerialRoutine;
 }
 
 void resetCounters()
@@ -337,7 +339,8 @@ void resetCounters()
     //cont=0;         
     contCalc=0; 
     countCtrlCalc=0;
-    countServoAction=0;    
+    countServoAction=0;  
+    contSerialRoutine=0;    
     contGyroSamples=0;     
     contEulerSamples=0;   
     servoTimeTot = 0;
@@ -480,6 +483,8 @@ void acquireGyro() // ISR
 
 void SerialRoutine()
 {
+  serialTimer = micros();
+  
   if (Serial.available())
   {
       char t = Serial.read();
@@ -1084,6 +1089,9 @@ void SerialRoutine()
       }       
       */
   }
+  contSerialRoutine++;
+  serialTimer = micros() - serialTimer;
+  serialTimeTot = serialTimeTot + serialTimer;
 }
 
 // Send accelerometer filter value to Matlab for dynamic change
@@ -1251,14 +1259,16 @@ void printTimers()
       // Print Samples rate: [sample/sec] 
       Serial.print("t,ISR: ");
       Serial.print(countISR);
-      Serial.print(",\nGyro: ");
-      Serial.print(contGyroSamples);
       Serial.print(",\nCtrl: ");
       Serial.print(countCtrlCalc);
       Serial.print(",\nEuler: ");
       Serial.print(contEulerSamples);
+      Serial.print(",\nGyro: ");
+      Serial.print(contGyroSamples);
       Serial.print(",\nServo: ");
       Serial.print(countServoAction);
+      Serial.print(",\nSerial: ");
+      Serial.print(contSerialRoutine);
       
       Serial.print(",\t");
       
@@ -1272,14 +1282,16 @@ void printTimers()
       
       Serial.print(",ISR ");
       Serial.print(isrTimeTot);
-      Serial.print(" = Servo");
+      Serial.print("\t,Servo");
       Serial.print(servoTimeTot);
-      Serial.print(" + Euler");
+      Serial.print("\t,Euler");
       Serial.print(eulerTimeTot);
-      Serial.print(" + Gyro");
+      Serial.print("\t,Gyro");
       Serial.print(gyroTimeTot);
-      Serial.print(" + Control");
+      Serial.print("\t,Control");
       Serial.print(controlTimeTot);
+      Serial.print("\t,Serial");
+      Serial.print(serialTimeTot);
       Serial.println(",z");
       Serial.println();
       
