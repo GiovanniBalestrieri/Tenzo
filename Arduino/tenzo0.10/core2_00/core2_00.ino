@@ -231,7 +231,7 @@ void getYPR()
     eulerTimer = micros();
   
     // Preemptable section
-    /sei();            
+    //sei();            
       // [max] 9800 us [avg] 4450 us
       sixDOF.getYawPitchRoll(angles);  
     //cli();
@@ -244,12 +244,16 @@ void getYPR()
 void getAngVelYPR()
 {    
     gyroTimer = micros();
+    eulerTimer = micros();
     
     //sei();            
-      // [max]  2770 us [avg] 2750 us
+      // [max]  6570 us [avg] 6290 us -> 155 Hz
       acquireGyroYPR();
     //cli();
     
+    contEulerSamples++; 
+    eulerTimer = micros() - eulerTimer;
+    eulerTimeTot = eulerTimeTot + eulerTimer;
     contGyroSamples++;        
     gyroTimer = micros() - gyroTimer;
     gyroTimeTot = gyroTimeTot + gyroTimer; 
@@ -259,23 +263,18 @@ void loop() {
   float a = micros();
   ticks = a*period_sched;
   
+  // Task 1
   getAngVelYPR();
   
+  // Task 2
   SerialRoutine();
   
-  timerSec = micros() - secRoutine;
-  //lastTimeToRead = micros();
       
   // Tasks (80 ticks,wcetSerial) : (Period,execTime) -> 1 Hz
   //freq_sched = 1/period_sched;
   if (fmod(ticks,freq_sched) == 0.00)
   { 
-    /* 
-    Serial.print("Ticks=");
-    Serial.println(ticks);
-    Serial.print("fmod?= ");
-    Serial.println(fmod(ticks,freq_sched));
-    */
+    // TODO Tick scheduler
   }
   
   if (timerSec >= 1000000)
@@ -285,26 +284,36 @@ void loop() {
     Serial.println(ticks);
     Serial.print("\t\tfmod?= ");
     Serial.println(fmod(ticks,freq_sched));
-    secRoutine = micros();
     
-    // Compute average imu readings time
-    servoTimeTot = servoTimeTot/countServoAction;
-        
-    // Compute average imu readings time
-    eulerTimeTot = eulerTimeTot/contEulerSamples;
-     
-    // Compute average imu readings time
-    gyroTimeTot = gyroTimeTot/contGyroSamples;
-    
-    // Compute average imu readings time
-    controlTimeTot = controlTimeTot/countCtrlCalc;
-    
-    // Compute average imu readings time
-    isrTimeTot = isrTimeTot/countISR;
+    computeAverageExecTime();
     
     printTimers();
     printRoutine();
+
+    resetCounters();
+  }
+}
+
+void computeAverageExecTime()
+{
+    // Compute average servo readings time
+    servoTimeTot = servoTimeTot/countServoAction;
+        
+    // Compute average euler readings time
+    eulerTimeTot = eulerTimeTot/contEulerSamples;
+     
+    // Compute average gyro readings time
+    gyroTimeTot = gyroTimeTot/contGyroSamples;
     
+    // Compute average controlCascade readings time
+    controlTimeTot = controlTimeTot/countCtrlCalc;
+    
+    // Compute average isr readings time
+    isrTimeTot = isrTimeTot/countISR;
+}
+
+void resetCounters()
+{    
     //cont=0;         
     contCalc=0; 
     countCtrlCalc=0;
@@ -316,19 +325,7 @@ void loop() {
     gyroTimeTot = 0;
     controlTimeTot = 0;
     countISR = 0;
-  }
-
-  timerRoutine = micros()-kMRoutine;
-  
-  // The following loop runs every 1s
-  if (timerRoutine >= deltaT*1000) 
-  {      
-    kMRoutine = micros();    
-    
-  }
-  
 }
-
 
 void calcAngle() // #ISR
 {
@@ -429,7 +426,7 @@ ISR(TIMER3_COMPB_vect) // #ISR
 
 void acquireGyroYPR()  // ISR
 {
-  getYawPitchRollGyro(angles,wVal);
+  sixDOF.getYawPitchRollGyro(angles,wVal);
   
   if (sakura.getGyroFilterFlag())
   {    
