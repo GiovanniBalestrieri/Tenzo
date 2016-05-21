@@ -788,10 +788,14 @@ void SerialRoutine()
       else if (t == 'i')
       {
         initialize();
+        // Do not alter max serial Routine exec time
+        initializing = true;
       }
       else if (t == 'L')
       {
         land();
+        // Do not alter max serial Routine exec time
+        landing = true;
       }
       else if (t == 'm')
       {
@@ -1108,10 +1112,14 @@ void SerialRoutine()
   contSerialRoutine++;
   serialTimer = micros() - serialTimer;
   
-    if (maxserialTimer <= serialTimer)
+    if (maxserialTimer <= serialTimer && !initializing && !landing)
       maxserialTimer = serialTimer;
   
   serialTimeTot = serialTimeTot + serialTimer;
+  
+  // restore initializing and landing to false
+  initializing = false;
+  landing = false;
 }
 
 // Send accelerometer filter value to Matlab for dynamic change
@@ -1315,6 +1323,7 @@ void printTimers()
       Serial.print("\t,Gyro");
       Serial.print(gyroTimeTot);
       Serial.print(",");
+      
       Serial.print(maxgyroTimer);
       Serial.print("\t,Control");
       Serial.print(controlTimeTot);
