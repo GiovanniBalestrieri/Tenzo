@@ -241,6 +241,22 @@ void getYPR()
     eulerTimeTot = eulerTimeTot + eulerTimer;
 }
 
+
+void getGyro()
+{  
+    gyroTimer = micros();
+  
+    // Preemptable section
+    //sei();            
+      // [max] 9800 us [avg] 4450 us
+    acquireGyro();
+    //cli();
+    
+    contGyroSamples++; 
+    gyroTimer = micros() - gyroTimer;
+    gyroTimeTot = gyroTimeTot + gyroTimer;
+}
+
 void getAngVelYPR()
 {    
     gyroTimer = micros();
@@ -248,7 +264,7 @@ void getAngVelYPR()
     
     //sei();            
       // [max]  6570 us [avg] 6290 us -> 155 Hz
-      acquireGyroYPR();
+    acquireGyroYPR();
     //cli();
     
     contEulerSamples++; 
@@ -263,8 +279,14 @@ void loop() {
   float a = micros();
   ticks = a*period_sched;
   
+  timerSec = micros() - secRoutine;
+  
   // Task 1
   getAngVelYPR();
+  
+  //
+  //getGyro();
+  //getYPR();
   
   // Task 2
   SerialRoutine();
@@ -291,6 +313,7 @@ void loop() {
     printRoutine();
 
     resetCounters();
+    secRoutine = micros();
   }
 }
 
