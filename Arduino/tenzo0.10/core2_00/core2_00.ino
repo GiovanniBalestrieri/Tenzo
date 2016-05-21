@@ -284,9 +284,6 @@ void loop() {
   // Task 1
   getAngVelYPR();
   
-  //
-  //getGyro();
-  //getYPR();
   
   // Task 2
   SerialRoutine();
