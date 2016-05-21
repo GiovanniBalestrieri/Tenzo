@@ -276,8 +276,6 @@ void getAngVelYPR()
 }
 
 void loop() {  
-  float a = micros();
-  ticks = a*period_sched;
   
   timerSec = micros() - secRoutine;
   
@@ -412,7 +410,10 @@ void aFilter(volatile float val[])
 
 ISR(TIMER3_COMPB_vect) // #ISR
 { 
-  // Updates counters
+  ticks++;
+  
+  //  checkPeriodicTask();
+  
   
   //digitalWrite(pinEnd, LOW);
   digitalWrite(pinInit, HIGH);
