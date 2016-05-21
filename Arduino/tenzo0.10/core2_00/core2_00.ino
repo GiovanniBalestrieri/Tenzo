@@ -60,18 +60,6 @@ MedianFilter medianGyroX(3,0);
 MedianFilter medianGyroY(3,0);
 MedianFilter medianGyroZ(3,0);
 
-// Acc Timers
-unsigned long accTimer;
-unsigned long lastAccTimer;
-unsigned long timeToRead = 0;
-unsigned long lastTimeToRead = 0;
-volatile long servoTime = 0;
-volatile long servoTimeTot = 0;
-
-
-float timerLoop = 0, timerReading = 0, timerSec = 0;
-float timerRoutine = 0, count = 0;
-float redingTime = 0, samplingTime = 0, calcTime =0, printTime = 0;
 float k=0, kM1=0, kMReading = 0, kMRoutine=0, kMLoop=0, secRoutine=0;
 
 byte mode;

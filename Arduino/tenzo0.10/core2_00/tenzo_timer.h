@@ -21,4 +21,24 @@ int freq_sched = 108; //Hz
 
 unsigned int ticks;
 
+
+
+// Counters
+volatile unsigned long accTimer = 0;
+volatile unsigned long lastAccTimer = 0;
+volatile unsigned long timeToRead = 0;
+volatile unsigned long lastTimeToRead = 0;
+
+volatile unsigned long eulerTimer = 0;
+volatile unsigned long eulerTimeTot = 0;
+volatile unsigned long gyroTimer = 0;
+volatile unsigned long gyroTimeTot = 0;
+
+volatile unsigned long servoTime = 0;
+volatile unsigned long servoTimeTot = 0;
+
+float timerLoop = 0, timerReading = 0, timerSec = 0;
+float timerRoutine = 0, count = 0;
+float redingTime = 0, samplingTime = 0, calcTime =0, printTime = 0;
+
 #endif
