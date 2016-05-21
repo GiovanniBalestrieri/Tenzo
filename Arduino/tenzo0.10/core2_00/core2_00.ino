@@ -226,13 +226,47 @@ void setup() {
   tenzoProp.init();
 }
 
+void getYPR()
+{  
+    eulerTimer = micros();
+  
+    // Preemptable section
+    //sei();            
+      // [max] 9800 us [avg] 4450 us
+      sixDOF.getYawPitchRoll(angles);  
+    //cli();
+    
+    contEulerSamples++; 
+    eulerTimer = micros() - eulerTimer;
+    eulerTimeTot = eulerTimeTot + eulerTimer;
+}
+
+void getAngVel()
+{    
+    gyroTimer = micros();
+    
+    //sei();            
+      // [max]  2770 us [avg] 2750 us
+      acquireGyro();
+    //cli();
+    
+    contGyroSamples++;        
+    gyroTimer = micros() - gyroTimer;
+    gyroTimeTot = gyroTimeTot + gyroTimer; 
+}
+
 void loop() {  
   float a = micros();
   ticks = a*period_sched;
   
+  getAngVel();
+
+  getYPR();
+  
+  
   SerialRoutine();
   
-  timerSec = micros()-secRoutine;
+  timerSec = micros() - secRoutine;
   //lastTimeToRead = micros();
       
   // Tasks (80 ticks,wcetSerial) : (Period,execTime) -> 1 Hz
@@ -249,7 +283,7 @@ void loop() {
   
   if (timerSec >= 1000000)
   {
-    
+    // #LOOP
     Serial.print("\t\tTicks=");
     Serial.println(ticks);
     Serial.print("\t\tfmod?= ");
@@ -257,24 +291,34 @@ void loop() {
     secRoutine = micros();
     
     // Compute average imu readings time
-    servoTimeTot = servoTimeTot/countCtrlAction;
+    servoTimeTot = servoTimeTot/countServoAction;
         
     // Compute average imu readings time
-    eulerTimeTot = eulerTimeTot/countCtrlAction;
+    eulerTimeTot = eulerTimeTot/contEulerSamples;
      
     // Compute average imu readings time
-    gyroTimeTot = gyroTimeTot/countCtrlAction;
+    gyroTimeTot = gyroTimeTot/contGyroSamples;
+    
+    // Compute average imu readings time
+    controlTimeTot = controlTimeTot/countCtrlCalc;
+    
+    // Compute average imu readings time
+    isrTimeTot = isrTimeTot/countISR;
     
     printTimers();
     printRoutine();
     
     //cont=0;         
     contCalc=0; 
-    countCtrlAction=0;    
-    contGyroSamples=0;   
+    countCtrlCalc=0;
+    countServoAction=0;    
+    contGyroSamples=0;     
+    contEulerSamples=0;   
     servoTimeTot = 0;
     eulerTimeTot = 0;
     gyroTimeTot = 0;
+    controlTimeTot = 0;
+    countISR = 0;
   }
 
   timerRoutine = micros()-kMRoutine;
@@ -289,7 +333,7 @@ void loop() {
 }
 
 
-void calcAngle() //ISR
+void calcAngle() // #ISR
 {
   // From Gyro
   dt = micros()-k;
@@ -349,64 +393,41 @@ void aFilter(volatile float val[])
 }
 
 
-ISR(TIMER3_COMPB_vect)
+ISR(TIMER3_COMPB_vect) // #ISR
 { 
   // Updates counters
   
   //digitalWrite(pinEnd, LOW);
   digitalWrite(pinInit, HIGH);
+  
   isrTimer = micros();
   
-    eulerTimer = micros();
-  
-    // Preemptable section
-    sei();            
-      // [max] 8700 us [avg] 4450 us
-      sixDOF.getYawPitchRoll(angles);  
-    cli();
+    controlTimer = micros();
+    // [max] 1300 us [avg] 1230 us      
+    controlCascade();  // [OK]
     
-    contEulerSamples++; 
-    eulerTimer = micros() - eulerTimer;
-    eulerTimeTot = eulerTimeTot + eulerTimer;
-  
-    gyroTimer = micros();
-    sei();            
-      // [max]  us [avg]  us
-      acquireGyro();
-    cli();
-    contGyroSamples++;    
-    
-    gyroTimer = micros() - gyroTimer;
-    gyroTimeTot = gyroTimeTot + gyroTimer;
-    
-    
-  controlTimer = micros();
-  // [max] 5000 us [avg] 3000 us      
-  controlCascade();  // [OK]
-  
-  controlTimer = micros() - controlTimer;
-  controlTimeTot = controlTimeTot + controlTimer;
+    countCtrlCalc++;  
+    controlTimer = micros() - controlTimer;
+    controlTimeTot = controlTimeTot + controlTimer;
 
   
-  servoTimer = micros(); 
-  tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
-  // update counter control  
-  countCtrlAction++;  
-  servoTimer = micros() - servoTimer;
-  servoTimeTot = servoTimeTot + servoTimer;
-  
-  //calcAngle();
-  //estAngle();
-  
-  cont++;  
+    servoTimer = micros();     
+    // [max] 250 us [avg] 240 us   
+    tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
+    // update counter control  
+
+    countServoAction++;  
+    servoTimer = micros() - servoTimer;
+    servoTimeTot = servoTimeTot + servoTimer;
+        
+  cont++;    
+  countISR++;  
   
   // Compute isr duration
   isrTimer = micros() - isrTimer;
-  isrTimeTot = isrTimeTot + isrTimer;
-  
+  isrTimeTot = isrTimeTot + isrTimer;  
   
   digitalWrite(pinInit, LOW);
-  //digitalWrite(pinEnd, HIGH);
 }
 
 void acquireGyro() // ISR
@@ -423,8 +444,7 @@ void acquireGyro() // ISR
    
     medianGyroZ.in(wVal[2]);
     wVal[2] = medianGyroZ.out();    
-  } 
-  
+  }   
 }
 
 void SerialRoutine()
@@ -1198,12 +1218,16 @@ void printTimers()
     if (sakura.getPrintTimers())
     {
       // Print Samples rate: [sample/sec] 
-      Serial.print("t,");
+      Serial.print("t,ISR: ");
+      Serial.print(countISR);
+      Serial.print(",\nGyro: ");
       Serial.print(contGyroSamples);
-      // Print     ControlInput: 
-      Serial.print(",");
-      Serial.print(countCtrlAction);
-      // Print    timeservo: 
+      Serial.print(",\nCtrl: ");
+      Serial.print(countCtrlCalc);
+      Serial.print(",\nEuler: ");
+      Serial.print(contEulerSamples);
+      Serial.print(",\nServo: ");
+      Serial.print(countServoAction);
       
       Serial.print(",\t");
       
@@ -1215,12 +1239,16 @@ void printTimers()
       // Print    timeservo: 
       Serial.print(",");
       
-      Serial.print(",Servo");
+      Serial.print(",ISR ");
+      Serial.print(isrTimeTot);
+      Serial.print(" = Servo");
       Serial.print(servoTimeTot);
-      Serial.print(",Euler");
+      Serial.print(" + Euler");
       Serial.print(eulerTimeTot);
-      Serial.print(",Gyro");
+      Serial.print(" + Gyro");
       Serial.print(gyroTimeTot);
+      Serial.print(" + Control");
+      Serial.print(controlTimeTot);
       Serial.println(",z");
       Serial.println();
       

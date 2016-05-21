@@ -52,7 +52,9 @@ float redingTime = 0, samplingTime = 0, calcTime =0, printTime = 0;
 /** **/
 
 volatile int cont = 0;
-volatile int countCtrlAction = 0;
+volatile int countISR = 0;
+volatile int countServoAction = 0;
+volatile int countCtrlCalc = 0;
 volatile int contGyroSamples=0;
 volatile int contEulerSamples=0;
 volatile int contSerialRoutine=0; // boh

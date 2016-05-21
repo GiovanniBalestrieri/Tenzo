@@ -14,7 +14,7 @@ volatile boolean enablePitchPid = true;
 volatile boolean enableYawPid = false;
 // w
 volatile boolean enableWRollPid = true;
-volatile boolean enableWPitchPid = false;
+volatile boolean enableWPitchPid = true;
 volatile boolean enableWYawPid = false;
 volatile boolean enableAltitudePid = false;
 
