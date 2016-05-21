@@ -231,7 +231,7 @@ void getYPR()
     eulerTimer = micros();
   
     // Preemptable section
-    //sei();            
+    /sei();            
       // [max] 9800 us [avg] 4450 us
       sixDOF.getYawPitchRoll(angles);  
     //cli();
@@ -241,13 +241,13 @@ void getYPR()
     eulerTimeTot = eulerTimeTot + eulerTimer;
 }
 
-void getAngVel()
+void getAngVelYPR()
 {    
     gyroTimer = micros();
     
     //sei();            
       // [max]  2770 us [avg] 2750 us
-      acquireGyro();
+      acquireGyroYPR();
     //cli();
     
     contGyroSamples++;        
@@ -259,10 +259,7 @@ void loop() {
   float a = micros();
   ticks = a*period_sched;
   
-  getAngVel();
-
-  getYPR();
-  
+  getAngVelYPR();
   
   SerialRoutine();
   
@@ -428,6 +425,23 @@ ISR(TIMER3_COMPB_vect) // #ISR
   isrTimeTot = isrTimeTot + isrTimer;  
   
   digitalWrite(pinInit, LOW);
+}
+
+void acquireGyroYPR()  // ISR
+{
+  getYawPitchRollGyro(angles,wVal);
+  
+  if (sakura.getGyroFilterFlag())
+  {    
+    medianGyroX.in(wVal[0]);
+    wVal[0] = medianGyroX.out();   
+   
+    medianGyroY.in(wVal[1]);
+    wVal[1] = medianGyroY.out();   
+   
+    medianGyroZ.in(wVal[2]);
+    wVal[2] = medianGyroZ.out();    
+  }   
 }
 
 void acquireGyro() // ISR

@@ -316,6 +316,23 @@ void FreeSixIMU::getAngles(volatile float * angles) {
 
 
 
+void FreeSixIMU::getYawPitchRollGyro(volatile float * ypr, volatile float * values)
+{
+  volatile float q[4]; // quaternion
+  volatile float gx, gy, gz; // estimated gravity direction
+  getQ(q);
+  
+  gx = 2 * (q[1]*q[3] - q[0]*q[2]);
+  gy = 2 * (q[0]*q[1] + q[2]*q[3]);
+  gz = q[0]*q[0] - q[1]*q[1] - q[2]*q[2] + q[3]*q[3];
+  
+  ypr[0] = atan(gy / sqrt(gx*gx + gz*gz))  * 180/M_PI;
+  ypr[1] = atan(gx / sqrt(gy*gy + gz*gz))  * 180/M_PI;
+  ypr[2] = atan2(2 * q[1] * q[2] - 2 * q[0] * q[3], 2 * q[0]*q[0] + 2 * q[1] * q[1] - 1) * 180/M_PI;
+  gyro.readGyro(&values[0]);
+  
+}
+
 
 void FreeSixIMU::getYawPitchRoll(volatile float * ypr) {
   volatile float q[4]; // quaternion

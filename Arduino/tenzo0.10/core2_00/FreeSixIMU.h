@@ -58,6 +58,7 @@ class FreeSixIMU
     void getQ(volatile float * q);
     void getEuler( volatile float * angles);
     void getYawPitchRoll( volatile float * ypr);
+    void getYawPitchRollGyro( volatile float * ypr,volatile float * values); 
     void getAngles( volatile float * angles);
     
     
