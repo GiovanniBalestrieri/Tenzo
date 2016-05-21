@@ -238,6 +238,8 @@ void getYPR()
     
     contEulerSamples++; 
     eulerTimer = micros() - eulerTimer;
+    if (maxeulerTimer <= eulerTimer)
+      maxeulerTimer = eulerTimer;
     eulerTimeTot = eulerTimeTot + eulerTimer;
 }
 
@@ -254,6 +256,8 @@ void getGyro()
     
     contGyroSamples++; 
     gyroTimer = micros() - gyroTimer;
+    if (maxgyroTimer <= gyroTimer)
+      maxgyroTimer = gyroTimer;
     gyroTimeTot = gyroTimeTot + gyroTimer;
 }
 
@@ -269,9 +273,13 @@ void getAngVelYPR()
     
     contEulerSamples++; 
     eulerTimer = micros() - eulerTimer;
+    if (maxeulerTimer <= eulerTimer)
+      maxeulerTimer = eulerTimer;
     eulerTimeTot = eulerTimeTot + eulerTimer;
     contGyroSamples++;        
     gyroTimer = micros() - gyroTimer;
+    if (maxgyroTimer <= gyroTimer)
+      maxgyroTimer = gyroTimer;
     gyroTimeTot = gyroTimeTot + gyroTimer; 
 }
 
@@ -426,6 +434,8 @@ ISR(TIMER3_COMPB_vect) // #ISR
     
     countCtrlCalc++;  
     controlTimer = micros() - controlTimer;
+    if (maxcontrolTimer <= controlTimer)
+      maxcontrolTimer = controlTimer;
     controlTimeTot = controlTimeTot + controlTimer;
 
   
@@ -436,6 +446,9 @@ ISR(TIMER3_COMPB_vect) // #ISR
 
     countServoAction++;  
     servoTimer = micros() - servoTimer;
+    
+    if (maxservoTimer <= servoTimer)
+      maxservoTimer = servoTimer;
     servoTimeTot = servoTimeTot + servoTimer;
         
   cont++;    
@@ -443,6 +456,8 @@ ISR(TIMER3_COMPB_vect) // #ISR
   
   // Compute isr duration
   isrTimer = micros() - isrTimer;
+    if (maxisrTimer <= isrTimer)
+      maxisrTimer = isrTimer;
   isrTimeTot = isrTimeTot + isrTimer;  
   
   digitalWrite(pinInit, LOW);
@@ -1092,6 +1107,10 @@ void SerialRoutine()
   }
   contSerialRoutine++;
   serialTimer = micros() - serialTimer;
+  
+    if (maxserialTimer <= serialTimer)
+      maxserialTimer = serialTimer;
+  
   serialTimeTot = serialTimeTot + serialTimer;
 }
 
@@ -1283,16 +1302,28 @@ void printTimers()
       
       Serial.print(",ISR ");
       Serial.print(isrTimeTot);
+      Serial.print(",");
+      Serial.print(maxisrTimer);
       Serial.print("\t,Servo");
       Serial.print(servoTimeTot);
+      Serial.print(",");
+      Serial.print(maxservoTimer);
       Serial.print("\t,Euler");
       Serial.print(eulerTimeTot);
+      Serial.print(",");
+      Serial.println(maxeulerTimer);
       Serial.print("\t,Gyro");
       Serial.print(gyroTimeTot);
+      Serial.print(",");
+      Serial.print(maxgyroTimer);
       Serial.print("\t,Control");
       Serial.print(controlTimeTot);
+      Serial.print(",");
+      Serial.print(maxcontrolTimer);
       Serial.print("\t,Serial");
       Serial.print(serialTimeTot);
+      Serial.print(",");
+      Serial.print(maxserialTimer);
       Serial.println(",z");
       Serial.println();
       

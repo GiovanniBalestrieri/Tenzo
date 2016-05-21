@@ -30,22 +30,28 @@ volatile unsigned long timeToRead = 0;
 volatile unsigned long lastTimeToRead = 0;
 
 volatile unsigned long eulerTimer = 0;
+volatile unsigned long maxeulerTimer = 0;
 volatile unsigned long eulerTimeTot = 0;
 
 volatile unsigned long gyroTimer = 0;
+volatile unsigned long maxgyroTimer = 0;
 volatile unsigned long gyroTimeTot = 0;
 
 volatile unsigned long servoTimer = 0;
+volatile unsigned long maxservoTimer = 0;
 volatile unsigned long servoTimeTot = 0;
 
 
 volatile unsigned long controlTimer = 0;
+volatile unsigned long maxcontrolTimer = 0;
 volatile unsigned long controlTimeTot = 0;
 
 volatile unsigned long isrTimer = 0;
+volatile unsigned long maxisrTimer = 0;
 volatile unsigned long isrTimeTot = 0;
 
 volatile unsigned long serialTimer = 0;
+volatile unsigned long maxserialTimer = 0;
 volatile unsigned long serialTimeTot = 0;
 
 /*** */
