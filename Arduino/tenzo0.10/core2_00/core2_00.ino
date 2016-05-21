@@ -10,6 +10,7 @@
 #include "FreeSixIMU.h"
 #include "FIMU_ADXL345.h"
 #include "FIMU_ITG3200.h"
+#include "tenzo_timer.h"
 
 // Se fai operazioni sui float o double su una variabile utilizzata come contatore
 // aggiornato in una ISR -> usa una variabile d'appoggio tipo cont_safe usa:
@@ -23,6 +24,7 @@ Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4)
 
 // Set the FreeSixIMU object
 FreeSixIMU sixDOF = FreeSixIMU();
+
 
 
 /*
@@ -241,7 +243,53 @@ void setup() {
 }
 
 void loop() {  
+  float a = micros();
+  ticks = a*period_sched;
   SerialRoutine();
+  
+  timerSec = micros()-secRoutine;
+  //lastTimeToRead = micros();
+      
+  // Tasks (80 ticks,wcetSerial) : (Period,execTime) -> 1 Hz
+  //freq_sched = 1/period_sched;
+  if (fmod(ticks,freq_sched) == 0.00)
+  {    
+    Serial.print("Ticks=");
+    Serial.println(ticks);
+    Serial.print("fmod?= ");
+    Serial.println(fmod(ticks,freq_sched));
+  }
+  
+  if (timerSec >= 1000000)
+  {
+    
+    Serial.print("\t\tTicks=");
+    Serial.println(ticks);
+    Serial.print("\t\tfmod?= ");
+    Serial.println(fmod(ticks,freq_sched));
+    secRoutine = micros();
+    
+    // Compute average imu readings time
+    servoTimeTot = servoTimeTot/countCtrlAction;
+    
+    printTimers();
+    //cont=0;         
+    contCalc=0; 
+    countCtrlAction=0;    
+    contGyroSamples=0;   
+    servoTimeTot = 0;
+  }
+
+  timerRoutine = micros()-kMRoutine;
+  
+  // The following loop runs every 1s
+  if (timerRoutine >= deltaT*1000) 
+  {      
+    kMRoutine = micros();    
+    
+    printRoutine();
+  }
+  
 }
 
 
@@ -964,34 +1012,6 @@ void SerialRoutine()
         } 
       }       
       */
-  }
-  timerSec = micros()-secRoutine;
-  //lastTimeToRead = micros();
-      
-  // Runs @ 1 Hz
-  if (timerSec >= 1000000)
-  {
-    secRoutine = micros();
-    
-    // Compute average imu readings time
-    servoTimeTot = servoTimeTot/countCtrlAction;
-    
-    printTimers();
-    //cont=0;         
-    contCalc=0; 
-    countCtrlAction=0;    
-    contGyroSamples=0;   
-    servoTimeTot = 0;
-  }
-
-  timerRoutine = micros()-kMRoutine;
-  
-  // The following loop runs every 1s
-  if (timerRoutine >= deltaT*1000) 
-  {      
-    kMRoutine = micros();    
-    
-    printRoutine();
   }
 }
 
