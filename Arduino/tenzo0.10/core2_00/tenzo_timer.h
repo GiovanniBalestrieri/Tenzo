@@ -1,3 +1,9 @@
+/*
+  tenzo_timer_h - Timer variables for Tenzo code.
+  Created by Giovanni Balestrieri -
+  UserK, August 26, 2015
+*/
+
 #ifndef tenzo_timer_h
 #define tenzo_timer_h
 

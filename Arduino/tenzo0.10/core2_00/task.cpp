@@ -62,22 +62,5 @@ int create_task(int id, unsigned long period,
 	return i;
 }
 
-void createTasks()
-{
-  Serial.println("Creating Task...");
-  /*
-	if (create_task(getAngVelYPR, NULL, HZ, 5, HZ, FPR, "led_cycle") == -1) {
-		puts("ERROR: cannot create task led_cycle\n");
-		panic(1);
-	}
-
-
-	if (create_task(SerialRoutine, NULL, HZ, 5, HZ, FPR, "led_cycle") == -1) {
-		puts("ERROR: cannot create task led_cycle\n");
-		panic(1);
-	}
-*/
-  Serial.println("[ Ok ] Task created");
-}
 
 

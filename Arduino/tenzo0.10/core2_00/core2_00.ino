@@ -1,16 +1,6 @@
 #include <Servo.h>
 #include <Wire.h>
-#include "Propulsion.h"
-#include "Ux.h"
-#include "NonLinearPid.h"
-#include "ControlPid.h"
-#include "FlightParams.h"
-#include "MedianFilter.h"
-#include "FreeSixIMU.h"
-#include "FIMU_ADXL345.h"
-#include "FIMU_ITG3200.h"
-#include "tenzo_timer.h"
-#include "sched.h"
+#include "tenzo.h"
 
 
 // Se fai operazioni sui float o double su una variabile utilizzata come contatore
@@ -224,7 +214,20 @@ void setup() {
   tenzoProp.calibrateOnce();
   tenzoProp.init();  
   initTaskset(); 
-  createTasks();
+  //createTasks();
+}
+
+
+void createTasks(int a)
+{
+  Serial.println("Creating Task...");
+  /*
+	if (create_task(0, HZ, 5, HZ, FPR, "test") == -1) {
+		//puts("ERROR: cannot create task led_cycle\n");
+		//panic(1);
+	}
+*/
+  Serial.println("[ Ok ] Task created");  
 }
 
 void getYPR()

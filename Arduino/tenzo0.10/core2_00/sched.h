@@ -3,6 +3,10 @@
 
 #define MAX_NUM_TASKS	32
 
+/* The types of task known to the scheduler */
+#define FPR 0
+#define EDF 1
+
 typedef void (*job_t) (void *);
 
 struct task {
@@ -20,9 +24,6 @@ struct task {
 	unsigned long regs[8];	/*storage area for registers r4-r11 */
 };
 
-/* The types of task known to the scheduler */
-#define FPR 0
-#define EDF 1
 
 void check_periodic_tasks(void);
 
