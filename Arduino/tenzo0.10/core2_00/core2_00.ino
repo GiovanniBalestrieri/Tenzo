@@ -10,7 +10,7 @@
 #include "FIMU_ADXL345.h"
 #include "FIMU_ITG3200.h"
 #include "tenzo_timer.h"
-#include "task.h"
+#include "sched.h"
 
 
 // Se fai operazioni sui float o double su una variabile utilizzata come contatore
@@ -215,17 +215,16 @@ void setupPinOut()
 /// TILL HERE
 
 void setup() {
-  init_taskset();
   setupPinOut();
   setupCommunication();
   setupIMU();
-//  setupAcceleromter();
-//  setupGyro();
   setupTimerInterrupt();  
   setupCtx();  
   sakura.welcome();
   tenzoProp.calibrateOnce();
-  tenzoProp.init();
+  tenzoProp.init();  
+  initTaskset(); 
+  createTasks();
 }
 
 void getYPR()

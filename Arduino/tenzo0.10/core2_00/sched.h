@@ -7,8 +7,9 @@ typedef void (*job_t) (void *);
 
 struct task {
 	int valid;		/* this descriptor is associated with a valid task */
-	job_t job;		/* job function to be executed at any activation */
-	void *arg;		/* arguments to be passed to the job function */
+	//job_t job;		/* job function to be executed at any activation */
+	//void *arg;		/* arguments to be passed to the job function */
+        int id;
 	unsigned long releasetime;	/* next release time */
 	unsigned long released;	/* number of released, pending jobs */
 	unsigned long period;	/* period of the task in ticks */
@@ -26,10 +27,11 @@ struct task {
 void check_periodic_tasks(void);
 
 extern volatile unsigned long ticks;
+
 extern int num_tasks;
 extern struct task taskset[MAX_NUM_TASKS];
+extern void initTaskset();
 
-void init_taskset(void);
 
 extern volatile unsigned long trigger_schedule;
 extern struct task *current;	/* the task of the job in execution */
