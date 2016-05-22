@@ -2,7 +2,6 @@
 #include <Wire.h>
 #include "Propulsion.h"
 #include "Ux.h"
-#include "PID_v2.h"
 #include "NonLinearPid.h"
 #include "ControlPid.h"
 #include "FlightParams.h"
@@ -11,6 +10,8 @@
 #include "FIMU_ADXL345.h"
 #include "FIMU_ITG3200.h"
 #include "tenzo_timer.h"
+#include "task.h"
+
 
 // Se fai operazioni sui float o double su una variabile utilizzata come contatore
 // aggiornato in una ISR -> usa una variabile d'appoggio tipo cont_safe usa:
@@ -214,6 +215,7 @@ void setupPinOut()
 /// TILL HERE
 
 void setup() {
+  init_taskset();
   setupPinOut();
   setupCommunication();
   setupIMU();

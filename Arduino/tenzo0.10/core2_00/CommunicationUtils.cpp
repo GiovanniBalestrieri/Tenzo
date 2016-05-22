@@ -1,5 +1,7 @@
 #include "CommunicationUtils.h"
 
+#define NULL	((void *)0)
+
 void serialPrintFloatArr(float * arr, int length) {
   for(int i=0; i<length; i++) {
     serialFloatPrint(arr[i]);
@@ -38,4 +40,9 @@ void writeVar(void * val, uint8_t type_bytes) {
   for(uint8_t i=0; i<type_bytes; i++) { 
     Serial.write(addr[i]);
   }
+}
+
+void panic(int l1)
+{
+    Serial.println("PANICOOOO!");
 }

@@ -19,7 +19,7 @@
 float period_sched = 0.0093; //us
 int freq_sched = 108; //Hz
 
-unsigned int ticks;
+volatile unsigned long ticks;
 
 
 
