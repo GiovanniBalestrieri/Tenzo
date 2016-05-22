@@ -1,7 +1,13 @@
-#include "task.h"
+#include "Task.h"
 #include "Arduino.h"
 
-void initTaskset()
+
+Task::Task()
+{
+
+}
+
+void Task::initTaskset()
 {
 	int i;
 	num_tasks = 0;
@@ -14,15 +20,16 @@ void initTaskset()
 	 * placeholder to be assigned to the current variable */
 
 	current = &taskset[0];
-        Serial.println("[ Ok ] TaskSet initialized");
+    Serial.println("[ Ok ] TaskSet initialized");
 }
 
 
-int create_task(int id, unsigned long period,
-		unsigned long phase,
-                unsigned long prio_dead,
-                int type,
-                const char *name)
+int Task::create_task(int id, 
+						unsigned long period,
+						unsigned long phase,
+		                unsigned long prio_dead,
+		                int type,
+		                const char *name)
 {
 	int i;
 	struct task *t;

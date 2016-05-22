@@ -16,6 +16,12 @@ Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4)
 // Set the FreeSixIMU object
 FreeSixIMU sixDOF = FreeSixIMU();
 
+// Init scheduler
+Scheduler scheduler = Scheduler();
+
+// Init Task Handler
+Task taskHandler = Task();
+
 
 
 /*
@@ -212,9 +218,10 @@ void setup() {
   setupCtx();  
   sakura.welcome();
   tenzoProp.calibrateOnce();
-  tenzoProp.init();  
-  initTaskset(); 
-  //createTasks();
+  tenzoProp.init(); 
+  
+  //taskHandler.initTaskset(); 
+  //taskHandler.createTasks();
 }
 
 
@@ -847,21 +854,16 @@ void SerialRoutine()
       }         
       else if (t == ',')
       {
-        /*
-        consKpWRoll = consKpWRoll + 0.02;
-        Serial.print("\t\t\t\t\t\t\t\t\t");
-        Serial.println(consKpWRoll);
-        */
+        // request pid val
+        SetpointCascRoll = SetpointCascRoll - 1;
+        Serial.print("V,SetpointCascRoll:  ");
+        Serial.println(SetpointCascRoll);
       }         
       else if (t == ';')
       {
-        /*
-        consKpWRoll = consKpWRoll - 0.02;
-        if (consKpWRoll<=0)
-          consKpWRoll = 0;
-        Serial.print("\t\t\t\t\t\t\t\t\t");
-        Serial.println(consKpWRoll);
-        */
+        SetpointCascRoll = SetpointCascRoll + 1;
+        Serial.print("V,SetpointCascRoll:  ");
+        Serial.println(SetpointCascRoll);
       }         
       else if (t == '.')
       {
@@ -898,20 +900,7 @@ void SerialRoutine()
         Serial.print("\t\t\t\t\t\t\t\t\t");
         Serial.println(consKdWRoll);
         */
-      }
-      else if (t == 'ò')
-      {
-        // request pid val
-        SetpointCascRoll = SetpointCascRoll - 1;
-        Serial.print("V,SetpointCascRoll:  ");
-        Serial.println(SetpointCascRoll);
-      }      
-      else if (t == 'à')
-      {
-        SetpointCascRoll = SetpointCascRoll + 1;
-        Serial.print("V,SetpointCascRoll:  ");
-        Serial.println(SetpointCascRoll);
-      }               
+      }     
       else if (t == 't')
       {
         Serial.println("\t\t\tPorco Dia ");
