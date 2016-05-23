@@ -1,7 +1,7 @@
 #ifndef tenzo_h
 #define  tenzo_h
 
-#define MAX_NUM_TASK 32
+#define MAX_TASKS 32
 
 #include "Propulsion.h"
 #include "Ux.h"

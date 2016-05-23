@@ -65,6 +65,7 @@ int Scheduler::create_task(int id,
         t->id = id;
   t->label = label;
   t->period = period;
+  t->active = 1;
   t->releasetime = ticks + phase;
   if (type == EDF) {
     /* this is an EDF task
@@ -92,6 +93,21 @@ int Scheduler::create_task(int id,
   return i;
 } 
 
+/*
+ * Sets active field to 0
+ * Returns -1 if task with id "id" is not present
+ */
+int Scheduler::delete_task(int id)  
+{  
+  int i;
+  for (i = 1; i < this->MAX_NUM_TASKS; ++i) // skip task 0 (idle task) 
+    if (taskset[i].id == id)
+      taskset[i].active = 0;
+  if (i == this->MAX_NUM_TASKS)
+    return -1;
+  return 1;
+} 
+
 
 
 void Scheduler::checkPeriodicTasks(void)
@@ -105,12 +121,19 @@ void Scheduler::checkPeriodicTasks(void)
 	  // skip task 0 (idle task) 
 		if (f - this->taskset >= this->MAX_NUM_TASKS)
 			panic(0);	// Should never happen 
-		if (!f->valid)
-			continue;
-		if (now >= f->releasetime) { // se è già stato rilasciato
+    if (!f->valid)
+      continue; 
+    if (!f->active)
+      continue;
+		if (now >= f->releasetime) 
+		{ 
+		  // se è già stato rilasciato update next release
 			f->releasetime += f->period;
+      // update number of job released
 			++f->released;
-			trigger_schedule = 1;	// force scheduler invocation 
+      // force scheduler invocation 
+			trigger_schedule = 1;	
+      // increment total number of job released
 			++globalreleases;
 		}
 		++i;

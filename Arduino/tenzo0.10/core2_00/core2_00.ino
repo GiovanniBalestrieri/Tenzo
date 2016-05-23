@@ -9,16 +9,17 @@
 // cont_safe = cont
 // cli()
 
-
+// Init User Experience agent Sakura
 Ux sakura;
+
+// Init Propulsion handler
 Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4));
 
-// Set the FreeSixIMU object
+// Init FreeSixIMU object
 FreeSixIMU sixDOF = FreeSixIMU();
 
-// Init scheduler
-Scheduler scheduler = Scheduler(MAX_NUM_TASK);
-
+// Init scheduler with MAX_TASKS
+Scheduler scheduler = Scheduler(MAX_TASKS);
 
 
 /*

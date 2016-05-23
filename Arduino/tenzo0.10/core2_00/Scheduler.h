@@ -29,7 +29,9 @@ class Scheduler
                     unsigned long phase,
                     unsigned long prio_dead,
                     int type,
-                    const char *name);       
+                    const char *name); 
+
+    int delete_task(int id);                          
                    
     void initTaskset();
     int num_tasks;
@@ -39,13 +41,14 @@ class Scheduler
 
 struct task {
   int valid;    /* this descriptor is associated with a valid task */
-    int id;
+  int id;       /* unique identifier */
   unsigned long releasetime;  /* next release time */
   unsigned long released; /* number of released, pending jobs */
   unsigned long period; /* period of the task in ticks */
   unsigned long priority; /* priority of the task (FPR) or job (EDF) */
   unsigned long deadline; /* relative deadline of the job (EDF), zero for FPR */
   const char *label; /* task name */
+  int active;  
 };
 
 extern volatile unsigned long ticks;
