@@ -308,9 +308,9 @@ void loop() {
     Serial.print(scheduler.getTaskLabel(0));
     Serial.print("Deadline:  ");
     Serial.println(scheduler.getTaskDeadline(0));
-    Serial.println("Task 2:  ");
-    Serial.println(scheduler.getTaskLabel(1));
-    Serial.println("Deadline:  ");
+    Serial.print("Task 2:  ");
+    Serial.print(scheduler.getTaskLabel(1));
+    Serial.print("Deadline:  ");
     Serial.println(scheduler.getTaskDeadline(1));
 
     computeAverageExecTime();

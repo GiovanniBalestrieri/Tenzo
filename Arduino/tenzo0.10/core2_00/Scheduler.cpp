@@ -29,16 +29,29 @@ void Scheduler::initTaskset()
   current = &taskset[0];
   Serial.println("[ Ok ] Taskset initialized");
 }
+
+
+void Scheduler::createTasks()
+{
+  if (this->create_task(0, HZ, 5, HZ, EDF, "number0") == -1) {
+    //puts("ERROR: cannot create task led_cycle\n");
+    this->panic(1);
+  }
+  
+  if (this->create_task(1, HZ, 5, 50, EDF, "number1") == -1) {
+    //puts("ERROR: cannot create task led_cycle\n");
+    this->panic(1);
+  }
+}
+
   
 int Scheduler::create_task(int id, 
             unsigned long period,
             unsigned long phase,
                     unsigned long prio_dead,
                     int type,
-                    const char *label)
-  
-{
-  
+                    const char *label)  
+{  
   int i;
   struct task *t;
   for (i = 1; i < this->MAX_NUM_TASKS; ++i) // skip task 0 (idle task) 
@@ -102,19 +115,6 @@ void Scheduler::checkPeriodicTasks(void)
 		}
 		++i;
 	}
-}
-
-void Scheduler::createTasks()
-{
-  if (this->create_task(0, HZ, 5, HZ, FPR, "number0") == -1) {
-    //puts("ERROR: cannot create task led_cycle\n");
-    this->panic(1);
-  }
-  
-  if (this->create_task(1, HZ, 5, HZ, FPR, "number1") == -1) {
-    //puts("ERROR: cannot create task led_cycle\n");
-    this->panic(1);
-  }
 }
 
 int Scheduler::getTaskDeadline(int id)
