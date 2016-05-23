@@ -11,17 +11,14 @@ volatile unsigned long trigger_schedule = 0;	/* force rescheduling */
 Scheduler::Scheduler(int sizeT)
 {
   taskset = new task[sizeT];
-  MAX_NUM_TASKS = sizeT;
+  this->MAX_NUM_TASKS = sizeT;
 }
-
-
-
   
 void Scheduler::initTaskset()
 {
   int i;
   num_tasks = 0;
-  for (i = 0; i < MAX_NUM_TASKS; ++i)
+  for (i = 0; i < this->MAX_NUM_TASKS; ++i)
     taskset[i].valid = 0;
 
   /* Task 0 is special: it is the idle (or kernel) task,
@@ -32,37 +29,35 @@ void Scheduler::initTaskset()
   current = &taskset[0];
   Serial.println("[ Ok ] Taskset initialized");
 }
-
-
   
 int Scheduler::create_task(int id, 
             unsigned long period,
             unsigned long phase,
                     unsigned long prio_dead,
                     int type,
-                    const char *name)
+                    const char *label)
   
 {
-  /*
+  
   int i;
   struct task *t;
-  for (i = 1; i < MAX_NUM_TASKS; ++i) // skip task 0 (idle task) 
+  for (i = 1; i < this->MAX_NUM_TASKS; ++i) // skip task 0 (idle task) 
     if (!taskset[i].valid)
       break;
-  if (i == MAX_NUM_TASKS)
+  if (i == this->MAX_NUM_TASKS)
     return -1;
   t = taskset + i;
   //t->job = job;
   //t->arg = (arg == NULL ? t : arg);
         t->id = id;
-  t->name = name;
+  t->label = label;
   t->period = period;
   t->releasetime = ticks + phase;
   if (type == EDF) {
     /* this is an EDF task
      * priority is set to the absolute deadline of the first job
      * a small absolute deadline yields a large priority */
-    /*
+    
     if (prio_dead == 0)
       return -1;
     t->priority = prio_dead + t->releasetime;
@@ -70,7 +65,7 @@ int Scheduler::create_task(int id,
   } else {
     /* this is a fixed-priority task
      * to be run in background if no other EDF job is pending */
-     /*
+     
     t->priority = prio_dead;
     t->deadline = 0;
   }
@@ -82,22 +77,20 @@ int Scheduler::create_task(int id,
   t->valid = 1;
   sei();
   return i;
-*/
 } 
 
 
 
-void checkPeriodicTasks(void)
+void Scheduler::checkPeriodicTasks(void)
 {
-  /*
 	unsigned long now = ticks;
 	struct task *f;
 	int i;
 
-	for (i = 0, f = taskset + 1; i < task1.num_tasks; ++f) 
+	for (i = 0, f = this->taskset + 1; i < this->num_tasks; ++f) 
 	{	
 	  // skip task 0 (idle task) 
-		if (f - taskset >= MAX_NUM_TASKS)
+		if (f - this->taskset >= this->MAX_NUM_TASKS)
 			panic(0);	// Should never happen 
 		if (!f->valid)
 			continue;
@@ -109,10 +102,40 @@ void checkPeriodicTasks(void)
 		}
 		++i;
 	}
- */
 }
 
-int selectBestTask()
+void Scheduler::createTasks()
+{
+  if (this->create_task(0, HZ, 5, HZ, FPR, "number0") == -1) {
+    //puts("ERROR: cannot create task led_cycle\n");
+    this->panic(1);
+  }
+  
+  if (this->create_task(1, HZ, 5, HZ, FPR, "number1") == -1) {
+    //puts("ERROR: cannot create task led_cycle\n");
+    this->panic(1);
+  }
+}
+
+int Scheduler::getTaskDeadline(int id)
+{
+  return taskset[id+1].deadline;
+  
+}
+
+
+String Scheduler::getTaskLabel(int id)
+{
+  return ((String) taskset[id+1].label);
+  
+}
+
+void Scheduler::panic(int l1)
+{
+    Serial.println("PANICOOOO!");
+}
+
+int Scheduler::selectBestTask()
 {
   /*
 	unsigned long maxprio;
@@ -156,7 +179,7 @@ int selectBestTask()
   */
 }
 
-int schedule()
+int Scheduler::schedule()
 {
   /*
 	static int do_not_enter = 0;

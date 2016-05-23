@@ -215,23 +215,9 @@ void setup() {
   setupCtx();  
   sakura.welcome();
   tenzoProp.calibrateOnce();
-  tenzoProp.init(); 
-  
+  tenzoProp.init();   
   scheduler.initTaskset(); 
-  //scheduler.createTasks();
-}
-
-
-void createTasks(int a)
-{
-  Serial.println("Creating Task...");
-  /*
-	if (create_task(0, HZ, 5, HZ, FPR, "test") == -1) {
-		//puts("ERROR: cannot create task led_cycle\n");
-		//panic(1);
-	}
-*/
-  Serial.println("[ Ok ] Task created");  
+  scheduler.createTasks();
 }
 
 void getYPR()
@@ -307,16 +293,26 @@ void loop() {
   if (fmod(ticks,freq_sched) == 0.00)
   { 
     // TODO Tick scheduler
+    /*
+    Serial.print("\t\tTicks=");
+    Serial.println(ticks);
+    Serial.print("\t\tfmod?= ");
+    Serial.println(fmod(ticks,freq_sched));
+    */
   }
   
   if (timerSec >= 1000000)
   {
     // #LOOP
-    Serial.print("\t\tTicks=");
-    Serial.println(ticks);
-    Serial.print("\t\tfmod?= ");
-    Serial.println(fmod(ticks,freq_sched));
-    
+    Serial.print("Task 1:  ");
+    Serial.print(scheduler.getTaskLabel(0));
+    Serial.print("Deadline:  ");
+    Serial.println(scheduler.getTaskDeadline(0));
+    Serial.println("Task 2:  ");
+    Serial.println(scheduler.getTaskLabel(1));
+    Serial.println("Deadline:  ");
+    Serial.println(scheduler.getTaskDeadline(1));
+
     computeAverageExecTime();
     
     printTimers();

@@ -8,7 +8,7 @@
 #define tenzo_timer_h
 
 
-#define HZ          1000	/* Tick frequency (Hz) */
+int HZ = 1000;	/* Tick frequency (Hz) */
 #define CONFIG_TICK_ADJUST 0
 
 #define TICK_V0	(Timer1_Freq/HZ)

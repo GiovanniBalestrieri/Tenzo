@@ -40,7 +40,3 @@ void writeVar(void * val, uint8_t type_bytes) {
   }
 }
 
-void panic(int l1)
-{
-    Serial.println("PANICOOOO!");
-}
