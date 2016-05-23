@@ -12,31 +12,32 @@ class Scheduler
 {
   public:
     Scheduler(int);
-    
-
     void checkPeriodicTasks();
     int selectBestTask();
     int schedule();
     int getTaskDeadline(int);
     String getTaskLabel(int);
-
-    struct task *taskset;
-      
+    // Method to create tasks for the application
     void createTasks();  
-          
     int create_task(int id, 
                     unsigned long period,
                     unsigned long phase,
                     unsigned long prio_dead,
                     int type,
-                    const char *name); 
-
-    int delete_task(int id);                          
-                   
+                    const char *label); 
+    int delete_task(int id);
+    void panic(int);     
     void initTaskset();
+
+    struct task *current;
+    struct task *taskset;
     int num_tasks;
     int MAX_NUM_TASKS;
-    void panic(int);
+
+    /* used as a status changed flag */
+    volatile unsigned long globalreleases = 0; 
+    /* force rescheduling */
+    volatile unsigned long trigger_schedule = 0;  
 };
 
 struct task {
@@ -53,11 +54,6 @@ struct task {
 
 extern volatile unsigned long ticks;
 
-//extern int num_tasks;
-//extern struct task taskset[MAX_NUM_TASKS];
-//extern void initTaskset();
 extern int HZ;
-//extern volatile unsigned long trigger_schedule;
-extern struct task *current;	/* the task of the job in execution */
 
 #endif

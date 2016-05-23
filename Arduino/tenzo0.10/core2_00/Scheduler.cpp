@@ -1,12 +1,4 @@
 #include "Scheduler.h"
-//#include "Task.h"
-
-struct task *current;
-
-volatile unsigned long globalreleases = 0;	/* used as a status changed flag */
-
-volatile unsigned long trigger_schedule = 0;	/* force rescheduling */
-
 
 Scheduler::Scheduler(int sizeT)
 {
@@ -19,14 +11,14 @@ void Scheduler::initTaskset()
   int i;
   num_tasks = 0;
   for (i = 0; i < this->MAX_NUM_TASKS; ++i)
-    taskset[i].valid = 0;
+    this->taskset[i].valid = 0;
 
   /* Task 0 is special: it is the idle (or kernel) task,
    * which runs whenever no other job is runnable.
    * Actually, taskset[0] is only used as an address
    * placeholder to be assigned to the current variable */
 
-  current = &taskset[0];
+  this->current = &this->taskset[0];
   Serial.println("[ Ok ] Taskset initialized");
 }
 
@@ -55,11 +47,11 @@ int Scheduler::create_task(int id,
   int i;
   struct task *t;
   for (i = 1; i < this->MAX_NUM_TASKS; ++i) // skip task 0 (idle task) 
-    if (!taskset[i].valid)
+    if (!this->taskset[i].valid)
       break;
   if (i == this->MAX_NUM_TASKS)
     return -1;
-  t = taskset + i;
+  t = this->taskset + i;
   //t->job = job;
   //t->arg = (arg == NULL ? t : arg);
         t->id = id;
@@ -87,7 +79,7 @@ int Scheduler::create_task(int id,
 //  init_task_context(t, i);
 
   cli();
-  ++num_tasks;
+  ++this->num_tasks;
   t->valid = 1;
   sei();
   return i;
@@ -101,8 +93,8 @@ int Scheduler::delete_task(int id)
 {  
   int i;
   for (i = 1; i < this->MAX_NUM_TASKS; ++i) // skip task 0 (idle task) 
-    if (taskset[i].id == id)
-      taskset[i].active = 0;
+    if (this->taskset[i].id == id)
+      this->taskset[i].active = 0;
   if (i == this->MAX_NUM_TASKS)
     return -1;
   return 1;
@@ -132,9 +124,9 @@ void Scheduler::checkPeriodicTasks(void)
       // update number of job released
 			++f->released;
       // force scheduler invocation 
-			trigger_schedule = 1;	
+			this->trigger_schedule = 1;	
       // increment total number of job released
-			++globalreleases;
+			++this->globalreleases;
 		}
 		++i;
 	}
@@ -142,15 +134,19 @@ void Scheduler::checkPeriodicTasks(void)
 
 int Scheduler::getTaskDeadline(int id)
 {
-  return taskset[id+1].deadline;
-  
+  if (this->taskset[id+1].active == 0)
+    return -1;
+  else
+    return this->taskset[id+1].deadline;
 }
 
 
 String Scheduler::getTaskLabel(int id)
 {
-  return ((String) taskset[id+1].label);
-  
+  if (this->taskset[id+1].active == 0)
+    return "-1";
+  else
+    return ((String) this->taskset[id+1].label);  
 }
 
 void Scheduler::panic(int l1)
@@ -224,7 +220,7 @@ int Scheduler::schedule()
                 cli();		
                 //irq_disable();
 	} while (oldreleases != globalreleases);
-	trigger_schedule = 0;
+	this->trigger_schedule = 0;
 	best = (best != current ? best : NULL);
 	do_not_enter = 0;
 	cli();

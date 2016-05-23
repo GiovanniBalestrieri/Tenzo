@@ -213,12 +213,12 @@ void setup() {
   setupCommunication();
   setupIMU();
   setupTimerInterrupt();  
+  scheduler.initTaskset(); 
+  scheduler.createTasks();
   setupCtx();  
   sakura.welcome();
   tenzoProp.calibrateOnce();
   tenzoProp.init();   
-  scheduler.initTaskset(); 
-  scheduler.createTasks();
 }
 
 void getYPR()
@@ -278,8 +278,10 @@ void getAngVelYPR()
     gyroTimeTot = gyroTimeTot + gyroTimer; 
 }
 
+boolean condCazzo = false;
+boolean condCazzo1 = false;
+
 void loop() {  
-  
   timerSec = micros() - secRoutine;
   
   // Task 1
@@ -288,18 +290,23 @@ void loop() {
   // Task 2
   SerialRoutine();
   
-      
-  // Tasks (80 ticks,wcetSerial) : (Period,execTime) -> 1 Hz
-  //freq_sched = 1/period_sched;
-  if (fmod(ticks,freq_sched) == 0.00)
-  { 
-    // TODO Tick scheduler
-    /*
-    Serial.print("\t\tTicks=");
-    Serial.println(ticks);
-    Serial.print("\t\tfmod?= ");
-    Serial.println(fmod(ticks,freq_sched));
-    */
+  if (micros() >= 10000000 && !condCazzo)
+  {
+    scheduler.delete_task(1);
+    Serial.print("\t\t\t\tDELETED");
+    condCazzo = true;
+  }
+  
+  if (micros() >= 15000000 && !condCazzo1)
+  {
+    
+    if (scheduler.create_task(2, 120, 0, 125, EDF, "serial") == -1) {
+      //puts("ERROR: cannot create task led_cycle\n");
+      scheduler.panic(1);
+    }
+    else
+      Serial.print("\t\t\t\t\t Created Task 3:  ");
+    condCazzo1 = true;
   }
   
   if (timerSec >= 1000000)
@@ -313,6 +320,10 @@ void loop() {
     Serial.print(scheduler.getTaskLabel(1));
     Serial.print("Deadline:  ");
     Serial.println(scheduler.getTaskDeadline(1));
+
+    
+    Serial.print("\t\tTicks=");
+    Serial.println(ticks);
 
     computeAverageExecTime();
     
