@@ -77,6 +77,6 @@ class Ux
        boolean _printVerboseSerial;
        volatile boolean _filterAcc;
        volatile boolean _filterGyro;
-       int _baudrate;
+       double _baudrate;
 };
 #endif

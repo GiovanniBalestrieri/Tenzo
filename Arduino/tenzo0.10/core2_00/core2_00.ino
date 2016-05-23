@@ -17,7 +17,7 @@ Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4)
 FreeSixIMU sixDOF = FreeSixIMU();
 
 // Init scheduler
-Scheduler scheduler = Scheduler(32);
+Scheduler scheduler = Scheduler(MAX_NUM_TASK);
 
 
 
