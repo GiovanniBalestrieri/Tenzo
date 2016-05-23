@@ -25,12 +25,12 @@ void Scheduler::initTaskset()
 
 void Scheduler::createTasks()
 {
-  if (this->create_task(1, HZ, 5, HZ, EDF, "number0") == -1) {
+  if (this->create_task(1, 110, 5, 130, EDF, "number0") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }
   
-  if (this->create_task(2, HZ, 5, 50, EDF, "number1") == -1) {
+  if (this->create_task(2, 50, 5, 50, EDF, "number1") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }
@@ -52,9 +52,7 @@ int Scheduler::create_task(int id,
   if (i == this->MAX_NUM_TASKS)
     return -1;
   t = this->taskset + i;
-  //t->job = job;
-  //t->arg = (arg == NULL ? t : arg);
-        t->id = id;
+  t->id = id;
   t->label = label;
   t->period = period;
   t->active = 1;
@@ -79,7 +77,7 @@ int Scheduler::create_task(int id,
 //  init_task_context(t, i);
 
   cli();
-  ++this->num_tasks;
+  this->num_tasks++;
   t->valid = 1;
   sei();
   return i;
@@ -108,11 +106,11 @@ void Scheduler::checkPeriodicTasks(void)
 	struct task *f;
 	int i;
 
+  // skip task 0 (idle task) 
 	for (i = 0, f = this->taskset + 1; i < this->num_tasks; ++f) 
 	{	
-	  // skip task 0 (idle task) 
-		if (f - this->taskset >= this->MAX_NUM_TASKS)
-			this->panic(0);	// Should never happen 
+		//if (f - this->taskset >= this->MAX_NUM_TASKS)
+		//	this->panic(9);	// Should never happen 
     if (!f->valid)
       continue; 
     if (!f->active)
@@ -138,6 +136,22 @@ int Scheduler::getTaskDeadline(int id)
     return -1;
   else
     return this->taskset[id].deadline;
+}
+
+int Scheduler::getTaskPeriod(int id)
+{
+  if (this->taskset[id].active == 0 || this->taskset[id].valid == 0)
+    return -1;
+  else
+    return this->taskset[id].period;
+}
+
+int Scheduler::getTaskPriority(int id)
+{
+  if (this->taskset[id].active == 0 || this->taskset[id].valid == 0)
+    return -1;
+  else
+    return this->taskset[id].priority;
 }
 
 
@@ -167,7 +181,8 @@ int Scheduler::isTaskAlive(int id)
 
 void Scheduler::panic(int l1)
 {
-    Serial.println("PANICOOOO!");
+    Serial.print("PANICOOOO!  \t");
+    Serial.println(l1);
 }
 
 int Scheduler::selectBestTask()

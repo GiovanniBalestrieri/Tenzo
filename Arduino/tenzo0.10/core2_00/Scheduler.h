@@ -17,6 +17,8 @@ class Scheduler
     int schedule();
     int getTaskDeadline(int);
     String getTaskLabel(int);
+    int getTaskPeriod(int);
+    int getTaskPriority(int);
     // Method to create tasks for the application
     void createTasks();  
     int create_task(int id, 
