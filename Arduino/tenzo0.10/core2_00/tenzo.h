@@ -1,7 +1,6 @@
 #ifndef tenzo_h
 #define  tenzo_h
 
-#define MAX_NUM_TASKS  32
 
 #include "Propulsion.h"
 #include "Ux.h"
@@ -14,7 +13,6 @@
 #include "FIMU_ITG3200.h"
 #include "tenzo_timer.h"
 #include "Scheduler.h"
-#include "Task.h"
 
 
 #endif

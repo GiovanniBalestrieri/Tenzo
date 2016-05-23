@@ -17,10 +17,7 @@ Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4)
 FreeSixIMU sixDOF = FreeSixIMU();
 
 // Init scheduler
-Scheduler scheduler = Scheduler();
-
-// Init Task Handler
-Task taskHandler = Task();
+Scheduler scheduler = Scheduler(32);
 
 
 
@@ -220,8 +217,8 @@ void setup() {
   tenzoProp.calibrateOnce();
   tenzoProp.init(); 
   
-  //taskHandler.initTaskset(); 
-  //taskHandler.createTasks();
+  scheduler.initTaskset(); 
+  //scheduler.createTasks();
 }
 
 

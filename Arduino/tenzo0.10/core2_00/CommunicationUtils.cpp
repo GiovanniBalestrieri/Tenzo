@@ -1,7 +1,5 @@
 #include "CommunicationUtils.h"
 
-#define NULL	((void *)0)
-
 void serialPrintFloatArr(float * arr, int length) {
   for(int i=0; i<length; i++) {
     serialFloatPrint(arr[i]);

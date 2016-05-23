@@ -13,16 +13,16 @@
 
 Propulsion::Propulsion(int M1, int M2, int M3, int M4)
 {
-  	extern Servo servo1;
+  extern Servo servo1;
 	extern Servo servo2;
 	extern Servo servo3;
 	extern Servo servo4;
           
-        wUs1=0, wUs2=0, wUs3=0, wUs4=0;        
-  	_pinM1 = M1;
-  	_pinM2 = M2;
-  	_pinM3 = M3;
-  	_pinM4 = M4;
+  wUs1=0, wUs2=0, wUs3=0, wUs4=0;        
+  _pinM1 = M1;
+  _pinM2 = M2;
+  _pinM3 = M3;
+  _pinM4 = M4;
 }
 
 int Propulsion::getThrottle()
@@ -42,14 +42,14 @@ void Propulsion::setThrottle(volatile int t)
 
 void Propulsion::init()
 {
-        this->throttle = MIN_SIGNAL;
-        //Serial.println("Propulsion initialized.");
+    this->throttle = MIN_SIGNAL;
+    //Serial.println("Propulsion initialized.");
 }
 
 void Propulsion::calibrateOnce()
 {        
   	Propulsion::detachAll();
-        delay(1000);
+    delay(1000);
   	//Serial.println("This program will Arm and Calibrate the ESC. Max...");
     
   	servo1.attach(_pinM1);
@@ -66,9 +66,9 @@ void Propulsion::calibrateOnce()
   
   	delay(MAX_SIGNAL);
   	servo1.writeMicroseconds(MIN_SIGNAL);
- 	servo2.writeMicroseconds(MIN_SIGNAL);
-	servo3.writeMicroseconds(MIN_SIGNAL);
- 	servo4.writeMicroseconds(MIN_SIGNAL);
+   	servo2.writeMicroseconds(MIN_SIGNAL);
+  	servo3.writeMicroseconds(MIN_SIGNAL);
+   	servo4.writeMicroseconds(MIN_SIGNAL);
   
   	//Serial.println("Done!");
   	throttle = 790;
