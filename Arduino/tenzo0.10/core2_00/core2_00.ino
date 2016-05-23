@@ -298,28 +298,52 @@ void loop() {
   }
   
   if (micros() >= 15000000 && !condCazzo1)
-  {
-    
-    if (scheduler.create_task(2, 120, 0, 125, EDF, "serial") == -1) {
-      //puts("ERROR: cannot create task led_cycle\n");
+  {    
+    if (scheduler.create_task(3, 120, 0, 125, EDF, "serial") == -1) {
       scheduler.panic(1);
     }
     else
-      Serial.print("\t\t\t\t\t Created Task 3:  ");
+      Serial.println("\t\t\t\t\t Created Task 3:  ");
     condCazzo1 = true;
   }
   
   if (timerSec >= 1000000)
   {
     // #LOOP
-    Serial.print("Task 1:  ");
-    Serial.print(scheduler.getTaskLabel(0));
-    Serial.print("Deadline:  ");
-    Serial.println(scheduler.getTaskDeadline(0));
-    Serial.print("Task 2:  ");
-    Serial.print(scheduler.getTaskLabel(1));
-    Serial.print("Deadline:  ");
-    Serial.println(scheduler.getTaskDeadline(1));
+    if (scheduler.isTaskAlive(1))
+    {
+      Serial.print("Task 1:  ");
+      Serial.print(scheduler.getTaskLabel(1));
+      Serial.print("\tJob num:  ");
+      Serial.print(scheduler.getJobReleased(1));
+      Serial.print("\tDeadline:  ");
+      Serial.println(scheduler.getTaskDeadline(1));
+    }
+    if (scheduler.isTaskAlive(2))
+    {
+      Serial.print("Task 2:  ");
+      Serial.print(scheduler.getTaskLabel(2));
+      Serial.print("\tJob num:  ");
+      Serial.print(scheduler.getJobReleased(2));
+      Serial.print("\tDeadline:  ");
+      Serial.println(scheduler.getTaskDeadline(2));
+    }
+    if (scheduler.isTaskAlive(3))
+    {
+      Serial.print("Task 3:  ");
+      Serial.print(scheduler.getTaskLabel(3));
+      Serial.print("\tJob num:  ");
+      Serial.print(scheduler.getJobReleased(3));
+      Serial.print("\tDeadline:  ");
+      Serial.println(scheduler.getTaskDeadline(3));
+    }
+    if (scheduler.isTaskAlive(4))
+    {
+      Serial.print("Task 4:  ");
+      Serial.print(scheduler.getTaskLabel(4));
+      Serial.print("\tDeadline:  ");
+      Serial.println(scheduler.getTaskDeadline(4));
+    }
 
     
     Serial.print("\t\tTicks=");
@@ -434,9 +458,10 @@ void aFilter(volatile float val[])
 
 ISR(TIMER3_COMPB_vect) // #ISR
 { 
+  // increments scheduler ticks
   ticks++;
-  
-  //  checkPeriodicTask();
+  // update Tasks info
+  scheduler.checkPeriodicTasks();
   
   
   //digitalWrite(pinEnd, LOW);

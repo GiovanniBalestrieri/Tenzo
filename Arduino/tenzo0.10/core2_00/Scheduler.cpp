@@ -25,12 +25,12 @@ void Scheduler::initTaskset()
 
 void Scheduler::createTasks()
 {
-  if (this->create_task(0, HZ, 5, HZ, EDF, "number0") == -1) {
+  if (this->create_task(1, HZ, 5, HZ, EDF, "number0") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }
   
-  if (this->create_task(1, HZ, 5, 50, EDF, "number1") == -1) {
+  if (this->create_task(2, HZ, 5, 50, EDF, "number1") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }
@@ -112,7 +112,7 @@ void Scheduler::checkPeriodicTasks(void)
 	{	
 	  // skip task 0 (idle task) 
 		if (f - this->taskset >= this->MAX_NUM_TASKS)
-			panic(0);	// Should never happen 
+			this->panic(0);	// Should never happen 
     if (!f->valid)
       continue; 
     if (!f->active)
@@ -134,19 +134,35 @@ void Scheduler::checkPeriodicTasks(void)
 
 int Scheduler::getTaskDeadline(int id)
 {
-  if (this->taskset[id+1].active == 0)
+  if (this->taskset[id].active == 0 || this->taskset[id].valid == 0)
     return -1;
   else
-    return this->taskset[id+1].deadline;
+    return this->taskset[id].deadline;
 }
 
 
+unsigned long Scheduler::getJobReleased(int id)
+{
+  if (this->taskset[id].active == 0 || this->taskset[id].valid == 0)
+    return -1;
+  else
+    return this->taskset[id].released;
+}
+
 String Scheduler::getTaskLabel(int id)
 {
-  if (this->taskset[id+1].active == 0)
+  if (this->taskset[id].active == 0 || this->taskset[id].valid == 0)
     return "-1";
   else
-    return ((String) this->taskset[id+1].label);  
+    return ((String) this->taskset[id].label);  
+}
+
+int Scheduler::isTaskAlive(int id)
+{
+  if (this->taskset[id].active == 0 || this->taskset[id].valid == 0)
+    return 0;
+  else if  (this->taskset[id].active == 1 || this->taskset[id].valid == 1)
+    return 1;
 }
 
 void Scheduler::panic(int l1)

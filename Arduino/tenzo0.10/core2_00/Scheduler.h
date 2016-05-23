@@ -26,8 +26,10 @@ class Scheduler
                     int type,
                     const char *label); 
     int delete_task(int id);
+    int isTaskAlive(int id);
     void panic(int);     
     void initTaskset();
+    unsigned long getJobReleased(int id);
 
     struct task *current;
     struct task *taskset;
