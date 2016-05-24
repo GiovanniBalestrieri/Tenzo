@@ -75,4 +75,6 @@ volatile int contEulerSamples=0;
 volatile int contSerialRoutine=0; // boh
 volatile int contCalc=0;
 
+volatile int contContrl = 0
+
 #endif

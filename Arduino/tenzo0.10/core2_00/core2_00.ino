@@ -141,10 +141,11 @@ void setupTimerInterrupt()
   TCCR3B = 0;
 
   // Set compare match register to the desired timer count
+  OCR3A=14; //16*10^6/(1000Hz*1024)-1 = 77 -> 1115 Hz 
   //OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
   //OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
   //OCR3A=103; //16*10^6/(150Hz*1024)-1 = 103 -> 150 Hz 
-  OCR3A=143; //16*10^6/(109Hz*1024)-1 = 143 -> 109 Hz 
+  //OCR3A=143; //16*10^6/(109Hz*1024)-1 = 143 -> 109 Hz 
   //OCR3A=780; //16*10^6/(20Hz*1024)-1 = 780 -> 20 Hz 
   //OCR3A=2000; //16*10^6/(8Hz*1024)-1 = 780 -> 8 Hz 
   //OCR3A=50; //16*10^6/(308Hz*1024)-1 = 50 -> 308 Hz 
@@ -276,6 +277,8 @@ void getAngVelYPR()
     if (maxgyroTimer <= gyroTimer)
       maxgyroTimer = gyroTimer;
     gyroTimeTot = gyroTimeTot + gyroTimer; 
+
+    //Serial.println("t\t\t\t\tANGLESSS");
 }
 
 boolean condCazzo = false;
@@ -283,27 +286,51 @@ boolean condCazzo1 = false;
 
 void loop() {  
   timerSec = micros() - secRoutine;
+
+  bestId = scheduler.schedule();
   
-  // Task 1
-  getAngVelYPR();
+  switch(bestId)
+  {
+    case(1):
+      // Task 1
+      getAngVelYPR();
+      scheduler.jobCompletedById(bestId);
+      break;
+
+    case(2):
+      // Task 2
+      SerialRoutine();
+      scheduler.jobCompletedById(bestId);
+      break;
+
+    case(3):
+      // Task 3
+      Serial.println("\t\t\t\t\t\t\t\t\t\tGPS");
+      scheduler.jobCompletedById(bestId);
+      break;
+      
+    case(4):
+      // Task 4 !!! FP !! Dummy
+      Serial.println("\t\t\t\t\t\t\t\t\t\tDUMMMY");
+      scheduler.jobCompletedById(bestId);
+      break;
+  }
     
-  // Task 2
-  SerialRoutine();
   
   if (micros() >= 10000000 && !condCazzo)
   {
-    scheduler.delete_task(1);
-    Serial.print("\t\t\t\tDELETED");
+    //scheduler.delete_task(1);
+    //Serial.print("\t\t\t\tDELETED");
     condCazzo = true;
   }
   
   if (micros() >= 15000000 && !condCazzo1)
   {    
-    if (scheduler.create_task(3, 120, 0, 125, EDF, "serial") == -1) {
+    if (scheduler.create_task(4, 220, 0, 220, FPR, "dummy") == -1) {
       scheduler.panic(1);
     }
     else
-      Serial.println("\t\t\t\t\t Created Task 3:  ");
+      Serial.println("\t\t\t\t\t Created Task 4:  ");
     condCazzo1 = true;
   }
   // #LOOP
@@ -325,17 +352,22 @@ void loop() {
         Serial.println(scheduler.getTaskDeadline(i));
       }
     }
-    Serial.print("\t\tTOTAL TASKS=");
-    Serial.println(scheduler.num_tasks);
-
     computeAverageExecTime();
     
-    printTimers();
-    printRoutine();
-
+    UXRoutine();
+    
     resetCounters();
+    
     secRoutine = micros();
   }
+}
+
+// Task 3
+void UXRoutine()
+{
+    printTimers();
+    printRoutine();
+    //Serial.println("\t\t\t\t\t\t\t\t\t\tPRINT ROUTINE");
 }
 
 void computeAverageExecTime()
@@ -441,7 +473,6 @@ ISR(TIMER3_COMPB_vect) // #ISR
   ticks++;
   // update Tasks info
   scheduler.checkPeriodicTasks();
-  
   
   //digitalWrite(pinEnd, LOW);
   digitalWrite(pinInit, HIGH);
@@ -1122,6 +1153,8 @@ void SerialRoutine()
   // restore initializing and landing to false
   initializing = false;
   landing = false;
+
+  //Serial.println("\t\t\t\t\t\t\t\t\t\t\t\tSERIALEEE");
 }
 
 // Send accelerometer filter value to Matlab for dynamic change

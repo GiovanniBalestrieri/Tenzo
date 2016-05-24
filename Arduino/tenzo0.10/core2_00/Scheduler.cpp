@@ -25,12 +25,17 @@ void Scheduler::initTaskset()
 
 void Scheduler::createTasks()
 {
-  if (this->create_task(1, 110, 5, 130, EDF, "number0") == -1) {
+  if (this->create_task(1, 2, 0, 2, EDF, "GetEulerW") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }
   
-  if (this->create_task(2, 50, 5, 50, EDF, "number1") == -1) {
+  if (this->create_task(2, 10, 0, 50, EDF, "SerialRoutine") == -1) {
+    //puts("ERROR: cannot create task led_cycle\n");
+    this->panic(1);
+  }
+  
+  if (this->create_task(3, 110, 0, 110, EDF, "UX") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }
@@ -168,7 +173,7 @@ String Scheduler::getTaskLabel(int id)
   if (this->taskset[id].active == 0 || this->taskset[id].valid == 0)
     return "-1";
   else
-    return ((String) this->taskset[id].label);  
+    return ( this->taskset[id].label);  
 }
 
 int Scheduler::isTaskAlive(int id)
@@ -185,25 +190,40 @@ void Scheduler::panic(int l1)
     Serial.println(l1);
 }
 
-int Scheduler::selectBestTask()
+int Scheduler::jobCompletedById(int id)
 {
-  /*
+  if (this->taskset[id].active == 0 || this->taskset[id].valid == 0)
+    return -999;
+  else if  (this->taskset[id].active == 1 || this->taskset[id].valid == 1)
+  {  
+   --this->taskset[id].released;
+   // force scheduler invocation 
+   this->trigger_schedule = 1; 
+   return this->taskset[id].released;
+  }
+}
+
+struct task* Scheduler::selectBestTask()
+{
 	unsigned long maxprio;
 	int i, edf;
 	struct task *best, *f;
 
 	maxprio = 100;
 	edf = 0;
-	best = &taskset[0];
-	for (i = 0, f = taskset + 1; i < num_tasks; ++f) { // Salta task 0 (idle)
-		if (f - taskset >= MAX_NUM_TASKS)
-			panic(0);	// Should never happen 
+	best = &this->taskset[0];
+	// Salta task 0 (idle)
+	for (i = 0, f = this->taskset + 1; i < num_tasks; ++f) 
+	{ 
+		//if (f - taskset >= MAX_NUM_TASKS)
+			//panic(0);	// Should never happen 
 		if (!f->valid)
 			continue;
 		++i;
 		if (f->released == 0)
 			continue;
-		if (edf) {
+		if (edf) 
+		{
 			// fixed-priority tasks have lower priority than EDF ones 
 			if (f->deadline == 0)
 				continue;
@@ -214,7 +234,8 @@ int Scheduler::selectBestTask()
 			}
 			continue;
 		} 
-		if (f->deadline != 0) {
+		if (f->deadline != 0) 
+		{
 			edf = 1;
 			maxprio = f->priority;
 			best = f;
@@ -225,37 +246,31 @@ int Scheduler::selectBestTask()
 			best = f;
 		}
 	}
-	return best->id;
-  */
+	return best;
 }
 
 int Scheduler::schedule()
-{
-  /*
+{  
 	static int do_not_enter = 0;
 	struct task *best;
 	unsigned long oldreleases;
-	//irq_disable();
-        sei();
+	noInterrupts();
 	if (do_not_enter != 0) {
-		//irq_enable();
-		cli();
-		return NULL;
+		interrupts();
+		return -1;
 	}
 	do_not_enter = 1;
 	do {
-		oldreleases = globalreleases;
-		//irq_enable();
-                sei();
-		best = select_best_task();
-                cli();		
-                //irq_disable();
+		oldreleases = this->globalreleases;
+    interrupts();
+		best = this->selectBestTask();
+    noInterrupts();
 	} while (oldreleases != globalreleases);
 	this->trigger_schedule = 0;
-	best = (best != current ? best : NULL);
+	best = (best != this->current ? best : NULL);
+  // Check validity of next statement
+  this->current = best;
 	do_not_enter = 0;
-	cli();
-        //irq_enable();
+  interrupts();
 	return best->id;
-  */
 }

@@ -13,7 +13,7 @@ class Scheduler
   public:
     Scheduler(int);
     void checkPeriodicTasks();
-    int selectBestTask();
+    struct task* selectBestTask();
     int schedule();
     int getTaskDeadline(int);
     String getTaskLabel(int);
@@ -32,6 +32,7 @@ class Scheduler
     void panic(int);     
     void initTaskset();
     unsigned long getJobReleased(int id);
+    int jobCompletedById(int id);
 
     struct task *current;
     struct task *taskset;
@@ -45,15 +46,15 @@ class Scheduler
 };
 
 struct task {
-  int valid;    /* this descriptor is associated with a valid task */
-  int id;       /* unique identifier */
-  unsigned long releasetime;  /* next release time */
-  unsigned long released; /* number of released, pending jobs */
-  unsigned long period; /* period of the task in ticks */
-  unsigned long priority; /* priority of the task (FPR) or job (EDF) */
-  unsigned long deadline; /* relative deadline of the job (EDF), zero for FPR */
+  volatile int valid;    /* this descriptor is associated with a valid task */
+  volatile int id;       /* unique identifier */
+  volatile unsigned long releasetime;  /* next release time */
+  volatile unsigned long released; /* number of released, pending jobs */
+  volatile unsigned long period; /* period of the task in ticks */
+  volatile unsigned long priority; /* priority of the task (FPR) or job (EDF) */
+  volatile unsigned long deadline; /* relative deadline of the job (EDF), zero for FPR */
   const char *label; /* task name */
-  int active;  
+  volatile int active;  
 };
 
 extern volatile unsigned long ticks;
