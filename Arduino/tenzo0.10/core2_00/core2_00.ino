@@ -141,7 +141,7 @@ void setupTimerInterrupt()
   TCCR3B = 0;
 
   // Set compare match register to the desired timer count
-  OCR3A=14; //16*10^6/(1000Hz*1024)-1 = 77 -> 1115 Hz 
+  OCR3A=14; //16*10^6/(1000Hz*1024)-1 = 77 -> 1068 Hz 
   //OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
   //OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
   //OCR3A=103; //16*10^6/(150Hz*1024)-1 = 103 -> 150 Hz 
@@ -340,7 +340,7 @@ void loop() {
   
   if (micros() >= 15000000 && !condCazzo1)
   {    
-    if (scheduler.create_task(4, 2200, 0, 2200, FPR, "dummy") == -1) {
+    if (scheduler.create_task(4, 2200, 0, 2200, EDF, "dummy") == -1) {
       scheduler.panic(1);
     }
     else
@@ -376,12 +376,11 @@ void loop() {
   }
 }
 
-// Task 3
+
 void UXRoutine()
 {
     printTimers();
     printRoutine();
-    //Serial.println("\t\t\t\t\t\t\t\t\t\tPRINT ROUTINE");
 }
 
 void computeAverageExecTime()
