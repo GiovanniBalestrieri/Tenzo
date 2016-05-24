@@ -2,6 +2,8 @@
 #ifndef ControlPid_h
   #define ControlPid_h
 
+// number of ticks to wait before actuation
+volatile int ctrlPeriod = 12;
 
 volatile float angles[3];
 

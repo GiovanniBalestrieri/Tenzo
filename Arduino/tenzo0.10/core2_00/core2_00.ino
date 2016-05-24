@@ -496,7 +496,7 @@ ISR(TIMER3_COMPB_vect) // #ISR
     
 
 
-    if (contCtrl == 10)
+    if (contCtrl == ctrlPeriod)
     {
       servoTimer = micros();     
       // [max] 250 us [avg] 240 us   
