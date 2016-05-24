@@ -25,17 +25,17 @@ void Scheduler::initTaskset()
 
 void Scheduler::createTasks()
 {
-  if (this->create_task(1, 2, 0, 2, EDF, "GetEulerW") == -1) {
+  if (this->create_task(1, 20, 0, 20, EDF, "GetEulerW") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }
   
-  if (this->create_task(2, 10, 0, 50, EDF, "SerialRoutine") == -1) {
+  if (this->create_task(2, 100, 0, 100, EDF, "SerialRoutine") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }
   
-  if (this->create_task(3, 110, 0, 110, EDF, "UX") == -1) {
+  if (this->create_task(3, 1100, 0, 1100, EDF, "UX") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }

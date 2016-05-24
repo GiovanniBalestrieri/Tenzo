@@ -284,6 +284,19 @@ void getAngVelYPR()
 boolean condCazzo = false;
 boolean condCazzo1 = false;
 
+void controlCycle()
+{
+  controlTimer = micros();
+  // [max] 1300 us [avg] 1230 us      
+  controlCascade();  // [OK]
+  
+  countCtrlCalc++;  
+  controlTimer = micros() - controlTimer;
+  if (maxcontrolTimer <= controlTimer)
+    maxcontrolTimer = controlTimer;
+  controlTimeTot = controlTimeTot + controlTimer;
+}
+
 void loop() {  
   timerSec = micros() - secRoutine;
 
@@ -294,6 +307,7 @@ void loop() {
     case(1):
       // Task 1
       getAngVelYPR();
+      controlCycle();
       scheduler.jobCompletedById(bestId);
       break;
 
@@ -326,7 +340,7 @@ void loop() {
   
   if (micros() >= 15000000 && !condCazzo1)
   {    
-    if (scheduler.create_task(4, 220, 0, 220, FPR, "dummy") == -1) {
+    if (scheduler.create_task(4, 2200, 0, 2200, FPR, "dummy") == -1) {
       scheduler.panic(1);
     }
     else
@@ -471,6 +485,7 @@ ISR(TIMER3_COMPB_vect) // #ISR
 { 
   // increments scheduler ticks
   ticks++;
+  contCtrl++;
   // update Tasks info
   scheduler.checkPeriodicTasks();
   
@@ -479,28 +494,25 @@ ISR(TIMER3_COMPB_vect) // #ISR
   
   isrTimer = micros();
   
-    controlTimer = micros();
-    // [max] 1300 us [avg] 1230 us      
-    controlCascade();  // [OK]
     
-    countCtrlCalc++;  
-    controlTimer = micros() - controlTimer;
-    if (maxcontrolTimer <= controlTimer)
-      maxcontrolTimer = controlTimer;
-    controlTimeTot = controlTimeTot + controlTimer;
 
+
+    if (contCtrl == 10)
+    {
+      servoTimer = micros();     
+      // [max] 250 us [avg] 240 us   
+      tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
+      // update counter control  
   
-    servoTimer = micros();     
-    // [max] 250 us [avg] 240 us   
-    tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
-    // update counter control  
+      countServoAction++;  
+      servoTimer = micros() - servoTimer;
+      
+      if (maxservoTimer <= servoTimer)
+        maxservoTimer = servoTimer;
+      servoTimeTot = servoTimeTot + servoTimer;
 
-    countServoAction++;  
-    servoTimer = micros() - servoTimer;
-    
-    if (maxservoTimer <= servoTimer)
-      maxservoTimer = servoTimer;
-    servoTimeTot = servoTimeTot + servoTimer;
+      contCtrl = 0;
+    }
         
   cont++;    
   countISR++;  
