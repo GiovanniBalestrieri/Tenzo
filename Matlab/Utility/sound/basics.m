@@ -6,7 +6,7 @@ t = 0:(1/fs):T;
 
 %Generate a sine wave of the desired frequency f at those times.
 f1 = 1300.81;
-f2 = 3800;
+f2 = 270;
 a = 0.5;
 b = 0.1;
 
@@ -21,7 +21,7 @@ sound(y2, fs);
 % Record your voice for 5 seconds.
 recObj = audiorecorder;
 disp('Start speaking.')
-T =  5;
+T =  1;
 recordblocking(recObj, T);
 disp('End of Recording.');
 
@@ -46,3 +46,25 @@ size(y)
 plot(t,y);
 sound(y,fs)
 
+y = myRecording'
+
+size(fs)
+y1 = y(1,13000:end);
+t1= t(1,13000:end);
+plot(y,t)
+
+
+%% 
+size(y)
+X_mags=abs(fft(y));
+figure(2)
+plot(X_mags);
+xlabel('DFT Bins');
+ylabel('Magnitude');
+
+% Plots first half of DFT (normalized frequency)
+num_bins = length(X_mags);
+plot(0:1/(num_bins/2 -1):1,X_mags(1:num_bins/2));
+grid on
+xlabel('Normalized frequency [\pi rads/samples]');
+ylabel('Magnitude');

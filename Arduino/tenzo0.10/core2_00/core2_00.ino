@@ -300,7 +300,6 @@ void controlCycle()
 void loop() {  
   timerSec = micros() - secRoutine;
 
-
   //scheduler.checkPeriodicTasks();
   bestId = scheduler.schedule();
   
@@ -484,6 +483,7 @@ void aFilter(volatile float val[])
 
 ISR(TIMER3_COMPB_vect) // #ISR
 { 
+  isrTimer = micros();
   // increments scheduler ticks
   ticks++;
   contCtrl++;
@@ -495,7 +495,6 @@ ISR(TIMER3_COMPB_vect) // #ISR
   //digitalWrite(pinEnd, LOW);
   digitalWrite(pinInit, HIGH);
   
-  isrTimer = micros();
 
     if (contCtrl == ctrlPeriod)
     {
@@ -517,10 +516,10 @@ ISR(TIMER3_COMPB_vect) // #ISR
   cont++;    
   countISR++;  
   
-  // Compute isr duration
+  // Compute isr time
   isrTimer = micros() - isrTimer;
-    if (maxisrTimer <= isrTimer)
-      maxisrTimer = isrTimer;
+  if (maxisrTimer <= isrTimer)
+    maxisrTimer = isrTimer;
   isrTimeTot = isrTimeTot + isrTimer;  
   
   digitalWrite(pinInit, LOW);
