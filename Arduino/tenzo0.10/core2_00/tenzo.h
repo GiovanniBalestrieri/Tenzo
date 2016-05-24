@@ -15,6 +15,6 @@
 #include "tenzo_timer.h"
 #include "Scheduler.h"
 
-int bestId;
+volatile int bestId;
 
 #endif

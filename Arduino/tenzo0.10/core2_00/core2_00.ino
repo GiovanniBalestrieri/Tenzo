@@ -300,6 +300,8 @@ void controlCycle()
 void loop() {  
   timerSec = micros() - secRoutine;
 
+
+  //scheduler.checkPeriodicTasks();
   bestId = scheduler.schedule();
   
   switch(bestId)
@@ -487,14 +489,13 @@ ISR(TIMER3_COMPB_vect) // #ISR
   contCtrl++;
   // update Tasks info
   scheduler.checkPeriodicTasks();
+  //if (scheduler.trigger_schedule)
+    //bestId = scheduler.schedule();
   
   //digitalWrite(pinEnd, LOW);
   digitalWrite(pinInit, HIGH);
   
   isrTimer = micros();
-  
-    
-
 
     if (contCtrl == ctrlPeriod)
     {
