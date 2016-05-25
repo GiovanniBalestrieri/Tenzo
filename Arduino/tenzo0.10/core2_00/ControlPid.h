@@ -21,9 +21,18 @@ volatile boolean enableWYawPid = false;
 volatile boolean enableAltitudePid = false;
 
 
+ 
+boolean inConsRoll = false; 
+boolean inConsPitch = false;
+boolean verbosePidValuesFeedback = true;
+boolean verboseFilterAccMatlab = true;          
+
+
 /*
  * Cascade Pid & settings
  */
+
+volatile int limitPidMax = 750;
  
 // Roll
 

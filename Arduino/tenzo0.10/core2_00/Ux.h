@@ -12,6 +12,35 @@ const String welcomeMSG = "Welcome to Tenzo";
 const String MIN_ = "700";
 const String IDLE_ = "790";
 
+
+byte mode;
+char readAnswer, readChar, readCh;
+
+byte modeS; 
+
+/**
+ ** Serial 
+ **/
+ 
+// Gps
+int BaudRateGps = 4800;
+byte loBytew1, hiBytew1,loBytew2, hiBytew2;
+int loWord,hiWord;
+
+int printBlueAngleCounter = 0;
+int printBlueAngleSkip = 5;
+
+String inString = "";
+String inComingString = "";
+
+// Serial remote gains PID change
+
+char kReadChar;
+char k1ReadChar;
+int k3ReadInt;
+float readPropVal,readIntVal,readDerVal,readSetVal;
+int readChar2;
+
 class Ux
 {
   public:

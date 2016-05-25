@@ -30,16 +30,6 @@ Scheduler scheduler = Scheduler(MAX_TASKS);
  */
 float deltaT = 15;  
 
-char readAnswer, readChar, readCh;
-
-byte modeS;
-
-volatile int limitPidMax = 750;
- 
-boolean inConsRoll = false; 
-boolean inConsPitch = false;
-boolean verbosePidValuesFeedback = true;
-boolean verboseFilterAccMatlab = true;           
         
 NonLinearPid cascadeRollPid(consKpCascRoll, consKiCascRoll, consKdCascRoll);
 NonLinearPid cascadeRollPidW(consKpCascRollW, consKiCascRollW, consKdCascRollW);
@@ -56,29 +46,6 @@ MedianFilter medianGyroY(3,0);
 MedianFilter medianGyroZ(3,0);
 
 float k=0, kM1=0, kMReading = 0, kMRoutine=0, kMLoop=0, secRoutine=0;
-
-byte mode;
-
-// Define various ADC prescaler
-const unsigned char PS_16 = (1 << ADPS2);
-const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
-const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);
-const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
-
-/**
- ** Serial 
- **/
- 
-// Gps
-int BaudRateGps = 4800;
-byte loBytew1, hiBytew1,loBytew2, hiBytew2;
-int loWord,hiWord;
-
-int printBlueAngleCounter = 0;
-int printBlueAngleSkip = 5;
-
-String inString = "";
-String inComingString = "";
 
 
 
@@ -123,14 +90,6 @@ volatile float alphaA= 0.993, alphaW = 0.8;
 volatile float estXAngle = 0, estYAngle = 0, estZAngle = 0;
 volatile float kG = 0.975, kA = 0.025, kGZ=0.60, kAZ = 0.40;
 
-
-// Serial remote gains PID change
-
-char kReadChar;
-char k1ReadChar;
-int k3ReadInt;
-float readPropVal,readIntVal,readDerVal,readSetVal;
-int readChar2;
 
 void setupTimerInterrupt()
 {
