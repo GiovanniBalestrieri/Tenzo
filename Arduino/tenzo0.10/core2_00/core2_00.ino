@@ -164,8 +164,16 @@ void setupPinOut()
   pinMode(pinEnd, OUTPUT);
   digitalWrite(pinInit, LOW);  
   digitalWrite(pinEnd, LOW);
+  if (!sakura.getProcessing())
+  {
+    Serial.println("[ OK ] Debug Pins Oscilloscope");
+  }
 }
 
+
+void setupSonar()
+{
+}
 /// TILL HERE
 
 void setup() {

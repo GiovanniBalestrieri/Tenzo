@@ -14,6 +14,7 @@
 #include "FIMU_ITG3200.h"
 #include "tenzo_timer.h"
 #include "Scheduler.h"
+#include "Sonar.h"
 
 volatile int bestId;
 
