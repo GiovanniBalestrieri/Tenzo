@@ -7,7 +7,6 @@
 #define FPR 0
 #define EDF 1
 
-
 class Scheduler
 {
   public:

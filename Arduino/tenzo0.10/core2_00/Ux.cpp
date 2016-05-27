@@ -1,6 +1,6 @@
 /*
   propulsion.h - Library to handle user interaction.
-  Created by Giovanni Balestrieri - UserK, August 26, 2015.
+  Created by Giovanni Balestrieri - UserK, August 26, 2015. 
 */
 
 #include "Arduino.h"
