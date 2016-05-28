@@ -5,6 +5,7 @@
 
 #include "Propulsion.h"
 #include "Ux.h"
+#include "Sensors.h"
 #include "NonLinearPid.h"
 #include "ControlPid.h"
 #include "FlightParams.h"
