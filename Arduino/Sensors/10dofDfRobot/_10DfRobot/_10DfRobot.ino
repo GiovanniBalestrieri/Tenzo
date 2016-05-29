@@ -23,32 +23,39 @@ void setup(){
   sixDOF.init(); //init the Acc and Gyro 
 }
  
-void loop(){
-   
+void loop(){   
   sixDOF.getEuler(angles);
-    
+  SerialRoutine();
   PrintData();
-   
-  delay(300);
+  delay(400);
+}
+
+void SerialRoutine()
+{
+  if (Serial2.available())
+  {
+    char t = Serial2.read();
+    if (t=='a')
+    {      
+      Serial2.print("a,");
+      Serial2.print(angles[0]);
+      Serial2.print(",");
+      Serial2.print(angles[1]);
+      Serial2.print(",");
+      Serial2.print(angles[2]);
+      Serial2.println(",z");
+    }
+  }
+  
 }
  
 void PrintData()
-{  
+{
   Serial.print("a,");
   Serial.print(angles[0]);
   Serial.print(",");
   Serial.print(angles[1]);
   Serial.print(",");
   Serial.print(angles[2]);
-  Serial.println(",z");
-
-  Serial2.print("a,");
-  Serial2.print(angles[0]);
-  Serial2.print(",");
-  Serial2.print(angles[1]);
-  Serial2.print(",");
-  Serial2.print(angles[2]);
-  Serial2.println(",z");
-  
-   
+  Serial.println(",z");   
 }
