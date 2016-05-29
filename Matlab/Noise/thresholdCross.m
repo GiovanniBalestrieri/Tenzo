@@ -1,16 +1,16 @@
 clc 
 clear all
 
-XMin = -20;
-XMax = 20;
-YMin = -20;
-YMax = 20;
+XMin = -50;
+XMax = 50;
+YMin = -50;
+YMax = 50;
 addpath('Reference/c2xyz/');
 addpath('Reference/export/');
 
 %% Random Radial Basis functions in space 
 disp('3D case with random path - 10 rbf:');
-N = 5 % number of random functions
+N = 6 % number of random functions
 stepMesh = 0.5;
 Z = zeros((XMax-XMin)/stepMesh+1,(XMax-XMin)/stepMesh+1);
 [X,Y] = meshgrid(XMin:stepMesh:XMax);

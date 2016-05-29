@@ -2,7 +2,6 @@
 #include <Wire.h>
 #include "tenzo.h"
 
-
 // Se fai operazioni sui float o double su una variabile utilizzata come contatore
 // aggiornato in una ISR -> usa una variabile d'appoggio tipo cont_safe usa:
 // sei()
@@ -21,7 +20,6 @@ FreeSixIMU sixDOF = FreeSixIMU();
 // Init scheduler with MAX_TASKS
 Scheduler scheduler = Scheduler(MAX_TASKS);
 
-
 /*
  * deltaT : loop routine frequency (Verbose_motors /NonVerbose)
  * 15: 50Hz
@@ -29,7 +27,6 @@ Scheduler scheduler = Scheduler(MAX_TASKS);
  * 7 : 110Hz/56Hz
  */
 float deltaT = 15;  
-
         
 NonLinearPid cascadeRollPid(consKpCascRoll, consKiCascRoll, consKdCascRoll);
 NonLinearPid cascadeRollPidW(consKpCascRollW, consKiCascRollW, consKdCascRollW);

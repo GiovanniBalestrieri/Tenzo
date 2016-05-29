@@ -18,7 +18,7 @@ clear all;
 clc;
 
 % declaring the arduino varialble and establishing connection
-a = arduino('Com13');
+a = serial('/dev/rfcomm0');
 modeG = 0.800
 midV = 1.65;
 Xacc = 0, Yacc = 0, Zacc=0;
