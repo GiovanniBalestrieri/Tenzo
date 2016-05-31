@@ -162,10 +162,10 @@ end
 
 %% Plots Global convexHull figure
 
-figure(6)
-title('Union Convex Hull');
-CH = bwconvhull(BW);
-imshow(CH);
+ figure(6)
+ title('Union Convex Hull');
+ CH = bwconvhull(BW);
+ imshow(CH);
 
 %% Scaling sectors up by a factor of K
 % 
