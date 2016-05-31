@@ -6,7 +6,6 @@
 
 #include "Arduino.h"
 #include "Propulsion.h"
-#include "Ux.h"
 #include <Servo.h>
 
 #define DEBUG_PROP = 1;

@@ -9,6 +9,8 @@
 // cli()
 
 // Init User Experience agent Sakura
+
+
 Ux sakura;
 
 // Init Propulsion handler
@@ -290,12 +292,13 @@ void loop() {
     
     secRoutine = micros();
   }
+  
 }
 
 
 void UXRoutine()
 {
-    printTimers();
+    printTimersSched();
     printRoutine();
 }
 
@@ -1241,7 +1244,7 @@ void sendPidVal(int which,int mode)
   }
 }
 
-void printTimers()
+void printTimersSched()
 {
     if (sakura.getPrintTimers())
     {
@@ -1296,8 +1299,6 @@ void printTimers()
       Serial.print(maxserialTimer);
       Serial.println(",z");
       Serial.println();
-      
-      
     }
 }
 

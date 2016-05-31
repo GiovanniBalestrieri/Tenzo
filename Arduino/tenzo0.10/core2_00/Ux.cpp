@@ -3,13 +3,36 @@
   Created by Giovanni Balestrieri - UserK, August 26, 2015. 
 */
 
-#include "Arduino.h"
 #include "Ux.h"
-#include "Ctx.h"
+
+extern boolean printSerial;
+extern boolean processing;
+extern boolean printBlue;
+extern boolean printMotorsVals;
+extern boolean printMotorsValsUs;
+extern boolean printPIDVals;
+extern boolean printSerialInfo;
+extern boolean printTimers;
+extern boolean printAccs;
+extern boolean printMotorsPid;
+extern boolean printOmegas;
+extern boolean sendBlueAngle;
+extern boolean serialByteProtocol;
+extern boolean printVerboseSerial;
+extern boolean removeSpikesNumerically;
+extern volatile boolean filterGyro;
+extern volatile boolean filterAcc;
+extern const double baudRate;
+
+extern const int VERSION;
+extern const int MOTOR_1;
+extern const int MOTOR_2;
+extern const int MOTOR_3;
+extern const int MOTOR_4;
 
 Ux::Ux()
 {
-   _baudrate = baudRate;
+   baudrate = baudRate;
    printMotorsVals = printMotorsVals;
    printMotorsValsUs = printMotorsValsUs;
    _printMotorsPid = _printMotorsPid;
@@ -52,6 +75,7 @@ boolean Ux::getVersion()
 {
   return VERSION;
 }
+
 
 int Ux::getM(int i)
 {
@@ -215,7 +239,7 @@ void Ux::setAccFilterFlag(volatile boolean filterAcc)
 
 int Ux::getBaudRate()
 {
- return _baudrate; 
+ return baudrate; 
 }
 
 boolean Ux::getGyroFilterFlag()

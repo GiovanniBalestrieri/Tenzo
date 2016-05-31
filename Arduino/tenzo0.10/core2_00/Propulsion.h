@@ -1,15 +1,19 @@
 /*
-  propulsion.h - Library to calibrate ESC's, arm, test, spin 
+  Propulsion.h - Library to calibrate ESC's, arm, test, spin 
   and stop your Brushless motors.
   Created by Giovanni Balestrieri - UserK, August 25, 2015.
+  www.userk.co.uk
 */
 #ifndef Propulsion_h
 #define Propulsion_h
 
 #include "Arduino.h"
 #include <Servo.h>
-#include "Ux.h"
 
+const int MOTOR_1 = 3;
+const int MOTOR_2 = 5;
+const int MOTOR_3 = 22;
+const int MOTOR_4 = 9;
 
 // Constants
 const int MAX_SIGNAL = 2000;
@@ -22,16 +26,16 @@ class Propulsion
     Propulsion(int, int, int, int);
     void init();
     void calibrateOnce();
-   	void calibrateAgain();
-  	void resetMotors();
+     void calibrateAgain();
+    void resetMotors();
     void test();
     void stopAll();
-  	int initialize();
-  	void setSpeeds(int, float, float, float, float);
+    int initialize();
+    void setSpeeds(int, float, float, float, float);
     void setSpeedWUs(int);
     void setSpeedradS(int);
     void detachAll();
-  	void idle(); 
+    void idle(); 
     
     int getwUs1();
     int getwUs2();
@@ -45,19 +49,19 @@ class Propulsion
     
     
     int getThrottle();
-    void setThrottle(volatile int);	 
+    void setThrottle(volatile int);  
   
     Servo servo1;
-  	Servo servo2;
-  	Servo servo3;
-  	Servo servo4;
+    Servo servo2;
+    Servo servo3;
+    Servo servo4;
   
     volatile int wUs1;
     volatile int wUs2;
     volatile int wUs3;
     volatile int wUs4;
   
-  	volatile int throttle = MIN_SIGNAL;
+    volatile int throttle = MIN_SIGNAL;
    
   private:
     int _pinM1;

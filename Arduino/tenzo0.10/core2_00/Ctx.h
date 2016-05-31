@@ -8,11 +8,7 @@
 #ifndef Ctx_h
   #define Ctx_h
   
-  #define VERSION 0.13  
-  #define MOTOR_1 3
-  #define MOTOR_2 5
-  #define MOTOR_3 22
-  #define MOTOR_4 9
+  const int VERSION = 0.13;  
   
   boolean printSerial = true;
   boolean processing = false;
@@ -36,7 +32,5 @@
   volatile boolean filterGyro = true;
   volatile boolean filterAcc = true;
   
-  //const double baudRate = 57600;
-  const double baudRate = 115200;
   
 #endif

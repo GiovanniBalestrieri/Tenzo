@@ -1,9 +1,10 @@
 /*
-  propulsion.h - Library to handle user interaction.
+  Ux.h - Library to handle user interaction.
   Created by Giovanni Balestrieri - UserK, August 26, 2015.
+  www.userk.co.uk
 */
-#ifndef Ux_h
-#define Ux_h
+#ifndef UX_H
+#define UX_H
 
 #include "Arduino.h"
 
@@ -11,35 +12,6 @@
 const String welcomeMSG = "Welcome to Tenzo";
 const String MIN_ = "700";
 const String IDLE_ = "790";
-
-
-byte mode;
-char readAnswer, readChar, readCh;
-
-byte modeS; 
-
-/**
- ** Serial 
- **/
- 
-// Gps
-int BaudRateGps = 4800;
-byte loBytew1, hiBytew1,loBytew2, hiBytew2;
-int loWord,hiWord;
-
-int printBlueAngleCounter = 0;
-int printBlueAngleSkip = 5;
-
-String inString = "";
-String inComingString = "";
-
-// Serial remote gains PID change
-
-char kReadChar;
-char k1ReadChar;
-int k3ReadInt;
-float readPropVal,readIntVal,readDerVal,readSetVal;
-int readChar2;
 
 class Ux
 {
@@ -88,6 +60,7 @@ class Ux
         void setPrintVerboseSerial(boolean);
         void setGyroFilterFlag(volatile boolean);
         void setAccFilterFlag(volatile boolean);
+        double baudrate;
         
         
         
@@ -106,6 +79,5 @@ class Ux
        boolean _printVerboseSerial;
        volatile boolean _filterAcc;
        volatile boolean _filterGyro;
-       double _baudrate;
 };
 #endif
