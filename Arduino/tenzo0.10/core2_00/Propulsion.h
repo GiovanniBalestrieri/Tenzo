@@ -10,11 +10,6 @@
 #include "Arduino.h"
 #include <Servo.h>
 
-const int MOTOR_1 = 3;
-const int MOTOR_2 = 5;
-const int MOTOR_3 = 22;
-const int MOTOR_4 = 9;
-
 // Constants
 const int MAX_SIGNAL = 2000;
 const int MIN_SIGNAL = 700;

@@ -5,34 +5,16 @@
 
 #include "Ux.h"
 
-extern boolean printSerial;
-extern boolean processing;
-extern boolean printBlue;
-extern boolean printMotorsVals;
-extern boolean printMotorsValsUs;
-extern boolean printPIDVals;
-extern boolean printSerialInfo;
-extern boolean printTimers;
-extern boolean printAccs;
-extern boolean printMotorsPid;
-extern boolean printOmegas;
-extern boolean sendBlueAngle;
-extern boolean serialByteProtocol;
-extern boolean printVerboseSerial;
-extern boolean removeSpikesNumerically;
-extern volatile boolean filterGyro;
-extern volatile boolean filterAcc;
-extern const double baudRate;
-
-extern const int VERSION;
-extern const int MOTOR_1;
-extern const int MOTOR_2;
-extern const int MOTOR_3;
-extern const int MOTOR_4;
 
 Ux::Ux()
 {
+   /*
    baudrate = baudRate;
+   motor_4 = MOTOR_4;
+   motor_3 = MOTOR_3;
+   motor_2 = MOTOR_2;
+   motor_1 = MOTOR_1;
+   */
    printMotorsVals = printMotorsVals;
    printMotorsValsUs = printMotorsValsUs;
    _printMotorsPid = _printMotorsPid;
@@ -237,7 +219,7 @@ void Ux::setAccFilterFlag(volatile boolean filterAcc)
  _filterAcc = filterAcc; 
 }
 
-int Ux::getBaudRate()
+double Ux::getBaudRate()
 {
  return baudrate; 
 }

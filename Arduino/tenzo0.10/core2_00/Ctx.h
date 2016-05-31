@@ -8,7 +8,6 @@
 #ifndef Ctx_h
   #define Ctx_h
   
-  const int VERSION = 0.13;  
   
   boolean printSerial = true;
   boolean processing = false;
@@ -31,6 +30,7 @@
   // ISR
   volatile boolean filterGyro = true;
   volatile boolean filterAcc = true;
+  
   
   
 #endif
