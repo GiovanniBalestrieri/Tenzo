@@ -220,6 +220,23 @@ void controlCycle()
   controlTimeTot = controlTimeTot + controlTimer;
 }
 
+void sonarRoutine()
+{
+  sonarTimer = micros();
+  
+  // [max] 1300 us [avg] 1230 us     
+  altitudeSonar = ux1.getDistance();
+
+  contSonarRoutine++;  
+  sonarTimer = micros() - sonarTimer;
+  if (maxsonarTimer <= sonarTimer)
+    maxsonarTimer = sonarTimer;
+  sonarTimeTot = sonarTimeTot + sonarTimer;
+
+  //Serial.print("\t\t\t\t\t\t\t\t\t\tSONAR");
+  //ux1.printAltitude();  
+}
+
 void loop() {  
   timerSec = micros() - secRoutine;
 
@@ -255,9 +272,7 @@ void loop() {
       
     case(5):
       // Task 5 !!! DP !! #Sonar
-      altitudeSonar = ux1.getDistance();
-      //Serial.print("\t\t\t\t\t\t\t\t\t\tSONAR");
-      //ux1.printAltitude();
+      sonarRoutine();      
       scheduler.jobCompletedById(bestId);
       break;
   }
@@ -270,16 +285,15 @@ void loop() {
     {
       if (scheduler.isTaskAlive(i))
       {
-        Serial.print("Task"); Serial.print(i);Serial.print("\tLabel: ");
-        Serial.print(scheduler.getTaskLabel(i));
-        Serial.print("\tTask Priority:  ");
-        Serial.print(scheduler.getTaskPriority(i));
-        Serial.print("\tTask Period:  ");
+        Serial.print("T"); Serial.print(i);
+        Serial.print("\t(");
         Serial.print(scheduler.getTaskPeriod(i));
-        Serial.print("\tJob num:  ");
+        Serial.print(",e,");
+        Serial.print(scheduler.getTaskPriority(i));
+        Serial.print(")\tJob queue:  ");
         Serial.print(scheduler.getJobReleased(i));
-        Serial.print("\tDeadline:  ");
-        Serial.println(scheduler.getTaskDeadline(i));
+        Serial.print("\t");
+        Serial.println(scheduler.getTaskLabel(i));
       }
     }
     computeAverageExecTime();
@@ -1282,13 +1296,16 @@ void printTimersSched()
       Serial.print(servoTimeTot);
       Serial.print("\tMax ");
       Serial.print(maxservoTimer);
-      
-      Serial.print(",\nSonar: ");
-      Serial.print(contSonarRoutine);
-      Serial.print("\t");
-      Serial.print(sonarTimeTot);
-      Serial.print("\tMax ");
-      Serial.println(maxsonarTimer);
+
+      if (SONAR)
+      {
+        Serial.print(",\nSonar: ");
+        Serial.print(contSonarRoutine);
+        Serial.print("\t");
+        Serial.print(sonarTimeTot);
+        Serial.print("\tMax ");
+        Serial.print(maxsonarTimer);
+      }
       
       Serial.print(",\nSerial: ");
       Serial.print(contSerialRoutine);

@@ -7,6 +7,8 @@
 #define FPR 0
 #define EDF 1
 
+extern int SONAR;
+
 class Scheduler
 {
   public:
