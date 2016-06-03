@@ -22,6 +22,8 @@ FreeSixIMU sixDOF = FreeSixIMU();
 // Init scheduler with MAX_TASKS
 Scheduler scheduler = Scheduler(MAX_TASKS);
 
+// Init Sonar with trigPin and echoPin
+Sonar ux1 = Sonar(trigPin,echoPin);
 /*
  * deltaT : loop routine frequency (Verbose_motors /NonVerbose)
  * 15: 50Hz
@@ -95,6 +97,13 @@ void setupCommunication()
   if (!sakura.getProcessing())
   {
     Serial.println("[ Ok ] InitCOM ");
+  }
+  
+  Serial1.begin(115200); 
+  //Serial.begin(sakura.getBaudRate()); 
+  if (!sakura.getProcessing())
+  {
+    Serial1.println("[ Ok ] InitCOM ");
   }
 }
 
@@ -244,6 +253,14 @@ void loop() {
     case(4):
       // Task 4 !!! FP !! Dummy
       Serial.println("\t\t\t\t\t\t\t\t\t\tDUMMMY");
+      scheduler.jobCompletedById(bestId);
+      break;
+      
+    case(5):
+      // Task 5 !!! DP !! #Sonar
+      altitudeSonar = ux1.getDistance();
+      Serial.print("\t\t\t\t\t\t\t\t\t\tSONAR");
+      ux1.printAltitude();
       scheduler.jobCompletedById(bestId);
       break;
   }
@@ -798,6 +815,7 @@ void SerialRoutine()
       else if (t == 'z')
       {
         //sakura.setPrintPIDVals(!sakura.getPrintPIDVals());
+        ux1.printAltitude();
       }
       else if (t == 'p')
       {
@@ -1810,55 +1828,3 @@ void changePidState(boolean cond)
     hovering = 0;
   }
 }
-
-
-// create file Sonar
-
-/*
-class Sonar
-{
-  public:
-    Sonar(int,int);
-    float getDistance();
-    unsigned long getDuration();
-
-    unsigned long duration;
-  private:
-    float _k1;
-    unsigned long _threshold;
-    int _trigger;
-    int _echo;
-};
-
-Sonar::Sonar(int trigger, int echo)
-{
-  pinMode(trigger, OUTPUT);
-  pinMode(echo, INPUT);
-  Serial.println("[ OK ] Sonar");
-  
-  _echo = echo;
-  _trigger = trigger;
-  _k1 = 0.034;
-  _threshold = 38000;
-  duration = 0;  
-}
-
-float Sonar::getDistance()
-{
-  return _k1 * this->getDuration() / 2;
-}
-
-
-unsigned long Sonar::getDuration()
-{
-  digitalWrite(_trigger, LOW);  // Added this line
-  delayMicroseconds(2); // Added this line
-  digitalWrite(_trigger, HIGH);
-  delay(1); // Added this line
-  digitalWrite(_trigger, LOW);
-  duration = pulseIn(_echo, HIGH);
-  return duration;
-}
-
-
-*/

@@ -17,8 +17,7 @@
 #include "FIMU_ADXL345.h"
 #include "FIMU_ITG3200.h"
 #include "Scheduler.h"
-
-//#include "Sonar.h"
+#include "Sonar.h"
 
 volatile int bestId;
 
