@@ -18,7 +18,19 @@ Sonar::Sonar(int trigger, int echo)
 
 float Sonar::getDistance()
 {
+
+  sonarTimer = micros();
+  
+  // [max] 1300 us [avg] 1230 us     
   _distance = _k1 * this->getDuration() / 2;
+  
+  
+  contSonarRoutine++;  
+  sonarTimer = micros() - sonarTimer;
+  if (maxsonarTimer <= sonarTimer)
+    maxsonarTimer = sonarTimer;
+  sonarTimeTot = sonarTimeTot + sonarTimer;
+  
   return _distance;
 }
 

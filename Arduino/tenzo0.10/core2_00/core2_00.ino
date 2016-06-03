@@ -1253,55 +1253,59 @@ void printTimersSched()
 {
     if (sakura.getPrintTimers())
     {
-      // Print Samples rate: [sample/sec] 
+      // Print Samples rate: [sample/sec] \t execTime \t wcet
+      //ISR
       Serial.print("t,ISR: ");
       Serial.print(countISR);
+      Serial.print("\t");
+      Serial.print(isrTimeTot);
+      Serial.print("\tMax ");
+      Serial.print(maxisrTimer);
+      
       Serial.print(",\nCtrl: ");
       Serial.print(countCtrlCalc);
-      Serial.print(",\nEuler: ");
-      Serial.print(contEulerSamples);
+      Serial.print("\t");
+      Serial.print(controlTimeTot);
+      Serial.print("\t Max");
+      Serial.print(maxcontrolTimer);
+      
       Serial.print(",\nGyro: ");
       Serial.print(contGyroSamples);
+      Serial.print("\t");
+      Serial.print(gyroTimeTot);
+      Serial.print("\tMax ");      
+      Serial.print(maxgyroTimer);
+      
       Serial.print(",\nServo: ");
       Serial.print(countServoAction);
+      Serial.print("\t");
+      Serial.print(servoTimeTot);
+      Serial.print("\tMax ");
+      Serial.print(maxservoTimer);
+      
+      Serial.print(",\nSonar: ");
+      Serial.print(contSonarRoutine);
+      Serial.print("\t");
+      Serial.print(sonarTimeTot);
+      Serial.print("\tMax ");
+      Serial.println(maxsonarTimer);
+      
       Serial.print(",\nSerial: ");
       Serial.print(contSerialRoutine);
-      
-      Serial.print(",\t");
-      
-      Serial.print(OutputCascRollW);
-      // Print    timeservo: 
-      Serial.print(",\t");
-      
-      Serial.print(OutputCascPitchW);
-      // Print    timeservo: 
-      Serial.print(",");
-      
-      Serial.print(",ISR ");
-      Serial.print(isrTimeTot);
-      Serial.print(",");
-      Serial.print(maxisrTimer);
-      Serial.print("\t,Servo");
-      Serial.print(servoTimeTot);
-      Serial.print(",");
-      Serial.print(maxservoTimer);
-      Serial.print("\t,Euler");
-      Serial.print(eulerTimeTot);
-      Serial.print(",");
-      Serial.println(maxeulerTimer);
-      Serial.print("\t,Gyro");
-      Serial.print(gyroTimeTot);
-      Serial.print(",");
-      
-      Serial.print(maxgyroTimer);
-      Serial.print("\t,Control");
-      Serial.print(controlTimeTot);
-      Serial.print(",");
-      Serial.print(maxcontrolTimer);
-      Serial.print("\t,Serial");
+      Serial.print("\t");
       Serial.print(serialTimeTot);
-      Serial.print(",");
-      Serial.print(maxserialTimer);
+      Serial.print("\tMax ");
+      Serial.println(maxserialTimer);
+      
+      if (enablePid)
+      {
+        Serial.print("\t");
+        Serial.print(OutputCascRollW);
+        // Print    timeservo: 
+        Serial.print(",\t");        
+        Serial.println(OutputCascPitchW);
+      }
+      
       Serial.println(",z");
       Serial.println();
     }

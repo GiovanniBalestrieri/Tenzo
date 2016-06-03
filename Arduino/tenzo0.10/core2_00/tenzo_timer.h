@@ -65,8 +65,7 @@ volatile unsigned long sonarTimer = 0;
 volatile unsigned long maxsonarTimer = 0;
 volatile unsigned long sonarTimeTot = 0;
 
-
-/*** */
+/** **/
 float timerLoop = 0, timerReading = 0, timerSec = 0;
 float timerRoutine = 0, count = 0;
 float redingTime = 0, samplingTime = 0, calcTime =0, printTime = 0;

@@ -7,6 +7,11 @@
 #define trigPin 7 
 #define echoPin 8
 
+extern volatile int contSonarRoutine;
+extern volatile unsigned long sonarTimer;
+extern volatile unsigned long maxsonarTimer;
+extern volatile unsigned long sonarTimeTot;
+
 
 class Sonar
 {
