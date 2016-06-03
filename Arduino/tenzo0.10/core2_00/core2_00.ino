@@ -207,9 +207,6 @@ void getAngVelYPR()
     //Serial.println("t\t\t\t\tANGLESSS");
 }
 
-boolean condCazzo = false;
-boolean condCazzo1 = false;
-
 void controlCycle()
 {
   controlTimer = micros();
@@ -252,36 +249,20 @@ void loop() {
       
     case(4):
       // Task 4 !!! FP !! Dummy
-      Serial.println("\t\t\t\t\t\t\t\t\t\tDUMMMY");
+      //Serial.println("\t\t\t\t\t\t\t\t\t\tDUMMMY");
       scheduler.jobCompletedById(bestId);
       break;
       
     case(5):
       // Task 5 !!! DP !! #Sonar
       altitudeSonar = ux1.getDistance();
-      Serial.print("\t\t\t\t\t\t\t\t\t\tSONAR");
-      ux1.printAltitude();
+      //Serial.print("\t\t\t\t\t\t\t\t\t\tSONAR");
+      //ux1.printAltitude();
       scheduler.jobCompletedById(bestId);
       break;
   }
     
   
-  if (micros() >= 10000000 && !condCazzo)
-  {
-    //scheduler.delete_task(1);
-    //Serial.print("\t\t\t\tDELETED");
-    condCazzo = true;
-  }
-  
-  if (micros() >= 15000000 && !condCazzo1)
-  {    
-    if (scheduler.create_task(4, 2200, 0, 2200, EDF, "dummy") == -1) {
-      scheduler.panic(1);
-    }
-    else
-      Serial.println("\t\t\t\t\t Created Task 4:  ");
-    condCazzo1 = true;
-  }
   // #LOOP
   if (timerSec >= 1000000)
   {
@@ -338,6 +319,9 @@ void computeAverageExecTime()
     
     // Compute average SerialRoutine time
     serialTimeTot = serialTimeTot/contSerialRoutine;
+    
+    // Compute average SonarRoutine time
+    sonarTimeTot = sonarTimeTot/contSonarRoutine;
 }
 
 void resetCounters()
@@ -348,11 +332,14 @@ void resetCounters()
     countServoAction=0;  
     contSerialRoutine=0;    
     contGyroSamples=0;     
+    contSonarRoutine=0;     
     contEulerSamples=0;   
+    
     servoTimeTot = 0;
     eulerTimeTot = 0;
     gyroTimeTot = 0;
     controlTimeTot = 0;
+    sonarTimeTot = 0;
     countISR = 0;
 }
 

@@ -60,6 +60,12 @@ volatile unsigned long serialTimer = 0;
 volatile unsigned long maxserialTimer = 0;
 volatile unsigned long serialTimeTot = 0;
 
+// Task 5 Sonar's timers
+volatile unsigned long sonarTimer = 0;
+volatile unsigned long maxsonarTimer = 0;
+volatile unsigned long sonarTimeTot = 0;
+
+
 /*** */
 float timerLoop = 0, timerReading = 0, timerSec = 0;
 float timerRoutine = 0, count = 0;
@@ -73,6 +79,7 @@ volatile int countCtrlCalc = 0;
 volatile int contGyroSamples=0;
 volatile int contEulerSamples=0;
 volatile int contSerialRoutine=0; // boh
+volatile int contSonarRoutine=0;
 volatile int contCalc=0;
 
 volatile int contCtrl = 0;

@@ -32,9 +32,9 @@ void Sonar::printAltitude()
 unsigned long Sonar::getDuration()
 {
   digitalWrite(_trigger, LOW);  // Added this line
-  //delayMicroseconds(19); // Added this line
+  delayMicroseconds(19); // Added this line
   digitalWrite(_trigger, HIGH);
-  //delay(2); // Added this line
+  delay(1); // Added this line
   digitalWrite(_trigger, LOW);
   duration = pulseIn(_echo, HIGH);
   return duration;
