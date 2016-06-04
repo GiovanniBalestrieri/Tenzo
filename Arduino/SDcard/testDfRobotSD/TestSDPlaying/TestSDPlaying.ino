@@ -36,14 +36,6 @@ void setup()
    Serial.println("Wiring is correct and a card is present."); 
   }
 
-  if (SD.exists(testFile))
-  {
-    Serial.println("TEST exists. Removing...");  
-    SD.remove(testFile);  
-  } else {
-    Serial.println("TEST DOES NOT exist");    
-  }
-
   if (SD.exists(exFile))
   {
     Serial.println("file2 exists. Removing...");  
@@ -64,28 +56,13 @@ void setup()
     if (sd_answer == 1)
       Serial.println("\n.\n");
     myFile.close();
-  }
-
-  
-  myFile1 = SD.open(testFile, FILE_WRITE);
-  if (myFile1)
-  {
-    Serial.println("Writing to file2.txt.");
-    sd_answer = myFile1.println("ok init");// read from the file until there's nothing else in it:
-    if (sd_answer == 1)
-      Serial.println("\n.\n");
-    myFile1.close();
-  }
-  
+  }  
 }
  
  
 void loop(void) {   
-  myFile = SD.open(exFile,FILE_WRITE);
-  myFile1 = SD.open(testFile,FILE_WRITE);
+  myFile = SD.open(exFile,FILE_WRITE);;
   myFile.print(cont);
-  myFile1.print(cont);
-  myFile1.close();
   myFile.close();
   
   Serial.println("Reading file2.txt...");
@@ -96,17 +73,6 @@ void loop(void) {
       Serial.write(myFile.read());
     }
     myFile.close();
-  }
-  
- Serial.println("Reading file1.txt...");
-  myFile1 = SD.open(testFile);
-  if (myFile1)
-  {
-    // read from the file until there's nothing else in it:
-    while (myFile1.available()) {
-      Serial.write(myFile1.read());
-    }
-    myFile1.close();
   }
   
   delay(1000);
