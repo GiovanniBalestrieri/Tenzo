@@ -51,83 +51,30 @@ void setup()
 
   
   folder = SD.open("/LOG");
-  //root =
-  //folder.ls(LS_R | LS_DATE | LS_SIZE);
   printDirectory(folder,0);
   folder.close();
 
-  if (SD.exists(exFile))
-  {
-    Serial.println("file2 exists. Removing...");  
-    SD.remove(exFile);      
-  } else {
-    Serial.println("file2 DOES NOT exist");    
-  }
-  
-  myFile = SD.open(exFile, FILE_WRITE);
-  if (myFile)
-  {
-    Serial.println("Writing to file1.txt.");
-    sd_answer = myFile.println("aaaaaaaaaaaaaaaaaaaaaaaa"); 
-    sd_answer = myFile.println("bbbbbbbbbbbbbbbbbbbbbbbb"); 
-    sd_answer = myFile.println("cccccccccccccccccccccccc"); 
-    sd_answer = myFile.println("dddddddddddddddddddddddd"); 
-    sd_answer = myFile.println("eeeeeeeeeeeeeeeeeeeeeeee"); 
-    if (sd_answer == 1)
-      Serial.println("\n.\n");
-    myFile.close();
-  }  
-  
   if (SD.exists(path1))
   {
     Serial.println("file2 exists. Removing...");  
     SD.remove(path1);      
   } else {
-    Serial.println("file1 DOES NOT exist");    
+    Serial.println("file2 DOES NOT exist");    
   }
-  my1 = SD.open(path1, FILE_WRITE); 
-  //my2 = SD.open(path2, FILE_WRITE); 
-  //my3 = SD.open(path3, FILE_WRITE); 
-  my1.println("init 1");
-  //my2.println("init 2");
-  //my3.println("init 3");
-    my1.close();
-    //my2.close();
-    //my3.close();
-
- 
   
+  myFile = SD.open(path1, FILE_WRITE);
+  if (myFile)
+  {
+    Serial.println("Writing to file1.txt.");
+    sd_answer = myFile.println("Init");
+    myFile.close();
+  }  
+
   folder = SD.open("/arduino");
-  //root =
-  //folder.ls(LS_R | LS_DATE | LS_SIZE);
   printDirectory(folder,0);
-  folder.close();
-  
+  folder.close();  
 }
 
-void printDirectory(File dir, int numTabs)
-{
-  while (true) {
-    File entry =  dir.openNextFile();
-    if (! entry) {
-      // no more files
-      break;
-    }
-    for (uint8_t i = 0; i < numTabs; i++) {
-      Serial.print('\t');
-    }
-    Serial.print(entry.name());
-    if (entry.isDirectory()) {
-      Serial.println("/");
-      printDirectory(entry, numTabs + 1);
-    } else {
-      // files have sizes, directories do not
-      Serial.print("\t\t");
-      Serial.println(entry.size(), DEC);
-    }
-    entry.close();
-  }
-}
  
 void loop(void) {   
 
@@ -153,9 +100,8 @@ void loop(void) {
   myFile.println();
   myFile.close();
   
-  
   Serial.println("Reading file2.txt...");
-  myFile = SD.open(exFile);
+  myFile = SD.open(path1);
   if (myFile)
   {
     while (myFile.available()) {
@@ -169,4 +115,29 @@ void loop(void) {
   Serial.println("END\n");
 
   cont++;
+}
+
+
+void printDirectory(File dir, int numTabs)
+{
+  while (true) {
+    File entry =  dir.openNextFile();
+    if (! entry) {
+      // no more files
+      break;
+    }
+    for (uint8_t i = 0; i < numTabs; i++) {
+      Serial.print('\t');
+    }
+    Serial.print(entry.name());
+    if (entry.isDirectory()) {
+      Serial.println("/");
+      printDirectory(entry, numTabs + 1);
+    } else {
+      // files have sizes, directories do not
+      Serial.print("\t\t");
+      Serial.println(entry.size(), DEC);
+    }
+    entry.close();
+  }
 }
