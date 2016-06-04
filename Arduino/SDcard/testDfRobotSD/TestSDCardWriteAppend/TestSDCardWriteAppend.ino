@@ -43,50 +43,46 @@ void setup()
   if (SD.exists(exFile))
   {
     Serial.println("file2 exists. Removing...");  
-    SD.remove(testFile);      
+    SD.remove(exFile);      
   } else {
     Serial.println("file2 DOES NOT exist");    
   }
   
-  Serial.println("Creating files 1..");
   myFile = SD.open(exFile, FILE_WRITE);
-  myFile.println("Ok init");
-  myFile.close();
+  if (myFile)
+  {
+    Serial.println("Writing to file1.txt.");
+    myFile.println("Ok init");
+    myFile.close();
+  }
 
   
-  Serial.println("Creating files 2 ..");
   myFile1 = SD.open(testFile, FILE_WRITE);
-  Serial.println("Writing to file1.txt.");
-  myFile1.println("ok init");// read from the file until there's nothing else in it:
-  myFile1.close();
+  if (myFile1)
+  {
+    Serial.println("Writing to file2.txt.");
+    myFile1.println("ok init");// read from the file until there's nothing else in it:
+    myFile1.close();
+  }
   
 }
  
  
 void loop(void) { 
   // open a new file and immediately close it:
-  Serial.println("Creating file2.txt...");
-  myFile = SD.open(exFile, FILE_WRITE);
+  Serial.println("Reading file2.txt...");
+  myFile = SD.open(exFile);
     while (myFile.available()) {
       Serial.write(myFile.read());
     }
   myFile.close();
-
-  // Check to see if the file exists:
-  if (SD.exists(exFile)) {
-    Serial.println("file2.txt exists.");
-  } else {
-    Serial.println("file2.txt doesn't exist.");
-  }
-
   
- Serial.println("Creating file1.txt...");
-  myFile1 = SD.open(testFile, FILE_WRITE);
+ Serial.println("Reading file1.txt...");
+  myFile1 = SD.open(testFile);
   // read from the file until there's nothing else in it:
     while (myFile1.available()) {
       Serial.write(myFile1.read());
     }
-
   myFile1.close();
   
   delay(1000);
