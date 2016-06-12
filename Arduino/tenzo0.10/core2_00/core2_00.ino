@@ -9,8 +9,6 @@
 // cli()
 
 // Init User Experience agent Sakura
-
-
 Ux sakura;
 
 // Init Propulsion handler
@@ -23,14 +21,8 @@ FreeSixIMU sixDOF = FreeSixIMU();
 Scheduler scheduler = Scheduler(MAX_TASKS);
 
 // Init Sonar with trigPin and echoPin
-Sonar ux1 = Sonar(trigPin,echoPin);
-/*
- * deltaT : loop routine frequency (Verbose_motors /NonVerbose)
- * 15: 50Hz
- * 8 : 75HZ/44Hz
- * 7 : 110Hz/56Hz
- */
-float deltaT = 15;  
+Sonar ux1 = Sonar();
+
         
 NonLinearPid cascadeRollPid(consKpCascRoll, consKiCascRoll, consKdCascRoll);
 NonLinearPid cascadeRollPidW(consKpCascRollW, consKiCascRollW, consKdCascRollW);
@@ -233,8 +225,8 @@ void sonarRoutine()
     maxsonarTimer = sonarTimer;
   sonarTimeTot = sonarTimeTot + sonarTimer;
 
-  //Serial.print("\t\t\t\t\t\t\t\t\t\tSONAR");
-  //ux1.printAltitude();  
+  Serial.print("\t\t\t\t\t\t\t\t\t\tSONAR");
+  ux1.printAltitude();  
 }
 
 void loop() {  

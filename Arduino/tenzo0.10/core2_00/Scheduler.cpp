@@ -42,7 +42,7 @@ void Scheduler::createTasks()
 
   if (SONAR)
   {
-    if (this->create_task(5, 100, 0, 100, EDF, "Sonar") == -1) {
+    if (this->create_task(5, 1000, 0, 100, EDF, "Sonar") == -1) {
       //puts("ERROR: cannot create task led_cycle\n");
       this->panic(1);
     }
