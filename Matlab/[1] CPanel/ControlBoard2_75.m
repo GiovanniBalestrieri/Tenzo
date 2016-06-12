@@ -2,7 +2,6 @@ function ControlBoard()
 clear all;
 clc;
 
-
 % Version
 global version;
 version = 2.70;
