@@ -5,8 +5,8 @@
 float k=0, kM1=0, kMReading = 0, kMRoutine=0, kMLoop=0, secRoutine=0;
 
 // Sonar
-int SONAR = 0;
-float altitudeSonar = 0;
+int SONAR = 1;
+double altitudeSonar = 0;
 
 // Volatile vars
 

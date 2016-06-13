@@ -17,13 +17,12 @@ Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4)
 // Init FreeSixIMU object
 FreeSixIMU sixDOF = FreeSixIMU();
 
+// Init Sonar
+Sonar ux1 = Sonar();
+        
 // Init scheduler with MAX_TASKS
 Scheduler scheduler = Scheduler(MAX_TASKS);
 
-// Init Sonar with trigPin and echoPin
-Sonar ux1 = Sonar();
-
-        
 NonLinearPid cascadeRollPid(consKpCascRoll, consKiCascRoll, consKdCascRoll);
 NonLinearPid cascadeRollPidW(consKpCascRollW, consKiCascRollW, consKdCascRollW);
 NonLinearPid cascadePitchPid(consKpCascPitch, consKiCascPitch, consKdCascPitch);
@@ -51,7 +50,7 @@ void setupTimerInterrupt()
   //OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
   //OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
   //OCR3A=103; //16*10^6/(150Hz*1024)-1 = 103 -> 150 Hz 
-  //OCR3A=143; //16*10^6/(109Hz*1024)-1 = 143 -> 109 Hz 
+  //OCR3A=143; //16*10^6/(109Hz*1024)-1 = 143 -> 109 Hz s
   //OCR3A=780; //16*10^6/(20Hz*1024)-1 = 780 -> 20 Hz 
   //OCR3A=2000; //16*10^6/(8Hz*1024)-1 = 780 -> 8 Hz 
   //OCR3A=50; //16*10^6/(308Hz*1024)-1 = 50 -> 308 Hz 
@@ -108,6 +107,14 @@ void setupIMU()
     Serial.println("[ Ok ] IMU ");
   }
 }
+void setupSonar()
+{ 
+  ux1.init();
+  if (!sakura.getProcessing())
+  {
+    Serial.println("[ Ok ] SONAR ");
+  }
+}
 
 volatile int pinInit = 4;
 volatile int pinEnd = 5;
@@ -131,6 +138,7 @@ void setup() {
   setupPinOut();
   setupCommunication();
   setupIMU();
+  setupSonar();
   setupTimerInterrupt();  
   scheduler.initTaskset(); 
   scheduler.createTasks();
@@ -217,7 +225,7 @@ void sonarRoutine()
   sonarTimer = micros();
   
   // [max] 1300 us [avg] 1230 us     
-  altitudeSonar = ux1.getDistance();
+  //altitudeSonar = ux1.getDistance();
 
   contSonarRoutine++;  
   sonarTimer = micros() - sonarTimer;
@@ -225,7 +233,7 @@ void sonarRoutine()
     maxsonarTimer = sonarTimer;
   sonarTimeTot = sonarTimeTot + sonarTimer;
 
-  Serial.print("\t\t\t\t\t\t\t\t\t\tSONAR");
+  Serial.println("\t\t\t\t\t\t\t\t\t\tSONAR");
   ux1.printAltitude();  
 }
 
@@ -309,25 +317,52 @@ void UXRoutine()
 void computeAverageExecTime()
 {
     // Compute average servo readings time
-    servoTimeTot = servoTimeTot/countServoAction;
+    if (countServoAction >  0)
+      servoTimeTot = servoTimeTot/countServoAction;
+    else 
+      servoTimeTot = -999;
         
     // Compute average euler readings time
-    eulerTimeTot = eulerTimeTot/contEulerSamples;
+    if (contEulerSamples != 0)
+      eulerTimeTot = eulerTimeTot/contEulerSamples;
+    else 
+      eulerTimeTot = -999;
+        
      
     // Compute average gyro readings time
-    gyroTimeTot = gyroTimeTot/contGyroSamples;
+    if (contGyroSamples >  0)
+      gyroTimeTot = gyroTimeTot/contGyroSamples;
+    else 
+      gyroTimeTot = -999;
+        
     
     // Compute average controlCascade readings time
-    controlTimeTot = controlTimeTot/countCtrlCalc;
+    if (countCtrlCalc > 0)
+      controlTimeTot = controlTimeTot/countCtrlCalc;
+    else 
+      controlTimeTot = -999;
+        
     
     // Compute average isr readings time
-    isrTimeTot = isrTimeTot/countISR;
+    if (countISR >  0)
+      isrTimeTot = isrTimeTot/countISR;
+    else 
+      isrTimeTot = -999;
+        
     
     // Compute average SerialRoutine time
-    serialTimeTot = serialTimeTot/contSerialRoutine;
+    if (contSerialRoutine >  0)
+      serialTimeTot = serialTimeTot/contSerialRoutine;
+    else 
+      serialTimeTot = -999;
+        
     
     // Compute average SonarRoutine time
-    sonarTimeTot = sonarTimeTot/contSonarRoutine;
+    if (contSonarRoutine > 0)
+      sonarTimeTot = sonarTimeTot/contSonarRoutine;
+    else 
+      sonarTimeTot = -999;
+        
 }
 
 void resetCounters()
@@ -808,7 +843,7 @@ void SerialRoutine()
       else if (t == 'z')
       {
         //sakura.setPrintPIDVals(!sakura.getPrintPIDVals());
-        ux1.printAltitude();
+        //ux1.printAltitude();
       }
       else if (t == 'p')
       {

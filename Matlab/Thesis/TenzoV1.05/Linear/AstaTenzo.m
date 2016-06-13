@@ -132,7 +132,7 @@ Cremote = [ 1 0 0 0 0 0 0 0 0 0 0 0;
            0 0 0 0 0 0 0 0 1 0 0 0];
        
 CFull = eye(size(A));       
-DFull = zeros(size(A),4);
+DFull = zeros(size(A,1),size(B,2));
 inputs = {'Thrust','TauPhi','TauTheta','TauPsi'};
 D = zeros(4,4);
 
@@ -345,7 +345,7 @@ q=size(ClocalMin,1);
 % Definizione segnali esogeni
 disp('Definizione dei Disturbi da reiettare:');
 disp('d(t)=');
-alpha=3; omega=0.5; gamma1=0;
+alpha=3; omega=3; gamma1=0;
 k1=1; h1=1; h2=1; gamma2=complex(0,omega);
 
 disp('Definizione segnali esogeni');
