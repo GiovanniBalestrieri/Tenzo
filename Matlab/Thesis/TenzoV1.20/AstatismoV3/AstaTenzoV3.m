@@ -187,7 +187,7 @@ Cremote = [ 1 0 0 0 0 0 0 0 0 0 0 0;
            0 0 0 0 0 0 0 0 1 0 0 0];
        
 CFull = eye(size(A));       
-DFull = zeros(size(A),4);
+DFull = zeros(size(A,1),4);
 inputs = {'w1^2','w2^2','w3^2','w4^2'};
 %inputs = {'TauPhi','TauTheta','TauPsi','Thrust'};
 D = zeros(4,4);
@@ -472,7 +472,7 @@ Asig =[ AMin-BMinw*K zeros(n,size(AK1,2)); -BK1*ClocalMin AK1];
 Bsig = [ BMinw; -BK1*D];
 
 R = eye(size(Asig,2));
-%Q = blkdiag([1 0; 0 1],1*eye(3),eye(3),eye(12));
+Q = blkdiag([1 0; 0 1],1*eye(3),eye(3),eye(12));
 %Q = 1000000*eye(20);
 R = eye(size(Bsig,2));
 F=-lqr(Asig+alpha*eye(size(Asig)),Bsig,Q,R);
@@ -498,7 +498,7 @@ disp(eig(AMin-BMinw*K-V*ClocalMin));
 % specifica 3 ) definizione matrici per simulink:
 
 disp('specifica 3 ) definizione matrici per simulink:');
-
+% Cosa influenza il disturbo 
 M=[ 1 0 0 0 1 1 1 1]';
 N=[ 0; 0; 0; 0];
 %per disturbo sul processo definisco Bmod:
@@ -509,7 +509,7 @@ Dmod  = [N D];
 Aoss=AMin-V*ClocalMin;
 Bossw=[BMinw-V*D V M-V*N]; %perche ho u,y,d   come ingressi, si noti che B-vD ha dim di B ma anche V ha dimn di B
 Coss=eye(n);
-Doss=zeros(size(Bossw));
+Doss=zeros(size(Bossw,2));
 
 % Ricordando che delta xi1=AK1*xi+ Bk1*e
 AMI=AK1;

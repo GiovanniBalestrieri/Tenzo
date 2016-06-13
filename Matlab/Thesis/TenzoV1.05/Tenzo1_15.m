@@ -86,7 +86,7 @@ Cremote = [ 1 0 0 0 0 0 0 0 0 0 0 0;
            0 0 0 0 0 0 0 0 1 0 0 0];
        
 CFull = eye(size(A));       
-DFull = zeros(size(A),4);
+DFull = zeros(size(A,1),size(B,2));
 inputs = {'Thrust','TauPhi','TauTheta','TauPsi'};
 D = zeros(4,4);
 
@@ -235,7 +235,7 @@ R2=[ A-B*K11-gamma2*eye(size(A)) B ; Clocal D];
 disp('Rank R2:');
 disp(rank(R2)); 
 if (rank(R2)==size(A,1)+size(Clocal,1)) 
-    disp('b) verificata ,rango della matrice 5.4.23 per gamma2 è');
+    disp('b) verificata ,rango della matrice 5.4.23 per gamma2 ï¿½');
     disp(rank(R2)); 
 else
     disp('Test Fallito per gamma2');
