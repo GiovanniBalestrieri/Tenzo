@@ -131,9 +131,6 @@ void setupPinOut()
   }
 }
 
-
-/// TILL HERE
-
 void setup() {
   setupPinOut();
   setupCommunication();
@@ -220,21 +217,25 @@ void controlCycle()
   controlTimeTot = controlTimeTot + controlTimer;
 }
 
-void sonarRoutine()
+
+void sonarPreRoutine()
 {
+  ux1.init();
+}
+
+
+void sonarRoutine()
+{  
   sonarTimer = micros();
   
   // [max] 1300 us [avg] 1230 us     
-  //altitudeSonar = ux1.getDistance();
-
+  altitudeSonar = ux1.getDistance();
+  
   contSonarRoutine++;  
   sonarTimer = micros() - sonarTimer;
   if (maxsonarTimer <= sonarTimer)
     maxsonarTimer = sonarTimer;
   sonarTimeTot = sonarTimeTot + sonarTimer;
-
-  Serial.println("\t\t\t\t\t\t\t\t\t\tSONAR");
-  ux1.printAltitude();  
 }
 
 void loop() {  
@@ -260,21 +261,28 @@ void loop() {
 
     case(3):
       // Task 3
-      Serial.println("\t\t\t\t\t\t\t\t\t\tGPS");
+      Serial.println("\t\t\t\t\t\t\t\t\t\tUX");
       scheduler.jobCompletedById(bestId);
       break;
       
     case(4):
-      // Task 4 !!! FP !! Dummy
-      //Serial.println("\t\t\t\t\t\t\t\t\t\tDUMMMY");
+      // Task 4 !!! DP !! #Sonar setup
+      sonarPreRoutine();      
       scheduler.jobCompletedById(bestId);
       break;
       
     case(5):
-      // Task 5 !!! DP !! #Sonar
+      // Task 5 !!! DP !! #Sonar read
       sonarRoutine();      
       scheduler.jobCompletedById(bestId);
       break;
+      
+    case(6):
+      // Task 6 !!! FP !! Dummy
+      Serial.println("\t\t\t\t\t\t\t\t\t\tGPS");
+      scheduler.jobCompletedById(bestId);
+      break;
+      
   }
     
   
@@ -900,11 +908,7 @@ void SerialRoutine()
       }         
       else if (t == '-')
       {
-        /*
-        consKdWRoll = consKdWRoll + 0.02;
-        Serial.print("\t\t\t\t\t\t\t\t\t");
-        Serial.println(consKdWRoll);
-        */
+        ux1.printAltitude();          
       }         
       else if (t == '_')
       {

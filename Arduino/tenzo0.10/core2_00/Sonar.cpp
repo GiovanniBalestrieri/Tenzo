@@ -12,12 +12,15 @@ void Sonar::init()
   Wire.beginTransmission(112); 
   Wire.write(byte(0x00));     
   Wire.write(byte(0x51));     
-  Wire.endTransmission();    
-  delay(80);
+  Wire.endTransmission();   
 }
 
 int Sonar::getDistance()
 {
+  Wire.beginTransmission(112); // transmit to device #112
+  Wire.write(byte(0x02));      // sets register pointer to echo #1 register (0x02)
+  Wire.endTransmission();      // stop transmitting
+  
   // request 2 bytes from slave device #112
   Wire.requestFrom(112, 2);    
 
@@ -37,7 +40,7 @@ int Sonar::getDistance()
 
 void Sonar::printAltitude()
 {
-  Serial.print("\nZ = ");
+  Serial.print("\n\t\t\t\tRelative Altitude = ");
   Serial.println(this->distance);
 }  
 

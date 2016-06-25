@@ -30,23 +30,33 @@ void Scheduler::createTasks()
     this->panic(1);
   }
   
-  if (this->create_task(2, 300, 0, 98, EDF, "SerialRoutine") == -1) {
+  if (this->create_task(2, 300, 0, 250, EDF, "SerialRoutine") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }
   
-  if (this->create_task(3, 2000, 0, 1100, EDF, "UX") == -1) {
+  if (this->create_task(3, 4000, 0, 4000, EDF, "UX") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }
 
   if (SONAR)
   {
-    if (this->create_task(4, 3000, 6000, 1000, EDF, "Sonar") == -1) {
+    if (this->create_task(4, 100, 1000, 100, EDF, "Sonar set") == -1) {
+      //puts("ERROR: cannot create task led_cycle\n");
+      this->panic(1);
+    }
+    
+    if (this->create_task(5, 250, 1000, 250, EDF, "Sonar read") == -1) {
       //puts("ERROR: cannot create task led_cycle\n");
       this->panic(1);
     }
   }
+
+  if (this->create_task(6, 10000, 10000, 10000, EDF, "GPS") == -1) {
+      //puts("ERROR: cannot create task led_cycle\n");
+      this->panic(1);
+    }
 }
 
   
