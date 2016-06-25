@@ -22,7 +22,11 @@ void setup()
 void setupSfr02()
 {
 
-  // step 1: instruct sensor to read echoes
+  
+}
+void loop()
+{
+                 // step 1: instruct sensor to read echoes
   Wire.beginTransmission(112); // transmit to device #112 (0x70)
   // the address specified in the datasheet is 224 (0xE0)
   // but i2c adressing uses the high 7 bits so it's 112
@@ -31,11 +35,7 @@ void setupSfr02()
   // use 0x51 for centimeters
   // use 0x52 for ping microseconds
   Wire.endTransmission();      // stop transmitting
-  
-}
-void loop()
-{
-  delay(70);                   
+  delay(15);    
 
   Wire.beginTransmission(112); // transmit to device #112
   Wire.write(byte(0x02));      // sets register pointer to echo #1 register (0x02)
@@ -44,15 +44,13 @@ void loop()
   sonarTimer = micros();
   Wire.requestFrom(112, 2);    // request 2 bytes from slave device #112
 
-  // step 5: receive reading from sensor
-  if (2 <= Wire.available())   // if two bytes were received
-  {
-    highB = Wire.read();  // receive high byte (overwrites previous reading)
-    lowB = Wire.read(); // receive low byte as lower 8 bits
-    reading = (highB << 8) + lowB;
-    Serial.print(reading);   // print the reading
-    Serial.println("cm");
+  if (2 <= Wire.available()) { // if two bytes were received
+    reading = Wire.read();  // receive high byte (overwrites previous reading)
+    reading = reading << 8;    // shift high byte to be high 8 bits
+    reading |= Wire.read(); // receive low byte as lower 8 bits
+    Serial.println(reading);   // print the reading
   }
+
 
 
   contSonarRoutine++;  
