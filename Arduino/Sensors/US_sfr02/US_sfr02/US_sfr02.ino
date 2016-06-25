@@ -11,7 +11,7 @@ double sonarTimeTot =0;
 void setup()
 {
   Wire.begin();                
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("OK");
 }
 
