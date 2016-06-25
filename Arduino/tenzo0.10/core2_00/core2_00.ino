@@ -19,6 +19,10 @@ FreeSixIMU sixDOF = FreeSixIMU();
 
 // Init Sonar
 Sonar ux1 = Sonar();
+
+// Init RTC
+RTC_DS1307 RTC;
+DateTime now;
         
 // Init scheduler with MAX_TASKS
 Scheduler scheduler = Scheduler(MAX_TASKS);
@@ -131,18 +135,30 @@ void setupPinOut()
   }
 }
 
+void setupRTC()
+{
+  RTC.begin();
+  //If we remove the comment from the following line, we will set up the module time and date with the computer one
+  RTC.adjust(DateTime(__DATE__, __TIME__));  
+  if (!sakura.getProcessing())
+  {
+    Serial.println("[ OK ] RTC");
+  }
+}
+
 void setup() {
   setupPinOut();
   setupCommunication();
   setupIMU();
   setupSonar();
+  setupRTC();
   setupTimerInterrupt();  
   scheduler.initTaskset(); 
   scheduler.createTasks();
   setupCtx();  
   sakura.welcome();
   tenzoProp.calibrateOnce();
-  tenzoProp.init();   
+  tenzoProp.init();     
 }
 
 void getYPR()
@@ -238,6 +254,19 @@ void sonarRoutine()
   sonarTimeTot = sonarTimeTot + sonarTimer;
 }
 
+void getDateTimeRTC()
+{
+  rtcTimer = micros();
+  
+  now = RTC.now();
+  
+  contRtcRoutine++;  
+  rtcTimer = micros() - rtcTimer;
+  if (maxrtcTimer <= rtcTimer)
+    maxrtcTimer = rtcTimer;
+  rtcTimeTot = rtcTimeTot + rtcTimer;
+}
+
 void loop() {  
   timerSec = micros() - secRoutine;
 
@@ -261,7 +290,7 @@ void loop() {
 
     case(3):
       // Task 3
-      Serial.println("\t\t\t\t\t\t\t\t\t\tUX");
+      Serial.println("\t\t\t\t\t\t\t\t\t\tGPS");
       scheduler.jobCompletedById(bestId);
       break;
       
@@ -279,10 +308,11 @@ void loop() {
       
     case(6):
       // Task 6 !!! FP !! Dummy
-      Serial.println("\t\t\t\t\t\t\t\t\t\tGPS");
+      getDateTimeRTC();
       scheduler.jobCompletedById(bestId);
-      break;
-      
+      Serial.print("\t\t\tRTC:");
+      Serial.println(now.second());
+      break;      
   }
     
   
@@ -370,6 +400,12 @@ void computeAverageExecTime()
       sonarTimeTot = sonarTimeTot/contSonarRoutine;
     else 
       sonarTimeTot = -999;
+
+      // Compute average SonarRoutine time
+    if (contRtcRoutine > 0)
+      rtcTimeTot = rtcTimeTot/contRtcRoutine;
+    else 
+      rtcTimeTot = -999;
         
 }
 
@@ -382,6 +418,7 @@ void resetCounters()
     contSerialRoutine=0;    
     contGyroSamples=0;     
     contSonarRoutine=0;     
+    contRtcRoutine=0;     
     contEulerSamples=0;   
     
     servoTimeTot = 0;
@@ -389,6 +426,7 @@ void resetCounters()
     gyroTimeTot = 0;
     controlTimeTot = 0;
     sonarTimeTot = 0;
+    rtcTimeTot = 0;
     countISR = 0;
 }
 
@@ -1337,6 +1375,18 @@ void printTimersSched()
         Serial.print("\tMax ");
         Serial.print(maxsonarTimer);
       }
+      
+      if (RTC_ON)
+      {
+        Serial.print(",\nRTC:\t ");
+        Serial.print(contRtcRoutine);
+        Serial.print("\t");
+        Serial.print(rtcTimeTot);
+        Serial.print("\tMax ");
+        Serial.print(maxrtcTimer);
+      }
+
+      
       
       Serial.print(",\nSerial: ");
       Serial.print(contSerialRoutine);

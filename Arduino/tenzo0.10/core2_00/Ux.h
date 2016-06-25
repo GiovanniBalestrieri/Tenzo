@@ -9,7 +9,7 @@
 #include "Arduino.h"
 
 // Constants
-const int VERSION = 0.13;  
+const int VERSION = 14;  
 const String welcomeMSG = "Welcome to Tenzo";
 const String MIN_ = "700";
 const String IDLE_ = "790";

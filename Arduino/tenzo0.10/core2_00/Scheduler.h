@@ -8,6 +8,7 @@
 #define EDF 1
 
 extern int SONAR;
+extern int RTC_ON;
 
 class Scheduler
 {

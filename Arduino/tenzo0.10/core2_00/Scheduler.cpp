@@ -25,7 +25,7 @@ void Scheduler::initTaskset()
 
 void Scheduler::createTasks()
 {
-  if (this->create_task(1, 100, 0, 9, EDF, "GetEulerW") == -1) {
+  if (this->create_task(1, 10, 0, 9, EDF, "GetEulerW") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }
@@ -52,11 +52,13 @@ void Scheduler::createTasks()
       this->panic(1);
     }
   }
-
-  if (this->create_task(6, 10000, 10000, 10000, EDF, "GPS") == -1) {
-      //puts("ERROR: cannot create task led_cycle\n");
-      this->panic(1);
-    }
+  if (RTC_ON)
+  {
+    if (this->create_task(6, 1000, 1000, 1000, EDF, "RTC") == -1) {
+        //puts("ERROR: cannot create task led_cycle\n");
+        this->panic(1);
+      }
+  }
 }
 
   

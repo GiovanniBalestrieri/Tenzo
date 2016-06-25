@@ -8,6 +8,9 @@ float k=0, kM1=0, kMReading = 0, kMRoutine=0, kMLoop=0, secRoutine=0;
 int SONAR = 1;
 double altitudeSonar = 0;
 
+// RTC
+int RTC_ON = 1;
+
 // Volatile vars
 
 volatile float thetaOLD = 0;

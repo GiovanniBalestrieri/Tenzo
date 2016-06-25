@@ -18,6 +18,7 @@
 #include "FIMU_ITG3200.h"
 #include "Scheduler.h"
 #include "Sonar.h"
+#include "RTClib.h"
 
 volatile int bestId;
 
