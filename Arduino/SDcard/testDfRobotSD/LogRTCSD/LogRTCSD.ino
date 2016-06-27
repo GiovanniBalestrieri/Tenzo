@@ -14,6 +14,8 @@ const int chipSelect = 4;
 
 char path1[] = "arduino/file1";
 char output[10];
+
+unsigned long timer;
  
 void setup()
 {
@@ -36,14 +38,6 @@ void setup()
   folder = SD.open("/arduino");
   printDirectory(folder,0);
   folder.close();
-
-  if (SD.exists(path1))
-  {
-    Serial.println("file2 exists. Removing...");  
-    SD.remove(path1);      
-  } else {
-    Serial.println("file2 DOES NOT exist");    
-  }
   
   myFile = SD.open(path1, FILE_WRITE);
   if (myFile)
@@ -60,11 +54,49 @@ void setup()
 
  
 void loop(void) {   
+  timer = millis();
+  SerialRoutine(); 
 
-  appendDate();
-  
-  Serial.println("Reading file2.txt...");
-  myFile = SD.open(path1);
+  if (timer % 1000 == 0)
+  {
+    appendDate();
+    Serial.println("END\n");
+    timer = 0;
+  }
+}
+
+void deleteFile(String path)
+{
+  if (SD.exists(path))
+  {
+    Serial.println("file1 exists. Delete");  
+    SD.remove(path);      
+    //sd_answer = myFile.println("\n\tNew Session: ");
+  } else {
+    Serial.println("file1 DOES NOT exist");    
+  }
+}
+
+void SerialRoutine()
+{
+  if (Serial.available())
+  {
+    char t = Serial.read();
+    if (t=='p')
+    {
+      readFile(path1);
+    }
+    else if (t == 'd')
+    {
+      deleteFile(path1);
+    }
+  }
+}
+
+void readFile(String path)
+{
+  Serial.println("\nContent of file:");
+  myFile = SD.open(path);
   if (myFile)
   {
     while (myFile.available()) {
@@ -72,10 +104,6 @@ void loop(void) {
     }
     myFile.close();
   }
- 
- 
-  delay(1000);
-  Serial.println("END\n");
 }
 
 void appendDate()
