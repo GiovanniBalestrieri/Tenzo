@@ -64,7 +64,7 @@ void Logs::logStates(int initialized, int hovering, int landed)
 /*
  * Log Accelerometer's value
  */
-void logAcc(float x,float y,float z)
+void Logs::logAcc(float x,float y,float z)
 {
   if (this->cardOK && this->checkFilesExistence)
   {
@@ -84,7 +84,7 @@ void logAcc(float x,float y,float z)
 /*
  * Log Gyro's value
  */
-void logGyro(float x,float y,float z)
+void Logs::logGyro(float x,float y,float z)
 {
   if (this->cardOK && this->checkFilesExistence)
   {
@@ -100,6 +100,94 @@ void logGyro(float x,float y,float z)
     this->closeLogFile(); 
   }
 }
+
+/*
+ * Log Orientation's value
+ */
+void Logs::logOrientation(float x,float y,float z)
+{
+  if (this->cardOK && this->checkFilesExistence)
+  {
+    this->openLogFile();
+    logFile.print("EstAngle,");
+    logFile.print(x);
+    logFile.print(',');
+    logFile.print(y);
+    logFile.print(',');
+    logFile.print(z);
+    logFile.print(",z");
+    logFile.println();
+    this->closeLogFile(); 
+  }
+}
+
+/*
+ * Log Altitude's value
+ */
+void Logs::logAltitude(float a)
+{
+  if (this->cardOK && this->checkFilesExistence)
+  {
+    this->openLogFile();
+    logFile.print("altitude,");
+    logFile.print(a);
+    logFile.print(",z");
+    logFile.println();
+    this->closeLogFile(); 
+  }
+}
+
+
+/*
+ * Log Gps's value
+ */
+void Logs::logGps(String lat, String lon)
+{
+  if (this->cardOK && this->checkFilesExistence)
+  {
+    this->openLogFile();
+    logFile.print("gps,");
+    logFile.print(lat);
+    logFile.print(",");
+    logFile.print(lon);
+    logFile.print(",z");
+    logFile.println();
+    this->closeLogFile(); 
+  }
+}
+
+/*
+ * Log Setpoint value
+ */
+void Logs::logSetpoint(float altSet)
+{
+  if (this->cardOK && this->checkFilesExistence)
+  {
+    this->openLogFile();
+    logFile.print("AltSetpt,");
+    logFile.print(altSet);
+    logFile.print(",z");
+    logFile.println();
+    this->closeLogFile(); 
+  }
+}
+
+/*
+ * Log 'Worst Case Execution Time' value
+ */
+void Logs::logWcet(float val,int taskID)
+{
+  if (this->cardOK && this->checkFilesExistence)
+  {
+    this->openWcetFile();
+    wcetFile.print("Task:");
+    wcetFile.println(taskID);
+    wcetFile.print(val);
+    wcetFile.println();
+    this->closeWcetFile(); 
+  }
+}
+      
 
 /*
  * Log Session Data
