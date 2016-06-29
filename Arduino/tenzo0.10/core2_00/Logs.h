@@ -1,7 +1,11 @@
 #ifndef LOGS_H
 #define LOGS_H
 
-extern char state[],wcet[],inertial[],warning[],error[];
+  
+#include <SD.h>
+#include <RTClib.h>
+
+extern char statePath[],wcetPath[],inertialPath[],warningPath[],errorPath[];
 
 class Logs
 {
@@ -18,9 +22,27 @@ class Logs
     boolean logInertial();
     boolean logSetpoint();
     boolean logWcet();
-    
 
- private:
+    // basic config files
+    uint8_t sd_answer;
+
+    // flags to check file presence
+    boolean stateFileCheck = false;
+    boolean inertialFileCheck = false;
+    boolean errorFileCheck = false;
+    boolean warningFileCheck = false;
+    boolean wcetFileCheck = false;
+    boolean filesCheck = false;
+    
+    RTC_DS1307 RTC;
+  
+    File stateFile;
+    File inertialFile;
+    File warningFile;
+    File errorFile;
+    File wcetFile;
+
+    
      boolean checkCard();
      boolean checkFileState();
      boolean checkFileInertial();
@@ -34,5 +56,9 @@ class Logs
      boolean createFileError();
      boolean createFileWcet();
      boolean createFiles();
+
+ private:
+ 
+    const int _chipSelect = 4; 
 };
 #endif
