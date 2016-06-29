@@ -5,7 +5,7 @@
 #include <SD.h>
 #include <RTClib.h>
 
-extern char statePath[],wcetPath[],inertialPath[],warningPath[],errorPath[];
+extern char logPath[],wcetPath[],warningPath[],errorPath[];
 
 class Logs
 {
@@ -15,24 +15,23 @@ class Logs
     boolean init();
     
     boolean initSession();
-    boolean logState();
-    
-    boolean logInertial();
-      boolean logAcc();
-      boolean logGyro();
-      boolean logOrientation();
-      boolean logAltitude();
-      boolean logGps();
+    void logStates(int,int,int);    
+    void logInertial();
+      void logAcc(float,float,float);
+      void logGyro(float,float,float);
+      void logOrientation(float,float,float);
+      void logAltitude(float);
+      void logGps(String,String);
       
-    boolean logSetpoint();
-    boolean logWcet();
+    void logSetpoint(float);
+    void logWcet(float,int);
+    void logSession();
 
     /*
      * Check and Creates Files
      */
     boolean checkFiles();
-      boolean checkFileState();
-      boolean checkFileInertial();
+      boolean checkFileLog();
       boolean checkFileWarning();
       boolean checkFileError();
       boolean checkFileWcet();
@@ -41,24 +40,37 @@ class Logs
     uint8_t sd_answer;
 
     // flags to check file presence
-    boolean stateFileCheck = false;
-    boolean inertialFileCheck = false;
+    boolean logFileCheck = false;
     boolean errorFileCheck = false;
     boolean warningFileCheck = false;
     boolean wcetFileCheck = false;
     boolean checkFilesExistence = false;
+
+    /*
+     * Open Close Methods
+     */
+     void closeLogFile();
+     void closeErrorFile();
+     void closeWarningFile();
+     void closeWcetFile();
+     
+     void openLogFile();
+     void openErrorFile();
+     void openWarningFile();
+     void openWcetFile();
     
     RTC_DS1307 RTC;
   
-    File stateFile;
-    File inertialFile;
+    File logFile;
     File warningFile;
     File errorFile;
     File wcetFile;
+
+    DateTime now_instant;
     
+    boolean cardOK = false;
 
  private: 
     const int _chipSelect = 4; 
-    boolean _cardOk = false;
 };
 #endif
