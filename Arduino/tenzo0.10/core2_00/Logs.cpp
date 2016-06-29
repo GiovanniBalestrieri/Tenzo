@@ -26,17 +26,15 @@ Logs::Logs()
 
 boolean Logs::init()
 {
-  Serial.print("\nInitializing SD card...");
+  //Serial.print("\nInitializing SD card...");
   pinMode(53, OUTPUT);
    
   if (!SD.begin(_chipSelect)) 
   {
-    Serial.println("SdCard failed. Continuing without log:");
     cardOK = false;
   } 
   else 
   {
-    Serial.println("Wiring is correct and a card is present.");
     cardOK = true;
   }  
   return cardOK;

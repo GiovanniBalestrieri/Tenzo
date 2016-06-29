@@ -151,7 +151,15 @@ void setupRTC()
 
 void setupLog()
 {
-  logger.init();
+  boolean tmp;
+  tmp = logger.init();
+  if (!sakura.getProcessing())
+  {
+    if (tmp)
+      Serial.println("[ OK ] LOG");
+    else      
+      Serial.println("[ KO ] SDCARD\nContinuing without log:");
+  }
 }
 
 void setupPropulsion()
