@@ -347,7 +347,14 @@ void loop() {
       // Task 6 !!! FP !! Dummy
       getDateTimeRTC();
       scheduler.jobCompletedById(bestId);
-      break;      
+      break;  
+         
+    case(7):
+      // Task 7 !!! DP !! LOG
+      logRoutine();
+      scheduler.jobCompletedById(bestId);
+      Serial.println("\t\t\t\t\t\t\t\t\t\tLOG");
+      break;     
   }
     
   

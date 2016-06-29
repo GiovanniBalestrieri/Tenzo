@@ -12,7 +12,7 @@ File folder;
 uint8_t sd_answer;
 const int chipSelect = 4;    
 
-char path1[] = "arduino/file1";
+char path1[] = "arduino/wcet.txt";
 char output[10];
 
 unsigned long timer;

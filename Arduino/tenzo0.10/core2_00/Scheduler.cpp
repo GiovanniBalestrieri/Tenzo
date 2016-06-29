@@ -59,6 +59,10 @@ void Scheduler::createTasks()
         this->panic(1);
       }
   }
+  
+  if (this->create_task(7, 5000, 0, 5000, EDF, "LOG") == -1) {
+      this->panic(1);
+    }
 }
 
   
