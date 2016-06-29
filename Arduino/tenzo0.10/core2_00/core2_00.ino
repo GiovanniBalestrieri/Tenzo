@@ -168,6 +168,12 @@ void setupPropulsion()
   tenzoProp.init();  
 }
 
+void setupScheduler()
+{
+  scheduler.initTaskset(); 
+  scheduler.createTasks();  
+}
+
 void setup() {
   setupPinOut();
   setupCommunication();
@@ -175,12 +181,11 @@ void setup() {
   setupSonar();
   setupRTC();
   setupTimerInterrupt();  
-  scheduler.initTaskset(); 
-  scheduler.createTasks();
   setupCtx();  
   setupPropulsion();
   setupLog();   
   sakura.welcome();
+  setupScheduler();
 }
 
 void getYPR()
