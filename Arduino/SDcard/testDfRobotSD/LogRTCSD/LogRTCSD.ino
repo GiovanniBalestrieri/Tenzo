@@ -69,11 +69,24 @@ void deleteFile(String path)
 {
   if (SD.exists(path))
   {
-    Serial.println("file1 exists. Delete");  
+    Serial.println("file exists. Delete");  
     SD.remove(path);      
     //sd_answer = myFile.println("\n\tNew Session: ");
   } else {
     Serial.println("file1 DOES NOT exist");    
+  }
+
+  myFile = SD.open(path, FILE_WRITE);
+  if (myFile)
+  {
+    Serial.println("Writing to file1.txt.");
+    sd_answer = myFile.println("DELETED");
+    sd_answer = myFile.println(myFile);
+    myFile.close();
+  }  
+  else
+  {
+    Serial.println("file1.txt NON Esiste");
   }
 }
 

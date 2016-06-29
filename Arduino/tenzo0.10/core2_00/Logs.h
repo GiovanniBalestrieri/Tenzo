@@ -11,7 +11,7 @@ class Logs
 {
   public:
     Logs();
-    void init();
+    boolean init();
     boolean initSession();
     boolean logState();
     boolean logAcc();
@@ -32,7 +32,7 @@ class Logs
     boolean errorFileCheck = false;
     boolean warningFileCheck = false;
     boolean wcetFileCheck = false;
-    boolean filesCheck = false;
+    boolean checkFilesExistence = false;
     
     RTC_DS1307 RTC;
   
@@ -43,7 +43,6 @@ class Logs
     File wcetFile;
 
     
-     boolean checkCard();
      boolean checkFileState();
      boolean checkFileInertial();
      boolean checkFileWarning();
@@ -60,5 +59,6 @@ class Logs
  private:
  
     const int _chipSelect = 4; 
+    boolean _cardOk = false;
 };
 #endif

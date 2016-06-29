@@ -21,7 +21,7 @@ Logs::Logs()
   File wcetFile = SD.open(wcetPath, FILE_WRITE);
 }
 
-void Logs::init()
+boolean Logs::init()
 {
   Serial.print("\nInitializing SD card...");
   pinMode(53, OUTPUT);
@@ -29,16 +29,19 @@ void Logs::init()
   if (!SD.begin(_chipSelect)) 
   {
     Serial.println("SdCard failed. Continuing without log:");
+    _cardOk = false;
   } 
   else 
   {
-    Serial.println("Wiring is correct and a card is present."); 
-    //folder = SD.open("/arduino");
-    //printDirectory(folder,0);
-    //folder.close();
+    Serial.println("Wiring is correct and a card is present.");
+    _cardOk = true;
   }  
+  return _cardOk;
 }
 
+/*
+ * Checks File existence
+ */
 boolean Logs::checkFileState()
 {
   if (stateFile)
@@ -53,11 +56,95 @@ boolean Logs::checkFileState()
   return stateFileCheck;
 }
 
+
+/*
+ * Checks File existence
+ */
+boolean Logs::checkFileInertial()
+{
+  if (inertialFile)
+  {
+    inertialFileCheck = true;
+    inertialFile.close();
+  }  
+  else 
+  {
+    inertialFileCheck = false;    
+  }
+  return inertialFileCheck;
+}
+
+
+/*
+ * Checks File existence
+ */
+boolean Logs::checkFileError()
+{
+  if (errorFile)
+  {
+    errorFileCheck = true;
+    errorFile.close();
+  }  
+  else 
+  {
+    errorFileCheck = false;    
+  }
+  return errorFileCheck;
+}
+
+
+/*
+ * Checks File existence
+ */
+boolean Logs::checkFileWarning()
+{
+  if (warningFile)
+  {
+    warningFileCheck = true;
+    warningFile.close();
+  }  
+  else 
+  {
+    warningFileCheck = false;    
+  }
+  return warningFileCheck;
+}
+
+/*
+ * Checks File existence
+ */
+boolean Logs::checkFileWcet()
+{
+  if (wcetFile)
+  {
+    wcetFileCheck = true;
+    wcetFile.close();
+  }  
+  else 
+  {
+    wcetFileCheck = false;    
+  }
+  return wcetFileCheck;
+}
+
+
+/*
+ * Checks All Files
+ */
 boolean Logs::checkFiles()
 {
-  
-  return false;
+  if (this->checkFileWcet() && this->checkFileWarning() && this->checkFileError() && this->checkFileState() && this->checkFileInertial())
+  {
+    checkFilesExistence = true;
+  }
+  else
+  {
+    checkFilesExistence = false;
+  }
+  return checkFilesExistence;
 }
+
+
 
 /*
 void Logs::printAltitude()
