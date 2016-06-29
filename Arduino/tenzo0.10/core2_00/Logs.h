@@ -11,17 +11,31 @@ class Logs
 {
   public:
     Logs();
+
     boolean init();
+    
     boolean initSession();
     boolean logState();
-    boolean logAcc();
-    boolean logGyro();
-    boolean logOrientation();
-    boolean logAltitude();
-    boolean logGps();
+    
     boolean logInertial();
+      boolean logAcc();
+      boolean logGyro();
+      boolean logOrientation();
+      boolean logAltitude();
+      boolean logGps();
+      
     boolean logSetpoint();
     boolean logWcet();
+
+    /*
+     * Check and Creates Files
+     */
+    boolean checkFiles();
+      boolean checkFileState();
+      boolean checkFileInertial();
+      boolean checkFileWarning();
+      boolean checkFileError();
+      boolean checkFileWcet();
 
     // basic config files
     uint8_t sd_answer;
@@ -41,23 +55,9 @@ class Logs
     File warningFile;
     File errorFile;
     File wcetFile;
-
     
-     boolean checkFileState();
-     boolean checkFileInertial();
-     boolean checkFileWarning();
-     boolean checkFileError();
-     boolean checkFileWcet();
-     boolean checkFiles();
-     boolean createFileState();
-     boolean createFileInertial();
-     boolean createFileWarning();
-     boolean createFileError();
-     boolean createFileWcet();
-     boolean createFiles();
 
- private:
- 
+ private: 
     const int _chipSelect = 4; 
     boolean _cardOk = false;
 };

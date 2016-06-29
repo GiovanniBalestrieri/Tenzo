@@ -56,7 +56,6 @@ boolean Logs::checkFileState()
   return stateFileCheck;
 }
 
-
 /*
  * Checks File existence
  */
