@@ -1,6 +1,10 @@
+/*
+  Propulsion.cpp - Library for Sd Card Logging code.
+  Created by Giovanni Balestrieri - UserK, June 29, 2015
+  Released into the public domain.
+*/
 #ifndef LOGS_H
 #define LOGS_H
-
   
 #include <SD.h>
 #include <RTClib.h>

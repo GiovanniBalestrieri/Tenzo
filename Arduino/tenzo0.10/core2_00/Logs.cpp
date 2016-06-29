@@ -1,6 +1,6 @@
 /*
-  Propulsion.cpp - Library for Tenzo Propulsion code.
-  Created by Giovanni Balestrieri - UserK, June 2, 2015
+  Propulsion.cpp - Library for Sd Card Logging code.
+  Created by Giovanni Balestrieri - UserK, June 29, 2015
   Released into the public domain.
 */
 
@@ -42,7 +42,9 @@ boolean Logs::init()
   return cardOK;
 }
 
-
+/*
+ * Log states
+ */
 void Logs::logStates(int initialized, int hovering, int landed)
 {
   if (this->cardOK && this->checkFilesExistence)
@@ -54,6 +56,46 @@ void Logs::logStates(int initialized, int hovering, int landed)
     logFile.print(hovering);
     logFile.print(',');
     logFile.print(landed);
+    logFile.println();
+    this->closeLogFile(); 
+  }
+}
+
+/*
+ * Log Accelerometer's value
+ */
+void logAcc(float x,float y,float z)
+{
+  if (this->cardOK && this->checkFilesExistence)
+  {
+    this->openLogFile();
+    logFile.print("Acc,");
+    logFile.print(x);
+    logFile.print(',');
+    logFile.print(y);
+    logFile.print(',');
+    logFile.print(z);
+    logFile.print(",z");
+    logFile.println();
+    this->closeLogFile(); 
+  }
+}
+
+/*
+ * Log Gyro's value
+ */
+void logGyro(float x,float y,float z)
+{
+  if (this->cardOK && this->checkFilesExistence)
+  {
+    this->openLogFile();
+    logFile.print("Gyro,");
+    logFile.print(x);
+    logFile.print(',');
+    logFile.print(y);
+    logFile.print(',');
+    logFile.print(z);
+    logFile.print(",z");
     logFile.println();
     this->closeLogFile(); 
   }
