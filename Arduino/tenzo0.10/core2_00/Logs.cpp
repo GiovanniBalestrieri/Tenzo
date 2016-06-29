@@ -173,13 +173,16 @@ void Logs::logSetpoint(float altSet)
 /*
  * Log 'Worst Case Execution Time' value
  */
-void Logs::logWcet(float val,int taskID)
+void Logs::logWcet(float val,int taskID,String label)
 {
   if (this->cardOK && this->checkFilesExistence)
   {
     this->openWcetFile();
     wcetFile.print("Task:");
-    wcetFile.println(taskID);
+    wcetFile.print(taskID);
+    wcetFile.print("\tlabel:");
+    wcetFile.print(label);
+    wcetFile.print("\twcet:");
     wcetFile.print(val);
     wcetFile.println();
     this->closeWcetFile(); 

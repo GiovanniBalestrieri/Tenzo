@@ -70,6 +70,13 @@ volatile unsigned long rtcTimer = 0;
 volatile unsigned long maxrtcTimer = 0;
 volatile unsigned long rtcTimeTot = 0;
 
+/*
+ * Variables to hande wcet logging
+ */
+boolean newCrossThreshold = false;
+String labelTaskCross = "";
+float valueTaskCross = 0;
+
 /** **/
 float timerLoop = 0, timerReading = 0, timerSec = 0;
 float timerRoutine = 0, count = 0;

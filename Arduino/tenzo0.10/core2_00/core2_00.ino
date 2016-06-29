@@ -174,7 +174,8 @@ void setupScheduler()
   scheduler.createTasks();  
 }
 
-void setup() {
+void setup() 
+{
   setupPinOut();
   setupCommunication();
   setupIMU();
@@ -205,24 +206,6 @@ void getYPR()
     eulerTimeTot = eulerTimeTot + eulerTimer;
 }
 
-
-void getGyro()
-{  
-    gyroTimer = micros();
-  
-    // Preemptable section
-    //sei();            
-      // [max] 9800 us [avg] 4450 us
-    acquireGyro();
-    //cli();
-    
-    contGyroSamples++; 
-    gyroTimer = micros() - gyroTimer;
-    if (maxgyroTimer <= gyroTimer)
-      maxgyroTimer = gyroTimer;
-    gyroTimeTot = gyroTimeTot + gyroTimer;
-}
-
 void getAngVelYPR()
 {    
     gyroTimer = micros();
@@ -241,10 +224,13 @@ void getAngVelYPR()
     contGyroSamples++;        
     gyroTimer = micros() - gyroTimer;
     if (maxgyroTimer <= gyroTimer)
+    {
       maxgyroTimer = gyroTimer;
+      newCrossThreshold = true;    
+      labelTaskCross = "gyro";   
+      valueTaskCross = maxgyroTimer;
+    }
     gyroTimeTot = gyroTimeTot + gyroTimer; 
-
-    //Serial.println("t\t\t\t\tANGLESSS");
 }
 
 void controlCycle()
@@ -256,7 +242,12 @@ void controlCycle()
   countCtrlCalc++;  
   controlTimer = micros() - controlTimer;
   if (maxcontrolTimer <= controlTimer)
+  {
     maxcontrolTimer = controlTimer;
+    newCrossThreshold = true;    
+    labelTaskCross = "Control";   
+    valueTaskCross = maxcontrolTimer;
+  }
   controlTimeTot = controlTimeTot + controlTimer;
 }
 
@@ -277,7 +268,12 @@ void sonarRoutine()
   contSonarRoutine++;  
   sonarTimer = micros() - sonarTimer;
   if (maxsonarTimer <= sonarTimer)
+  {
     maxsonarTimer = sonarTimer;
+    newCrossThreshold = true;    
+    labelTaskCross = "Sonar";   
+    valueTaskCross = maxsonarTimer;
+  }
   sonarTimeTot = sonarTimeTot + sonarTimer;
 }
 
@@ -290,8 +286,22 @@ void getDateTimeRTC()
   contRtcRoutine++;  
   rtcTimer = micros() - rtcTimer;
   if (maxrtcTimer <= rtcTimer)
+  {
     maxrtcTimer = rtcTimer;
+    newCrossThreshold = true;    
+    labelTaskCross = "RTC";   
+    valueTaskCross = maxrtcTimer;
+  }
   rtcTimeTot = rtcTimeTot + rtcTimer;
+}
+
+void logRoutine()
+{
+  if (newCrossThreshold)
+  {
+    logger.logWcet(valueTaskCross,0,labelTaskCross);    
+    newCrossThreshold = false;
+  }
 }
 
 void loop() {  
@@ -337,8 +347,6 @@ void loop() {
       // Task 6 !!! FP !! Dummy
       getDateTimeRTC();
       scheduler.jobCompletedById(bestId);
-      Serial.print("\t\t\tRTC:");
-      Serial.println(now.second());
       break;      
   }
     
@@ -432,8 +440,7 @@ void computeAverageExecTime()
     if (contRtcRoutine > 0)
       rtcTimeTot = rtcTimeTot/contRtcRoutine;
     else 
-      rtcTimeTot = -999;
-        
+      rtcTimeTot = -999;        
 }
 
 void resetCounters()

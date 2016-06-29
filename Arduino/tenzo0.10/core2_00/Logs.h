@@ -29,7 +29,7 @@ class Logs
       void logGps(String,String);
       
     void logSetpoint(float);
-    void logWcet(float,int);
+    void logWcet(float,int,String);
     void logSession();
 
     /*
