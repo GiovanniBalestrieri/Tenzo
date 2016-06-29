@@ -5,11 +5,12 @@
 */
 #ifndef LOGS_H
 #define LOGS_H
+#include "logPaths.h"
   
 #include <SD.h>
 #include <RTClib.h>
 
-extern char logPath[],wcetPath[],warningPath[],errorPath[];
+extern const char logPath[],wcetPath[],warningPath[],errorPath[];
 
 class Logs
 {

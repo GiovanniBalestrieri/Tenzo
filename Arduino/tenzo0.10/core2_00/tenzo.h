@@ -19,6 +19,7 @@
 #include "Scheduler.h"
 #include "Sonar.h"
 #include "RTClib.h"
+#include "Logs.h"
 
 volatile int bestId;
 

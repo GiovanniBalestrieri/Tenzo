@@ -23,6 +23,9 @@ Sonar ux1 = Sonar();
 // Init RTC
 RTC_DS1307 RTC;
 DateTime now;
+
+// Init Log
+Logs logger = Logs();
         
 // Init scheduler with MAX_TASKS
 Scheduler scheduler = Scheduler(MAX_TASKS);
@@ -146,6 +149,17 @@ void setupRTC()
   }
 }
 
+void setupLog()
+{
+  logger.init();
+}
+
+void setupPropulsion()
+{
+  tenzoProp.calibrateOnce();
+  tenzoProp.init();  
+}
+
 void setup() {
   setupPinOut();
   setupCommunication();
@@ -156,9 +170,9 @@ void setup() {
   scheduler.initTaskset(); 
   scheduler.createTasks();
   setupCtx();  
+  setupPropulsion();
+  setupLog();   
   sakura.welcome();
-  tenzoProp.calibrateOnce();
-  tenzoProp.init();     
 }
 
 void getYPR()
