@@ -35,8 +35,21 @@ boolean Logs::init()
     errorFile.close();
     File wcetFile = SD.open(wcetPath, FILE_WRITE);
     wcetFile.close();
+
+    this->sessionStart();
   }  
   return cardOK;
+}
+
+/*
+ * Log the start of the new session with date from RTC
+ */
+void Logs::sessionStart()
+{  
+    this->logSessionFile(logPath);
+    this->logSessionFile(errorPath);
+    this->logSessionFile(warningPath);
+    this->logSessionFile(wcetPath);
 }
 
 /*
