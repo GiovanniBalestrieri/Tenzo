@@ -5,14 +5,12 @@
 */
 #ifndef LOGS_H
 #define LOGS_H
+#include "logPaths.h"
   
 #include <SD.h>
 #include <RTClib.h>
 
-const char logPath[] = "arduino/log.txt";
-const char errorPath[] = "arduino/error.txt";
-const char warningPath[] = "arduino/warning.txt";
-const char wcetPath[] = "arduino/wcet.txt";
+extern const char logPath[],wcetPath[],warningPath[],errorPath[];
 
 class Logs
 {
@@ -33,6 +31,7 @@ class Logs
     void logSetpoint(float);
     void logWcet(float,int,String);
     void logSession();
+    void logSessionFile(String);
 
     /*
      * Check and Creates Files
@@ -57,10 +56,12 @@ class Logs
      * Open Close Methods
      */
      void closeLogFile();
+     void closeFile();
      void closeErrorFile();
      void closeWarningFile();
      void closeWcetFile();
      
+     void openFile(String);
      void openLogFile();
      void openErrorFile();
      void openWarningFile();
@@ -72,6 +73,7 @@ class Logs
     File warningFile;
     File errorFile;
     File wcetFile;
+    File file;
 
     DateTime now_instant;
     

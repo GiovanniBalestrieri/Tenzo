@@ -12,9 +12,7 @@
 
 Logs::Logs()
 {
-  extern RTC_DS1307 RTC;
-  
-  
+  extern RTC_DS1307 RTC;  
 }
 
 boolean Logs::init()
@@ -225,6 +223,43 @@ void Logs::logSession()
   }  
 }
 
+
+/*
+ * Log Session Data
+ */
+void Logs::logSessionFile(String path)
+{
+  if (this->cardOK && this->checkFileLog())
+  {
+    now_instant = RTC.now();
+
+    // this method opens a file and saves the object in a the public File file variable
+    this->openFile(path);
+    
+    logFile.print(" Session ");
+    logFile.print(now_instant.day());
+    logFile.print('/');
+    //We print the month
+    logFile.print(now_instant.month());
+    logFile.print('/');
+    //We print the year
+    logFile.print(now_instant.year());
+    logFile.print(' ');
+    //We print the hour
+    logFile.print(now_instant.hour());
+    logFile.print(':');
+    //We print the minutes
+    logFile.print(now_instant.minute());
+    logFile.print(':');
+    //We print the seconds
+    logFile.print(now_instant.second());
+    logFile.println();
+
+    // Needs to be closed to free the resource
+    this->closeFile();  
+  }  
+}
+
 /*
  * Checks File existence
  */
@@ -319,6 +354,16 @@ void Logs::openLogFile()
 void Logs::closeLogFile()
 {
   logFile.close();
+}
+
+void Logs::openFile(String a)
+{
+  file = SD.open(a,FILE_WRITE);
+}
+
+void Logs::closeFile()
+{
+  file.close();
 }
 
 void Logs::openErrorFile()
