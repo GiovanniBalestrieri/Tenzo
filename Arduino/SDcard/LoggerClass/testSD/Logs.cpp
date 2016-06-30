@@ -36,7 +36,7 @@ boolean Logs::init()
     File wcetFile = SD.open(wcetPath, FILE_WRITE);
     wcetFile.close();
 
-    this->sessionStart();
+    sessionStart();
   }  
   return cardOK;
 }
@@ -50,6 +50,77 @@ void Logs::sessionStart()
     this->logSessionFile(errorPath);
     this->logSessionFile(warningPath);
     this->logSessionFile(wcetPath);
+}
+
+
+/*
+ * Log Session Data
+ */
+void Logs::logSession()
+{
+  if (this->cardOK && this->checkFileLog())
+  {
+    now_instant = RTC.now();
+
+    this->openLogFile();
+    
+    logFile.print(" Session ");
+    logFile.print(now_instant.day());
+    logFile.print('/');
+    //We print the month
+    logFile.print(now_instant.month());
+    logFile.print('/');
+    //We print the year
+    logFile.print(now_instant.year());
+    logFile.print(' ');
+    //We print the hour
+    logFile.print(now_instant.hour());
+    logFile.print(':');
+    //We print the minutes
+    logFile.print(now_instant.minute());
+    logFile.print(':');
+    //We print the seconds
+    logFile.print(now_instant.second());
+    logFile.println();
+    
+    this->closeLogFile();  
+  }  
+}
+
+/*
+ * Log Session Data
+ */
+void Logs::logSessionFile(String path)
+{
+  if (this->cardOK && this->checkFileLog())
+  {
+    now_instant = RTC.now();
+
+    // this method opens a file and saves the object in a the public File file variable
+    File file = this->openFile(path);
+    
+    file.print(" Session ");
+    file.print(now_instant.day());
+    file.print('/');
+    //We print the month
+    file.print(now_instant.month());
+    file.print('/');
+    //We print the year
+    file.print(now_instant.year());
+    file.print(' ');
+    //We print the hour
+    file.print(now_instant.hour());
+    file.print(':');
+    //We print the minutes
+    file.print(now_instant.minute());
+    file.print(':');
+    //We print the seconds
+    file.print(now_instant.second());
+    file.println();
+
+    // Needs to be closed to free the resource
+    closeFile(file);  
+  }  
 }
 
 /*
@@ -202,76 +273,6 @@ void Logs::logWcet(float val,int taskID,String label)
 }
       
 
-/*
- * Log Session Data
- */
-void Logs::logSession()
-{
-  if (this->cardOK && this->checkFileLog())
-  {
-    now_instant = RTC.now();
-
-    this->openLogFile();
-    
-    logFile.print(" Session ");
-    logFile.print(now_instant.day());
-    logFile.print('/');
-    //We print the month
-    logFile.print(now_instant.month());
-    logFile.print('/');
-    //We print the year
-    logFile.print(now_instant.year());
-    logFile.print(' ');
-    //We print the hour
-    logFile.print(now_instant.hour());
-    logFile.print(':');
-    //We print the minutes
-    logFile.print(now_instant.minute());
-    logFile.print(':');
-    //We print the seconds
-    logFile.print(now_instant.second());
-    logFile.println();
-    
-    this->closeLogFile();  
-  }  
-}
-
-
-/*
- * Log Session Data
- */
-void Logs::logSessionFile(String path)
-{
-  if (this->cardOK && this->checkFileLog())
-  {
-    now_instant = RTC.now();
-
-    // this method opens a file and saves the object in a the public File file variable
-    this->openFile(path);
-    
-    logFile.print(" Session ");
-    logFile.print(now_instant.day());
-    logFile.print('/');
-    //We print the month
-    logFile.print(now_instant.month());
-    logFile.print('/');
-    //We print the year
-    logFile.print(now_instant.year());
-    logFile.print(' ');
-    //We print the hour
-    logFile.print(now_instant.hour());
-    logFile.print(':');
-    //We print the minutes
-    logFile.print(now_instant.minute());
-    logFile.print(':');
-    //We print the seconds
-    logFile.print(now_instant.second());
-    logFile.println();
-
-    // Needs to be closed to free the resource
-    this->closeFile();  
-  }  
-}
 
 /*
  * Checks File existence
@@ -369,14 +370,14 @@ void Logs::closeLogFile()
   logFile.close();
 }
 
-void Logs::openFile(String a)
+File Logs::openFile(String a)
 {
-  file = SD.open(a,FILE_WRITE);
+  return SD.open(a,FILE_WRITE);
 }
 
-void Logs::closeFile()
+void Logs::closeFile(File a)
 {
-  file.close();
+  a.close();
 }
 
 void Logs::openErrorFile()

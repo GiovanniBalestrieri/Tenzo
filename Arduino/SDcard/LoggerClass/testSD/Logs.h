@@ -57,12 +57,12 @@ class Logs
      * Open Close Methods
      */
      void closeLogFile();
-     void closeFile();
+     void closeFile(File);
      void closeErrorFile();
      void closeWarningFile();
      void closeWcetFile();
      
-     void openFile(String);
+     File openFile(String);
      void openLogFile();
      void openErrorFile();
      void openWarningFile();
