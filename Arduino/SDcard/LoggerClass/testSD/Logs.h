@@ -32,6 +32,7 @@ class Logs
     void logWcet(float,int,String);
     void logSession();
     void logSessionFile(String);
+    void sessionStart();
 
     /*
      * Check and Creates Files
