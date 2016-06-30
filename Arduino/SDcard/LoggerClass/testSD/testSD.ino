@@ -57,7 +57,7 @@ void deleteFile(String path)
   myFile = SD.open(path, FILE_WRITE);
   if (myFile)
   {
-    Serial.println("Writing to file1.txt.");
+    Serial.println("File created");
     sd_answer = myFile.println("DELETED");
     sd_answer = myFile.println(myFile);
     myFile.close();
