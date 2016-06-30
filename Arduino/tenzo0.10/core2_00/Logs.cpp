@@ -12,16 +12,7 @@
 
 Logs::Logs()
 {
-  extern RTC_DS1307 RTC;
-  
-  File logFile = SD.open(logPath, FILE_WRITE);
-  logFile.close();
-  File warningFile = SD.open(warningPath, FILE_WRITE);
-  warningFile.close();
-  File errorFile = SD.open(errorPath, FILE_WRITE);
-  errorFile.close();
-  File wcetFile = SD.open(wcetPath, FILE_WRITE);
-  wcetFile.close();
+  extern RTC_DS1307 RTC;  
 }
 
 boolean Logs::init()
@@ -36,6 +27,14 @@ boolean Logs::init()
   else 
   {
     cardOK = true;
+    File logFile = SD.open(logPath, FILE_WRITE);
+    logFile.close();
+    File warningFile = SD.open(warningPath, FILE_WRITE);
+    warningFile.close();
+    File errorFile = SD.open(errorPath, FILE_WRITE);
+    errorFile.close();
+    File wcetFile = SD.open(wcetPath, FILE_WRITE);
+    wcetFile.close();
   }  
   return cardOK;
 }
@@ -45,7 +44,7 @@ boolean Logs::init()
  */
 void Logs::logStates(int initialized, int hovering, int landed)
 {
-  if (this->cardOK && this->checkFilesExistence)
+  if (this->cardOK && this->checkFileLog())
   {
     this->openLogFile();
     logFile.print("S,");
@@ -64,7 +63,7 @@ void Logs::logStates(int initialized, int hovering, int landed)
  */
 void Logs::logAcc(float x,float y,float z)
 {
-  if (this->cardOK && this->checkFilesExistence)
+  if (this->cardOK && this->checkFileLog())
   {
     this->openLogFile();
     logFile.print("Acc,");
@@ -84,7 +83,7 @@ void Logs::logAcc(float x,float y,float z)
  */
 void Logs::logGyro(float x,float y,float z)
 {
-  if (this->cardOK && this->checkFilesExistence)
+  if (this->cardOK && this->checkFileLog())
   {
     this->openLogFile();
     logFile.print("Gyro,");
@@ -104,7 +103,7 @@ void Logs::logGyro(float x,float y,float z)
  */
 void Logs::logOrientation(float x,float y,float z)
 {
-  if (this->cardOK && this->checkFilesExistence)
+  if (this->cardOK && this->checkFileLog())
   {
     this->openLogFile();
     logFile.print("EstAngle,");
@@ -124,7 +123,7 @@ void Logs::logOrientation(float x,float y,float z)
  */
 void Logs::logAltitude(float a)
 {
-  if (this->cardOK && this->checkFilesExistence)
+  if (this->cardOK && this->checkFileLog())
   {
     this->openLogFile();
     logFile.print("altitude,");
@@ -141,7 +140,7 @@ void Logs::logAltitude(float a)
  */
 void Logs::logGps(String lat, String lon)
 {
-  if (this->cardOK && this->checkFilesExistence)
+  if (this->cardOK && this->checkFileLog())
   {
     this->openLogFile();
     logFile.print("gps,");
@@ -159,7 +158,7 @@ void Logs::logGps(String lat, String lon)
  */
 void Logs::logSetpoint(float altSet)
 {
-  if (this->cardOK && this->checkFilesExistence)
+  if (this->cardOK && this->checkFileLog())
   {
     this->openLogFile();
     logFile.print("AltSetpt,");
@@ -175,7 +174,7 @@ void Logs::logSetpoint(float altSet)
  */
 void Logs::logWcet(float val,int taskID,String label)
 {
-  if (this->cardOK && this->checkFilesExistence)
+  if (this->cardOK && this->checkFileWcet())
   {
     this->openWcetFile();
     wcetFile.print("Task:");
@@ -195,7 +194,7 @@ void Logs::logWcet(float val,int taskID,String label)
  */
 void Logs::logSession()
 {
-  if (this->cardOK && this->checkFilesExistence)
+  if (this->cardOK && this->checkFileLog())
   {
     now_instant = RTC.now();
 
