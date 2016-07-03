@@ -20,6 +20,8 @@
 #include "Sonar.h"
 #include "RTClib.h"
 #include "Logs.h"
+#include "MelodyUtils.h"
+#include "Pitches.h"
 
 volatile int bestId;
 
