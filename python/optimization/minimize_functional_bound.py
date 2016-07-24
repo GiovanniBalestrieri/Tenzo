@@ -14,21 +14,21 @@ import matplotlib.pyplot as plt
 # [ a21 a22]     [ -1 -2 ]
 
 a11 = 0
-a12 = 1
-a21 = -1
-a22 = -2
+a12 = 0
+a21 = 0
+a22 = 0
 
 def pend(X, t, a11, a12, a21, a22):
-     dydt = [a11*X[0] + a12*X[1], a21*X[0] + a22*X[1]]
+     dydt = [a11*X[0] + a12*X[1] + 0, a21*X[0] + a22*X[1] + 2]
      return dydt
 
 
 def main():
-	a_t = np.arange(0, 25.0, 0.01)
-	asol = integrate.odeint(pend, [1, 0], a_t, args=(a11,a12,a21,a22))
+	a_t = np.arange(0, 10.0, 0.01)
+	asol = integrate.odeint(pend, [4, 0], a_t, args=(a11,a12,a21,a22))
 	print(asol)
-	plt.plot(a_t, asol[:, 0], 'b', label='theta(t)')
-	plt.plot(a_t, asol[:, 1], 'g', label='omega(t)')
+	plt.plot(a_t, asol[:, 0], 'b', label='x1(t)')
+	plt.plot(a_t, asol[:, 1], 'g', label='x2(t)')
 	plt.legend(loc='best')
 	plt.xlabel('t')
 	plt.grid()
