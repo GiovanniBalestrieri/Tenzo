@@ -14,17 +14,16 @@ def pend(X, t):
 
 def main():
 	#a_t = np.arange(0, 25.0, 0.01)
-	X1 = np.linspace(0,2,101)
+	X1 = np.linspace(0,4,101)
 	#T = np.array([X1,X2,X3,X4])
 	#print(X1)
 	X0 = [1,1,1,1]
 	print(X0)
 	print(pend(X0,1))
 	
-	#a_t = np.mgrid[0:10.0:0.01,0:10:0.01,0:10:0.01,0:10:0.01]  
-	#print(a_t[0])
 	asol = integrate.odeint(pend,[0,0,1,1], X1)
-	#print(asol)
+	
+	# Plot solutions
 	plt.plot(X1, asol[:, 0], 'b', label='X(t)')
 	plt.plot(X1, asol[:, 1], 'g', label='Y(t)')
 	plt.plot(X1, asol[:, 2], 'b*', label='vX(t)')
