@@ -21,7 +21,7 @@ def main():
 	print(X0)
 	print(pend(X0,1))
 	
-	asol = integrate.odeint(pend,[0,0,1,1], X1)
+	asol = integrate.odeint(pend,[1,1,0.3,0.5], X1)
 	
 	# Plot solutions
 	plt.plot(X1, asol[:, 0], 'b', label='X(t)')
