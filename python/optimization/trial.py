@@ -10,20 +10,20 @@ import matplotlib.pyplot as plt
 
 # Minimun distance
 def pend(X, t):
-     dydt = [ X[1],X[1]**2/(1+X[1]**2) ]
+     dydt = [ X[1],X[1]**4/(1+X[1]**2) ]
      return dydt
 
 
 def main():
 	#a_t = np.arange(0, 25.0, 0.01)
-	X1 = np.linspace(0,4,101)
+	X1 = np.linspace(0,4,131)
 	#T = np.array([X1,X2,X3,X4])
 	#print(X1)
 	X0 = [1,1]
 	print(X0)
 	print(pend(X0,1))
 	
-	asol = integrate.odeint(pend,[5,0.1], X1)
+	asol = integrate.odeint(pend,[5,0.45], X1)
 	
 	# Plot solutions
 	plt.plot(X1, asol[:, 0], 'b', label='X(t)')
