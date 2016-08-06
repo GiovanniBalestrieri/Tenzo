@@ -1,59 +1,72 @@
-#!/usr/bin/python
+import scikits.bvp_solver
+import numpy,math
 
-from math import *
-from sympy import *
-import numpy as np
-import scipy.integrate as integrate
-from scipy.optimize import minimize_scalar,minimize
-import matplotlib.pyplot as plt
+# next we define the important constants
+X1T0 = 0
+X1Tf = 5
+X2Tf = 7
+TF = 4
+U = 1.0
 
+"""
+Then we define the callback function which evaluates the ODEs. The first argument of this function gets the independent variable,
+in our case A, and the second argument gets an array of the values of the dependent variables, in our case, T_1 and T_2.
+If the boundary value problem includes unknown parameters, then a third argument gets the values of the unknown parameters,
+but since this problem does not deal with unknown parameters, the function can only have 2 arguments. In this problem
+we will have the first variable of the dependent variable array represent stream 1 (the hot liquid).
 
-# Minimun distance
-def pend(X, t):
-     dydt = [ X[1],X[1]**4/(1+X[1]**2) ]
-     return dydt
+This function must return a numpy array that contains the value of the first derivative of each dependent variable. These
+must be in the same order as the dependent variable array.
+"""
+arg1 = 0 
+arg2 = 1
+def function(a , T):
+    return numpy.array([T[1] ,        # evaluate dT1/dA
+                        T[0]*arg1 - (T[1]/math.sqrt(1+T[1]**2))*arg2])    # evaluate dT2/dA
 
+"""
+To finish the problem definition, we define the define the callback function which evaluates the difference between the actual
+boundary conditions and the required boundary conditions. The first argument this function receives is an array of the values
+of the dependent variables (here T_1 and T_2) at the left boundary condition. The second argument this function receives is
+an array of the values of the dependent variables (here T_1 and T_2) at the right boundary condition.
 
-def main():
-	#a_t = np.arange(0, 25.0, 0.01)
-	X1 = np.linspace(0,4,131)
-	#T = np.array([X1,X2,X3,X4])
-	#print(X1)
-	X0 = [1,1]
-	print(X0)
-	print(pend(X0,1))
-	
-	asol = integrate.odeint(pend,[5,0.45], X1)
-	
-	# Plot solutions
-	plt.plot(X1, asol[:, 0], 'b', label='X(t)')
-	plt.plot(X1, asol[:, 1], 'g', label='Y(t)')
-	plt.legend(loc='best')
-	plt.xlabel('t')
-	plt.grid()
-	plt.show()	
+This function must return two numpy arrays that contains the difference between the actual boundary conditions and the required
+boundary conditions. The first return array must contain these differences for all boundary conditions on the left, and second
+return array must contain these differences for all boundary conditions on the right. The sizes of these arrays must add up to
+the total number of ODEs plus the number of unknown parameters. Both these arrays must be in the same order as the dependent
+variable arrays (which is the same as in the first function).
+"""
+def boundary_conditions(Ta,Tb):
 
-if __name__ == '__main__':
-    main()
+    return (numpy.array([Ta[0] - X1T0]),  #evaluate the difference between the temperature of the hot stream on the
+                                         #left and the required boundary condition
+            numpy.array([Tb[1] - X2Tf]))#evaluate the difference between the temperature of the cold stream on the
+                                         #right and the required boundary condition
 
-#cons = ({'type': 'ineq', 'fun': lambda x:  x[0] - 2 * x[1] + 2},{'type': 'ineq', 'fun': lambda x: -x[0] - 2 * x[1] + 6},{'type': 'ineq', 'fun': lambda x: -x[0] + 2 * x[1] + 2})
+"""
+Next we create the ProblemDefinition object, by passing the relevant information and callbacks to its constructor.
+"""
+problem = scikits.bvp_solver.ProblemDefinition(num_ODE = 2,
+                                      num_parameters = 0,
+                                      num_left_boundary_conditions = 1,
+                                      boundary_points = (0, TF),
+                                      function = function,
+                                      boundary_conditions = boundary_conditions)
 
-#bnds = ((0, None), (0, None))
+solution = scikits.bvp_solver.solve(problem,
+                            solution_guess = ((X1T0 + X1Tf)/2.0,
+                                              (X1T0 + X1Tf)/2.0))
+"""
+The "solve" function returns a Solution object which can be passed an array of points at which to evaluate the solution.
+"""
+A = numpy.linspace(0,TF, 45)
+T = solution(A)
+print T
 
-#def fcn(x):
-	#return (x[0] - 1)**2 + (x[1] - 2.5)**2
-#	return sqrt(1+diff(x,x)^2)
-
-#def objfunctional(tf):
-#        res = integrate.quad(function,0,tf)
-        #print("Integrating ...\n Solution:")
-        #print(res)
-#        return res[0]
-
-#def mini():
-#        res = minimize(objfunctional,bounds=(0,4),method='bounded')
-#        return res
-#res = minimize(fcn, (2, 0), method='SLSQP')#, bounds=bnds)#,constraints=cons)
-
-#print(res)
-
+"""
+We can plot the solution using pylab with the following code
+"""
+import pylab
+pylab.plot(A, T[0,:],'-')
+pylab.plot(A, T[1,:],'-')
+pylab.show()
