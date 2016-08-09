@@ -1,11 +1,11 @@
 import scikits.bvp_solver
 import numpy,math
 
-# next we define the important constants
-X1T0 = 0
-X1Tf = 10
-X2Tf = 2
-TF = math.pi/2
+# next we define the boundary conditions and the final time
+X1T0 = 41
+X1Tf = -82
+X2Tf = 3
+TF = 4
 
 """
 Then we define the callback function which evaluates the ODEs. The first argument of this function gets the independent variable,

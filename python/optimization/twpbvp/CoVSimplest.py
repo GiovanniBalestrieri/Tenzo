@@ -3,18 +3,19 @@ import numpy,math
 
 # next we define the important constants
 X1T0 = 0
-X1Tf = 10
+X1Tf = 11
 X2T0 = 0
 X2Tf = -2
 TF = 10
-wAltitude, wSpeed = 1,+0.2
+
+wAltitude, wSpeed = 0.1,1
 def function(a , T):
     return numpy.array([T[1] ,        # evaluate dT1/dA
                        (wAltitude/wSpeed)*T[0]])    # evaluate dT2/dAa
 
 def boundary_conditions(Ta,Tb):
     return (numpy.array([Ta[0] - X1T0]),  #evaluate the difference between the temperature of the hot stream on the
-            numpy.array([Tb[1] - X2Tf]))#evaluate the difference between the temperature of the cold stream on the
+            numpy.array([Tb[0] - X1Tf]))#evaluate the difference between the temperature of the cold stream on the
 
 """
 Next we create the ProblemDefinition object, by passing the relevant information and callbacks to its constructor.
@@ -27,12 +28,12 @@ problem = scikits.bvp_solver.ProblemDefinition(num_ODE = 2,
                                       boundary_conditions = boundary_conditions)
 
 solution = scikits.bvp_solver.solve(problem,
-                            solution_guess = ((X1T0 + X2Tf)/2.0,
-                                              (X1T0 + X2Tf)/2.0))
+                            solution_guess = ((X1T0 + X1Tf)/2.0,
+                                              (X2T0 + X2Tf)/2.0))
 """
 The "solve" function returns a Solution object which can be passed an array of points at which to evaluate the solution.
 """
-A = numpy.linspace(0,TF, 101)
+A = numpy.linspace(0,TF, 501)
 T = solution(A)
 print T
 
