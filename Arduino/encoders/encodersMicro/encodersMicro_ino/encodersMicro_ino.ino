@@ -1,7 +1,12 @@
+#include<SoftwareSerial.h>
+
 #define RESOLUTION 128
 
 int encoderPin1 = 2;
 int encoderPin2 = 3;
+
+SoftwareSerial blu(10, 11); // RX, TX 
+
 
 volatile int lastEncoded = 0;
 volatile long encoderValue = 0;
@@ -14,6 +19,7 @@ double angle;
 
 void setup() {
   Serial.begin (9600);
+  blu.begin(9600);
 
   pinMode(encoderPin1, INPUT); 
   pinMode(encoderPin2, INPUT);
@@ -26,13 +32,36 @@ void setup() {
   attachInterrupt(2, updateEncoder, CHANGE); 
   attachInterrupt(3, updateEncoder, CHANGE);
 
+
+  
+  blu.println("Setup Completed");
+  Serial.println("Setup Completed");
+
 }
 
 void loop()
 { 
   convertTicksToAngle();
   serialRoutine();
+  bluRoutine();
   delay(1000);
+}
+
+void bluRoutine()
+{
+  if (blu.available()>0)
+  {
+    Serial.println("Received command via BT");
+    char t =  blu.read();
+    if (t=='a')
+    {
+      blu.print("e,");
+      blu.print(angle);
+      blu.print(",");
+      blu.print(encoderValue);
+      blu.println(",z");
+    }
+  }
 }
 
 void convertTicksToAngle()
@@ -55,8 +84,8 @@ void serialRoutine()
 
 void updateEncoder()
 {
-  int MSB = digitalRead(0); //MSB = most significant bit
-  int LSB = digitalRead(1); //LSB = least significant bit
+  int MSB = digitalRead(2); //MSB = most significant bit
+  int LSB = digitalRead(3); //LSB = least significant bit
 
   int encoded = (MSB << 1) |LSB; //converting the 2 pin value to single number
   int sum  = (lastEncoded << 2) | encoded; //adding it to the previous encoded value
