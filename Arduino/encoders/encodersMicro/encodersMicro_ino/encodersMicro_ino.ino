@@ -18,6 +18,7 @@ int lastLSB = 0;
 double angle;
 
 boolean matlab = false;
+boolean requested = false;
 
 void setup() {
   Serial.begin (9600);
@@ -58,7 +59,8 @@ void bluRoutine()
     Serial.println(t);
     if (t=='a')
     {
-      printBluAngles();
+      requested = true;
+      //printBluAngles();
     }
     else if (t=='c')
     {
@@ -67,6 +69,7 @@ void bluRoutine()
       blu.print("K");
       Serial.println("ACK sent: 'K'");
       matlab = true;
+      Serial.println("Matlba = True");
     }
     else if (t=='X')
     {
@@ -74,6 +77,8 @@ void bluRoutine()
       Serial.println("CPanel Disconnect...");
       blu.print("X");
       Serial.println("ACK sent: 'X'");
+      matlab = false;
+      Serial.println("Matlba = False");
     }
     else if (t=='r')
       encoderValue = 0;
@@ -96,8 +101,10 @@ void serialRoutine()
  Serial.print(angle);
  Serial.print("\tValue: encoded: ");
  Serial.println(encoderValue);
- if (matlab)
+ if (matlab && requested)
+ {
   printBluAngles();
+ }
 }
 
 void updateEncoder()
@@ -123,4 +130,5 @@ void printBluAngles()
   blu.print(",");
   blu.print(encoderValue);
   blu.println(",z");
+  requested = false;
 }

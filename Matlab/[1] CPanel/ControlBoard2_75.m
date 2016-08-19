@@ -1890,7 +1890,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
             % if the set of such objects is not(~) empty
             if (~isempty(oldSerial))  
-                disp('WARNING:  port in use.  Closing.')
+                disp('Report:  Closing previous port /dev/rfcomm2.')
                 delete(oldSerial)
             end
 
@@ -1999,15 +1999,16 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             end
 
             % Testing Wireless communication
-            timerXbee = timer('ExecutionMode','FixedRate','Period',0.1,'TimerFcn',{@storeDataFromSerial});
-            try
-                start(timerXbee);  
-            catch
-                disp '******** InstrumentSubscription ERROR *********'
-                disp (exception.message);
-                disp '***********************************************'
+            if isempty(timerXbee)
+                timerXbee = timer('ExecutionMode','FixedRate','Period',0.1,'TimerFcn',{@storeDataFromSerial});
+                try
+                    start(timerXbee);  
+                catch
+                    disp '******** InstrumentSubscription ERROR *********'
+                    disp (exception.message);
+                    disp '***********************************************'
+                end
             end
-            
             % variable tenzo defines the connection status
             tenzo = false;
             
@@ -2543,7 +2544,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
        
         % New connection:
         if (vitruvio == false) && ~strcmp(mess,'')
-            if (strcmp(mess,'K') && vitruvioConnectionRequested)
+                if (strcmp(mess,'K') && vitruvioConnectionRequested)
                 vitruvio = true;
                 set(handles.connectVitruviano,'String','Vitruviano');
                 set(handles.conVitruvioTxt,'ForegroundColor', [.21 .96 .07],'String','Vitruvio');    
@@ -2573,7 +2574,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 disp('Connection closed...');
                 if speakCmd && vocalVerb>=1 
                     %tts('Connection closed',voice);
-                    Speak('Connection with Vitruvio closed',girls,rateVoice,volumeVoice,pitchVoice,langEn);
+                    Speak('Connection closed',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                 end
                 stop(timerVitruviano);
                 fclose(vitruvio);
