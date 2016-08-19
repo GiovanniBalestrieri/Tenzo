@@ -51,16 +51,29 @@ void bluRoutine()
 {
   if (blu.available()>0)
   {
-    Serial.println("Received command via BT");
+    Serial.print("Received command via BT:\t");
     char t =  blu.read();
+    Serial.println(t);
     if (t=='a')
     {
-      blu.print("e,");
-      blu.print(angle);
-      blu.print(",");
-      blu.print(encoderValue);
-      blu.println(",z");
+      printBluAngles();
     }
+    else if (t=='c')
+    {
+      // Connection request from CPanel
+      Serial.println("CPanel connection...");
+      blu.print("K");
+      Serial.println("ACK sent: 'K'");
+    }
+    else if (t=='X')
+    {
+      // Connection request from CPanel
+      Serial.println("CPanel Disconnect...");
+      blu.print("X");
+      Serial.println("ACK sent: 'X'");
+    }
+    else if (t=='r')
+      encoderValue = 0;
   }
 }
 
@@ -80,6 +93,7 @@ void serialRoutine()
  Serial.print(angle);
  Serial.print("\tValue: encoded: ");
  Serial.println(encoderValue);
+ printBluAngles();
 }
 
 void updateEncoder()
@@ -96,4 +110,13 @@ void updateEncoder()
     encoderValue --;
 
   lastEncoded = encoded; //store this value for next time
+}
+
+void printBluAngles()
+{
+  blu.print("e,");
+  blu.print(angle);
+  blu.print(",");
+  blu.print(encoderValue);
+  blu.println(",z");
 }

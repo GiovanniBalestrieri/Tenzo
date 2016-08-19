@@ -7,14 +7,18 @@ global version;
 version = 2.70;
 
 global xbee;
+global vitruviano;
 global portWin;
 global portUnix;
+global portUnixVitruviano;
 global xbeeBR;
+global vitruvianoBR;
 global terminator;
 global inputBuffSize;
 global outputBuffSize;
 global tag;
 global tenzo;
+global vitruvio;
 global matlabAdd;
 global arduinoAdd;
 global versionProtocol;
@@ -177,6 +181,8 @@ global recording;
 global plotting;
 global asked;
 global axdata;
+global phidata;
+global thetadata;
 global aydata;
 global azdata;
 global axdataDa;
@@ -195,6 +201,7 @@ global serial1;
 global serial0;
 global serial2;
 global tenzoConnectionRequested;
+global vitruvioConnectionRequested;
 global accTag;
 global timerTag;
 global gyroTag;
@@ -353,7 +360,9 @@ arduinoAdd = 1;
 matlabAdd = 2;
 portWin = 'Com3';
 portUnix = '/dev/rfcomm0';
+portUnixVitruviano = '/dev/rfcomm2';
 xbeeBR = 115200;
+vitruvianoBR = 9600;
 % buffer size should be the same as the one specified on the Arduino side
 inputBuffSize = 47+1;
 outputBuffSize = 31;
@@ -431,6 +440,8 @@ gyFdata = zeros(buf_len,1);
 gzFdata = zeros(buf_len,1);
 axdata = zeros(buf_len,1);
 aydata = zeros(buf_len,1);
+phidata = zeros(buf_len,1);
+thetadata = zeros(buf_len,1);
 azdata = zeros(buf_len,1);
 Rdata = zeros(buf_len,1);
 Pdata = zeros(buf_len,1);
@@ -496,7 +507,7 @@ accTimer = timer('ExecutionMode','FixedRate','Period',accFreq,'TimerFcn',{@graph
 %% Delete all serial connections
 delete(instrfindall)
 clear('xbee');
-
+clear('vitruviano');
 %% create tabbed GUI
 handles.hFig = figure('Menubar','none');
 s = warning('off', 'MATLAB:uitabgroup:OldVersion');
@@ -544,6 +555,11 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             if ~tenzo
                 disp('Connection required!');
                 warndlg('Usb Cable required to acquire data','Attention');
+            end
+            if ~vitruvio
+                disp('Vitruviano not connected. Please connect first');
+                
+                warndlg('Usb Cable required','Vitruviano');
             end
         end
     end
@@ -679,13 +695,23 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         'Position', [350 210 120 30],...
         'Parent',hTabs(1), 'Callback',@landCallback);
     
+    
     handles.conTxt = uicontrol('Style','text', 'String','Offline','ForegroundColor',[.99 .183 0.09], ...
         'Position', [70 20 100 30],...
         'Parent',hTabs(1), 'FontSize',13,'FontWeight','bold');
     
+    handles.conVitruvioTxt = uicontrol('Style','text', 'String','Vitruvio Off','ForegroundColor',[.99 .183 0.09], ...
+        'Position', [70 70 100 30],...
+        'Parent',hTabs(1), 'FontSize',13,'FontWeight','bold');
+    
     handles.connect = uicontrol('Style','togglebutton', 'String','Connect', ...
         'Position', [400 20 120 30],'BackgroundColor',[.21 .96 .07],...
-        'Parent',hTabs(1), 'Callback',@connection);        
+        'Parent',hTabs(1), 'Callback',@connection);  
+    
+    
+    handles.connectVitruviano = uicontrol('Style','togglebutton', 'String','Vitruviano', ...
+        'Position', [400 70 120 30],'BackgroundColor',[.21 .96 .07],...
+        'Parent',hTabs(1), 'Callback',@connectionVitruviano); 
     
     %% Control Ui Components
     
@@ -1844,6 +1870,88 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         end
     end
     
+
+    %% 
+
+    %% Handles bluetooth connection
+    % #connectionVitruviano
+    function connectionVitruviano(obj,event,handles) 
+        handles = guidata(gcf);
+        if get(handles.connectVitruviano,'Value') == 1
+            disp('Connecting to Vitruviano 2.0...');
+            
+            %delete(instrfindall);
+            % Check to see if there are existing serial objects 
+            % (instrfind) whos 'Port' property is set to 'COM3'
+
+            oldSerial = instrfind('Port', portUnixVitruviano);
+            % can also use instrfind() with no input arguments to find 
+            % ALL existing serial objects
+
+            % if the set of such objects is not(~) empty
+            if (~isempty(oldSerial))  
+                disp('WARNING:  port in use.  Closing.')
+                delete(oldSerial)
+            end
+
+            %  Setting up serial communication
+            %  If the vitruviano variable doesn't exist, create it
+            if (~exist('vitruviano','var'))
+                vitruviano = serial(portUnixVitruviano,'baudrate',vitruvianoBR,'tag',tag);
+                %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
+
+                % Max wait time
+                set(vitruviano, 'TimeOut', 10);  
+                % One message long buffer
+                set(vitruviano, 'InputBufferSize',inputBuffSize)
+                % Open the serial
+                fopen(vitruviano);    
+            elseif (exist('vitruviano','var') || isempty(vitruviano))
+                %if the xbee serial object exists but it is empty -> recreate it
+                vitruviano = serial(portUnixVitruviano,'baudrate',vitruvianoBR,'tag',tag);
+                %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
+
+                % Max wait time
+                set(vitruviano, 'TimeOut', 10);  
+                % One message long buffer
+                set(vitruviano, 'InputBufferSize',inputBuffSize)
+                % Open the serial
+                fopen(vitruviano);    
+            end
+
+            % Testing Wireless communication
+            timerVitruviano = timer('ExecutionMode','FixedRate','Period',0.1,'TimerFcn',{@storeDataFromSerialVitruviano});
+            try
+                start(timerVitruviano);  
+            catch
+                disp '******** InstrumentSubscription ERROR *********'
+                disp (exception.message);
+                disp '***********************************************'
+            end
+            
+            % variable tenzo defines the connection status
+            vitruvio = false;
+            
+            if (serial2)
+                cmd = 'c';
+                %sendNMess(cmd);
+                sendVitruvianoMess(cmd);
+                vitruvioConnectionRequested = true;
+            end            
+        end
+
+        if get(handles.connectVitruviano,'Value') == 0
+            disp ('Disconnecting...');             
+            vitruvio = false;           
+            
+            if (serial2)
+                cmd = 'X';
+                sendVitruvianoMess(cmd);
+            end
+            
+            set(handles.connectVitruviano,'String','Connect V');
+        end 
+    end
     %% Handles bluetooth connection
     % #connection
     function connection(obj,event,handles) 
@@ -1948,6 +2056,12 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         %xbee.ValuesSent
     end
 
+    function sendVitruvianoMess(obj)
+        fprintf(vitruviano,obj);
+        disp('Sending to vitruviano');
+        disp(obj);
+    end
+
     %% Send topics
     function sendMess(obj)
         % Build the message Header + Command (only one command at the time)
@@ -2032,7 +2146,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         
         % Requests data only if previous ones have been received and plotted
         
-        if estReceived || anglesRequested
+        if estReceived || anglesRequested5
             if (serial1 || serial0)
                 %Initialize the cmd array
                 cmd = zeros(8,4,'uint8');
@@ -2401,7 +2515,131 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         end
     end 
     
+    
+    function storeDataFromSerialVitruviano(obj,event,handles)
+        handles = guidata(gcf);
+        while (get(vitruviano, 'BytesAvailable')~=0)
+            if (serial2)
+                serialProtocol2Vitruviano();
+            end
+        end
+    end 
+
     %% Serial Protocol 2.0 Bluetooth
+    
+    % #bluetooth #vitruviano
+    function serialProtocol2Vitruviano()
+        [mess,count] = fscanf(vitruviano);
+        
+        disp('[Vitruviano] Reading incoming buffer. Dim:');
+        % Debug stuff
+        disp(count);
+        
+        disp(mess); 
+        
+        if count > 0
+            mess = deblank(mess);
+        end
+       
+        % New connection:
+        if (vitruvio == false) && ~strcmp(mess,'')
+            if (strcmp(mess,'K') && vitruvioConnectionRequested)
+                vitruvio = true;
+                set(handles.connectVitruviano,'String','Vitruviano');
+                set(handles.conVitruvioTxt,'ForegroundColor', [.21 .96 .07],'String','Vitruvio');    
+                disp ('Connection with Vitruviano 2.0 established. Rock & Roll!'); 
+                if speakCmd && vocalVerb>=1 
+                        %tts('Connessione eseguita',voice);
+                        %tts('Connection Established',voice);
+                        Speak('Vitruviano Connected',girls,rateVoice,volumeVoice,pitchVoice,langEn);
+                end
+                tenzoConnectionRequested = false;
+            elseif (~strcmp(mess,'K') &&  tenzoConnectionRequested)
+                vitruvio = false;
+                set(handles.connectVitruviano,'BackgroundColor',[.21 .96 .07],'String','Vitruvio');
+                set(handles.conVitruvioTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
+                if speakCmd && vocalVerb>=1 
+                        %tts('Problema di connessione',voice);
+                        %tts('Connection problem',voice);
+                        Speak('Vitruviano problem',girls,rateVoice,volumeVoice,pitchVoice,langEn);
+                end
+                disp ('Vitruviano problem');            
+            elseif (strcmp(mess,'X'))
+                vitruvio = false;
+                %delete(timerXbee);
+                %set(connect,'String','Connect');
+                set(handles.connectVitruviano,'BackgroundColor',[.21 .96 .07],'String','Vitruvio');
+                set(handles.conVitruvioTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
+                disp('Connection closed...');
+                if speakCmd && vocalVerb>=1 
+                    %tts('Connection closed',voice);
+                    Speak('Connection with Vitruvio closed',girls,rateVoice,volumeVoice,pitchVoice,langEn);
+                end
+                stop(timerVitruviano);
+                fclose(vitruvio);
+                %clear('vitruvio');
+            end
+        elseif (vitruvio) && ~strcmp(mess,'')    
+            if (strcmp(mess,'X'))
+                vitruvio = false;
+                %delete(timerXbee);
+                %set(connect,'String','Connect');
+                set(handles.connectVitruviano,'BackgroundColor',[.21 .96 .07],'String','Vitruvio');
+                set(handles.conVitruvioTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
+                disp('Connection closed...');
+                if speakCmd && vocalVerb>=1 
+                    %tts('Connection closed',voice);
+                    Speak('Connection with Vitruvio closed',girls,rateVoice,volumeVoice,pitchVoice,langEn);
+                end
+                stop(timerVitruviano);
+                fclose(vitruvio);
+                clear('vitruvio');
+            end
+            if mess(0) ~= 'e'
+                footer = mess(size(mess,2));
+                % if message is correct
+                if footer == footerTag
+                tag = mess(1);
+                    if tag == encTag
+                        %disp('Accelerations');
+                        % Acc time serial
+                        [R,phiVitruvio,thetaVitruvio,t] = strread(mess,'%s%f%f%s',1,'delimiter',',');
+                         %if encoder == true
+                            % Gets Accelerometer data
+                            phidata = [ phidata(2:end) ; double(phiVitruvio) ];
+                            thetadata = [ thetadata(2:end) ; double(thetaVitruvio) ]; 
+                         %end
+
+                         %Plot the X magnitude
+                        h1 = subplot(3,1,1,'Parent',hTabs(3));
+                        if filterAcc
+                            plot(h1,index,phidata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        else
+                            plot(h1,index,phidata,'r','LineWidth',2);
+                        end
+                        grid on;
+
+                        h2 = subplot(3,1,2,'Parent',hTabs(3));
+                        if filterAcc
+                            plot(h2,index,thetadata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        else
+                            plot(h2,index,thetadata,'b','LineWidth',2);
+                        end
+                        grid on;
+                        
+                        %encReceived = true;
+                        if asked
+                            % Write to file
+                            dlmwrite('enc.dat',[phiVitruvio thetaVitruvio],'-append', 'delimiter', ',');
+                        end
+
+                    end
+                end
+            end
+        end
+        
+    end
+    
     % #bluetooth #record #plot
     function serialProtocol2()
         [mess,count] = fscanf(xbee);
