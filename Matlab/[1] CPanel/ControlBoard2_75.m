@@ -2553,17 +2553,17 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                         %tts('Connection Established',voice);
                         Speak('Vitruviano Connected',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                 end
-                tenzoConnectionRequested = false;
-            elseif (~strcmp(mess,'K') &&  tenzoConnectionRequested)
+                vitruvioConnectionRequested = false;
+            elseif (~strcmp(mess,'K') &&  vitruvioConnectionRequested)
                 vitruvio = false;
                 set(handles.connectVitruviano,'BackgroundColor',[.21 .96 .07],'String','Vitruvio');
                 set(handles.conVitruvioTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
-                if speakCmd && vocalVerb>=1 
+                %if speakCmd && vocalVerb>=1 
                         %tts('Problema di connessione',voice);
                         %tts('Connection problem',voice);
-                        Speak('Vitruviano problem',girls,rateVoice,volumeVoice,pitchVoice,langEn);
-                end
-                disp ('Vitruviano problem');            
+                        %Speak('Vitruviano problem',girls,rateVoice,volumeVoice,pitchVoice,langEn);
+                %end
+                disp ('Warning Vitruviano is sending');            
             elseif (strcmp(mess,'X'))
                 vitruvio = false;
                 %delete(timerXbee);
@@ -2632,12 +2632,10 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                             % Write to file
                             dlmwrite('enc.dat',[phiVitruvio thetaVitruvio],'-append', 'delimiter', ',');
                         end
-
                     end
                 end
             end
-        end
-        
+        end        
     end
     
     % #bluetooth #record #plot

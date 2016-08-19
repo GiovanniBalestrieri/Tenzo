@@ -17,6 +17,8 @@ int lastMSB = 0;
 int lastLSB = 0;
 double angle;
 
+boolean matlab = false;
+
 void setup() {
   Serial.begin (9600);
   blu.begin(9600);
@@ -64,6 +66,7 @@ void bluRoutine()
       Serial.println("CPanel connection...");
       blu.print("K");
       Serial.println("ACK sent: 'K'");
+      matlab = true;
     }
     else if (t=='X')
     {
@@ -93,7 +96,8 @@ void serialRoutine()
  Serial.print(angle);
  Serial.print("\tValue: encoded: ");
  Serial.println(encoderValue);
- printBluAngles();
+ if (matlab)
+  printBluAngles();
 }
 
 void updateEncoder()
