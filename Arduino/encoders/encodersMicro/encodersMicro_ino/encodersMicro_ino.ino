@@ -60,7 +60,8 @@ void bluRoutine()
     if (t=='a')
     {
       requested = true;
-      //printBluAngles();
+      if (matlab)
+        printBluAngles();
     }
     else if (t=='c')
     {
@@ -101,10 +102,12 @@ void serialRoutine()
  Serial.print(angle);
  Serial.print("\tValue: encoded: ");
  Serial.println(encoderValue);
- if (matlab && requested)
- {
-  printBluAngles();
- }
+ 
+ 
+ //if (matlab && requested)
+ //{
+  //printBluAngles();
+ //}
 }
 
 void updateEncoder()

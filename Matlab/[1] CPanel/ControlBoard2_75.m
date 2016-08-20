@@ -4,7 +4,7 @@ clc;
 
 % Version
 global version;
-version = 2.70;
+version = 2.71;
 
 global xbee;
 global vitruviano;
@@ -77,6 +77,7 @@ global accReceived;
 global accRequested;
 global gyroRequested;
 global anglesRequested;
+global anglesRequestedVitruviano;
 global gyroReceived;
 global magnReceived;
 global estReceived;
@@ -1896,18 +1897,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
             %  Setting up serial communication
             %  If the vitruviano variable doesn't exist, create it
-            if (~exist('vitruviano','var'))
-                vitruviano = serial(portUnixVitruviano,'baudrate',vitruvianoBR,'tag',tag);
-                %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
-
-                % Max wait time
-                set(vitruviano, 'TimeOut', 10);  
-                % One message long buffer
-                set(vitruviano, 'InputBufferSize',inputBuffSize)
-                % Open the serial
-                fopen(vitruviano);    
-            elseif (exist('vitruviano','var') || isempty(vitruviano))
-                %if the xbee serial object exists but it is empty -> recreate it
+            if (~exist('vitruviano','var') || isempty(vitruviano))
                 vitruviano = serial(portUnixVitruviano,'baudrate',vitruvianoBR,'tag',tag);
                 %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
 
@@ -2144,10 +2134,11 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         % To debug uncomment the following line
         %disp('Angles');
         anglesRequested = true;
+        anglesRequestedVitruviano = true;
         
         % Requests data only if previous ones have been received and plotted
         
-        if estReceived || anglesRequested5
+        if estReceived || anglesRequested
             if (serial1 || serial0)
                 %Initialize the cmd array
                 cmd = zeros(8,4,'uint8');
@@ -2160,10 +2151,15 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 sendMess(cmd);
             elseif (serial2)
                cmd = 'e';
+               % Request data to Tenzo
                sendNMess(cmd);
+               % Request data to Vitruviano
+               if (vitruvio && anglesRequestedVitruviano)
+                    sendVitruvianoMess('a');
+               end
             end
         else
-            disp('Not received yet Gyro');
+            disp('Not received yet Angles');
         end
     end
 
