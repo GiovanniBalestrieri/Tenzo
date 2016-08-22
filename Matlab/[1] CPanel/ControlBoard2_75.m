@@ -569,9 +569,104 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 disp('No connection detected. Please connect first');                
                 warndlg('No connections detected','Vitruviano & Tenzo');
             end
+        end        
+        if val == hTabs(6)
+            if ~tenzo && vitruvio
+                disp('Connection required!');
+                warndlg('Connection required to acquire data','Attention');
+            end
+            if ~vitruvio && tenzo
+                disp('Vitruviano not connected. Please connect first');                
+                warndlg('No connections detected','Vitruviano');
+            end
+            if ~vitruvio && ~tenzo                
+                disp('No connection detected. Please connect first');                
+                warndlg('No connections detected','Vitruviano & Tenzo');
+            end
         end
     end
 
+
+
+    %% Performance panel
+    % #perf #performance
+
+      %# Create the button group.
+      
+    welcomePerf = uicontrol('Style','text', 'String','Performance Tests', ...
+        'Position', [140 240 350 90],...
+        'Parent', hTabs(6), 'FontSize',15,'FontWeight','bold');
+       
+    
+    performanceSensorGroup = uibuttongroup('Parent', hTabs(6),'visible','off',...
+        'Position',[0 0 .20 1]);
+    
+    modePerf = uicontrol('Style','text', 'String','Modes', ...
+        'Position', [2 340 80 30],...
+        'Parent', hTabs(6), 'FontSize',9);
+    
+    % Create three radio buttons in the button group.
+    angEstRad = uicontrol('Style','Radio','String','Angle Est',...
+        'pos',[10 250 80 30],'parent',performanceSensorGroup,'HandleVisibility','off');
+    ctrlEffRad = uicontrol('Style','Radio','String','Ctrl Eff',...
+        'pos',[10 150 80 30],'parent',performanceSensorGroup,'HandleVisibility','off');
+    % Initialize some button group properties. 
+    set(performanceSensorGroup,'SelectionChangeFcn',@selPerfControl);
+    set(performanceSensorGroup,'SelectedObject',[]);  % No selection
+    set(performanceSensorGroup,'Visible','on');
+    
+    if (~exist('handles.startPerfAng','var'))
+        handles.startPerfAng = uicontrol('Style','pushbutton', 'String','Start', ...
+            'Position', [160 20 120 30],...
+            'Parent',hTabs(6), 'Callback',@startPerfAngCallback);
+    end
+    
+    if (~exist('handles.savePerfAng','var'))
+        handles.savePerfAng = uicontrol('Style','pushbutton', 'String','Stop', ...
+            'Position', [360 20 120 30],...
+            'Parent',hTabs(6), 'Callback',@savePerfAngCallback);
+    end
+    
+    
+    % Min Square Error -> Angle Estimation 
+    
+    minSqErrTxt = uicontrol('Style','text', 'String','Min Square Error: ', ...
+        'Position', [135 315 180 40],'Visible','off',...
+        'Parent',hTabs(6), 'FontSize',10,'FontWeight','normal');    
+    
+    stringSqErr = 'Angle Estimation performance measure. Computes\n the mean sq. error from the values received from bluetooth acquired by optical encoders on the vitruviano';
+    
+    minSqErrTxt2 = uicontrol('Style','text', 'String', stringSqErr, ...
+        'Position', [135 193 300 100],'Visible','off',...
+        'Parent',hTabs(6), 'FontSize',10,'FontWeight','normal');    
+    
+    handles.minSqErrVal = uicontrol('Style','edit', 'String','0', ...
+        'Position', [456 325 35 35],'Visible','off',...
+        'Parent',hTabs(6), 'FontSize',12,'FontWeight','normal');
+    
+    frameMinSqErr = uicontrol('Style','frame','Visible','off', ...
+        'Parent',hTabs(6), 'Position',[ 451 320 45 45 ]);
+    
+    
+    function selPerfControl(source,eventdata)
+        disp(['You are in ',get(get(source,'SelectedObject'),'String'),' mode ']);
+        
+        % If Manual mode is seleceted toggle visibility of up/dw
+        if get(angEstRad,'Value') == 1
+            set(welcomePerf,'Visible','off');
+            set(frameMinSqErr,'Visible','on');
+            set(handles.minSqErrVal,'Visible','on');
+            set(minSqErrTxt,'Visible','on');        
+            set(minSqErrTxt2,'Visible','on'); 
+        elseif get(ctrlEffRad,'Value') == 1      
+            set(welcomePerf,'Visible','off');
+            set(frameMinSqErr,'Visible','off');
+            set(handles.minSqErrVal,'Visible','off');
+            set(minSqErrTxt,'Visible','off');
+            set(minSqErrTxt2,'Visible','off');      
+        end
+    end   
+    
     %% Data Acquisition panel
 
       %# Create the button group.
@@ -680,6 +775,61 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     readMedianBtn = uicontrol('Style','pushbutton', 'String','Read', ...
         'Position', [140 250 70 30],'Visible','off', ...
         'Parent',hTabs(5), 'Callback',@readPidCallback);
+    
+    function selAcqControl(source,eventdata)
+        disp(['You are in ',get(get(source,'SelectedObject'),'String'),' mode ']);
+        
+        % If Manual mode is seleceted toggle visibility of up/dw
+        if get(accRad,'Value') == 1
+            set(welcomeAcq,'Visible','off');
+            set(frameAlphaA,'Visible','on');
+            set(handles.alphaAVal,'Visible','on');
+            set(alphaATxt,'Visible','on');            
+            set(StateAccTxt,'Visible','on');    
+            set(FilterConstantTxt,'Visible','on');
+            
+            set(frameWindowMedian,'Visible','off');
+            set(handles.winMedianVal,'Visible','off');
+            set(winMedianTxt,'Visible','off');
+        else                        
+            set(frameAlphaA,'Visible','off');
+            set(alphaATxt,'Visible','off');
+            set(handles.alphaAVal,'Visible','off'); 
+            set(StateAccTxt,'Visible','off');    
+            set(FilterConstantTxt,'Visible','off');
+            
+            set(frameWindowMedian,'Visible','off');
+            set(handles.winMedianVal,'Visible','off');
+            set(winMedianTxt,'Visible','off');
+        end
+        
+        % If Test is selected toggle visibility btns
+        if get(gyroRad,'Value') == 1      
+            set(welcomeAcq,'Visible','off');
+            set(frameAlphaA,'Visible','off');
+            set(handles.alphaAVal,'Visible','off');
+            set(alphaATxt,'Visible','off');
+            set(StateAccTxt,'Visible','off');    
+            set(FilterConstantTxt,'Visible','off');
+            set(StateGyroTxt,'Visible','off');   
+            set(WindowTxt,'Visible','off');
+            
+            set(frameWindowMedian,'Visible','on');
+            set(handles.winMedianVal,'Visible','on');
+            set(winMedianTxt,'Visible','on');
+        else
+        end
+        
+        if get(HInfRad,'Value') == 1            
+            set(workInProgress,'Visible','on');
+            set(frameThreshold,'Visible','off');
+            set(handles.referencePIDVal,'Visible','off');
+            set(referencePIDTxt,'Visible','off');
+            set(sendPidValsBtn,'Visible','off');
+        else            
+        end
+    end
+    
     
     
     %% Home UI components
@@ -1242,6 +1392,118 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
      
      function rtCallback(obj,event,h)
      end
+ 
+ %% Performance panel Callbacks
+ % #perf #performance
+    
+    function function1(obj,event,h)
+        disp('start pressed');
+        asked = ~asked;
+        delete(timerfindall);
+        if asked == true
+            if serialFlag == 0 
+                % Activate timers TODO
+                [acceleration.s] = setupSerial();
+            end
+        else 
+            if serialFlag == 1 
+                receiving = false;
+                recording = false;
+                set(handles.start,'String','Start');
+                serialFlag = 0;
+            end
+        end
+        %disp(abs(az));
+        serialFlag;
+    end
+    
+    function [s] = function2()
+        %comPortWin = 'COM4';
+        comPort = portUnix;
+        oldSerial = instrfind('Port', comPort); 
+        % if the set of such objects is not(~) empty
+        if (~isempty(oldSerial))  
+            disp('WARNING:  Port in use.  Closing.')
+            delete(oldSerial);
+        end
+        s = serial(comPort);
+
+        % Max wait time
+        set(s, 'TimeOut', 5); 
+        % set(s,'terminator','CR');
+        set(s,'BaudRate',xbeeBR);
+        fopen(s);
+
+        disp('Sending Request.');
+        acceleration.s = s;
+        timerArduino = timer('ExecutionMode','fixedRate','Period',0.1,'TimerFcn',{@storeSerial});    
+        timerConnect = timer('ExecutionMode','fixedRate','Period',5,'TimerFcn',{@connectSerial});%,'StopFcn',{@stoppedCon});    
+        try 
+            start(timerConnect);
+        catch exception
+            disp '******** InstrumentSubscription ERROR *********'
+            disp (exception.message);
+            disp '***********************************************'
+        end
+    end
+
+
+    function function3(obj,event,h)
+        if serialFlag == 0 && requestPending == false
+            if isvalid(acceleration.s) == 1
+                fwrite(acceleration.s,16); 
+            end
+            if (strcmp(get(timerArduino,'Running'),'off'))
+                try
+                    start(timerArduino);    
+                catch exception
+                    disp '******** InstrumentSubscription ERROR *********'
+                    disp (exception.message);
+                    disp '***********************************************'
+                end
+            end
+        end
+    end
+
+    function function4(obj,event,h)       
+        serialFlag = 1;
+        requestPending = false;
+        stop(timerArduino);   
+        stop(timerConnect);      
+        set(handles.start,'String','Stop');
+        disp('Connection established');
+    end
+
+    function storeSerial2(obj,event,handles)
+        while (get(acceleration.s, 'BytesAvailable')==1)
+            [mess,cont] = fread(acceleration.s);
+            %disp('Received bytes:');
+            %disp(cont);
+            %disp(mess);
+            if (mess == 17)             
+                %display(['Collecting data']);
+                fwrite(acceleration.s,18); 
+                requestPending = true;   
+            elseif (mess == 19)  
+                stoppedCon();
+            end
+        end
+    end
+
+    function stopCallback22(obj,event,handles)
+        if (~exist('serialFlag','var')) 
+            disp('disconnect');
+        end 
+    end 
+
+     function recordCallback22(obj,event,handles)
+     end
+     
+     function recordCallback122(obj,event,handles)
+     end
+     
+     function rtCallback22(obj,event,h)
+     end
     
     
     %% Motors Up btn callbacks
@@ -1677,59 +1939,6 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     end
 
 
-    function selAcqControl(source,eventdata)
-        disp(['You are in ',get(get(source,'SelectedObject'),'String'),' mode ']);
-        
-        % If Manual mode is seleceted toggle visibility of up/dw
-        if get(accRad,'Value') == 1
-            set(welcomeAcq,'Visible','off');
-            set(frameAlphaA,'Visible','on');
-            set(handles.alphaAVal,'Visible','on');
-            set(alphaATxt,'Visible','on');            
-            set(StateAccTxt,'Visible','on');    
-            set(FilterConstantTxt,'Visible','on');
-            
-            set(frameWindowMedian,'Visible','off');
-            set(handles.winMedianVal,'Visible','off');
-            set(winMedianTxt,'Visible','off');
-        else                        
-            set(frameAlphaA,'Visible','off');
-            set(alphaATxt,'Visible','off');
-            set(handles.alphaAVal,'Visible','off'); 
-            set(StateAccTxt,'Visible','off');    
-            set(FilterConstantTxt,'Visible','off');
-            
-            set(frameWindowMedian,'Visible','off');
-            set(handles.winMedianVal,'Visible','off');
-            set(winMedianTxt,'Visible','off');
-        end
-        
-        % If Test is selected toggle visibility btns
-        if get(gyroRad,'Value') == 1      
-            set(welcomeAcq,'Visible','off');
-            set(frameAlphaA,'Visible','off');
-            set(handles.alphaAVal,'Visible','off');
-            set(alphaATxt,'Visible','off');
-            set(StateAccTxt,'Visible','off');    
-            set(FilterConstantTxt,'Visible','off');
-            set(StateGyroTxt,'Visible','off');   
-            set(WindowTxt,'Visible','off');
-            
-            set(frameWindowMedian,'Visible','on');
-            set(handles.winMedianVal,'Visible','on');
-            set(winMedianTxt,'Visible','on');
-        else
-        end
-        
-        if get(HInfRad,'Value') == 1            
-            set(workInProgress,'Visible','on');
-            set(frameThreshold,'Visible','off');
-            set(handles.referencePIDVal,'Visible','off');
-            set(referencePIDTxt,'Visible','off');
-            set(sendPidValsBtn,'Visible','off');
-        else            
-        end
-    end
     
     %# drop-down menu callback
     function popupCallback(src,~)
