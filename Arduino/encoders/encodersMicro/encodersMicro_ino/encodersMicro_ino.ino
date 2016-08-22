@@ -50,6 +50,8 @@ void loop()
   delay(1000);
 }
 
+// To communicate with the module you need to send a 
+// connection request using 'c'. It will answer with K
 void bluRoutine()
 {
   if (blu.available()>0)

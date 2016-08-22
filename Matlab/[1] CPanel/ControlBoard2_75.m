@@ -355,6 +355,9 @@ tenzoStateID = 30;
 connID = 31;
 accValuesID = 32;
 
+tenzo = false;
+vitruvio = false;
+
 cmdLength = 17;
 headerLength = 13;
 arduinoAdd = 1;
@@ -520,6 +523,7 @@ hTabs(2) = uitab('Parent',hTabGroup, 'Title','Motors');
 hTabs(3) = uitab('Parent',hTabGroup, 'Title','Sensors');
 hTabs(4) = uitab('Parent',hTabGroup, 'Title','Control');
 hTabs(5) = uitab('Parent',hTabGroup, 'Title','Acquisition');
+hTabs(6) = uitab('Parent',hTabGroup, 'Title','Performance');
 set(hTabGroup, 'SelectedTab',hTabs(1));
 Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
@@ -553,14 +557,17 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             end
         end
         if val == hTabs(5)
-            if ~tenzo
+            if ~tenzo && vitruvio
                 disp('Connection required!');
-                warndlg('Usb Cable required to acquire data','Attention');
+                warndlg('Connection required to acquire data','Attention');
             end
-            if ~vitruvio
-                disp('Vitruviano not connected. Please connect first');
-                
-                warndlg('Usb Cable required','Vitruviano');
+            if ~vitruvio && tenzo
+                disp('Vitruviano not connected. Please connect first');                
+                warndlg('No connections detected','Vitruviano');
+            end
+            if ~vitruvio && ~tenzo                
+                disp('No connection detected. Please connect first');                
+                warndlg('No connections detected','Vitruviano & Tenzo');
             end
         end
     end
@@ -1919,7 +1926,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 disp '***********************************************'
             end
             
-            % variable tenzo defines the connection status
+            % variable vitruvio defines the connection status
             vitruvio = false;
             
             if (serial2)
@@ -2152,7 +2159,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             elseif (serial2)
                cmd = 'e';
                % Request data to Tenzo
-               sendNMess(cmd);
+               if ~isempty(xbee)
+                sendNMess(cmd);
+               end
                % Request data to Vitruviano
                if (vitruvio && anglesRequestedVitruviano)
                     sendVitruvianoMess('a');
@@ -2592,13 +2601,16 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 fclose(vitruvio);
                 clear('vitruvio');
             end
-            if mess(0) ~= 'e'
+            if mess(0) == 'e'
                 footer = mess(size(mess,2));
                 % if message is correct
-                if footer == footerTag
-                tag = mess(1);
-                    if tag == encTag
-                        %disp('Accelerations');
+                % if footer == footerTag
+                if 0==0
+                    mess(0)
+                    mess(1)
+                    tag = mess(0);
+                    if tag == 'e'
+                        %disp('Vitruviano encoder');
                         % Acc time serial
                         [R,phiVitruvio,thetaVitruvio,t] = strread(mess,'%s%f%f%s',1,'delimiter',',');
                          %if encoder == true
