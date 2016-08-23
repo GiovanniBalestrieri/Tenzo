@@ -2117,16 +2117,25 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 vitruviano = serial(portUnixVitruviano,'baudrate',vitruvianoBR,'tag',tag);
                 
                 % Max wait time
-                set(vitruviano, 'TimeOut', 10);  
+                set(vitruviano, 'TimeOut', 5);  
                 % One message long buffer
-                set(vitruviano, 'InputBufferSize',inputBuffSize)
+                set(vitruviano, 'InputBufferSize',100)
                 % Open the serial
                 fopen(vitruviano);    
             end
             
             vitCallback = @(~, ~) disp('Caught error For Vitruviano StoreDataTimer');
             
-            % Testing Wireless communication
+            % variable vitruvio defines the connection status
+            vitruvio = false;
+            
+            if (serial2)
+                cmd = 'c';
+                %sendNMess(cmd);
+                sendVitruvianoMess(cmd);
+                vitruvioConnectionRequested = true;
+            end          
+            % Wireless communication
             timerVitruviano = timer('ExecutionMode','FixedRate','Period',0.1,...
                 'TimerFcn',{@storeDataFromSerialVitruviano},'ErrorFcn', vitCallback);
             try
@@ -2137,16 +2146,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 disp (exception.message);
                 disp '***********************************************'
             end
-            
-            % variable vitruvio defines the connection status
-            vitruvio = false;
-            
-            if (serial2)
-                cmd = 'c';
-                %sendNMess(cmd);
-                sendVitruvianoMess(cmd);
-                vitruvioConnectionRequested = true;
-            end            
+              
         end
 
         if get(handles.connectVitruviano,'Value') == 0
@@ -2379,11 +2379,12 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 sendMess(cmd);
             elseif (serial2)
                cmd = 'e';
-               % Request data to Tenzo
-               if ~isempty(xbee)
+               
+               % Request data to Tenzo if connected
+               if tenzo
                 sendNMess(cmd);
                end
-               % Request data to Vitruviano
+               % Request data to Vitruviano if connected
                if (vitruvio && anglesRequestedVitruviano)
                     sendVitruvianoMess('a');
                end
@@ -2729,8 +2730,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         sendMess(cmd); 
     end
 
-    function storeDataFromSerial(obj,event,handles)
-        handles = guidata(gcf);
+    function storeDataFromSerial(~,~,~)
         while (get(xbee, 'BytesAvailable')~=0)
             if (serial2)
                 serialProtocol2();
@@ -2743,9 +2743,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     end 
     
     
-    function storeDataFromSerialVitruviano(obj,event,handles)
-        handles = guidata(gcf);
-        
+    function storeDataFromSerialVitruviano(~,~,~)        
         if (exist('vitruviano','var') || ~isempty(vitruviano))
             while (get(vitruviano, 'BytesAvailable')~=0)
                 if (serial2)
@@ -2798,7 +2796,6 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 %end
                 disp ('Warning Vitruviano is sending');            
             elseif (strcmp(mess,'X'))
-                vitruvio = false;
                 %delete(timerXbee);
                 %set(connect,'String','Connect');
                 set(handles.connectVitruviano,'BackgroundColor',[.21 .96 .07],'String','Vitruvio');
@@ -2811,10 +2808,10 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 stop(timerVitruviano);
                 fclose(vitruvio);
                 %clear('vitruvio');
+                vitruvio = false;
             end
         elseif (vitruvio) && ~strcmp(mess,'')    
             if (strcmp(mess,'X'))
-                vitruvio = false;
                 %delete(timerXbee);
                 %set(connect,'String','Connect');
                 set(handles.connectVitruviano,'BackgroundColor',[.21 .96 .07],'String','Vitruvio');
@@ -2826,7 +2823,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 end
                 stop(timerVitruviano);
                 fclose(vitruvio);
-                clear('vitruvio');
+                clear(vitruvio);
+                vitruvio = false;
             end
             if mess(0) == 'e'
                 footer = mess(size(mess,2));
@@ -2910,7 +2908,6 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 end
                 disp ('Communication problem. Check Hardware and retry.');            
             elseif (strcmp(mess,'X'))
-                tenzo = false;
                 %delete(timerXbee);
                 %set(connect,'String','Connect');
                 set(handles.connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
@@ -2923,10 +2920,10 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 stop(timerXbee);
                 fclose(xbee);
                 %clear('xbee');
+                tenzo = false;
             end
         elseif (tenzo)  && ~strcmp(mess,'')
             if (strcmp(mess,'X'))
-                tenzo = false;
                 set(handles.connect,'BackgroundColor',[.21 .96 .07],'String','Connect');
                 set(handles.conTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');  
                 disp('Connection closed...');
@@ -2937,6 +2934,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 stop(timerXbee);
                 fclose(xbee);
                 clear(xbee);
+                tenzo = false;
             end
             if mess(1) ~= 'V'
                 % Communication established
