@@ -2124,9 +2124,12 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 % Open the serial
                 fopen(vitruviano);    
             end
-
+            
+            vitCallback = @(~, ~) disp('Caught error For Vitruviano StoreDataTimer');
+            
             % Testing Wireless communication
-            timerVitruviano = timer('ExecutionMode','FixedRate','Period',0.1,'TimerFcn',{@storeDataFromSerialVitruviano});
+            timerVitruviano = timer('ExecutionMode','FixedRate','Period',0.1,...
+                'TimerFcn',{@storeDataFromSerialVitruviano},'ErrorFcn', vitCallback);
             try
                 start(timerVitruviano);  
             catch
@@ -2205,9 +2208,13 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 fopen(xbee);    
             end
 
+            
+            xbeeCallback = @(~, ~) disp('Caught error For Tenzo StoreDataTimer');
+            
             % Testing Wireless communication
             if isempty(timerXbee)
-                timerXbee = timer('ExecutionMode','FixedRate','Period',0.1,'TimerFcn',{@storeDataFromSerial});
+                timerXbee = timer('ExecutionMode','FixedRate','Period',0.1,...
+                    'TimerFcn',{@storeDataFromSerial},'ErrorFcn', xbeeCallback);
                 try
                     start(timerXbee);  
                 catch
