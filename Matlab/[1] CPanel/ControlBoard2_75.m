@@ -2115,8 +2115,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             %  If the vitruviano variable doesn't exist, create it
             if (~exist('vitruviano','var') || isempty(vitruviano))
                 vitruviano = serial(portUnixVitruviano,'baudrate',vitruvianoBR,'tag',tag);
-                %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
-
+                
                 % Max wait time
                 set(vitruviano, 'TimeOut', 10);  
                 % One message long buffer
@@ -2273,9 +2272,13 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     end
 
     function sendVitruvianoMess(obj)
-        fprintf(vitruviano,obj);
-        disp('Sending to vitruviano');
-        disp(obj);
+        if (exist('vitruviano','var') || ~isempty(vitruviano))
+            fprintf(vitruviano,obj);
+            disp('Sending to vitruviano');
+            disp(obj);
+        else
+            disp('Vitruviano serial object CLEARED! transmission requested. Critical Err avoided');
+        end
     end
 
     %% Send topics
@@ -2742,10 +2745,15 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     
     function storeDataFromSerialVitruviano(obj,event,handles)
         handles = guidata(gcf);
-        while (get(vitruviano, 'BytesAvailable')~=0)
-            if (serial2)
-                serialProtocol2Vitruviano();
+        
+        if (exist('vitruviano','var') || ~isempty(vitruviano))
+            while (get(vitruviano, 'BytesAvailable')~=0)
+                if (serial2)
+                    serialProtocol2Vitruviano();
+                end
             end
+        else
+            disp('Vitruviano serial object CLEARED! transmission requested. Critical Err avoided');
         end
     end 
 
@@ -2753,6 +2761,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     
     % #bluetooth #vitruviano
     function serialProtocol2Vitruviano()
+        % Vitruviano serial object is valid. Safe
         [mess,count] = fscanf(vitruviano);
         
         disp('[Vitruviano] Reading incoming buffer. Dim:');
