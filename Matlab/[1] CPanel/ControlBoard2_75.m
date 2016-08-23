@@ -2130,6 +2130,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             try
                 start(timerVitruviano);  
             catch
+                disp('TimerVitruviano');
                 disp '******** InstrumentSubscription ERROR *********'
                 disp (exception.message);
                 disp '***********************************************'
@@ -2210,6 +2211,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 try
                     start(timerXbee);  
                 catch
+                    disp('Timer Xbee');
                     disp '******** InstrumentSubscription ERROR *********'
                     disp (exception.message);
                     disp '***********************************************'
