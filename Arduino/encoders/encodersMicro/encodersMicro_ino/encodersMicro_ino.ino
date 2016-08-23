@@ -47,7 +47,7 @@ void loop()
   convertTicksToAngle();
   serialRoutine();
   bluRoutine();
-  delay(1000);
+  //delay(1000);
 }
 
 // To communicate with the module you need to send a 

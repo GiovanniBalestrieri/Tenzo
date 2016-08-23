@@ -2831,17 +2831,17 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                          %Plot the X magnitude
                         h1 = subplot(3,1,1,'Parent',hTabs(3));
                         if filterAcc
-                            plot(h1,index,phidata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                            plot(h1,index,phidata,'b*','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                         else
-                            plot(h1,index,phidata,'r','LineWidth',2);
+                            plot(h1,index,phidata,'b*','LineWidth',2);
                         end
                         grid on;
 
                         h2 = subplot(3,1,2,'Parent',hTabs(3));
                         if filterAcc
-                            plot(h2,index,thetadata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                            plot(h2,index,thetadata,'g*','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                         else
-                            plot(h2,index,thetadata,'b','LineWidth',2);
+                            plot(h2,index,thetadata,'g*','LineWidth',2);
                         end
                         grid on;
                         
