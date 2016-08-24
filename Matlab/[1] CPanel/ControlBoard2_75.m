@@ -2274,8 +2274,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     function sendVitruvianoMess(obj)
         if (exist('vitruviano','var') || ~isempty(vitruviano))
             fprintf(vitruviano,obj);
-            disp('Sending to vitruviano');
-            disp(obj);
+            %disp('Sending to vitruviano');
+            %disp(obj);
         else
             disp('Vitruviano serial object CLEARED! transmission requested. Critical Err avoided');
         end
@@ -2681,10 +2681,14 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 cmd(1,1) = uint8(gyroID);
                 bits = reshape(bitget(0,32:-1:1),8,[]);
                 cmd(2,:) = weights2*bits;
-                sendMess(cmd);
+                if tenzo
+                    sendMess(cmd);
+                end
             elseif (serial2)
                 cmd = 'o';
-                sendNMess(cmd);
+                if tenzo
+                    sendNMess(cmd);
+                end
             end
         else
             disp('Not received yet Gyro');
@@ -2708,10 +2712,14 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 bits = reshape(bitget(0,32:-1:1),8,[]);
                 cmd(2,:) = weights2*bits;
                 accReceived = false;
-                sendMess(cmd);
+                if tenzo
+                    sendMess(cmd);
+                end
             elseif (serial2)
                 cmd = 'l';
-                sendNMess(cmd);
+                if tenzo
+                    sendNMess(cmd);
+                end
             end
         else
             disp('Not received yet');
@@ -2762,10 +2770,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         % Vitruviano serial object is valid. Safe
         [mess,count] = fscanf(vitruviano);
         
-        disp('[Vitruviano] Reading incoming buffer. Dim:');
+        %disp('[Vitruviano] Reading incoming buffer. Dim:');
         % Debug stuff
-        disp(count);
-        
+        %disp(count);        
         disp(mess); 
         
         if count > 0
@@ -2826,14 +2833,11 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 clear(vitruvio);
                 vitruvio = false;
             end
-            if mess(0) == 'e'
+            if count > 2
                 footer = mess(size(mess,2));
-                % if message is correct
-                % if footer == footerTag
-                if 0==0
-                    mess(0)
-                    mess(1)
-                    tag = mess(0);
+                % if message is correct - No CRC needed in lab tests
+                if footer == footerTag
+                    tag = mess(1);
                     if tag == 'e'
                         %disp('Vitruviano encoder');
                         % Acc time serial
