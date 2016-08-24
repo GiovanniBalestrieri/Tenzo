@@ -1,6 +1,7 @@
 import nltk
 import random
 from nltk.corpus import movie_reviews
+import pickle
 
 # List of tuples
 documents=[(list(movie_reviews.words(fileid)),category)
@@ -29,7 +30,7 @@ print(all_words.most_common(15))
 # See how many times the word stupid is present in the reviews
 print(all_words["stupid"])
 
-word_feature = list(all_words.keys())[:1000]
+word_feature = list(all_words.keys())[:3000]
 
 def find_feature(document):
 	words = set(document)
@@ -39,7 +40,7 @@ def find_feature(document):
 	return features
 
 
-print(find_feature(movie_reviews.words('neg/cv000_29416.txt')))
+#print(find_feature(movie_reviews.words('neg/cv000_29416.txt')))
 
 featuresets = [(find_feature(rev),category) for (rev,category) in documents]
 
@@ -49,5 +50,13 @@ test_set = featuresets[1900:]
 
 # Train with Naive Bayes
 classifier = nltk.NaiveBayesClassifier.train(training_set)
+#classifer_f = open("naiveBayes.pickle","rb")
+#classfier = pickle.load(classifier_f)
+#classifier_f.close()
+
 print("Naive Bayes Alg acc:", (nltk.classify.accuracy(classifier,test_set))*100)
 classifier.show_most_informative_features(15)
+
+save_classifier = open("naiveBayes.pickle","wb")
+pickle.dump(classifier,save_classifier)
+save_classifier.close()
