@@ -2111,9 +2111,13 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 delete(oldSerial)
             end
 
+            disp('Exist vitruviano:')
+            exist('vitruviano','var')
+            %disp('is Empty')
+            %isempty(vitruviano)
             %  Setting up serial communication
             %  If the vitruviano variable doesn't exist, create it
-            if (~exist('vitruviano','var') || isempty(vitruviano))
+            if (~exist('vitruviano','var'))
                 vitruviano = serial(portUnixVitruviano,'baudrate',vitruvianoBR,'tag',tag);
                 
                 % Max wait time
@@ -2813,6 +2817,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                     Speak('Connection closed',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                 end
                 stop(timerVitruviano);
+                
+                % Check whether those two are needed and don't cause
+                % problems for new connections
                 fclose(vitruvio);
                 %clear('vitruvio');
                 vitruvio = false;
@@ -2829,6 +2836,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                     Speak('Connection with Vitruvio closed',girls,rateVoice,volumeVoice,pitchVoice,langEn);
                 end
                 stop(timerVitruviano);
+                
+                % Check whether those two are needed and don't cause
+                % problems for new connections
                 fclose(vitruvio);
                 clear(vitruvio);
                 vitruvio = false;
