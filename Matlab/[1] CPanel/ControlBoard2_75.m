@@ -2183,8 +2183,28 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             % if the set of such objects is not(~) empty
             if (~isempty(oldSerial))  
                 disp('WARNING:  port in use.  Closing.')
+                % When it deletes the object the serial port becomes
+                % invalid.
                 delete(oldSerial)
+                % clear the invalid object from the workspace
+                clear(oldSerial)
             end
+            
+            % Check whether the serial port is available
+            serials = instrhwinfo('serial')
+            serialCond = false;
+            for (i=1:size(serials.AvailableSerialPorts,1))
+                if (strcmp(serials.AvailableSerialPorts(i),portUnix))
+                    serialCond = true;
+                    break;
+                end
+            end
+            
+            if (~serialCond)                           
+                warndlg('Serial port not found. Is it connected','Check Tenzo Bluetooth');
+                return;
+            end
+
 
             %  Setting up serial communication
             %  If the xbee variable doesn't exist, create it
@@ -2198,19 +2218,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 set(xbee, 'InputBufferSize',inputBuffSize)
                 % Open the serial
                 fopen(xbee);    
-            elseif (exist('xbee','var') || isempty(xbee))
-                %if the xbee serial object exists but it is empty -> recreate it
-                xbee = serial(portUnix,'baudrate',xbeeBR,'tag',tag);
-                %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
-
-                % Max wait time
-                set(xbee, 'TimeOut', 10);  
-                % One message long buffer
-                set(xbee, 'InputBufferSize',inputBuffSize)
-                % Open the serial
+            elseif (exist('xbee','var')) % removed  || isempty(xbee)
                 fopen(xbee);    
             end
-
             
             xbeeCallback = @(~, ~) disp('Caught error For Tenzo StoreDataTimer');
             
