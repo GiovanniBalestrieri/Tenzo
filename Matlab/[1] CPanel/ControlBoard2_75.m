@@ -2110,11 +2110,23 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 disp('Report:  Closing previous port /dev/rfcomm2.')
                 delete(oldSerial)
             end
+            
+            % Check whether the serial port is available
+            serials = instrhwinfo('serial');
+            serialCond1 = false;
+            for (i=1:size(serials.AvailableSerialPorts,1))
+                if (strcmp(serials.AvailableSerialPorts(i),portUnixVitruviano))
+                    disp('Found Vitruviano bluetooth');
+                    serialCond1 = true;
+                    break;
+                end
+            end
+            
+            if (~serialCond1)                           
+                warndlg('Serial port not found. Is it connected','Check Tenzo Bluetooth');
+                return;
+            end
 
-            disp('Exist vitruviano:')
-            exist('vitruviano','var')
-            %disp('is Empty')
-            %isempty(vitruviano)
             %  Setting up serial communication
             %  If the vitruviano variable doesn't exist, create it
             if (~exist('vitruviano','var'))
@@ -2123,7 +2135,10 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 % Max wait time
                 set(vitruviano, 'TimeOut', 5);  
                 % One message long buffer
-                set(vitruviano, 'InputBufferSize',100)
+                set(vitruviano, 'InputBufferSize',14)
+                % Open the serial
+                fopen(vitruviano);    
+            elseif (exist('vitruviano','var'))                
                 % Open the serial
                 fopen(vitruviano);    
             end
@@ -2191,10 +2206,11 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             end
             
             % Check whether the serial port is available
-            serials = instrhwinfo('serial')
+            serials = instrhwinfo('serial');
             serialCond = false;
-            for (i=1:size(serials.AvailableSerialPorts,1))
+            for i=1:size(serials.AvailableSerialPorts,1)
                 if (strcmp(serials.AvailableSerialPorts(i),portUnix))
+                    disp('Found Tenzo bluetooth');
                     serialCond = true;
                     break;
                 end
@@ -2218,7 +2234,30 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 set(xbee, 'InputBufferSize',inputBuffSize)
                 % Open the serial
                 fopen(xbee);    
-            elseif (exist('xbee','var')) % removed  || isempty(xbee)
+            elseif (exist('xbee','var') && isvalid(xbee))
+                fopen(xbee);    
+            elseif (exist('xbee','var') && ~isvalid(xbee))
+                % Attention this case is weird. But happens, depends on hardware issues.
+                % First Clear the invalid obj and create it again     
+                
+                % This error is caused by some virtual serial port drivers 
+                % not supporting functionality equivalent to a physical 
+                % serial port, and the way MATLAB handles communication 
+                % with the virtual serial port.
+                % 
+                % https://it.mathworks.com/matlabcentral/answers/
+                % 106190-why-do-i-get-an-error-occurred-during-writ
+                % ing-error-when-writing-data-to-a-virtual-serial-port
+                clear(xbee);   
+                
+                xbee = serial(portUnix,'baudrate',xbeeBR,'tag',tag);
+                %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
+
+                % Max wait time
+                set(xbee, 'TimeOut', 10);  
+                % One message long buffer
+                set(xbee, 'InputBufferSize',inputBuffSize)
+                % Open the serial
                 fopen(xbee);    
             end
             
