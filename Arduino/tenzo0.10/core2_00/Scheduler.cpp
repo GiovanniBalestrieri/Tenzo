@@ -25,7 +25,7 @@ void Scheduler::initTaskset()
 
 void Scheduler::createTasks()
 {
-  if (this->create_task(1, 10, 0, 9, EDF, "GetEulerW") == -1) {
+  if (this->create_task(1, 20, 0, 15, EDF, "GetEulerW") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }
@@ -205,6 +205,22 @@ int Scheduler::isTaskAlive(int id)
   if (this->taskset[id].active == 0 || this->taskset[id].valid == 0)
     return 0;
   else if  (this->taskset[id].active == 1 || this->taskset[id].valid == 1)
+    return 1;
+}
+
+int Scheduler::isTaskActive(int id)
+{
+  if (this->taskset[id].active == 0)
+    return 0;
+  else if  (this->taskset[id].active == 1)
+    return 1;
+}
+
+int Scheduler::isTaskValid(int id)
+{
+  if (this->taskset[id].valid == 0)
+    return 0;
+  else if  (this->taskset[id].valid == 1)
     return 1;
 }
 

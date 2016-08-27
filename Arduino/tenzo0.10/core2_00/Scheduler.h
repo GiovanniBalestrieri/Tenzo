@@ -31,6 +31,8 @@ class Scheduler
                     const char *label); 
     int delete_task(int id);
     int isTaskAlive(int id);
+    int isTaskActive(int id);
+    int isTaskValid(int id);
     void panic(int);     
     void initTaskset();
     unsigned long getJobReleased(int id);
