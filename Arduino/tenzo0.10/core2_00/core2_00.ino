@@ -321,6 +321,7 @@ void loop() {
   {
     case(1):
       // Task 1
+      //getYPR();
       getAngVelYPR();
       controlCycle();
       scheduler.jobCompletedById(bestId);
@@ -582,7 +583,7 @@ ISR(TIMER3_COMPB_vect) // #ISR
   digitalWrite(pinInit, LOW);
 }
 
-void acquireGyroYPR()  // ISR
+void acquireGyroYPR() 
 {
   sixDOF.getYawPitchRollGyro(angles,wVal);
   
@@ -976,11 +977,7 @@ void SerialRoutine()
       }         
       else if (t == '.')
       {
-        /*
-        consKiWRoll = consKiWRoll + 0.05;
-        Serial.print("\t\t\t\t\t\t\t\t\t");
-        Serial.println(consKiWRoll);
-        */
+        printDate();
       }         
       else if (t == ':')
       {
@@ -1965,3 +1962,28 @@ void changePidState(boolean cond)
     hovering = 0;
   }
 }
+
+void printDate()
+{
+  //We print the day
+  Serial.print(now.day());
+  Serial.print('/');
+  //We print the month
+  Serial.print(now.month());
+  Serial.print('/');
+  //We print the year
+  Serial.print(now.year());
+  Serial.print(' ');
+  //We print the hour
+  Serial.print(now.hour());
+  Serial.print(':');
+  //We print the minutes
+  Serial.print(now.minute());
+  Serial.print(':');
+  //We print the seconds
+  Serial.print(now.second());
+  Serial.print("\t\t\t\tTimer:");
+  Serial.print(sonarTimer);
+  Serial.println();
+}
+

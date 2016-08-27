@@ -330,7 +330,6 @@ void FreeSixIMU::getYawPitchRollGyro(volatile float * ypr, volatile float * valu
   ypr[1] = atan(gx / sqrt(gy*gy + gz*gz))  * 180/M_PI;
   ypr[2] = atan2(2 * q[1] * q[2] - 2 * q[0] * q[3], 2 * q[0]*q[0] + 2 * q[1] * q[1] - 1) * 180/M_PI;
   gyro.readGyro(&values[0]);
-  
 }
 
 
