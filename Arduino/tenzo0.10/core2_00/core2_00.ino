@@ -171,7 +171,11 @@ void setupPropulsion()
 void setupScheduler()
 {
   scheduler.initTaskset(); 
-  scheduler.createTasks();  
+  scheduler.createTasks(); 
+
+  // #DEBUG
+  Serial.print(")\tJob queue:  ");
+  Serial.print(scheduler.getJobReleased(1)); 
 }
 
 void setup() 
@@ -237,7 +241,7 @@ void getAngVelYPR()
       labelTaskCross = "gyro";   
       valueTaskCross = maxgyroTimer;
     }
-    gyroTimeTot = gyroTimeTot + gyroTimer; 
+    gyroTimeTot = gyroTimeTot + gyroTimer;
 }
 
 void controlCycle()

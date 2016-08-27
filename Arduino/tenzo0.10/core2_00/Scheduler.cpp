@@ -236,7 +236,8 @@ int Scheduler::jobCompletedById(int id)
     return -999;
   else if  (this->taskset[id].active == 1 || this->taskset[id].valid == 1)
   {  
-   --this->taskset[id].released;
+   if (this->taskset[id].released > 0)
+       --this->taskset[id].released;
    // force scheduler invocation 
    this->trigger_schedule = 1; 
    return this->taskset[id].released;
