@@ -2,8 +2,8 @@
 
 #define RESOLUTION 128
 
-int encoderPin1 = 2;
-int encoderPin2 = 3;
+int encoderPin1 = 0;
+int encoderPin2 = 1;
 
 SoftwareSerial blu(10, 11); // RX, TX 
 
@@ -18,7 +18,8 @@ int lastLSB = 0;
 double angle;
 
 boolean matlab = false;
-boolean requested = false;
+boolean requestedSerial = false;
+boolean requestedBlu = false;
 
 void setup() {
   Serial.begin (9600);
@@ -32,14 +33,11 @@ void setup() {
 
   //call updateEncoder() when any high/low changed seen
   //on interrupt 0 (pin 2), or interrupt 1 (pin 3) 
-  attachInterrupt(2, updateEncoder, CHANGE); 
-  attachInterrupt(3, updateEncoder, CHANGE);
+  attachInterrupt(encoderPin1, updateEncoder, CHANGE); 
+  attachInterrupt(encoderPin2, updateEncoder, CHANGE);
 
-
-  
   blu.println("Setup Completed");
   Serial.println("Setup Completed");
-
 }
 
 void loop()
@@ -47,7 +45,6 @@ void loop()
   convertTicksToAngle();
   serialRoutine();
   bluRoutine();
-  //delay(1000);
 }
 
 // To communicate with the module you need to send a 
@@ -61,7 +58,7 @@ void bluRoutine()
     Serial.println(t);
     if (t=='a')
     {
-      requested = true;
+      requestedBlu = true;
       if (matlab)
         printBluAngles();
     }
@@ -98,18 +95,27 @@ void serialRoutine()
  if (Serial.available()>0)
  {
     char t = Serial.read(); 
-    if (t=='r')
+    if (t=='a')
+    {
+      requestedSerial = true;
+      if (matlab)
+        printAngles();
+    }
+    else if (t=='c')
+    {
+      // Connection request from CPanel
+      Serial.print("K");
+      matlab = true;
+    }
+    else if (t=='X')
+    {
+      // Disconnection request from CPanel
+      Serial.print("X");
+      matlab = false;
+    }
+    else if (t=='r')
       encoderValue = 0;
  }
- Serial.print(angle);
- Serial.print("\tValue: encoded: ");
- Serial.println(encoderValue);
- 
- 
- //if (matlab && requested)
- //{
-  //printBluAngles();
- //}
 }
 
 void updateEncoder()
@@ -135,5 +141,15 @@ void printBluAngles()
   blu.print(",");
   blu.print(encoderValue);
   blu.println(",z");
-  requested = false;
+  requestedBlu = false;
+}
+
+void printAngles()
+{
+  Serial.print("e,");
+  Serial.print(angle);
+  Serial.print(",");
+  Serial.print(encoderValue);
+  Serial.println(",z");
+  requestedSerial = false;
 }

@@ -8,9 +8,11 @@ version = 2.71;
 
 global xbee;
 global vitruviano;
+global useBlue;
 global portWin;
 global portUnix;
-global portUnixVitruviano;
+global portUnixVitruvianoSerial;
+global portUnixVitruvianoBlu;
 global xbeeBR;
 global vitruvianoBR;
 global terminator;
@@ -364,7 +366,9 @@ arduinoAdd = 1;
 matlabAdd = 2;
 portWin = 'Com3';
 portUnix = '/dev/rfcomm0';
-portUnixVitruviano = '/dev/rfcomm2';
+portUnixVitruvianoBlu = '/dev/rfcomm2';
+portUnixVitruvianoSerial = '/dev/ttyS101';
+useBlue = 0;
 xbeeBR = 115200;
 vitruvianoBR = 9600;
 % buffer size should be the same as the one specified on the Arduino side
@@ -2100,23 +2104,27 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             %delete(instrfindall);
             % Check to see if there are existing serial objects 
             % (instrfind) whos 'Port' property is set to 'COM3'
-
-            oldSerial = instrfind('Port', portUnixVitruviano);
+            if useBlue
+                portVitruviano = portUnixVitruvianoBlu;
+            else
+                portVitruviano = portUnixVitruvianoSerial;
+            end
+            oldSerial = instrfind('Port', portVitruviano);
             % can also use instrfind() with no input arguments to find 
             % ALL existing serial objects
 
             % if the set of such objects is not(~) empty
             if (~isempty(oldSerial))  
-                disp('Report:  Closing previous port /dev/rfcomm2.')
+                disp('Report:  Closing previous port.')
                 delete(oldSerial)
             end
             
             % Check whether the serial port is available
-            serials = instrhwinfo('serial');
+            serials = instrhwinfo('serial')
             serialCond1 = false;
             for (i=1:size(serials.AvailableSerialPorts,1))
-                if (strcmp(serials.AvailableSerialPorts(i),portUnixVitruviano))
-                    disp('Found Vitruviano bluetooth');
+                if (strcmp(serials.AvailableSerialPorts(i),portVitruviano))
+                    disp('Found Vitruviano');
                     serialCond1 = true;
                     break;
                 end
@@ -2130,7 +2138,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             %  Setting up serial communication
             %  If the vitruviano variable doesn't exist, create it
             if (~exist('vitruviano','var'))
-                vitruviano = serial(portUnixVitruviano,'baudrate',vitruvianoBR,'tag',tag);
+                vitruviano = serial(portVitruviano,'baudrate',vitruvianoBR,'tag',tag);
                 
                 % Max wait time
                 set(vitruviano, 'TimeOut', 5);  
@@ -2901,28 +2909,27 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                         %disp('Vitruviano encoder');
                         % Acc time serial
                         [R,phiVitruvio,thetaVitruvio,t] = strread(mess,'%s%f%f%s',1,'delimiter',',');
-                         %if encoder == true
-                            % Gets Accelerometer data
-                            phidata = [ phidata(2:end) ; double(phiVitruvio) ];
-                            thetadata = [ thetadata(2:end) ; double(thetaVitruvio) ]; 
-                         %end
-
-                         %Plot the X magnitude
-                        h1 = subplot(3,1,1,'Parent',hTabs(3));
-                        if filterAcc
-                            plot(h1,index,phidata,'b*','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                        else
-                            plot(h1,index,phidata,'b*','LineWidth',2);
-                        end
-                        grid on;
-
-                        h2 = subplot(3,1,2,'Parent',hTabs(3));
-                        if filterAcc
-                            plot(h2,index,thetadata,'g*','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-                        else
-                            plot(h2,index,thetadata,'g*','LineWidth',2);
-                        end
-                        grid on;
+                        
+                        % Save Data from encoder
+                        phidata = [ phidata(2:end) ; double(phiVitruvio) ];
+                        thetadata = [ thetadata(2:end) ; double(thetaVitruvio) ]; 
+                        
+%                         %Plot the X magnitude
+%                         h1 = subplot(3,1,1,'Parent',hTabs(3));
+%                         if filterAcc
+%                             plot(h1,index,phidata,'b*','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+%                         else
+%                             plot(h1,index,phidata,'b*','LineWidth',2);
+%                         end
+%                         grid on;
+% 
+%                         h2 = subplot(3,1,2,'Parent',hTabs(3));
+%                         if filterAcc
+%                             plot(h2,index,thetadata,'g*','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+%                         else
+%                             plot(h2,index,thetadata,'g*','LineWidth',2);
+%                         end
+%                         grid on;
                         
                         %encReceived = true;
                         if asked
@@ -3093,7 +3100,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                         [R,rollM,pitchM,bearingM,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
 
                         if magneto == true
-                            % Gets Magnetometer and Estimated angles
+                            % Gets Magnetometer or Estimated angles
                             if (rollM>90)
                                 rollM = rollM - 360;
                             end
@@ -3121,11 +3128,21 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
                         %Plot the X magnitude
                         h1 = subplot(3,1,1,'Parent',hTabs(3));
+                        if vitruvio
+                            plot(h1,index,phidata,'b','LineWidth',2);
+                            hold on
+                        end
                         plot(h1,index,Rdata,'r','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        hold off
                         grid on;
 
-                        h2 = subplot(3,1,2,'Parent',hTabs(3));
+                        h2 = subplot(3,1,2,'Parent',hTabs(3));                        
+                        if vitruvio
+                            plot(h2,index,thetadata,'c','LineWidth',2);
+                            hold on
+                        end
                         plot(h2,index,Pdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
+                        hold off
                         grid on;
 
                         h3 = subplot(3,1,3,'Parent',hTabs(3));
