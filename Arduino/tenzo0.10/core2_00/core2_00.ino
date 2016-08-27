@@ -172,10 +172,6 @@ void setupScheduler()
 {
   scheduler.initTaskset(); 
   scheduler.createTasks(); 
-
-  // #DEBUG
-  Serial.print(")\tJob queue:  ");
-  Serial.print(scheduler.getJobReleased(1)); 
 }
 
 void setup() 
@@ -592,7 +588,9 @@ ISR(TIMER3_COMPB_vect) // #ISR
 
 void acquireGyroYPR() 
 {
-  sixDOF.getYawPitchRollGyro(angles,wVal);
+  // #DEBUG
+  //sixDOF.getYawPitchRollGyro(angles,wVal);
+  sixDOF.getAngles(angles);
   
   if (sakura.getGyroFilterFlag())
   {    
