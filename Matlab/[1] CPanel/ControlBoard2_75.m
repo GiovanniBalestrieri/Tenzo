@@ -183,6 +183,7 @@ global firing;
 global recording;
 global plotting;
 global asked;
+global askedPerf;
 global axdata;
 global phidata;
 global thetadata;
@@ -242,6 +243,12 @@ global girls;
 global guys;
 
 global timerSamples;
+
+
+% Performance
+global fullStack;
+global fullStackCounter;
+global totStackPerf;
 
 %% Serial Protocol 2 - Bluetooth
 
@@ -304,6 +311,7 @@ buffLenDa = 500;
 longBuffLen = 1000;
 indexDa=1:buffLenDa;
 asked = false;
+askedPerf = false;
 rt = false;
 plotting = false;
 receiving = false;
@@ -497,6 +505,11 @@ defaultAlt = 1;
 weights2 = 2.^([7:-1:0]);
 
 bufferSend = zeros(1, outputBuffSize);
+
+% Performance
+totStackPerf = 100;
+fullStackCounter = 0;
+fullStack = zeros(1,totStackPerf);
   
 disp('Welcome to the CPanel');
 
@@ -670,6 +683,31 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             set(minSqErrTxt2,'Visible','off');      
         end
     end   
+
+    % Starts the angle request
+    function startPerfAngCallback(~,~,~)
+        disp('starting Performance Test');
+        askedPerf = true;
+        
+        % if graph angle timer is not active
+        if ~get(angleTimer,'Running')
+            start(angleTimer);
+        end
+        
+        fullStack = zeros(1,totStackPerf);
+        fullStackCounter = 0;
+    end
+
+    function savePerfAngCallback(~,~,~)
+        disp('Stop and save Performance Test');
+        % if premptive stop
+        if fullStackCounter < totStackPerf
+            askedPerf = false;
+        end
+        % Compute min Sq Err
+        
+        % Save result and array
+    end
     
     %% Data Acquisition panel
 
@@ -1399,27 +1437,6 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
  
  %% Performance panel Callbacks
  % #perf #performance
-    
-    function function1(obj,event,h)
-        disp('start pressed');
-        asked = ~asked;
-        delete(timerfindall);
-        if asked == true
-            if serialFlag == 0 
-                % Activate timers TODO
-                [acceleration.s] = setupSerial();
-            end
-        else 
-            if serialFlag == 1 
-                receiving = false;
-                recording = false;
-                set(handles.start,'String','Start');
-                serialFlag = 0;
-            end
-        end
-        %disp(abs(az));
-        serialFlag;
-    end
     
     function [s] = function2()
         %comPortWin = 'COM4';
