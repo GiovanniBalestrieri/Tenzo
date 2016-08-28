@@ -113,6 +113,7 @@ global omegaR;
 % Motor speed value
 global omega;
 global alpha;
+global fh;
 
 % Boolean vars
 global accelero;
@@ -446,6 +447,7 @@ angleFreq = 0.2;
 
 buf_len = 100;
 index = 1:buf_len;
+indexPerf = 1:totStackPerf;
 
 % create variables for the Xaxis
 gxdata = zeros(buf_len,1);
@@ -689,21 +691,23 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     % Starts the angle request
     function startPerfAngCallback(~,~,~)
         disp('starting Performance Test');
+        fh = figure(10);
         askedPerf = true;
+        anglesRequestedVitruviano = true;
         
         % if graph angle timer is not active
-        if ~get(angleTimer,'Running')
+        if strcmp('off',get(angleTimer,'Running'))
             start(angleTimer);
         end
         
-        fullStack = zeros(4,totStackPerf);
         fullStackCounter = 0;
     end
 
     function savePerfAngCallback(~,~,~)
         disp('Stop and save Performance Test');
         
-        askedPerf = false;
+        askedPerf = false;        
+        anglesRequestedVitruviano = false;
         
         % Compute min Sq Err
         err = immse(phidata,Rdata)
@@ -2347,8 +2351,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     %% Send topics
     function sendNMess(obj)
         fprintf(xbee,obj);    
-        disp('Sending: ');
-        disp(obj);
+        %disp('Sending: ');
+        %disp(obj);
+        
         %disp('Tot bytes sent');
         %xbee.ValuesSent
     end
@@ -2937,8 +2942,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                          
                         if askedPerf
                            fullStackCounter = fullStackCounter + 1; 
-                        end
-                        
+                        end                        
                     end
                 end
             end
@@ -3129,13 +3133,33 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                             disp('Warning! Received magneto data but not requested');
                         end
                         
-                        % Second incrementation to track stored data
+                        % Second incrementation to track stored data & Plot
                         if askedPerf
                            fullStackCounter = fullStackCounter + 1 
+                           
+                           size(index)
+                           size(phidata)
+                           size(Rdata)
+                           
+                           figure(fh)  
+                           ax1 = subplot(2,1,1);  
+                           plot(ax1,index,phidata,'b','LineWidth',2);
+                           hold on
+                           plot(ax1,index,Rdata,'r','LineWidth',2);
+                           hold off
+                           grid on;                         
+
+                           % compute error
+                           errorEst = phidata - Rdata
+                            
+                           ax2 = subplot(2,1,2);
+                           stem(ax2,index,errorEst)   
+                           grid on;                            
+                           
                         end
                         
                         % Call Stop Perf if tot data reached
-                        if fullStackCounter >= totStackPerf && askedPerf
+                        if fullStackCounter >= (totStackPerf*2.4) && askedPerf
                            savePerfAngCallback();
                         end
 
