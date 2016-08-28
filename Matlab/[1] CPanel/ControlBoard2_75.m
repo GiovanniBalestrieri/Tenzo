@@ -638,13 +638,13 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     
     if (~exist('handles.startPerfAng','var'))
         handles.startPerfAng = uicontrol('Style','pushbutton', 'String','Start', ...
-            'Position', [160 20 120 30],...
+            'Position', [160 20 120 30],'Visible','off',...
             'Parent',hTabs(6), 'Callback',@startPerfAngCallback);
     end
     
     if (~exist('handles.savePerfAng','var'))
         handles.savePerfAng = uicontrol('Style','pushbutton', 'String','Stop', ...
-            'Position', [360 20 120 30],...
+            'Position', [360 20 120 30],'Visible','off',...
             'Parent',hTabs(6), 'Callback',@savePerfAngCallback);
     end
     
@@ -655,13 +655,13 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         'Position', [135 315 180 40],'Visible','off',...
         'Parent',hTabs(6), 'FontSize',10,'FontWeight','normal');    
     
-    stringSqErr = 'Angle Estimation performance measure. Computes\n the mean sq. error from the values received from bluetooth acquired by optical encoders on the vitruviano';
+    stringSqErr = 'Angle Estimation performance measure. Computes the mean sq. error from the values received from bluetooth acquired by optical encoders on the vitruviano';
     
     minSqErrTxt2 = uicontrol('Style','text', 'String', stringSqErr, ...
         'Position', [135 193 300 100],'Visible','off',...
         'Parent',hTabs(6), 'FontSize',10,'FontWeight','normal');    
     
-    handles.minSqErrVal = uicontrol('Style','edit', 'String','0', ...
+    handles.minSqErrVal = uicontrol('Style','text', 'String','0', ...
         'Position', [456 325 35 35],'Visible','off',...
         'Parent',hTabs(6), 'FontSize',12,'FontWeight','normal');
     
@@ -677,12 +677,16 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             set(welcomePerf,'Visible','off');
             set(frameMinSqErr,'Visible','on');
             set(handles.minSqErrVal,'Visible','on');
+            set(handles.savePerfAng,'Visible','on');
+            set(handles.startPerfAng,'Visible','on');
             set(minSqErrTxt,'Visible','on');        
             set(minSqErrTxt2,'Visible','on'); 
         elseif get(ctrlEffRad,'Value') == 1      
             set(welcomePerf,'Visible','off');
             set(frameMinSqErr,'Visible','off');
             set(handles.minSqErrVal,'Visible','off');
+            set(handles.savePerfAng,'Visible','off');
+            set(handles.startPerfAng,'Visible','off');
             set(minSqErrTxt,'Visible','off');
             set(minSqErrTxt2,'Visible','off');      
         end
@@ -711,6 +715,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         
         % Compute min Sq Err
         err = immse(phidata,Rdata)
+        set(handles.minSqErrVal,'Visible','on');
+        set(handles.minSqErrVal,'String',err);
         % Save result and array
         combo = [phidata;Rdata];
         
@@ -1441,99 +1447,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
      end
      
      function rtCallback(obj,event,h)
-     end
- 
- %% Performance panel Callbacks
- % #perf #performance
-    
-    function [s] = function2()
-        %comPortWin = 'COM4';
-        comPort = portUnix;
-        oldSerial = instrfind('Port', comPort); 
-        % if the set of such objects is not(~) empty
-        if (~isempty(oldSerial))  
-            disp('WARNING:  Port in use.  Closing.')
-            delete(oldSerial);
-        end
-        s = serial(comPort);
-
-        % Max wait time
-        set(s, 'TimeOut', 5); 
-        % set(s,'terminator','CR');
-        set(s,'BaudRate',xbeeBR);
-        fopen(s);
-
-        disp('Sending Request.');
-        acceleration.s = s;
-        timerArduino = timer('ExecutionMode','fixedRate','Period',0.1,'TimerFcn',{@storeSerial});    
-        timerConnect = timer('ExecutionMode','fixedRate','Period',5,'TimerFcn',{@connectSerial});%,'StopFcn',{@stoppedCon});    
-        try 
-            start(timerConnect);
-        catch exception
-            disp '******** InstrumentSubscription ERROR *********'
-            disp (exception.message);
-            disp '***********************************************'
-        end
-    end
-
-
-    function function3(obj,event,h)
-        if serialFlag == 0 && requestPending == false
-            if isvalid(acceleration.s) == 1
-                fwrite(acceleration.s,16); 
-            end
-            if (strcmp(get(timerArduino,'Running'),'off'))
-                try
-                    start(timerArduino);    
-                catch exception
-                    disp '******** InstrumentSubscription ERROR *********'
-                    disp (exception.message);
-                    disp '***********************************************'
-                end
-            end
-        end
-    end
-
-    function function4(obj,event,h)       
-        serialFlag = 1;
-        requestPending = false;
-        stop(timerArduino);   
-        stop(timerConnect);      
-        set(handles.start,'String','Stop');
-        disp('Connection established');
-    end
-
-    function storeSerial2(obj,event,handles)
-        while (get(acceleration.s, 'BytesAvailable')==1)
-            [mess,cont] = fread(acceleration.s);
-            %disp('Received bytes:');
-            %disp(cont);
-            %disp(mess);
-            if (mess == 17)             
-                %display(['Collecting data']);
-                fwrite(acceleration.s,18); 
-                requestPending = true;   
-            elseif (mess == 19)  
-                stoppedCon();
-            end
-        end
-    end
-
-    function stopCallback22(obj,event,handles)
-        if (~exist('serialFlag','var')) 
-            disp('disconnect');
-        end 
-    end 
-
-     function recordCallback22(obj,event,handles)
-     end
-     
-     function recordCallback122(obj,event,handles)
-     end
-     
-     function rtCallback22(obj,event,h)
-     end
-    
+     end    
     
     %% Motors Up btn callbacks
     function upCallback(src,eventData)
