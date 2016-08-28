@@ -2141,7 +2141,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             end
             
             % Check whether the serial port is available
-            serials = instrhwinfo('serial')
+            serials = instrhwinfo('serial');
             serialCond1 = false;
             for (i=1:size(serials.AvailableSerialPorts,1))
                 if (strcmp(serials.AvailableSerialPorts(i),portVitruviano))
@@ -2162,7 +2162,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 vitruviano = serial(portVitruviano,'baudrate',vitruvianoBR,'tag',tag);
                 
                 % Max wait time
-                set(vitruviano, 'TimeOut', 5);  
+                set(vitruviano, 'TimeOut', 10);  
                 % One message long buffer
                 set(vitruviano, 'InputBufferSize',14)
                 % Open the serial
@@ -2939,11 +2939,6 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                            fullStackCounter = fullStackCounter + 1; 
                         end
                         
-                        %encReceived = true;
-                        if asked
-                            % Write to file
-                            dlmwrite('enc.dat',[phiVitruvio thetaVitruvio],'-append', 'delimiter', ',');
-                        end
                     end
                 end
             end
@@ -3140,7 +3135,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                         end
                         
                         % Call Stop Perf if tot data reached
-                        if askedPerf >= totStackPerf
+                        if fullStackCounter >= totStackPerf && askedPerf
                            savePerfAngCallback();
                         end
 
