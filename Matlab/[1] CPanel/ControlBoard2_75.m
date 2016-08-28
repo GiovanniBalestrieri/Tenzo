@@ -184,6 +184,7 @@ global recording;
 global plotting;
 global asked;
 global askedPerf;
+global filenamePerf;
 global axdata;
 global phidata;
 global thetadata;
@@ -509,7 +510,8 @@ bufferSend = zeros(1, outputBuffSize);
 % Performance
 totStackPerf = 100;
 fullStackCounter = 0;
-fullStack = zeros(1,totStackPerf);
+fullStack = zeros(4,totStackPerf);
+filenamePerf = 'errorTenzo.mat';
   
 disp('Welcome to the CPanel');
 
@@ -694,19 +696,21 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             start(angleTimer);
         end
         
-        fullStack = zeros(1,totStackPerf);
+        fullStack = zeros(4,totStackPerf);
         fullStackCounter = 0;
     end
 
     function savePerfAngCallback(~,~,~)
         disp('Stop and save Performance Test');
-        % if premptive stop
-        if fullStackCounter < totStackPerf
-            askedPerf = false;
-        end
-        % Compute min Sq Err
         
+        askedPerf = false;
+        
+        % Compute min Sq Err
+        err = immse(phidata,Rdata)
         % Save result and array
+        combo = [phidata;Rdata];
+        
+        save(filenamePerf,'combo')
     end
     
     %% Data Acquisition panel
@@ -2930,23 +2934,10 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                         % Save Data from encoder
                         phidata = [ phidata(2:end) ; double(phiVitruvio) ];
                         thetadata = [ thetadata(2:end) ; double(thetaVitruvio) ]; 
-                        
-%                         %Plot the X magnitude
-%                         h1 = subplot(3,1,1,'Parent',hTabs(3));
-%                         if filterAcc
-%                             plot(h1,index,phidata,'b*','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-%                         else
-%                             plot(h1,index,phidata,'b*','LineWidth',2);
-%                         end
-%                         grid on;
-% 
-%                         h2 = subplot(3,1,2,'Parent',hTabs(3));
-%                         if filterAcc
-%                             plot(h2,index,thetadata,'g*','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
-%                         else
-%                             plot(h2,index,thetadata,'g*','LineWidth',2);
-%                         end
-%                         grid on;
+                         
+                        if askedPerf
+                           fullStackCounter = fullStackCounter + 1; 
+                        end
                         
                         %encReceived = true;
                         if asked
@@ -3141,6 +3132,16 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                             end
                         else
                             disp('Warning! Received magneto data but not requested');
+                        end
+                        
+                        % Second incrementation to track stored data
+                        if askedPerf
+                           fullStackCounter = fullStackCounter + 1 
+                        end
+                        
+                        % Call Stop Perf if tot data reached
+                        if askedPerf >= totStackPerf
+                           savePerfAngCallback();
                         end
 
                         %Plot the X magnitude
