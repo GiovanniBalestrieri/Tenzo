@@ -3051,9 +3051,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                         if askedPerf
                            fullStackCounter = fullStackCounter + 1 
                            
-                           size(index)
-                           size(phidata)
-                           size(Rdata)
+                           %size(index);
+                           %size(phidata);
+                           %size(Rdata);
                            
                            figure(fh)  
                            ax1 = subplot(2,1,1);  
@@ -3064,7 +3064,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                            grid on;                         
 
                            % compute error
-                           errorEst = phidata - Rdata
+                           errorEst = phidata - Rdata;
                             
                            ax2 = subplot(2,1,2);
                            stem(ax2,index,errorEst)   
@@ -3089,8 +3089,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
                         h2 = subplot(3,1,2,'Parent',hTabs(3));                        
                         if vitruvio
-                            plot(h2,index,thetadata,'c','LineWidth',2);
-                            hold on
+                            %plot(h2,index,thetadata,'c','LineWidth',2);
+                            %hold on
                         end
                         plot(h2,index,Pdata,'b','LineWidth',2);%,'MarkerEdgeColor','k','MarkerFaceColor','g','MarkerSize',5);
                         hold off
