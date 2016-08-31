@@ -315,6 +315,11 @@ MedianFilter medianGyroX(3,0);
 MedianFilter medianGyroY(3,0);
 MedianFilter medianGyroZ(3,0);
 
+// Filter the orientation estimate           # DEBUG
+MedianFilter medianEstX(3,0);
+MedianFilter medianEstY(3,0);
+MedianFilter medianEstZ(3,0);
+
 /**
  ** Acc 
  **/
