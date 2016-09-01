@@ -1241,7 +1241,7 @@ void SerialRoutine()
       }  
       else if (t == 'w')
       {
-        alphaW = alphaW + 0.05;
+        alphaW = alphaW + 0.005;
         if (alphaW>=1)
           alphaW = 1;
         if (verboseFilterAccMatlab)
@@ -1261,7 +1261,7 @@ void SerialRoutine()
       }     
       else if (t == 's')
       {
-        alphaW = alphaW - 0.05;
+        alphaW = alphaW - 0.005;
         if (alphaW<=0)
           alphaW = 0;
         if (verboseFilterAccMatlab)
