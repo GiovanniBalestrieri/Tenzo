@@ -5,9 +5,9 @@
 #include "PID_v2.h"
 #include "NonLinearPid.h"
 #include "MedianFilter.h"
-#include <FreeSixIMU.h>
-#include <FIMU_ADXL345.h>
-#include <FIMU_ITG3200.h>
+//#include <FreeSixIMU.h>
+//#include <FIMU_ADXL345.h>
+//#include <FIMU_ITG3200.h>
 
 Ux sakura;
 Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4));
@@ -15,7 +15,7 @@ Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4)
 //NonLinearPid controlCascade(SetpointRoll,SetpointPitch,SetpointYaw,SetpointAltitude);
 
 // Set the FreeSixIMU object
-FreeSixIMU sixDOF = FreeSixIMU();
+//FreeSixIMU sixDOF = FreeSixIMU();
  
 float angles[3];
 
@@ -578,21 +578,12 @@ void setupCommunication()
   }
 }
 
-void setupIMU()
-{ 
-  sixDOF.init(); //init the Acc and Gyro
-  delay(5);
-  if (!sakura.getProcessing())
-  {
-    Serial.println("[Ok] IMU ");
-  }
-}
 
 /// TILL HERE
 
 void setup() {
   setupCommunication();
-  setupIMU();
+  //setupIMU();
 //  setupAcceleromter();
 //  setupGyro();
   setupTimerInterrupt();  
@@ -694,7 +685,6 @@ void estAngle() // ISR
     estXAngle = medianEstX.out();
     estYAngle = medianEstY.out();
   }
-  
 }
 
 void wFilter(volatile float val[])
@@ -735,8 +725,8 @@ ISR(TIMER3_COMPB_vect)
   getAcc();
   getCompassValues();
   calcAngle();
-  sixDOF.getEuler(angles);
-  //estAngle();
+  //sixDOF.getEuler(angles);
+  estAngle();
   cont++;
 }
 
