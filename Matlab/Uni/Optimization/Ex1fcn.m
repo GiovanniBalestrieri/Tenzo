@@ -3,15 +3,11 @@
 %
 
 
+[X,Y] = meshgrid(-5:.1:5);
 %Z = (2*X.^2+3*Y.^2+2*X+3*Y);
-
-T = (5*X.^2+0.5*Y.^2+5/2*Z.^2-5*X+5*Z.*X);
-
+Z = 1/2*(6*X.^2+4*X*Y+Y.^2)-4*X-Y;
 
 %% Ex1 20-feb2015
-
-[X,Y,Z] = meshgrid(-5:.2:5);
-dZ = diff(T)./X
 figure(1)
 title('Function');
 surf(X,Y,Z)
@@ -21,12 +17,13 @@ title('Function');
 mesh(X,Y,Z)
 shading interp
 %% 
-banana = @(x) (2*x(1)^2+3*x(2)^2+2*x(1)+3*x(2))^2
-fminsearch(banana,[-1.4,-1.4])
-feval(banana,[-0.5,-0.5])
-feval(banana,[0,1])
+banana = @(x) (3*x(1)^2+1/2*x(2)^2+2*x(1)*x(2))-4*x(1)-x(2)
 
-feval(banana,[-1,-1])
+sol = fminsearch(banana,[-1.4,-1.4])
+disp('Solution of MinSearch')
+feval(banana,[sol(1),sol(2)])
+
+%feval(banana,[-1,-1])
 
 %%
 % Hessian
