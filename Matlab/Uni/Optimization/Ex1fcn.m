@@ -1,11 +1,17 @@
 %% 
 % Plot 3d functions
 %
+
+
+%Z = (2*X.^2+3*Y.^2+2*X+3*Y);
+
+T = (5*X.^2+0.5*Y.^2+5/2*Z.^2-5*X+5*Z.*X);
+
+
 %% Ex1 20-feb2015
 
-[X,Y] = meshgrid(-5:.2:5);
-Z = (2*X.^2+3*Y.^2+2*X+3*Y);
-dZ = diff(Z)/X
+[X,Y,Z] = meshgrid(-5:.2:5);
+dZ = diff(T)./X
 figure(1)
 title('Function');
 surf(X,Y,Z)
@@ -38,4 +44,3 @@ solGrad.y
 
 
 
-feval(HessBanana,

@@ -419,6 +419,7 @@ volatile int dt=0;
 volatile float wF[3] = {0,0,0};
 volatile float aF[3] = {0,0,0};
 volatile boolean filterGyro = true;
+volatile boolean filterEst = true;
 volatile boolean filterAcc = true;
 volatile boolean initializedSetup = false;
 volatile boolean initializedGyroCalib = false;
@@ -680,9 +681,20 @@ void calcAngle() //ISR
 void estAngle() // ISR
 {
   estXAngle = (estXAngle + x*(float)dt/1000000.0)*kG + angleXAcc*kA;
+  
   estYAngle = (estYAngle + y*(float)dt/1000000.0)*kG + angleYAcc*kA;
   //estZAngle = (estZAngle + z*(float)dt/1000000.0)*0.02 + bearing1*0.98;
   //psi*KG + yaw*KA;
+
+  // Filter Estimates with Median Filter
+  if (filterEst)
+  {
+    medianEstX.in(estXAngle);
+    medianEstY.in(estYAngle);
+    estXAngle = medianEstX.out();
+    estYAngle = medianEstY.out();
+  }
+  
 }
 
 void wFilter(volatile float val[])
@@ -1815,7 +1827,6 @@ void getGyroValues()
   xC = ((xMSB << 8) | xLSB);
   medianGyroX.in(xC);
   x = medianGyroX.out();    
-  //x = ((xMSB << 8) | xLSB);
 
   yMSB = readRegister(L3G4200D_Address, 0x2B);
   yLSB = readRegister(L3G4200D_Address, 0x2A);
