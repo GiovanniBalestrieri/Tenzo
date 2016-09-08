@@ -4,6 +4,9 @@ from nltk.corpus import movie_reviews
 import pickle
 from nltk.classify.scikitlearn import SklearnClassifier
 from sklearn.naive_bayes import MultinomialNB, GaussianNB ,BernoulliNB
+from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.svm import SVC,LinearSVC,NuSVC
+
 
 # List of tuples
 documents=[(list(movie_reviews.words(fileid)),category)
@@ -66,11 +69,28 @@ save_classifier.close()
 # Uses a wrapper around nltk classfier
 MNB_classifier = SklearnClassifier(MultinomialNB())
 MNB_classifier.train(training_set)
-print(" Original Multinomial Classifier acc:", (nltk.classify.accuracy(MNB_classifier,test_set))*100)
+print("Multinomial Classifier acc:", (nltk.classify.accuracy(MNB_classifier,test_set))*100)
+
+LogisticRegression_classifier = SklearnClassifier(LogisticRegression())
+LogisticRegression_classifier.train(training_set)
+print("LogisticRegression Classifier acc:", (nltk.classify.accuracy(LogisticRegression_classifier,test_set))*100)
+
+SGD_classifier = SklearnClassifier(SGDClassifier())
+SGD_classifier.train(training_set)
+print("SGD Classifier acc:", (nltk.classify.accuracy(SGD_classifier,test_set))*100)
+
+SVC_classifier = SklearnClassifier(SVC())
+SVC_classifier.train(training_set)
+print("SVC Classifier acc:", (nltk.classify.accuracy(SVC_classifier,test_set))*100)
+
+LSVC_classifier = SklearnClassifier(LinearSVC())
+LSVC_classifier.train(training_set)
+print("Linear SVC Classifier acc:", (nltk.classify.accuracy(LSVC_classifier,test_set))*100)
+
+NuSVC_classifier = SklearnClassifier(NuSVC())
+NuSVC_classifier.train(training_set)
+print("Nu SVC Classifier acc:", (nltk.classify.accuracy(NuSVC_classifier,test_set))*100)
 
 
-#GuassianNB_classifier = SklearnClassifier(GaussianNB())
-#GaussianMNB_classifier.train(training_set)
-#print(" Original Gaussian classifier acc:", (nltk.classify.accuracy(GaussianMNB_classifier,test_set))*100)
-
+# Let's add a confidence parameter using a voting system. Next hack
 
