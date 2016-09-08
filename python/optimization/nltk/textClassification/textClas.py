@@ -7,6 +7,35 @@ from sklearn.naive_bayes import MultinomialNB, GaussianNB ,BernoulliNB
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.svm import SVC,LinearSVC,NuSVC
 
+from nltk.classify import ClassifierI
+from statistics import mode
+
+class VoteClassifier(ClassifierI):
+	def __init__(self,*classifiers):
+		self._classifiers = classifiers
+
+	def classify(self,features):
+		votes=[]
+		for c in self._classifiers:
+			v = c.classify(features)
+			votes.append(v)
+
+		return mode(votes)
+
+	def confidence(self,features):
+		votes = []
+		for c in self._classifiers:
+			v = c.classify(features)
+			votes.append(v)
+
+		choice_votes = votes.count(mode(votes))
+		print(votes)
+		print(mode(votes))
+		print(choice_votes)
+		print(len(votes))
+		conf = choice_votes*100 / len(votes)
+		return conf
+
 
 # List of tuples
 documents=[(list(movie_reviews.words(fileid)),category)
@@ -94,3 +123,20 @@ print("Nu SVC Classifier acc:", (nltk.classify.accuracy(NuSVC_classifier,test_se
 
 # Let's add a confidence parameter using a voting system. Next hack
 
+voted_classifier = VoteClassifier(classifier,
+				  MNB_classifier,
+				  LogisticRegression_classifier, 
+				  SGD_classifier,
+			      	  SVC_classifier,
+				  LSVC_classifier,
+				  NuSVC_classifier)
+
+print("Voted classifier accuracy percent:",(nltk.classify.accuracy(voted_classifier,test_set))*100)
+
+print("Classification: ", voted_classifier.classify(test_set[0][0]), "Confidence: ", voted_classifier.confidence(test_set[0][0])*100)
+
+
+print("Classification: ", voted_classifier.classify(test_set[1][0]), "Confidence: ", voted_classifier.confidence(test_set[1][0])*100)
+print("Classification: ", voted_classifier.classify(test_set[2][0]), "Confidence: ", voted_classifier.confidence(test_set[2][0])*100)
+print("Classification: ", voted_classifier.classify(test_set[3][0]), "Confidence: ", voted_classifier.confidence(test_set[3][0])*100)
+print("Classification: ", voted_classifier.classify(test_set[4][0]), "Confidence: ", voted_classifier.confidence(test_set[4][0])*100)
