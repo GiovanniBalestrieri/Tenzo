@@ -2,6 +2,8 @@ import nltk
 import random
 from nltk.corpus import movie_reviews
 import pickle
+from nltk.classify.scikitlearn import SklearnClassifier
+from sklearn.naive_bayes import MultinomialNB, GaussianNB ,BernoulliNB
 
 # List of tuples
 documents=[(list(movie_reviews.words(fileid)),category)
@@ -24,13 +26,13 @@ for w in movie_reviews.words():
 
 # convert to nltk frequency distribution
 all_words = nltk.FreqDist(words)
-
+print("\t\t\tReally")
 # Show most common words
 print(all_words.most_common(15))
 # See how many times the word stupid is present in the reviews
-print(all_words["stupid"])
+print(all_words["really"])
 
-word_feature = list(all_words.keys())[:3000]
+word_feature = list(all_words.keys())[:5000]
 
 def find_feature(document):
 	words = set(document)
@@ -54,9 +56,21 @@ classifier = nltk.NaiveBayesClassifier.train(training_set)
 #classfier = pickle.load(classifier_f)
 #classifier_f.close()
 
-print("Naive Bayes Alg acc:", (nltk.classify.accuracy(classifier,test_set))*100)
+print(" Original Naive Bayes Alg acc:", (nltk.classify.accuracy(classifier,test_set))*100)
 classifier.show_most_informative_features(15)
 
 save_classifier = open("naiveBayes.pickle","wb")
 pickle.dump(classifier,save_classifier)
 save_classifier.close()
+
+# Uses a wrapper around nltk classfier
+MNB_classifier = SklearnClassifier(MultinomialNB())
+MNB_classifier.train(training_set)
+print(" Original Multinomial Classifier acc:", (nltk.classify.accuracy(MNB_classifier,test_set))*100)
+
+
+#GuassianNB_classifier = SklearnClassifier(GaussianNB())
+#GaussianMNB_classifier.train(training_set)
+#print(" Original Gaussian classifier acc:", (nltk.classify.accuracy(GaussianMNB_classifier,test_set))*100)
+
+
