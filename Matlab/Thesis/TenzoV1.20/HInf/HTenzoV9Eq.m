@@ -525,7 +525,8 @@ D0 = tenzo_min_nominale.d;
 
 set_param('LQRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
 
-Kopt = Kopt_3;
+% Assign Lqr Gain to Simulation block #K_opt
+Kopt = Kopt_2;
 
 if strcmp(answer10,'y')
     sim('LqrTenzo.slx');
@@ -728,6 +729,7 @@ Doss=zeros(size(Aoss,1),poss);
 
 
 open('LqrTenzo.slx');
+%open('LTRTenzo.slx');
 Kopt = Kopt_3;
 A0 = tenzo_min_nominale.a;
 B0 = tenzo_min_nominale.b;
@@ -1093,7 +1095,7 @@ lm_b = frd(max_T0_LTR_vs.^-1,omega);
 pre_bound_dMout = frd(top_dMout,omega);
 
 % fit razionale e min phase per ricavare il bound
-ord = 2; %Ordine della funzione di fitting 
+ord = 1; %Ordine della funzione di fitting 
 bound_dMout2 = fitmagfrd(pre_bound_dMout,ord,[],[],1); 
 bb_dMout2 = sigma(bound_dMout2,omega);
 max_dMout2 = bb_dMout2(1,:);
@@ -1135,7 +1137,7 @@ W3 = gamma_3*w3_X*eye(q);
 W3Old = w3_X*eye(q);
 
 
-W1_EQ = gamma_1*w1_EQ*eye(q);
+W1 = gamma_1*w1*eye(q);
 W1Old = w1*eye(q);
 W2 = gamma_2*w2*eye(q);
 W2Old = w2*eye(q);

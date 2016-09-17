@@ -1,13 +1,13 @@
 Model {
   Name			  "PidNL"
-  Version		  8.5
+  Version		  8.6
   MdlSubVersion		  0
   SavedCharacterEncoding  "UTF-8"
   GraphicalInterface {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.111"
+    ComputedModelVersion    "1.112"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -40,7 +40,7 @@ Model {
       $ObjectID		      3
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [55.0, 14.0, 1321.0, 944.0]
+      Location		      [65.0, 24.0, 1301.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		4
@@ -64,7 +64,7 @@ Model {
 	IsActive		[1]
 	ViewObjType		"SimulinkTopLevel"
 	LoadSaveID		"0"
-	Extents			[1265.0, 573.0]
+	Extents			[1267.0, 599.0]
 	ZoomFactor		[1.0]
 	Offset			[-19.273809523809973, 19.157951468229328]
       }
@@ -76,9 +76,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "userk"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Dec 17 01:44:42 2015"
-  RTWModifiedTimeStamp	  372217480
-  ModelVersionFormat	  "1.%<AutoIncrement:111>"
+  LastModifiedDate	  "Fri Sep 16 01:33:51 2016"
+  RTWModifiedTimeStamp	  395885867
+  ModelVersionFormat	  "1.%<AutoIncrement:112>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -96,6 +96,7 @@ Model {
   SortedOrder		  off
   ExecutionContextIcon	  off
   ShowLinearizationAnnotations on
+  ShowVisualizeInsertedRTB on
   ShowMarkup		  on
   BlockNameDataTip	  off
   BlockParametersDataTip  off
@@ -136,27 +137,6 @@ Model {
       PropName		      "logAsSpecifiedByModelsSSIDs_"
     }
   }
-  RecordCoverage	  off
-  CovPath		  "/"
-  CovSaveName		  "covdata"
-  CovMetricSettings	  "dw"
-  CovNameIncrementing	  off
-  CovHtmlReporting	  on
-  CovForceBlockReductionOff on
-  CovEnableCumulative	  on
-  covSaveCumulativeToWorkspaceVar on
-  CovSaveSingleToWorkspaceVar on
-  CovCumulativeVarName	  "covCumulativeData"
-  CovCumulativeReport	  off
-  CovReportOnPause	  on
-  CovModelRefEnable	  "Off"
-  CovExternalEMLEnable	  off
-  CovSFcnEnable		  on
-  CovBoundaryAbsTol	  0.000010
-  CovBoundaryRelTol	  0.010000
-  CovUseTimeInterval	  off
-  CovStartTime		  0
-  CovStopTime		  0
   ExtModeBatchMode	  off
   ExtModeEnableFloating	  on
   ExtModeTrigType	  "manual"
@@ -185,13 +165,13 @@ Model {
     Dimension		    1
     Simulink.ConfigSet {
       $ObjectID		      8
-      Version		      "1.15.0"
+      Version		      "1.15.1"
       Array {
 	Type			"Handle"
-	Dimension		9
+	Dimension		10
 	Simulink.SolverCC {
 	  $ObjectID		  9
-	  Version		  "1.15.0"
+	  Version		  "1.15.1"
 	  StartTime		  "0.0"
 	  StopTime		  "50.0"
 	  AbsTol		  "auto"
@@ -218,6 +198,8 @@ Model {
 	  ZeroCrossControl	  "UseLocalSettings"
 	  ZeroCrossAlgorithm	  "Nonadaptive"
 	  AlgebraicLoopSolver	  "TrustRegion"
+	  SolverInfoToggleStatus  off
+	  IsAutoAppliedInSIP	  off
 	  SolverResetMethod	  "Fast"
 	  PositivePriorityOrder	  off
 	  AutoInsertRateTranBlk	  off
@@ -226,7 +208,7 @@ Model {
 	}
 	Simulink.DataIOCC {
 	  $ObjectID		  10
-	  Version		  "1.15.0"
+	  Version		  "1.15.1"
 	  Decimation		  "1"
 	  ExternalInput		  "[t, u]"
 	  FinalStateName	  "xFinal"
@@ -245,6 +227,8 @@ Model {
 	  DSMLogging		  on
 	  InspectSignalLogs	  off
 	  VisualizeSimOutput	  on
+	  StreamToWorkspace	  off
+	  StreamVariableName	  "streamout"
 	  SaveTime		  on
 	  ReturnWorkspaceOutputs  off
 	  StateSaveName		  "xout"
@@ -256,10 +240,11 @@ Model {
 	  OutputTimes		  "[]"
 	  ReturnWorkspaceOutputsName "out"
 	  Refine		  "1"
+	  LoggingIntervals	  "[-inf, inf]"
 	}
 	Simulink.OptimizationCC {
 	  $ObjectID		  11
-	  Version		  "1.15.0"
+	  Version		  "1.15.1"
 	  Array {
 	    Type		    "Cell"
 	    Dimension		    8
@@ -276,7 +261,7 @@ Model {
 	  BlockReduction	  on
 	  BooleanDataType	  on
 	  ConditionallyExecuteInputs on
-	  InlineParams		  off
+	  DefaultParameterBehavior "Tunable"
 	  UseDivisionForNetSlopeComputation "off"
 	  UseFloatMulNetSlope	  off
 	  DefaultUnderspecifiedDataType	"double"
@@ -316,7 +301,7 @@ Model {
 	}
 	Simulink.DebuggingCC {
 	  $ObjectID		  12
-	  Version		  "1.15.0"
+	  Version		  "1.15.1"
 	  RTPrefix		  "error"
 	  ConsistencyChecking	  "none"
 	  ArrayBoundsChecking	  "none"
@@ -343,7 +328,6 @@ Model {
 	  IgnoredZcDiagnostic	  "warning"
 	  SolverPrmCheckMsg	  "none"
 	  InheritedTsInSrcMsg	  "warning"
-	  DiscreteInheritContinuousMsg "warning"
 	  MultiTaskDSMMsg	  "error"
 	  MultiTaskCondExecSysMsg "error"
 	  MultiTaskRateTransMsg	  "error"
@@ -376,6 +360,7 @@ Model {
 	  BusObjectLabelMismatch  "warning"
 	  RootOutportRequireBusObject "warning"
 	  AssertControl		  "UseLocalSettings"
+	  AllowSymbolicDim	  off
 	  ModelReferenceIOMsg	  "none"
 	  ModelReferenceMultiInstanceNormalModeStructChecksumCheck "error"
 	  ModelReferenceVersionMismatchMessage "none"
@@ -391,6 +376,7 @@ Model {
 	  StrictBusMsg		  "ErrorLevel1"
 	  BusNameAdapt		  "WarnAndRepair"
 	  NonBusSignalsTreatedAsBus "none"
+	  SymbolicDimMinMaxWarning "warning"
 	  BlockIODiagnostic	  "none"
 	  SFUnusedDataAndEventsDiag "warning"
 	  SFUnexpectedBacktrackingDiag "warning"
@@ -405,7 +391,7 @@ Model {
 	}
 	Simulink.HardwareCC {
 	  $ObjectID		  13
-	  Version		  "1.15.0"
+	  Version		  "1.15.1"
 	  ProdBitPerChar	  8
 	  ProdBitPerShort	  16
 	  ProdBitPerInt		  32
@@ -445,8 +431,9 @@ Model {
 	}
 	Simulink.ModelReferenceCC {
 	  $ObjectID		  14
-	  Version		  "1.15.0"
+	  Version		  "1.15.1"
 	  UpdateModelReferenceTargets "IfOutOfDateOrStructuralChange"
+	  EnableRefExpFcnMdlSchedulingChecks on
 	  CheckModelReferenceTargetMessage "error"
 	  EnableParallelModelReferenceBuilds off
 	  ParallelModelReferenceErrorOnInvalidPool on
@@ -460,8 +447,7 @@ Model {
 	}
 	Simulink.SFSimCC {
 	  $ObjectID		  15
-	  Version		  "1.15.0"
-	  SFSimOverflowDetection  on
+	  Version		  "1.15.1"
 	  SFSimEcho		  on
 	  SimCtrlC		  on
 	  SimIntegrity		  on
@@ -473,7 +459,7 @@ Model {
 	Simulink.RTWCC {
 	  $BackupClass		  "Simulink.RTWCC"
 	  $ObjectID		  16
-	  Version		  "1.15.0"
+	  Version		  "1.15.1"
 	  Array {
 	    Type		    "Cell"
 	    Dimension		    16
@@ -501,7 +487,6 @@ Model {
 	  MakeCommand		  "make_rtw"
 	  GenerateMakefile	  on
 	  PackageGeneratedCodeAndArtifacts off
-	  PackageName		  ""
 	  TemplateMakefile	  "grt_default_tmf"
 	  PostCodeGenCommand	  ""
 	  Description		  ""
@@ -515,13 +500,6 @@ Model {
 	  TLCAssert		  off
 	  RTWUseLocalCustomCode	  off
 	  RTWUseSimCustomCode	  off
-	  CustomSourceCode	  ""
-	  CustomHeaderCode	  ""
-	  CustomInclude		  ""
-	  CustomSource		  ""
-	  CustomLibrary		  ""
-	  CustomInitializer	  ""
-	  CustomTerminator	  ""
 	  Toolchain		  "Automatically locate an installed toolchain"
 	  BuildConfiguration	  "Faster Builds"
 	  IncludeHyperlinkInReport off
@@ -553,7 +531,7 @@ Model {
 	    Dimension		    2
 	    Simulink.CodeAppCC {
 	      $ObjectID		      17
-	      Version		      "1.15.0"
+	      Version		      "1.15.1"
 	      Array {
 		Type			"Cell"
 		Dimension		24
@@ -625,7 +603,7 @@ Model {
 	    Simulink.GRTTargetCC {
 	      $BackupClass	      "Simulink.TargetCC"
 	      $ObjectID		      18
-	      Version		      "1.15.0"
+	      Version		      "1.15.1"
 	      Array {
 		Type			"Cell"
 		Dimension		13
@@ -689,6 +667,7 @@ Model {
 	      AutosarCompliant	      off
 	      GRTInterface	      off
 	      GenerateAllocFcn	      off
+	      UseToolchainInfoCompliant	on
 	      GenerateSharedConstants on
 	      UseMalloc		      off
 	      ExtMode		      off
@@ -708,9 +687,36 @@ Model {
 	    PropName		    "Components"
 	  }
 	}
-	hdlcoderui.hdlcc {
+	SlCovCC.ConfigComp {
 	  $ObjectID		  19
-	  Version		  "1.15.0"
+	  Version		  "1.15.1"
+	  Description		  "Simulink Coverage Configuration Component"
+	  Name			  "Simulink Coverage"
+	  RecordCoverage	  off
+	  CovPath		  "/"
+	  CovSaveName		  "covdata"
+	  CovMetricSettings	  "dw"
+	  CovNameIncrementing	  off
+	  CovHtmlReporting	  on
+	  CovForceBlockReductionOff on
+	  CovEnableCumulative	  on
+	  CovSaveCumulativeToWorkspaceVar on
+	  CovSaveSingleToWorkspaceVar on
+	  CovCumulativeVarName	  "covCumulativeData"
+	  CovCumulativeReport	  off
+	  CovReportOnPause	  on
+	  CovModelRefEnable	  "Off"
+	  CovExternalEMLEnable	  off
+	  CovSFcnEnable		  on
+	  CovBoundaryAbsTol	  1e-05
+	  CovBoundaryRelTol	  0.01
+	  CovUseTimeInterval	  off
+	  CovStartTime		  0
+	  CovStopTime		  0
+	}
+	hdlcoderui.hdlcc {
+	  $ObjectID		  20
+	  Version		  "1.15.1"
 	  Description		  "HDL Coder custom configuration component"
 	  Name			  "HDL Coder"
 	  Array {
@@ -735,7 +741,7 @@ Model {
   }
   Object {
     $PropName		    "DataTransfer"
-    $ObjectID		    20
+    $ObjectID		    21
     $ClassName		    "Simulink.GlobalDataTransfer"
     DefaultTransitionBetweenSyncTasks "Ensure deterministic transfer (maximum delay)"
     DefaultTransitionBetweenAsyncTasks "Ensure data integrity only"
@@ -797,11 +803,9 @@ Model {
   BlockParameterDefaults {
     Block {
       BlockType		      BusCreator
-      Inputs		      "4"
       DisplayOption	      "none"
       OutDataTypeStr	      "Inherit: auto"
       NonVirtualBus	      off
-      InheritFromInputs	      on
     }
     Block {
       BlockType		      BusSelector
@@ -954,8 +958,6 @@ Model {
       FunctionName	      "system"
       SFunctionModules	      "''"
       PortCounts	      "[]"
-      SFunctionDeploymentMode off
-      EnableBusSupport	      off
     }
     Block {
       BlockType		      Saturate
@@ -974,23 +976,9 @@ Model {
     }
     Block {
       BlockType		      Scope
-      ModelBased	      off
-      TickLabels	      "OneTimeTick"
-      ZoomMode		      "on"
-      Grid		      "on"
-      ShowLegends	      off
-      TimeRange		      "auto"
-      YMin		      "-5"
-      YMax		      "5"
-      SaveToWorkspace	      off
-      SaveName		      "ScopeData"
-      DataFormat	      "Array"
-      LimitDataPoints	      on
-      MaxDataPoints	      "5000"
-      Decimation	      "1"
-      SampleInput	      off
-      SampleTime	      "-1"
-      ScrollMode	      off
+      DefaultConfigurationName "Simulink.scopes.TimeScopeBlockCfg"
+      NumInputPorts	      "1"
+      Floating		      off
     }
     Block {
       BlockType		      SubSystem
@@ -1019,7 +1007,6 @@ Model {
       Opaque		      off
       MaskHideContents	      off
       SFBlockType	      "NONE"
-      Variant		      off
       GeneratePreprocessorConditionals off
       ContentPreviewEnabled   off
       IsWebBlock	      off
@@ -1077,7 +1064,7 @@ Model {
   }
   System {
     Name		    "PidNL"
-    Location		    [55, 14, 1376, 958]
+    Location		    [65, 24, 1366, 768]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -1108,9 +1095,10 @@ Model {
       ZOrder		      -6
       BackgroundColor	      "orange"
       RequestExecContextInheritance off
+      Variant		      off
       System {
 	Name			"Ctrl Mix"
-	Location		[55, 14, 1376, 958]
+	Location		[55, 24, 1376, 968]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1166,6 +1154,7 @@ Model {
 	  Position		  [175, 29, 305, 181]
 	  ZOrder		  92
 	  RequestExecContextInheritance	off
+	  Variant		  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "mc1"
@@ -1492,7 +1481,7 @@ Model {
 	    Annotation {
 	      SID		      "258"
 	      Name		      "mc2 = Alt_cor + Psi_cor + Phi_cor"
-	      Position		      [636, 219, 790, 234]
+	      Position		      [636, 219, 790, 236]
 	      InternalMargins	      [0, 0, 0, 0]
 	      FixedHeight	      off
 	      FixedWidth	      off
@@ -1501,7 +1490,7 @@ Model {
 	    Annotation {
 	      SID		      "257"
 	      Name		      "+ (plus) Quad Configuration Control Mixing"
-	      Position		      [302, 24, 493, 39]
+	      Position		      [302, 24, 493, 41]
 	      InternalMargins	      [0, 0, 0, 0]
 	      FixedHeight	      off
 	      FixedWidth	      off
@@ -1510,7 +1499,7 @@ Model {
 	    Annotation {
 	      SID		      "256"
 	      Name		      "mc4 = Alt_cor + Psi_cor - Phi_cor"
-	      Position		      [636, 336, 787, 351]
+	      Position		      [636, 336, 787, 353]
 	      InternalMargins	      [0, 0, 0, 0]
 	      FixedHeight	      off
 	      FixedWidth	      off
@@ -1519,7 +1508,7 @@ Model {
 	    Annotation {
 	      SID		      "255"
 	      Name		      "mc3 = Alt_cor - Psi_cor + The_cor "
-	      Position		      [636, 152, 792, 167]
+	      Position		      [636, 152, 792, 169]
 	      InternalMargins	      [0, 0, 0, 0]
 	      FixedHeight	      off
 	      FixedWidth	      off
@@ -1528,7 +1517,7 @@ Model {
 	    Annotation {
 	      SID		      "254"
 	      Name		      "mc1 = Alt_cor -Psi_cor - The_cor"
-	      Position		      [636, 59, 785, 74]
+	      Position		      [636, 59, 785, 76]
 	      InternalMargins	      [0, 0, 0, 0]
 	      FixedHeight	      off
 	      FixedWidth	      off
@@ -1544,7 +1533,9 @@ Model {
 	  Position		  [345, 25, 350, 185]
 	  ZOrder		  94
 	  ShowName		  off
+	  Inputs		  "4"
 	  DisplayOption		  "bar"
+	  InheritFromInputs	  on
 	}
 	Block {
 	  BlockType		  BusCreator
@@ -1554,7 +1545,9 @@ Model {
 	  Position		  [345, 265, 350, 425]
 	  ZOrder		  97
 	  ShowName		  off
+	  Inputs		  "4"
 	  DisplayOption		  "bar"
+	  InheritFromInputs	  on
 	}
 	Block {
 	  BlockType		  Constant
@@ -1582,6 +1575,7 @@ Model {
 	  Position		  [175, 269, 305, 421]
 	  ZOrder		  96
 	  RequestExecContextInheritance	off
+	  Variant		  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "mc1"
@@ -2018,7 +2012,7 @@ Model {
 	    Annotation {
 	      SID		      "287"
 	      Name		      "mc1 = Alt_cor - The_cor - Phi_cor - Psi_cor"
-	      Position		      [713, 64, 907, 79]
+	      Position		      [713, 64, 907, 81]
 	      InternalMargins	      [0, 0, 0, 0]
 	      FixedHeight	      off
 	      FixedWidth	      off
@@ -2027,7 +2021,7 @@ Model {
 	    Annotation {
 	      SID		      "286"
 	      Name		      "X - Configuration Quad Control Mixing"
-	      Position		      [397, 29, 567, 44]
+	      Position		      [397, 29, 567, 46]
 	      InternalMargins	      [0, 0, 0, 0]
 	      FixedHeight	      off
 	      FixedWidth	      off
@@ -2036,7 +2030,7 @@ Model {
 	    Annotation {
 	      SID		      "285"
 	      Name		      "mc3 = Alt_cor + The_cor + Phi_cor - Psi_cor"
-	      Position		      [716, 116, 915, 131]
+	      Position		      [716, 116, 915, 133]
 	      InternalMargins	      [0, 0, 0, 0]
 	      FixedHeight	      off
 	      FixedWidth	      off
@@ -2045,7 +2039,7 @@ Model {
 	    Annotation {
 	      SID		      "284"
 	      Name		      "mc2 = Alt_cor - The_cor + Phi_cor + Psi_cor"
-	      Position		      [716, 297, 915, 312]
+	      Position		      [716, 297, 915, 314]
 	      InternalMargins	      [0, 0, 0, 0]
 	      FixedHeight	      off
 	      FixedWidth	      off
@@ -2054,7 +2048,7 @@ Model {
 	    Annotation {
 	      SID		      "283"
 	      Name		      "mc4 = Alt_cor + The_cor - Phi_cor + Psi_cor"
-	      Position		      [716, 244, 915, 259]
+	      Position		      [716, 244, 915, 261]
 	      InternalMargins	      [0, 0, 0, 0]
 	      FixedHeight	      off
 	      FixedWidth	      off
@@ -2270,9 +2264,10 @@ Model {
       Position		      [50, 230, 115, 280]
       ZOrder		      -11
       RequestExecContextInheritance off
+      Variant		      off
       System {
 	Name			"Path"
-	Location		[55, 14, 1376, 958]
+	Location		[55, 24, 1376, 968]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -2290,16 +2285,18 @@ Model {
 	  Name			  "Bus\nCreator"
 	  SID			  "400"
 	  Ports			  [4, 1]
-	  Position		  [150, 46, 155, 259]
+	  Position		  [140, -37, 145, 342]
 	  ZOrder		  -2
 	  ShowName		  off
+	  Inputs		  "4"
 	  DisplayOption		  "bar"
+	  InheritFromInputs	  on
 	}
 	Block {
 	  BlockType		  FromWorkspace
 	  Name			  "From\nWorkspace"
 	  SID			  "396"
-	  Position		  [35, 38, 80, 62]
+	  Position		  [35, 33, 80, 57]
 	  ZOrder		  -10
 	  VariableName		  "path.x"
 	  SampleTime		  "0"
@@ -2319,7 +2316,7 @@ Model {
 	  BlockType		  FromWorkspace
 	  Name			  "From\nWorkspace2"
 	  SID			  "398"
-	  Position		  [25, 148, 70, 172]
+	  Position		  [20, 153, 65, 177]
 	  ZOrder		  -10
 	  VariableName		  "path.z"
 	  SampleTime		  "0"
@@ -2329,7 +2326,7 @@ Model {
 	  BlockType		  FromWorkspace
 	  Name			  "From\nWorkspace3"
 	  SID			  "399"
-	  Position		  [15, 203, 60, 227]
+	  Position		  [20, 233, 65, 257]
 	  ZOrder		  -10
 	  VariableName		  "path.psi"
 	  SampleTime		  "0"
@@ -2339,7 +2336,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Out1"
 	  SID			  "393"
-	  Position		  [190, 118, 220, 132]
+	  Position		  [215, 148, 245, 162]
 	  ZOrder		  -14
 	  IconDisplay		  "Port number"
 	}
@@ -2347,7 +2344,7 @@ Model {
 	  ZOrder		  1
 	  SrcBlock		  "From\nWorkspace"
 	  SrcPort		  1
-	  Points		  [35, 0; 0, 25]
+	  Points		  [25, 0; 0, -35]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  1
 	}
@@ -2355,7 +2352,6 @@ Model {
 	  ZOrder		  2
 	  SrcBlock		  "From\nWorkspace1"
 	  SrcPort		  1
-	  Points		  [30, 0; 0, 20]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  2
 	}
@@ -2363,7 +2359,7 @@ Model {
 	  ZOrder		  3
 	  SrcBlock		  "From\nWorkspace2"
 	  SrcPort		  1
-	  Points		  [25, 0; 0, 15]
+	  Points		  [18, 0; 0, 35]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  3
 	}
@@ -2371,7 +2367,7 @@ Model {
 	  ZOrder		  4
 	  SrcBlock		  "From\nWorkspace3"
 	  SrcPort		  1
-	  Points		  [20, 0; 0, 10]
+	  Points		  [8, 0; 0, 50]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  4
 	}
@@ -2379,14 +2375,13 @@ Model {
 	  ZOrder		  5
 	  SrcBlock		  "Bus\nCreator"
 	  SrcPort		  1
-	  Points		  [5, 0; 0, -25]
 	  DstBlock		  "Out1"
 	  DstPort		  1
 	}
 	Annotation {
 	  SID			  "384"
 	  Name			  "X path"
-	  Position		  [35, 71, 65, 86]
+	  Position		  [35, 71, 65, 88]
 	  InternalMargins	  [0, 0, 0, 0]
 	  FixedHeight		  off
 	  FixedWidth		  off
@@ -2395,7 +2390,7 @@ Model {
 	Annotation {
 	  SID			  "386"
 	  Name			  "Y path"
-	  Position		  [40, 131, 70, 146]
+	  Position		  [40, 131, 70, 148]
 	  InternalMargins	  [0, 0, 0, 0]
 	  FixedHeight		  off
 	  FixedWidth		  off
@@ -2404,7 +2399,7 @@ Model {
 	Annotation {
 	  SID			  "388"
 	  Name			  "Psi path"
-	  Position		  [45, 251, 83, 266]
+	  Position		  [45, 251, 83, 268]
 	  InternalMargins	  [0, 0, 0, 0]
 	  FixedHeight		  off
 	  FixedWidth		  off
@@ -2413,7 +2408,7 @@ Model {
 	Annotation {
 	  SID			  "390"
 	  Name			  "Z path"
-	  Position		  [55, 186, 85, 201]
+	  Position		  [55, 186, 85, 203]
 	  InternalMargins	  [0, 0, 0, 0]
 	  FixedHeight		  off
 	  FixedWidth		  off
@@ -2430,9 +2425,10 @@ Model {
       ZOrder		      159
       BackgroundColor	      "[0.596078, 0.878431, 0.921569]"
       RequestExecContextInheritance off
+      Variant		      off
       System {
 	Name			"Position Controller"
-	Location		[55, 14, 1376, 958]
+	Location		[55, 24, 1376, 968]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -2461,7 +2457,9 @@ Model {
 	  Position		  [930, 206, 935, 389]
 	  ZOrder		  215
 	  ShowName		  off
+	  Inputs		  "4"
 	  DisplayOption		  "bar"
+	  InheritFromInputs	  on
 	  Port {
 	    PortNumber		    1
 	    Name		    "Attitude_Cmd"
@@ -2552,6 +2550,7 @@ Model {
 	  ZOrder		  216
 	  BackgroundColor	  "green"
 	  RequestExecContextInheritance	off
+	  Variant		  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "Desired velocity in Xb"
@@ -3052,9 +3051,10 @@ Model {
 	  ZOrder		  218
 	  BackgroundColor	  "lightBlue"
 	  RequestExecContextInheritance	off
+	  Variant		  off
 	  Object {
 	    $PropName		    "MaskObject"
-	    $ObjectID		    21
+	    $ObjectID		    22
 	    $ClassName		    "Simulink.Mask"
 	    Display		    "fprintf(['Kp = ' num2str(Kp) '\\n' ...\n    'Kd = ' num2str(Kd) '\\n' ...\n    'Attitude Limit (+/-"
 	    "): ' num2str(ASat*180/pi) '°']);"
@@ -3063,7 +3063,7 @@ Model {
 	      Type		      "Simulink.MaskParameter"
 	      Dimension		      3
 	      Object {
-		$ObjectID		22
+		$ObjectID		23
 		Type			"promote"
 		Array {
 		  Type			  "Cell"
@@ -3076,7 +3076,7 @@ Model {
 		Value			"0.32"
 	      }
 	      Object {
-		$ObjectID		23
+		$ObjectID		24
 		Type			"promote"
 		Array {
 		  Type			  "Cell"
@@ -3089,7 +3089,7 @@ Model {
 		Value			"0.1"
 	      }
 	      Object {
-		$ObjectID		24
+		$ObjectID		25
 		Type			"promote"
 		Array {
 		  Type			  "Cell"
@@ -3330,7 +3330,7 @@ Model {
 	      SID		      "364"
 	      Name		      "-1 Gain is required because a \"negative\"\nangle of Phi induces a positive velocity\nin the body "
 	      "frame y direction!"
-	      Position		      [768, 20, 949, 61]
+	      Position		      [768, 20, 948, 67]
 	      InternalMargins	      [0, 0, 0, 0]
 	      FixedHeight	      off
 	      FixedWidth	      off
@@ -3347,9 +3347,10 @@ Model {
 	  ZOrder		  217
 	  BackgroundColor	  "[1.000000, 0.400000, 0.400000]"
 	  RequestExecContextInheritance	off
+	  Variant		  off
 	  Object {
 	    $PropName		    "MaskObject"
-	    $ObjectID		    25
+	    $ObjectID		    26
 	    $ClassName		    "Simulink.Mask"
 	    Display		    "fprintf(['Kp = ' num2str(Kp) '\\n' ...\n    'Kd = ' num2str(Kd) '\\n' ...\n    'Attitude Limit (+/-"
 	    "): ' num2str(ASat*180/pi) '°']);"
@@ -3358,7 +3359,7 @@ Model {
 	      Type		      "Simulink.MaskParameter"
 	      Dimension		      3
 	      Object {
-		$ObjectID		26
+		$ObjectID		27
 		Type			"promote"
 		Array {
 		  Type			  "Cell"
@@ -3371,7 +3372,7 @@ Model {
 		Value			"0.32"
 	      }
 	      Object {
-		$ObjectID		27
+		$ObjectID		28
 		Type			"promote"
 		Array {
 		  Type			  "Cell"
@@ -3384,7 +3385,7 @@ Model {
 		Value			"0.10"
 	      }
 	      Object {
-		$ObjectID		28
+		$ObjectID		29
 		Type			"promote"
 		Array {
 		  Type			  "Cell"
@@ -3786,7 +3787,7 @@ Model {
 	  Name			  "Inertial-frame velocity is used as the state to be controlled,\n(as this is what is controlled by attitud"
 	  "e)\nthus we find position error in the body frame\nand map this to a body frame desired velocity. This desired\nvel"
 	  "ocity is then mapped to a desired attitude."
-	  Position		  [607, 117, 869, 184]
+	  Position		  [607, 117, 868, 194]
 	  InternalMargins	  [0, 0, 0, 0]
 	  FixedHeight		  off
 	  FixedWidth		  off
@@ -3803,9 +3804,10 @@ Model {
       ZOrder		      -13
       BackgroundColor	      "blue"
       RequestExecContextInheritance off
+      Variant		      off
       System {
 	Name			"Quadcopter Dynamics"
-	Location		[55, 14, 1376, 958]
+	Location		[55, 24, 1376, 968]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -3835,9 +3837,10 @@ Model {
 	  ZOrder		  -45
 	  BackgroundColor	  "green"
 	  RequestExecContextInheritance	off
+	  Variant		  off
 	  System {
 	    Name		    "Motors"
-	    Location		    [55, 14, 1376, 958]
+	    Location		    [55, 24, 1376, 968]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -3998,29 +4001,13 @@ Model {
 	      Position		      [345, 14, 375, 46]
 	      ZOrder		      -3
 	      NamePlacement	      "alternate"
-	      Floating		      off
-	      Location		      [54, 53, 1367, 767]
-	      Open		      off
-	      NumInputPorts	      "1"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-	      }
-	      List {
-		ListType		ScopeGraphics
-		FigureColor		"[0.501960784313725 0.501960784313725 0.501960784313725]"
-		AxesColor		"[0 0 0]"
-		AxesTickColor		"[1 1 1]"
-		LineColors		"[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		LineStyles		"-|-|-|-|-|-"
-		LineWidths		"[1 0.5 0.5 0.5 0.5 0.5]"
-		MarkerStyles		"none|none|none|none|none|none"
-	      }
-	      YMin		      "904.495"
-	      YMax		      "999.705"
-	      SaveName		      "ScopeData15"
-	      DataFormat	      "StructureWithTime"
-	      SampleTime	      "0"
+	      ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),MxPVP('AxesTitles"
+	      "',24,'struct(''axes1'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.501960784313"
+	      "725 0.501960784313725 0.501960784313725]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors"
+	      "'',''[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[1 0.5 0.5 0.5 0.5"
+	      " 0.5]'',''MarkerStyles'',''none|none|none|none|none|none'')'),StrPVP('YMin','904.495'),StrPVP('YMax','999.705')"
+	      ",StrPVP('SaveName','ScopeData15'),StrPVP('DataFormat','StructureWithTime'),StrPVP('BlockParamSampleTime','0'),S"
+	      "trPVP('LimitDataPoints','on'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
 	    }
 	    Block {
 	      BlockType		      Scope
@@ -4030,28 +4017,13 @@ Model {
 	      Position		      [155, 39, 185, 71]
 	      ZOrder		      -3
 	      NamePlacement	      "alternate"
-	      Floating		      off
-	      Location		      [54, 53, 1367, 767]
-	      Open		      off
-	      NumInputPorts	      "1"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-	      }
-	      List {
-		ListType		ScopeGraphics
-		FigureColor		"[0.501960784313725 0.501960784313725 0.501960784313725]"
-		AxesColor		"[0 0 0]"
-		AxesTickColor		"[1 1 1]"
-		LineColors		"[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		LineStyles		"-|-|-|-|-|-"
-		LineWidths		"[1 0.5 0.5 0.5 0.5 0.5]"
-		MarkerStyles		"none|none|none|none|none|none"
-	      }
-	      YMin		      "904.495"
-	      YMax		      "999.705"
-	      DataFormat	      "StructureWithTime"
-	      SampleTime	      "0"
+	      ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),MxPVP('AxesTitles"
+	      "',24,'struct(''axes1'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.501960784313"
+	      "725 0.501960784313725 0.501960784313725]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors"
+	      "'',''[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[1 0.5 0.5 0.5 0.5"
+	      " 0.5]'',''MarkerStyles'',''none|none|none|none|none|none'')'),StrPVP('YMin','904.495'),StrPVP('YMax','999.705')"
+	      ",StrPVP('DataFormat','StructureWithTime'),StrPVP('BlockParamSampleTime','0'),StrPVP('LimitDataPoints','on'),Str"
+	      "PVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
 	    }
 	    Block {
 	      BlockType		      Outport
@@ -4218,9 +4190,10 @@ Model {
 	  ZOrder		  -66
 	  BackgroundColor	  "darkGreen"
 	  RequestExecContextInheritance	off
+	  Variant		  off
 	  System {
 	    Name		    "Tenzo NL"
-	    Location		    [55, 14, 1376, 958]
+	    Location		    [55, 24, 1376, 968]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -4250,9 +4223,10 @@ Model {
 	      ZOrder		      6
 	      BackgroundColor	      "blue"
 	      RequestExecContextInheritance off
+	      Variant		      off
 	      System {
 		Name			"6dofDynamics"
-		Location		[100, 100, 600, 900]
+		Location		[55, 24, 1376, 968]
 		Open			off
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
@@ -4465,10 +4439,11 @@ Model {
 	      Name		      "TorquesForces"
 	      SID		      "414"
 	      Ports		      [1, 2]
-	      Position		      [225, 172, 310, 238]
+	      Position		      [225, 174, 310, 241]
 	      ZOrder		      5
 	      BackgroundColor	      "green"
 	      RequestExecContextInheritance off
+	      Variant		      off
 	      System {
 		Name			"TorquesForces"
 		Location		[55, 14, 1376, 958]
@@ -4542,33 +4517,15 @@ Model {
 		  Ports			  [3]
 		  Position		  [365, 103, 395, 137]
 		  ZOrder		  -16
-		  Floating		  off
-		  Location		  [54, 53, 1367, 767]
-		  Open			  off
+		  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),MxPVP('AxesTitles',2"
+		  "4,'struct(''axes1'',''%<SignalLabel>'',''axes2'',''%<SignalLabel>'',''axes3'',''%<SignalLabel>'')'),MxPVP('ScopeGr"
+		  "aphics',28,'struct(''FigureColor'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''Lin"
+		  "eColors'',''[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0"
+		  ".5 0.5 0.5]'',''MarkerStyles'',''none|none|none|none|none|none'')'),StrPVP('TimeRange','30'),StrPVP('YMin','-95000"
+		  "0~-8~-5'),StrPVP('YMax','0~2~5'),StrPVP('SaveName','ScopeData5'),StrPVP('DataFormat','StructureWithTime'),StrPVP('"
+		  "BlockParamSampleInput','on'),StrPVP('BlockParamSampleTime','0.01'),StrPVP('LimitDataPoints','on'),StrPVP('Decimati"
+		  "on','1'))"
 		  NumInputPorts		  "3"
-		  List {
-		    ListType		    AxesTitles
-		    axes1		    "%<SignalLabel>"
-		    axes2		    "%<SignalLabel>"
-		    axes3		    "%<SignalLabel>"
-		  }
-		  List {
-		    ListType		    ScopeGraphics
-		    FigureColor		    "[0.5 0.5 0.5]"
-		    AxesColor		    "[0 0 0]"
-		    AxesTickColor	    "[1 1 1]"
-		    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		    LineStyles		    "-|-|-|-|-|-"
-		    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-		    MarkerStyles	    "none|none|none|none|none|none"
-		  }
-		  TimeRange		  "30"
-		  YMin			  "-950000~-8~-5"
-		  YMax			  "0~2~5"
-		  SaveName		  "ScopeData5"
-		  DataFormat		  "StructureWithTime"
-		  SampleInput		  on
-		  SampleTime		  "0.01"
 		}
 		Block {
 		  BlockType		  Scope
@@ -4577,32 +4534,13 @@ Model {
 		  Ports			  [1]
 		  Position		  [135, 53, 165, 87]
 		  ZOrder		  -16
-		  Floating		  off
-		  Location		  [54, 53, 1367, 767]
-		  Open			  off
-		  NumInputPorts		  "1"
-		  ZoomMode		  "yonly"
-		  List {
-		    ListType		    AxesTitles
-		    axes1		    "%<SignalLabel>"
-		  }
-		  List {
-		    ListType		    ScopeGraphics
-		    FigureColor		    "[0.5 0.5 0.5]"
-		    AxesColor		    "[0 0 0]"
-		    AxesTickColor	    "[1 1 1]"
-		    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		    LineStyles		    "-|-|-|-|-|-"
-		    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-		    MarkerStyles	    "none|none|none|none|none|none"
-		  }
-		  TimeRange		  "30"
-		  YMin			  "-950000"
-		  YMax			  "0"
-		  SaveName		  "ScopeData27"
-		  DataFormat		  "StructureWithTime"
-		  SampleInput		  on
-		  SampleTime		  "0.01"
+		  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),StrPVP('ZoomMode','y"
+		  "only'),MxPVP('AxesTitles',24,'struct(''axes1'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColo"
+		  "r'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1;"
+		  "1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',"
+		  "''none|none|none|none|none|none'')'),StrPVP('TimeRange','30'),StrPVP('YMin','-950000'),StrPVP('YMax','0'),StrPVP('"
+		  "SaveName','ScopeData27'),StrPVP('DataFormat','StructureWithTime'),StrPVP('BlockParamSampleInput','on'),StrPVP('Blo"
+		  "ckParamSampleTime','0.01'),StrPVP('LimitDataPoints','on'),StrPVP('Decimation','1'))"
 		}
 		Block {
 		  BlockType		  From
@@ -4670,32 +4608,14 @@ Model {
 		  Ports			  [2]
 		  Position		  [265, 270, 295, 305]
 		  ZOrder		  -16
-		  Floating		  off
-		  Location		  [54, 53, 1367, 767]
-		  Open			  off
+		  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),MxPVP('AxesTitles',2"
+		  "4,'struct(''axes1'',''%<SignalLabel>'',''axes2'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureCo"
+		  "lor'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 "
+		  "1;1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'"
+		  "',''none|none|none|none|none|none'')'),StrPVP('TimeRange','30'),StrPVP('YMin','-8~0'),StrPVP('YMax','2~8.5'),StrPV"
+		  "P('SaveName','ScopeData8'),StrPVP('DataFormat','StructureWithTime'),StrPVP('BlockParamSampleInput','on'),StrPVP('B"
+		  "lockParamSampleTime','0.01'),StrPVP('LimitDataPoints','on'),StrPVP('Decimation','1'))"
 		  NumInputPorts		  "2"
-		  List {
-		    ListType		    AxesTitles
-		    axes1		    "%<SignalLabel>"
-		    axes2		    "%<SignalLabel>"
-		  }
-		  List {
-		    ListType		    ScopeGraphics
-		    FigureColor		    "[0.5 0.5 0.5]"
-		    AxesColor		    "[0 0 0]"
-		    AxesTickColor	    "[1 1 1]"
-		    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		    LineStyles		    "-|-|-|-|-|-"
-		    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-		    MarkerStyles	    "none|none|none|none|none|none"
-		  }
-		  TimeRange		  "30"
-		  YMin			  "-8~0"
-		  YMax			  "2~8.5"
-		  SaveName		  "ScopeData8"
-		  DataFormat		  "StructureWithTime"
-		  SampleInput		  on
-		  SampleTime		  "0.01"
 		}
 		Block {
 		  BlockType		  Scope
@@ -4704,33 +4624,15 @@ Model {
 		  Ports			  [3]
 		  Position		  [470, 294, 500, 326]
 		  ZOrder		  -16
-		  Floating		  off
-		  Location		  [54, 53, 1367, 767]
-		  Open			  off
+		  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),StrPVP('ZoomMode','y"
+		  "only'),MxPVP('AxesTitles',24,'struct(''axes1'',''%<SignalLabel>'',''axes2'',''%<SignalLabel>'',''axes3'',''%<Signa"
+		  "lLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTi"
+		  "ckColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''Li"
+		  "neWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',''none|none|none|none|none|none'')'),StrPVP('YMin','2605"
+		  "0.4~-1~-671.375'),StrPVP('YMax','28792.6~1~-607.435'),StrPVP('SaveName','ScopeData4'),StrPVP('DataFormat','Structu"
+		  "reWithTime'),StrPVP('LimitDataPoints','off'),StrPVP('BlockParamSampleTime','0'),StrPVP('Decimation','1'),StrPVP('B"
+		  "lockParamSampleInput','off'))"
 		  NumInputPorts		  "3"
-		  ZoomMode		  "yonly"
-		  List {
-		    ListType		    AxesTitles
-		    axes1		    "%<SignalLabel>"
-		    axes2		    "%<SignalLabel>"
-		    axes3		    "%<SignalLabel>"
-		  }
-		  List {
-		    ListType		    ScopeGraphics
-		    FigureColor		    "[0.5 0.5 0.5]"
-		    AxesColor		    "[0 0 0]"
-		    AxesTickColor	    "[1 1 1]"
-		    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		    LineStyles		    "-|-|-|-|-|-"
-		    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-		    MarkerStyles	    "none|none|none|none|none|none"
-		  }
-		  YMin			  "26050.4~-1~-671.375"
-		  YMax			  "28792.6~1~-607.435"
-		  SaveName		  "ScopeData4"
-		  DataFormat		  "StructureWithTime"
-		  LimitDataPoints	  off
-		  SampleTime		  "0"
 		}
 		Block {
 		  BlockType		  Scope
@@ -4739,33 +4641,15 @@ Model {
 		  Ports			  [3]
 		  Position		  [470, 49, 500, 81]
 		  ZOrder		  -16
-		  Floating		  off
-		  Location		  [54, 53, 1367, 767]
-		  Open			  off
+		  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),StrPVP('ZoomMode','x"
+		  "only'),MxPVP('AxesTitles',24,'struct(''axes1'',''%<SignalLabel>'',''axes2'',''%<SignalLabel>'',''axes3'',''%<Signa"
+		  "lLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTi"
+		  "ckColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''Li"
+		  "neWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',''none|none|none|none|none|none'')'),StrPVP('YMin','-1~-"
+		  "1~-2.3'),StrPVP('YMax','1~1~-0.4'),StrPVP('SaveName','ScopeData23'),StrPVP('DataFormat','StructureWithTime'),StrPV"
+		  "P('LimitDataPoints','off'),StrPVP('BlockParamSampleTime','0'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleInp"
+		  "ut','off'))"
 		  NumInputPorts		  "3"
-		  ZoomMode		  "xonly"
-		  List {
-		    ListType		    AxesTitles
-		    axes1		    "%<SignalLabel>"
-		    axes2		    "%<SignalLabel>"
-		    axes3		    "%<SignalLabel>"
-		  }
-		  List {
-		    ListType		    ScopeGraphics
-		    FigureColor		    "[0.5 0.5 0.5]"
-		    AxesColor		    "[0 0 0]"
-		    AxesTickColor	    "[1 1 1]"
-		    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		    LineStyles		    "-|-|-|-|-|-"
-		    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-		    MarkerStyles	    "none|none|none|none|none|none"
-		  }
-		  YMin			  "-1~-1~-2.3"
-		  YMax			  "1~1~-0.4"
-		  SaveName		  "ScopeData23"
-		  DataFormat		  "StructureWithTime"
-		  LimitDataPoints	  off
-		  SampleTime		  "0"
 		}
 		Block {
 		  BlockType		  Sum
@@ -4788,33 +4672,15 @@ Model {
 		  Ports			  [3]
 		  Position		  [415, 209, 445, 241]
 		  ZOrder		  -16
-		  Floating		  off
-		  Location		  [54, 53, 1367, 767]
-		  Open			  off
+		  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),StrPVP('ZoomMode','x"
+		  "only'),MxPVP('AxesTitles',24,'struct(''axes1'',''%<SignalLabel>'',''axes2'',''%<SignalLabel>'',''axes3'',''%<Signa"
+		  "lLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTi"
+		  "ckColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''Li"
+		  "neWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',''none|none|none|none|none|none'')'),StrPVP('YMin','-1~-"
+		  "1~-2.3'),StrPVP('YMax','1~1~-0.4'),StrPVP('SaveName','ScopeData7'),StrPVP('DataFormat','StructureWithTime'),StrPVP"
+		  "('LimitDataPoints','off'),StrPVP('BlockParamSampleTime','0'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleInpu"
+		  "t','off'))"
 		  NumInputPorts		  "3"
-		  ZoomMode		  "xonly"
-		  List {
-		    ListType		    AxesTitles
-		    axes1		    "%<SignalLabel>"
-		    axes2		    "%<SignalLabel>"
-		    axes3		    "%<SignalLabel>"
-		  }
-		  List {
-		    ListType		    ScopeGraphics
-		    FigureColor		    "[0.5 0.5 0.5]"
-		    AxesColor		    "[0 0 0]"
-		    AxesTickColor	    "[1 1 1]"
-		    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		    LineStyles		    "-|-|-|-|-|-"
-		    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-		    MarkerStyles	    "none|none|none|none|none|none"
-		  }
-		  YMin			  "-1~-1~-2.3"
-		  YMax			  "1~1~-0.4"
-		  SaveName		  "ScopeData7"
-		  DataFormat		  "StructureWithTime"
-		  LimitDataPoints	  off
-		  SampleTime		  "0"
 		}
 		Block {
 		  BlockType		  Gain
@@ -5123,9 +4989,10 @@ Model {
 	      ZOrder		      4
 	      BackgroundColor	      "orange"
 	      RequestExecContextInheritance off
+	      Variant		      off
 	      System {
 		Name			"order"
-		Location		[100, 100, 600, 900]
+		Location		[55, 24, 1376, 968]
 		Open			off
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
@@ -5668,9 +5535,10 @@ Model {
 	  ZOrder		  -30
 	  BackgroundColor	  "red"
 	  RequestExecContextInheritance	off
+	  Variant		  off
 	  System {
 	    Name		    "WtoTreal"
-	    Location		    [55, 14, 1376, 958]
+	    Location		    [55, 24, 1376, 968]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -5710,9 +5578,10 @@ Model {
 	      ZOrder		      1
 	      BackgroundColor	      "magenta"
 	      RequestExecContextInheritance off
+	      Variant		      off
 	      System {
 		Name			"Mixer"
-		Location		[100, 100, 600, 900]
+		Location		[55, 24, 1376, 968]
 		Open			off
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
@@ -5816,32 +5685,13 @@ Model {
 		  Position		  [270, 24, 300, 56]
 		  ZOrder		  -3
 		  NamePlacement		  "alternate"
-		  Floating		  off
-		  Location		  [54, 53, 1367, 767]
-		  Open			  off
-		  NumInputPorts		  "1"
-		  ZoomMode		  "yonly"
-		  List {
-		    ListType		    AxesTitles
-		    axes1		    "%<SignalLabel>"
-		  }
-		  List {
-		    ListType		    ScopeGraphics
-		    FigureColor		    "[0.5 0.5 0.5]"
-		    AxesColor		    "[0 0 0]"
-		    AxesTickColor	    "[1 1 1]"
-		    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		    LineStyles		    "-|-|-|-|-|-"
-		    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-		    MarkerStyles	    "none|none|none|none|none|none"
-		  }
-		  TimeRange		  "50"
-		  YMin			  "-1"
-		  YMax			  "1"
-		  SaveName		  "ScopeData17"
-		  DataFormat		  "StructureWithTime"
-		  LimitDataPoints	  off
-		  SampleTime		  "0"
+		  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),StrPVP('ZoomMode','y"
+		  "only'),MxPVP('AxesTitles',24,'struct(''axes1'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColo"
+		  "r'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1;"
+		  "1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',"
+		  "''none|none|none|none|none|none'')'),StrPVP('TimeRange','50'),StrPVP('YMin','-1'),StrPVP('YMax','1'),StrPVP('SaveN"
+		  "ame','ScopeData17'),StrPVP('DataFormat','StructureWithTime'),StrPVP('LimitDataPoints','off'),StrPVP('BlockParamSam"
+		  "pleTime','0'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
 		}
 		Block {
 		  BlockType		  Gain
@@ -5884,28 +5734,13 @@ Model {
 		  Position		  [395, 39, 425, 71]
 		  ZOrder		  -3
 		  NamePlacement		  "alternate"
-		  Floating		  off
-		  Location		  [54, 53, 1367, 767]
-		  Open			  off
-		  NumInputPorts		  "1"
-		  ZoomMode		  "yonly"
-		  List {
-		    ListType		    AxesTitles
-		    axes1		    "%<SignalLabel>"
-		  }
-		  List {
-		    ListType		    ScopeGraphics
-		    FigureColor		    "[0.5 0.5 0.5]"
-		    AxesColor		    "[0 0 0]"
-		    AxesTickColor	    "[1 1 1]"
-		    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		    LineStyles		    "-|-|-|-|-|-"
-		    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-		    MarkerStyles	    "none|none|none|none|none|none"
-		  }
-		  SaveName		  "ScopeData14"
-		  DataFormat		  "StructureWithTime"
-		  SampleTime		  "0"
+		  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),StrPVP('ZoomMode','y"
+		  "only'),MxPVP('AxesTitles',24,'struct(''axes1'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColo"
+		  "r'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1;"
+		  "1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',"
+		  "''none|none|none|none|none|none'')'),StrPVP('SaveName','ScopeData14'),StrPVP('DataFormat','StructureWithTime'),Str"
+		  "PVP('BlockParamSampleTime','0'),StrPVP('LimitDataPoints','on'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleIn"
+		  "put','off'))"
 		}
 		Block {
 		  BlockType		  Scope
@@ -5915,28 +5750,13 @@ Model {
 		  Position		  [440, 294, 470, 326]
 		  ZOrder		  -3
 		  NamePlacement		  "alternate"
-		  Floating		  off
-		  Location		  [54, 53, 1367, 767]
-		  Open			  off
-		  NumInputPorts		  "1"
-		  ZoomMode		  "yonly"
-		  List {
-		    ListType		    AxesTitles
-		    axes1		    "%<SignalLabel>"
-		  }
-		  List {
-		    ListType		    ScopeGraphics
-		    FigureColor		    "[0.5 0.5 0.5]"
-		    AxesColor		    "[0 0 0]"
-		    AxesTickColor	    "[1 1 1]"
-		    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		    LineStyles		    "-|-|-|-|-|-"
-		    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-		    MarkerStyles	    "none|none|none|none|none|none"
-		  }
-		  SaveName		  "ScopeData11"
-		  DataFormat		  "StructureWithTime"
-		  SampleTime		  "0"
+		  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),StrPVP('ZoomMode','y"
+		  "only'),MxPVP('AxesTitles',24,'struct(''axes1'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColo"
+		  "r'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1;"
+		  "1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',"
+		  "''none|none|none|none|none|none'')'),StrPVP('SaveName','ScopeData11'),StrPVP('DataFormat','StructureWithTime'),Str"
+		  "PVP('BlockParamSampleTime','0'),StrPVP('LimitDataPoints','on'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleIn"
+		  "put','off'))"
 		}
 		Block {
 		  BlockType		  Scope
@@ -5946,27 +5766,12 @@ Model {
 		  Position		  [450, 204, 480, 236]
 		  ZOrder		  -3
 		  NamePlacement		  "alternate"
-		  Floating		  off
-		  Location		  [54, 53, 1367, 767]
-		  Open			  off
-		  NumInputPorts		  "1"
-		  List {
-		    ListType		    AxesTitles
-		    axes1		    "%<SignalLabel>"
-		  }
-		  List {
-		    ListType		    ScopeGraphics
-		    FigureColor		    "[0.5 0.5 0.5]"
-		    AxesColor		    "[0 0 0]"
-		    AxesTickColor	    "[1 1 1]"
-		    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		    LineStyles		    "-|-|-|-|-|-"
-		    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-		    MarkerStyles	    "none|none|none|none|none|none"
-		  }
-		  SaveName		  "ScopeData13"
-		  DataFormat		  "StructureWithTime"
-		  SampleTime		  "0"
+		  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),MxPVP('AxesTitles',2"
+		  "4,'struct(''axes1'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.5 0.5 0.5]'',''Axe"
+		  "sColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''Line"
+		  "Styles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles'',''none|none|none|none|none|"
+		  "none'')'),StrPVP('SaveName','ScopeData13'),StrPVP('DataFormat','StructureWithTime'),StrPVP('BlockParamSampleTime',"
+		  "'0'),StrPVP('LimitDataPoints','on'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
 		}
 		Block {
 		  BlockType		  Outport
@@ -6220,9 +6025,10 @@ Model {
 	      ZOrder		      2
 	      BackgroundColor	      "red"
 	      RequestExecContextInheritance off
+	      Variant		      off
 	      System {
 		Name			"SquareGains"
-		Location		[55, 14, 1376, 958]
+		Location		[55, 24, 1376, 968]
 		Open			off
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
@@ -6314,31 +6120,14 @@ Model {
 		  Position		  [620, 66, 650, 99]
 		  ZOrder		  -3
 		  NamePlacement		  "alternate"
-		  Floating		  off
-		  Location		  [54, 53, 1367, 767]
-		  Open			  off
+		  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),StrPVP('ZoomMode','y"
+		  "only'),MxPVP('AxesTitles',24,'struct(''axes1'',''%<SignalLabel>'',''axes2'',''%<SignalLabel>'')'),MxPVP('ScopeGrap"
+		  "hics',28,'struct(''FigureColor'',''[0.5 0.5 0.5]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineC"
+		  "olors'',''[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[0.5 0.5 0.5 0.5"
+		  " 0.5 0.5]'',''MarkerStyles'',''none|none|none|none|none|none'')'),StrPVP('YMin','-5~-5'),StrPVP('YMax','5~5'),StrP"
+		  "VP('SaveName','ScopeData19'),StrPVP('DataFormat','StructureWithTime'),StrPVP('BlockParamSampleTime','0'),StrPVP('L"
+		  "imitDataPoints','on'),StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
 		  NumInputPorts		  "2"
-		  ZoomMode		  "yonly"
-		  List {
-		    ListType		    AxesTitles
-		    axes1		    "%<SignalLabel>"
-		    axes2		    "%<SignalLabel>"
-		  }
-		  List {
-		    ListType		    ScopeGraphics
-		    FigureColor		    "[0.5 0.5 0.5]"
-		    AxesColor		    "[0 0 0]"
-		    AxesTickColor	    "[1 1 1]"
-		    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		    LineStyles		    "-|-|-|-|-|-"
-		    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-		    MarkerStyles	    "none|none|none|none|none|none"
-		  }
-		  YMin			  "-5~-5"
-		  YMax			  "5~5"
-		  SaveName		  "ScopeData19"
-		  DataFormat		  "StructureWithTime"
-		  SampleTime		  "0"
 		}
 		Block {
 		  BlockType		  Gain
@@ -6694,9 +6483,10 @@ Model {
       CloseFcn		      "sigbuilder_block('close');"
       RequestExecContextInheritance off
       MaskHideContents	      on
+      Variant		      off
       Object {
 	$PropName		"MaskObject"
-	$ObjectID		29
+	$ObjectID		30
 	$ClassName		"Simulink.Mask"
 	Type			"Sigbuilder block"
 	Description		"Simulink:masks:SigbuilderBlock_MD"
@@ -6734,6 +6524,7 @@ Model {
 	  Position		  [300, 200, 320, 600]
 	  ZOrder		  28
 	  Inputs		  "8"
+	  InheritFromInputs	  on
 	}
 	Block {
 	  BlockType		  FromWorkspace
@@ -6756,6 +6547,7 @@ Model {
 	  Position		  [150, 204, 200, 606]
 	  ZOrder		  27
 	  RequestExecContextInheritance	off
+	  Variant		  off
 	  Port {
 	    PortNumber		    1
 	    Name		    "Ze"
@@ -7087,9 +6879,10 @@ Model {
       BackgroundColor	      "red"
       ShowName		      off
       RequestExecContextInheritance off
+      Variant		      off
       System {
 	Name			"Subsystem"
-	Location		[55, 14, 1376, 958]
+	Location		[55, 24, 1376, 968]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -7176,7 +6969,7 @@ Model {
 	  Ports			  [1, 1]
 	  Position		  [375, 447, 415, 483]
 	  ZOrder		  -6
-	  LibraryVersion	  "1.356"
+	  LibraryVersion	  "1.358"
 	  SourceBlock		  "simulink/Continuous/PID Controller"
 	  SourceType		  "PID 1dof"
 	  ContentPreviewEnabled	  off
@@ -7300,7 +7093,7 @@ Model {
 	  Ports			  [1, 1]
 	  Position		  [380, 67, 420, 103]
 	  ZOrder		  -6
-	  LibraryVersion	  "1.356"
+	  LibraryVersion	  "1.358"
 	  SourceBlock		  "simulink/Continuous/PID Controller"
 	  SourceType		  "PID 1dof"
 	  ContentPreviewEnabled	  off
@@ -7424,7 +7217,7 @@ Model {
 	  Ports			  [1, 1]
 	  Position		  [380, 177, 420, 213]
 	  ZOrder		  -6
-	  LibraryVersion	  "1.356"
+	  LibraryVersion	  "1.358"
 	  SourceBlock		  "simulink/Continuous/PID Controller"
 	  SourceType		  "PID 1dof"
 	  ContentPreviewEnabled	  off
@@ -7548,7 +7341,7 @@ Model {
 	  Ports			  [1, 1]
 	  Position		  [375, 302, 415, 338]
 	  ZOrder		  -6
-	  LibraryVersion	  "1.356"
+	  LibraryVersion	  "1.358"
 	  SourceBlock		  "simulink/Continuous/PID Controller"
 	  SourceType		  "PID 1dof"
 	  ContentPreviewEnabled	  off
@@ -7730,30 +7523,13 @@ Model {
 	  ZOrder		  -3
 	  NamePlacement		  "alternate"
 	  ShowName		  off
-	  Floating		  off
-	  Location		  [54, 53, 1367, 767]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.501960784313725 0.501960784313725 0.501960784313725]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[1 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  YMin			  "-2.5"
-	  YMax			  "-0.7"
-	  SaveName		  "ScopeData1"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
+	  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),MxPVP('AxesTitles',24"
+	  ",'struct(''axes1'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.501960784313725 0.50"
+	  "1960784313725 0.501960784313725]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[0 1 0;"
+	  "1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[1 0.5 0.5 0.5 0.5 0.5]'',''Marker"
+	  "Styles'',''none|none|none|none|none|none'')'),StrPVP('YMin','-2.5'),StrPVP('YMax','-0.7'),StrPVP('SaveName','ScopeD"
+	  "ata1'),StrPVP('DataFormat','StructureWithTime'),StrPVP('LimitDataPoints','off'),StrPVP('BlockParamSampleTime','0'),"
+	  "StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
 	}
 	Block {
 	  BlockType		  Scope
@@ -7764,30 +7540,13 @@ Model {
 	  ZOrder		  -3
 	  NamePlacement		  "alternate"
 	  ShowName		  off
-	  Floating		  off
-	  Location		  [54, 53, 1367, 767]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.501960784313725 0.501960784313725 0.501960784313725]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[1 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  YMin			  "2700"
-	  YMax			  "4700"
-	  SaveName		  "ScopeData2"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
+	  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),MxPVP('AxesTitles',24"
+	  ",'struct(''axes1'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.501960784313725 0.50"
+	  "1960784313725 0.501960784313725]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[0 1 0;"
+	  "1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[1 0.5 0.5 0.5 0.5 0.5]'',''Marker"
+	  "Styles'',''none|none|none|none|none|none'')'),StrPVP('YMin','2700'),StrPVP('YMax','4700'),StrPVP('SaveName','ScopeD"
+	  "ata2'),StrPVP('DataFormat','StructureWithTime'),StrPVP('LimitDataPoints','off'),StrPVP('BlockParamSampleTime','0'),"
+	  "StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
 	}
 	Block {
 	  BlockType		  Scope
@@ -7798,30 +7557,13 @@ Model {
 	  ZOrder		  -3
 	  NamePlacement		  "alternate"
 	  ShowName		  off
-	  Floating		  off
-	  Location		  [54, 53, 1367, 767]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.501960784313725 0.501960784313725 0.501960784313725]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[1 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  YMin			  "2700"
-	  YMax			  "4700"
-	  SaveName		  "ScopeData3"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
+	  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),MxPVP('AxesTitles',24"
+	  ",'struct(''axes1'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.501960784313725 0.50"
+	  "1960784313725 0.501960784313725]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[0 1 0;"
+	  "1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[1 0.5 0.5 0.5 0.5 0.5]'',''Marker"
+	  "Styles'',''none|none|none|none|none|none'')'),StrPVP('YMin','2700'),StrPVP('YMax','4700'),StrPVP('SaveName','ScopeD"
+	  "ata3'),StrPVP('DataFormat','StructureWithTime'),StrPVP('LimitDataPoints','off'),StrPVP('BlockParamSampleTime','0'),"
+	  "StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
 	}
 	Block {
 	  BlockType		  Scope
@@ -7832,30 +7574,13 @@ Model {
 	  ZOrder		  -3
 	  NamePlacement		  "alternate"
 	  ShowName		  off
-	  Floating		  off
-	  Location		  [54, 53, 1367, 767]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.501960784313725 0.501960784313725 0.501960784313725]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[1 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  YMin			  "2700"
-	  YMax			  "4700"
-	  SaveName		  "ScopeData6"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
+	  ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),MxPVP('AxesTitles',24"
+	  ",'struct(''axes1'',''%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.501960784313725 0.50"
+	  "1960784313725 0.501960784313725]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[0 1 0;"
+	  "1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[1 0.5 0.5 0.5 0.5 0.5]'',''Marker"
+	  "Styles'',''none|none|none|none|none|none'')'),StrPVP('YMin','2700'),StrPVP('YMax','4700'),StrPVP('SaveName','ScopeD"
+	  "ata6'),StrPVP('DataFormat','StructureWithTime'),StrPVP('LimitDataPoints','off'),StrPVP('BlockParamSampleTime','0'),"
+	  "StrPVP('Decimation','1'),StrPVP('BlockParamSampleInput','off'))"
 	}
 	Block {
 	  BlockType		  Outport
@@ -8050,7 +7775,7 @@ Model {
 	Annotation {
 	  SID			  "308"
 	  Name			  "e_phi"
-	  Position		  [320, 27, 346, 42]
+	  Position		  [320, 27, 346, 44]
 	  InternalMargins	  [0, 0, 0, 0]
 	  FixedHeight		  off
 	  FixedWidth		  off
@@ -8059,7 +7784,7 @@ Model {
 	Annotation {
 	  SID			  "309"
 	  Name			  "e_theta"
-	  Position		  [320, 134, 355, 149]
+	  Position		  [320, 134, 355, 151]
 	  InternalMargins	  [0, 0, 0, 0]
 	  FixedHeight		  off
 	  FixedWidth		  off
@@ -8068,7 +7793,7 @@ Model {
 	Annotation {
 	  SID			  "307"
 	  Name			  "E_ze"
-	  Position		  [320, 296, 344, 311]
+	  Position		  [320, 296, 344, 313]
 	  InternalMargins	  [0, 0, 0, 0]
 	  FixedHeight		  off
 	  FixedWidth		  off
@@ -8085,6 +7810,7 @@ Model {
       ZOrder		      161
       BackgroundColor	      "green"
       RequestExecContextInheritance off
+      Variant		      off
       System {
 	Name			"XandY"
 	Location		[55, 14, 1376, 958]
@@ -8121,6 +7847,7 @@ Model {
 	  TreatAsAtomicUnit	  on
 	  RequestExecContextInheritance	off
 	  SFBlockType		  "MATLAB Function"
+	  Variant		  off
 	  System {
 	    Name		    "C"
 	    Location		    [193, 226, 852, 905]
@@ -8136,7 +7863,7 @@ Model {
 	    TiledPageScale	    1
 	    ShowPageBoundaries	    off
 	    ZoomFactor		    "100"
-	    SIDHighWatermark	    "28"
+	    SIDHighWatermark	    "31"
 	    Block {
 	      BlockType		      Inport
 	      Name		      "X"
@@ -8148,22 +7875,24 @@ Model {
 	    Block {
 	      BlockType		      Demux
 	      Name		      " Demux "
-	      SID		      "169::27"
+	      SID		      "169::30"
 	      Ports		      [1, 1]
 	      Position		      [270, 230, 320, 270]
-	      ZOrder		      13
+	      ZOrder		      16
 	      Outputs		      "1"
 	    }
 	    Block {
 	      BlockType		      S-Function
 	      Name		      " SFunction "
-	      SID		      "169::26"
+	      SID		      "169::29"
 	      Tag		      "Stateflow S-Function PidNL 1"
 	      Ports		      [1, 2]
 	      Position		      [180, 100, 230, 160]
-	      ZOrder		      12
+	      ZOrder		      15
 	      FunctionName	      "sf_sfun"
 	      PortCounts	      "[1 2]"
+	      SFunctionDeploymentMode off
+	      EnableBusSupport	      off
 	      Port {
 		PortNumber		2
 		Name			"ymis"
@@ -8174,9 +7903,9 @@ Model {
 	    Block {
 	      BlockType		      Terminator
 	      Name		      " Terminator "
-	      SID		      "169::28"
+	      SID		      "169::31"
 	      Position		      [460, 241, 480, 259]
-	      ZOrder		      14
+	      ZOrder		      17
 	    }
 	    Block {
 	      BlockType		      Outport
@@ -8187,7 +7916,7 @@ Model {
 	      IconDisplay	      "Port number"
 	    }
 	    Line {
-	      ZOrder		      5
+	      ZOrder		      9
 	      SrcBlock		      "X"
 	      SrcPort		      1
 	      DstBlock		      " SFunction "
@@ -8195,7 +7924,7 @@ Model {
 	    }
 	    Line {
 	      Name		      "ymis"
-	      ZOrder		      6
+	      ZOrder		      10
 	      Labels		      [0, 0]
 	      SrcBlock		      " SFunction "
 	      SrcPort		      2
@@ -8203,14 +7932,14 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      ZOrder		      7
+	      ZOrder		      11
 	      SrcBlock		      " Demux "
 	      SrcPort		      1
 	      DstBlock		      " Terminator "
 	      DstPort		      1
 	    }
 	    Line {
-	      ZOrder		      8
+	      ZOrder		      12
 	      SrcBlock		      " SFunction "
 	      SrcPort		      1
 	      DstBlock		      " Demux "
@@ -8227,6 +7956,7 @@ Model {
 	  ZOrder		  16
 	  BackgroundColor	  "green"
 	  RequestExecContextInheritance	off
+	  Variant		  off
 	  System {
 	    Name		    "Output1"
 	    Location		    [457, 45, 1380, 969]
@@ -8290,7 +8020,7 @@ Model {
 	      Ports		      [1, 1]
 	      Position		      [285, 85, 315, 115]
 	      ZOrder		      -12
-	      LibraryVersion	      "1.43"
+	      LibraryVersion	      "1.44"
 	      SourceBlock	      "simulink_extras/Transformations/Radians\nto Degrees"
 	      SourceType	      "RadiansToDegrees"
 	      ContentPreviewEnabled   off
@@ -8303,33 +8033,16 @@ Model {
 	      Position		      [400, 89, 430, 121]
 	      ZOrder		      13
 	      NamePlacement	      "alternate"
-	      Floating		      off
-	      Location		      [54, 53, 1367, 767]
-	      Open		      off
+	      ScopeSpecificationString "C++SS(StrPVP('Location','[54, 53, 1367, 767]'),StrPVP('Open','off'),MxPVP('AxesTitles"
+	      "',24,'struct(''axes1'',''%<SignalLabel>'',''axes2'',''%<SignalLabel>'',''axes3'',''%<SignalLabel>'',''axes4'','"
+	      "'%<SignalLabel>'')'),MxPVP('ScopeGraphics',28,'struct(''FigureColor'',''[0.501960784313725 0.501960784313725 0."
+	      "501960784313725]'',''AxesColor'',''[0 0 0]'',''AxesTickColor'',''[1 1 1]'',''LineColors'',''[0 1 0;1 0 1;0 1 1;"
+	      "1 0 0;0 1 0;0 0 1]'',''LineStyles'',''-|-|-|-|-|-'',''LineWidths'',''[1 0.5 0.5 0.5 0.5 0.5]'',''MarkerStyles''"
+	      ",''none|none|none|none|none|none'')'),StrPVP('YMin','-1.29247e-26~-9e-10~-3.5e-08~-4.2'),StrPVP('YMax','6e-10~-"
+	      "5.16988e-26~-6.61744e-24~-3.8'),StrPVP('SaveName','ScopeData10'),StrPVP('DataFormat','StructureWithTime'),StrPV"
+	      "P('LimitDataPoints','off'),StrPVP('BlockParamSampleTime','0'),StrPVP('Decimation','1'),StrPVP('BlockParamSample"
+	      "Input','off'))"
 	      NumInputPorts	      "4"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-		axes2			"%<SignalLabel>"
-		axes3			"%<SignalLabel>"
-		axes4			"%<SignalLabel>"
-	      }
-	      List {
-		ListType		ScopeGraphics
-		FigureColor		"[0.501960784313725 0.501960784313725 0.501960784313725]"
-		AxesColor		"[0 0 0]"
-		AxesTickColor		"[1 1 1]"
-		LineColors		"[0 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-		LineStyles		"-|-|-|-|-|-"
-		LineWidths		"[1 0.5 0.5 0.5 0.5 0.5]"
-		MarkerStyles		"none|none|none|none|none|none"
-	      }
-	      YMin		      "-1.29247e-26~-9e-10~-3.5e-08~-4.2"
-	      YMax		      "6e-10~-5.16988e-26~-6.61744e-24~-3.8"
-	      SaveName		      "ScopeData10"
-	      DataFormat	      "StructureWithTime"
-	      LimitDataPoints	      off
-	      SampleTime	      "0"
 	    }
 	    Line {
 	      ZOrder		      1
@@ -8412,6 +8125,7 @@ Model {
 	  Position		  [115, 109, 185, 151]
 	  ZOrder		  160
 	  RequestExecContextInheritance	off
+	  Variant		  off
 	  System {
 	    Name		    "Selector"
 	    Location		    [55, 14, 1376, 958]
@@ -8448,6 +8162,7 @@ Model {
 	      ShowName		      off
 	      Inputs		      "5"
 	      DisplayOption	      "bar"
+	      InheritFromInputs	      on
 	    }
 	    Block {
 	      BlockType		      Demux
@@ -8668,7 +8383,7 @@ Model {
     Annotation {
       SID		      "328"
       Name		      "Control"
-      Position		      [430, 303, 464, 318]
+      Position		      [430, 303, 464, 320]
       InternalMargins	      [0, 0, 0, 0]
       FixedHeight	      off
       FixedWidth	      off
@@ -8677,7 +8392,7 @@ Model {
     Annotation {
       SID		      "377"
       Name		      "Manca il controllo sulla posizione"
-      Position		      [152, 96, 299, 111]
+      Position		      [152, 96, 299, 113]
       InternalMargins	      [0, 0, 0, 0]
       FixedHeight	      off
       FixedWidth	      off
@@ -8862,7 +8577,7 @@ MatData {
 }
 #Finite State Machines
 #
-#   Stateflow 80000005
+#   Stateflow 80000006
 #
 #
 Stateflow {
@@ -8872,7 +8587,7 @@ Stateflow {
     created		    "20-May-2015 17:11:42"
     isLibrary		    0
     firstTarget		    9
-    sfVersion		    80000005
+    sfVersion		    80000006
   }
   chart {
     id			    2

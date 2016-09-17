@@ -12,7 +12,7 @@
 Ux sakura;
 
 // Init Propulsion handler
-Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4));
+Propulsion tenzoProp(sakura.getM(1),sakura .getM(2),sakura.getM(3),sakura.getM(4));
 
 // Init FreeSixIMU object
 FreeSixIMU sixDOF = FreeSixIMU();
@@ -381,8 +381,8 @@ void loop() {
         Serial.print(scheduler.getJobReleased(i));
         Serial.print("\tValid:  ");
         Serial.print(scheduler.isTaskValid(i));
-        Serial.print("\tActive:  ");
-        Serial.print(scheduler.isTaskActive(i));
+        //Serial.print("\tActive:  ");
+        //Serial.print(scheduler.isTaskActive(i));
         Serial.print("\t");
         Serial.println(scheduler.getTaskLabel(i));
       }

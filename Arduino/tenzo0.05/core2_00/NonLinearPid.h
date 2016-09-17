@@ -26,15 +26,23 @@ class NonLinearPid
         void changePidState(boolean);
         
         void init();
-	void setAutoPid(boolean);
+      	void setAutoPid(boolean);
         void setEnablePid(boolean);
-	void setEnablePitch(boolean);
+      	void setEnablePitch(boolean);
         void setEnableRoll(boolean);
-	void setEnableWPitch(boolean);
+      	void setEnableWPitch(boolean);
         void setEnableWRoll(boolean);
         void setEnableAltitude(boolean);
         
         //void setSpeedradS(int);
+
+        float SetpointRoll, SetpointPitch, SetpointYaw, SetpointAltitude;
+        float InputRoll, InputPitch, InputYaw, InputAltitude;
+        float errorRoll, errorPitch, errorYaw, errorAltitude;
+        float OutputRoll, OutputPitch, OutputYaw, OutputAltitude;
+
+        
+        
         
   private:
         //int getThrottle();

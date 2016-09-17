@@ -2,7 +2,7 @@
   NonLinearPid.h - Library implementing a model free approach based on 
   pid control. 
   Created by Giovanni Balestrieri - UserK, August 28, 2015.
-*/
+
 
 #include "Arduino.h"
 #include "NonLinearPid.h"
@@ -12,7 +12,7 @@
 
 NonLinearPid::NonLinearPid(float setPointRoll, float setPointPitch, float setPointYaw, float setPointAlt)
 {  
-  /*
+  
         SetpointRoll = setPointRoll;
         SetpointPitch = setPointPitch;
         SetpointYaw = setPointYaw;
@@ -28,12 +28,12 @@ NonLinearPid::NonLinearPid(float setPointRoll, float setPointPitch, float setPoi
         PID wrollPid(&InputWRoll, &OutputWRoll, &SetpointWRoll, consKpWRoll, consKiWRoll, consKdWRoll, DIRECT);
         PID wpitchPid(&InputWPitch, &OutputWPitch, &SetpointWPitch, consKpWPitch, consKiWPitch, consKdWPitch, DIRECT);
         PID wyawPid(&InputWYaw, &OutputWYaw, &SetpointWYaw, consKpWYaw, consKiWYaw, consKdWYaw, DIRECT);
-        */
+        
 }
 
 void NonLinearPid::changePidState(boolean cond)
 {
-  /*
+  
   if (cond)
   {
     // Enable Pid Actions
@@ -86,10 +86,10 @@ void NonLinearPid::changePidState(boolean cond)
     
     enablePid = false;
   }
-  */
+  
 }
 
-/*
+
 void NonLinearPid::init()
 {
  
@@ -116,7 +116,7 @@ void control()
       //Serial.println("    ZAK ");
       errorRoll = abs(SetpointRoll - estXAngle); //distance away from setpoint
       
-        rollPID.SetTunings(consKpRoll, consKiRoll, consKdRoll);
+      rollPID.SetTunings(consKpRoll, consKiRoll, consKdRoll);
         
       rollPID.Compute(); // Computes outputRoll
 
@@ -243,8 +243,8 @@ void controlW()
     //{
       //Serial.println();      
     //}
-     
      /*
+     
   }
   else
   {
@@ -252,5 +252,6 @@ void controlW()
     OutputWPitch = 0;    
     OutputWYaw = 0;
   }
+  
 }
 */

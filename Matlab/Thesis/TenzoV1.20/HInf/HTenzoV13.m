@@ -509,6 +509,7 @@ poss = size(Bossw,2);
 qoss = size(Aoss,2);
 Doss=zeros(size(Aoss,1),poss);
 
+
 disp('Autovalori A-V*C');
 disp(eig(tenzo_min_nominale.a-V*tenzo_min_nominale.c));
 
@@ -528,7 +529,7 @@ D0 = tenzo_min_nominale.d;
 Kopt = Kopt_3;
 
 set_param('LQRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
-set_param('LqrTenzo/Optima Controller/F1','Gain','Kopt1');
+set_param('LqrTenzo/Optima Controller/F1','Gain','Kopt');
 
 
 if strcmp(answer10,'y')
