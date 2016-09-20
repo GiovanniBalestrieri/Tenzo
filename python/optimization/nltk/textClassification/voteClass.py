@@ -6,6 +6,7 @@ from sklearn.naive_bayes import MultinomialNB, GaussianNB ,BernoulliNB
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.svm import SVC,LinearSVC,NuSVC
 
+from nltk.corpus import stopwords
 from nltk.classify import ClassifierI
 from statistics import mode
 
@@ -60,6 +61,20 @@ for w in short_pos_words:
 for w in short_neg_words:
 	all_words.append(w.lower()) 
 
+ss=set(stopwords.words('english'))
+#print("Stopwords in English: ",ss)
+ss.add(",")
+ss.add(".")
+ss.add("'s")
+ss.add("'")
+all_clean = []
+
+for word in all_words:
+	if word not in ss:
+		all_clean.append(word)
+
+all_words = all_clean
+#print(all_words)
 
 # convert to nltk frequency distribution
 all_words = nltk.FreqDist(all_words)
