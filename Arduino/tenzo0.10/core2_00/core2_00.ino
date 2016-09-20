@@ -203,7 +203,7 @@ void getYPR()
     // Preemptable section
     //sei();            
       // [max] 9800 us [avg] 4450 us
-      sixDOF.getYawPitchRoll(angles);  
+      sixDOF.getYawPitchRoll(angles);   // 
     //cli();
     
     contEulerSamples++; 
@@ -362,8 +362,7 @@ void loop() {
       scheduler.jobCompletedById(bestId);
       Serial.println("\t\t\t\t\t\t\t\t\t\tLOG");
       break;     
-  }
-    
+  } 
   
   // #LOOP
   if (timerSec >= 1000000)
@@ -379,8 +378,8 @@ void loop() {
         Serial.print(scheduler.getTaskPriority(i));
         Serial.print(")\tJob queue:  ");
         Serial.print(scheduler.getJobReleased(i));
-        Serial.print("\tValid:  ");
-        Serial.print(scheduler.isTaskValid(i));
+        //Serial.print("\tValid:  ");
+        //Serial.print(scheduler.isTaskValid(i));
         //Serial.print("\tActive:  ");
         //Serial.print(scheduler.isTaskActive(i));
         Serial.print("\t");
@@ -590,7 +589,14 @@ void acquireGyroYPR()
 {
   // #DEBUG
   //sixDOF.getYawPitchRollGyro(angles,wVal);
-  sixDOF.getAngles(angles);
+  sixDOF.getValues(inertiaValues);  
+  sixDOF.getAngles(angles);    
+
+  for (int i = 0; i<3;i++)
+  {
+    rawAcc[i] = inertiaValues[i];
+    wVal[i] = inertiaValues[3+i];
+  }
   
   if (sakura.getGyroFilterFlag())
   {    
@@ -1685,11 +1691,11 @@ void printAcc()
   if (!sakura.getAccFilterFlag())
   {
     Serial.print("a,");
-    Serial.print(aax);
+    Serial.print(rawAcc[0]);
     Serial.print(",");
-    Serial.print(aay);
+    Serial.print(rawAcc[1]);
     Serial.print(",");
-    Serial.print(aaz);
+    Serial.print(rawAcc[2]);
     Serial.println(",z");
   }
   else

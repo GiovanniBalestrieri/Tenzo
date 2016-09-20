@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <Wire.h>
-#include <Arduino.h>
+#include "Arduino.h"
 
 #include "FIMU_ADXL345.h"
 #define FIMU_ACC_ADDR ADXL345_ADDR_ALT_LOW // SDO connected to GND
@@ -52,35 +52,34 @@ class FreeSixIMU
     void init();
     void init(bool fastmode);
     void init(int acc_addr, int gyro_addr, bool fastmode);
-    void getRawValues(volatile int * raw_values);
-    void getValues(volatile float * values);
-    void getGyroValues(volatile float * values);
-    void getQ(volatile float * q);
-    void getEuler( volatile float * angles);
-    void getYawPitchRoll( volatile float * ypr);
-    void getYawPitchRollGyro( volatile float * ypr,volatile float * values); 
-    void getAngles( volatile float * angles);
+    void getRawValues(int * raw_values);
+    void getValues(float * values);
+    void getGyroValues(float * values);
+    void getQ(float * q);
+    void getEuler(float * angles);
+    void getYawPitchRoll(float * ypr);
+    void getAngles(float * angles);
     
     
-    ADXL345 acc;
+	ADXL345 acc;
     ITG3200 gyro;
     
-    volatile int* raw_acc, raw_gyro, raw_magn;
+    int* raw_acc, raw_gyro, raw_magn;
     
   private:
-    void AHRSupdate(volatile float gx, volatile float gy,volatile float gz,volatile float ax,volatile float ay,volatile float az, volatile float mx,volatile float my,volatile float mz);
+    void AHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz);
     //float q0, q1, q2, q3; // quaternion elements representing the estimated orientation
-    volatile float iq0, iq1, iq2, iq3;
-    volatile float exInt, eyInt, ezInt;  // scaled integral error
+    float iq0, iq1, iq2, iq3;
+    float exInt, eyInt, ezInt;  // scaled integral error
     volatile float twoKp;      // 2 * proportional gain (Kp)
     volatile float twoKi;      // 2 * integral gain (Ki)
     volatile float q0, q1, q2, q3; // quaternion of sensor frame relative to auxiliary frame
     volatile float integralFBx,  integralFBy, integralFBz;
-    volatile unsigned long lastUpdate, now; // sample period expressed in milliseconds
-    volatile float sampleFreq; // half the sample period expressed in seconds
-    volatile int startLoopTime;
+    unsigned long lastUpdate, now; // sample period expressed in milliseconds
+    float sampleFreq; // half the sample period expressed in seconds
+    int startLoopTime;
 };
 
-float invSqrt(volatile float number);
+float invSqrt(float number);
 
 #endif // FreeSixIMU_h

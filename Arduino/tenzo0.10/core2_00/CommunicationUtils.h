@@ -3,6 +3,7 @@
 
 #include "Arduino.h"
 
+
 void serialPrintFloatArr(float * arr, int length);
 void serialFloatPrint(float f);
 void writeArr(void * arr, uint8_t arr_length, uint8_t type_bytes);

@@ -25,32 +25,27 @@ ADXL345::ADXL345() {
   gains[0] = 0.00376390;
   gains[1] = 0.00376009;
   gains[2] = 0.00349265;
-  //Serial.println("Yo");
 }
 
 void ADXL345::init(int address) {
   _dev_address = address;
   powerOn();
-  //Serial.println("giù");
 }
 
 void ADXL345::powerOn() {
   //Turning on the ADXL345
   //writeTo(ADXL345_POWER_CTL, 0);      
   //writeTo(ADXL345_POWER_CTL, 16);
-  //Serial.println("su");
   writeTo(ADXL345_POWER_CTL, 8);
-  //Serial.println("sex");
 }
 
 // Reads the acceleration into an array of three places
-void ADXL345::readAccel(volatile int *xyz){
+void ADXL345::readAccel(int *xyz){
   readAccel(xyz, xyz + 1, xyz + 2);
-  //Serial.println("on the beach");
 }
 
 // Reads the acceleration into three variable x, y and z
-void ADXL345::readAccel(volatile int *x, volatile int *y,volatile int *z) {
+void ADXL345::readAccel(int *x, int *y, int *z) {
   readFrom(ADXL345_DATAX0, TO_READ, _buff); //read the acceleration data from the ADXL345
 
   // each axis reading comes in 10 bit resolution, ie 2 bytes.  Least Significat Byte first!!
@@ -60,9 +55,9 @@ void ADXL345::readAccel(volatile int *x, volatile int *y,volatile int *z) {
   *z = (((int)_buff[5]) << 8) | _buff[4];
 }
 
-void ADXL345::get_Gxyz(volatile float *xyz){
-  volatile int i;
-  volatile int xyz_int[3];
+void ADXL345::get_Gxyz(float *xyz){
+  int i;
+  int xyz_int[3];
   readAccel(xyz_int);
   for(i=0; i<3; i++){
     xyz[i] = xyz_int[i] * gains[i];
@@ -71,15 +66,10 @@ void ADXL345::get_Gxyz(volatile float *xyz){
 
 // Writes val to address register on device
 void ADXL345::writeTo(byte address, byte val) {
-  //Serial.println("sex");
   Wire.beginTransmission(_dev_address); // start transmission to device
-  //Serial.println("sex");
   Wire.write(address);             // send register address
-  //Serial.println("sex");
   Wire.write(val);                 // send value to write
-  //Serial.println("sex");
   Wire.endTransmission();         // end transmission
-  //Serial.println("sex");
 }
 
 // Reads num bytes starting from address register on device in to _buff array
@@ -205,7 +195,7 @@ void ADXL345::setJustifyBit(bool justifyBit) {
 // A value of 0 may result in undesirable behavior
 void ADXL345::setTapThreshold(int tapThreshold) {
   tapThreshold = min(max(tapThreshold,0),255);
-  volatile byte _b = byte (tapThreshold);
+  byte _b = byte (tapThreshold);
   writeTo(ADXL345_THRESH_TAP, _b);  
 }
 

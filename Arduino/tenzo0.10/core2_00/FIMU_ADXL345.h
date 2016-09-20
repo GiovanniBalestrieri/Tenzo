@@ -104,9 +104,9 @@ public:
   ADXL345();
   void init(int address);
   void powerOn();
-  void readAccel(volatile int* xyx);
-  void readAccel(volatile int* x,volatile int* y, volatile int* z);
-  void get_Gxyz(volatile float *xyz);
+  void readAccel(int* xyx);
+  void readAccel(int* x, int* y, int* z);
+  void get_Gxyz(float *xyz);
 
   void setTapThreshold(int tapThreshold);
   int getTapThreshold();

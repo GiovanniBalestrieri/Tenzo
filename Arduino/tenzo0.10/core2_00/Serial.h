@@ -1,5 +1,5 @@
 /*
-  Serial - SSerial context for Tenzo.
+  Serial - Serial context for Tenzo.
   Created by Giovanni Balestrieri
   UserK, June 1, 2016
   www.userk.co.uk

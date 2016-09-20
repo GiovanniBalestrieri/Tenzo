@@ -113,9 +113,9 @@
 class ITG3200 {
 
 public:
-  volatile float gains[3]; 
-  volatile int offsets[3];
-  volatile float polarities[3];
+  float gains[3]; 
+  int offsets[3];
+  float polarities[3];
 
   ITG3200();
   
@@ -156,16 +156,16 @@ public:
   bool isRawDataReady();
   // Gyro Sensors
   void readTemp(float *_Temp);
-  void readGyroRaw(volatile int  *_GyroXYZ);
-  void readGyroRaw(volatile int *_GyroX, volatile int *_GyroY,volatile int *_GyroZ);
+  void readGyroRaw(int  *_GyroXYZ);
+  void readGyroRaw(int *_GyroX, int *_GyroY, int *_GyroZ);
   void setRevPolarity(bool _Xpol, bool _Ypol, bool _Zpol);	// true = Reversed  false = default
   void setGains(float _Xgain, float _Ygain, float _Zgain);
   void setOffsets(int _Xoffset, int _Yoffset, int _Zoffset);
   void zeroCalibrate(unsigned int totSamples, unsigned int sampleDelayMS);	// assuming gyroscope is stationary (updates XYZ offsets for zero)
-  void readGyroRawCal(volatile int *_GyroX, volatile int *_GyroY,volatile int *_GyroZ);
-  void readGyroRawCal(volatile int *_GyroXYZ);
-  void readGyro(volatile float *_GyroXYZ); // includes gain and offset
-  void readGyro(volatile float *_GyroX,volatile  float *_GyroY,volatile  float *_GyroZ); // includes gain and offset    
+  void readGyroRawCal(int *_GyroX, int *_GyroY, int *_GyroZ);
+  void readGyroRawCal(int *_GyroXYZ);
+  void readGyro(float *_GyroXYZ); // includes gain and offset
+  void readGyro(float *_GyroX, float *_GyroY, float *_GyroZ); // includes gain and offset    
   // Power management
   void reset(); // after reset all registers have default values
   bool isLowPower();

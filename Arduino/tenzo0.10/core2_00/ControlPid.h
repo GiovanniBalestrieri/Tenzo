@@ -5,7 +5,8 @@
 // number of ticks to wait before actuation
 volatile int ctrlPeriod = 12;
 
-volatile float angles[3];
+float angles[3];
+float inertiaValues[6];
 
 boolean autoEnablePid = true;
 volatile boolean enablePid = false;

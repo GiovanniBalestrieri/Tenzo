@@ -20,10 +20,11 @@ volatile float psi=0;
 volatile int x=0;
 volatile int y = 0;
 volatile int z= 0;
-volatile float wVal[3] = {0,0,0};
+ float wVal[3] = {0,0,0};
 volatile int rawAx = 0;
 volatile int rawAy = 0;
 volatile int rawAz = 0;
+float rawAcc[3];
 volatile int dt=0;
 
 volatile float wF[3] = {0,0,0};

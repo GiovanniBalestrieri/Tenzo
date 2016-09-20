@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#define DEBUG
 #include "FreeSixIMU.h"
 // #include "WireUtils.h"
-// #include "DebugUtils.h"
+//#include "DebugUtils.h"
 
 
 FreeSixIMU::FreeSixIMU() {
@@ -43,59 +43,49 @@ FreeSixIMU::FreeSixIMU() {
   ezInt = 0.0;
   twoKp = twoKpDef;
   twoKi = twoKiDef;
-  integralFBx = 0.0f, integralFBy = 0.0f, integralFBz = 0.0f;
+  integralFBx = 0.0f,  integralFBy = 0.0f, integralFBz = 0.0f;
   lastUpdate = 0;
   now = 0;
 }
 
 void FreeSixIMU::init() {
   init(FIMU_ACC_ADDR, FIMU_ITG3200_DEF_ADDR, false);
-  //Serial.println("OK");
 }
 
 void FreeSixIMU::init(bool fastmode) {
   init(FIMU_ACC_ADDR, FIMU_ITG3200_DEF_ADDR, fastmode);
-  //Serial.println("Okkk");
 }
 
 void FreeSixIMU::init(int acc_addr, int gyro_addr, bool fastmode) {
   delay(5);
   
-  
   // disable internal pullups of the ATMEGA which Wire enable by default
-  #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega8__) || defined(__AVR_ATmega328P__)
+  #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega8__) || defined(__AVR_ATmega328P__)
     // deactivate internal pull-ups for twi
     // as per note from atmega8 manual pg167
     cbi(PORTC, 4);
     cbi(PORTC, 5);
-  //Serial.println("Serio");
   #else
     // deactivate internal pull-ups for twi
     // as per note from atmega128 manual pg204
     cbi(PORTD, 0);
     cbi(PORTD, 1);
-  //Serial.println("Altro");
   #endif
   
   if(fastmode) { // switch to 400KHz I2C - eheheh
     TWBR = ((16000000L / 400000L) - 16) / 2; // see twi_init in Wire/utility/twi.c
     // TODO: make the above usable also for 8MHz arduinos..
-    //Serial.println("i2c boost");
   }
   
-  //Serial.println("acc pre");
 	// init ADXL345
 	acc.init(acc_addr);
-  //Serial.println("acc");
 	
 
   // init ITG3200
   gyro.init(gyro_addr);
-  //Serial.println("gyro ok");
   delay(1000);
   // calibrate the ITG3200
   gyro.zeroCalibrate(128,5);
-  //Serial.println("calibrate");
   
   // init HMC5843
   //magn.init(false); // Don't set mode yet, we'll do that later on.
@@ -109,7 +99,7 @@ void FreeSixIMU::init(int acc_addr, int gyro_addr, bool fastmode) {
 }
 
 
-void FreeSixIMU::getRawValues(volatile int * raw_values) {
+void FreeSixIMU::getRawValues(int * raw_values) {
   acc.readAccel(&raw_values[0], &raw_values[1], &raw_values[2]);
   gyro.readGyroRaw(&raw_values[3], &raw_values[4], &raw_values[5]);
   //magn.getValues(&raw_values[6], &raw_values[7], &raw_values[8]);
@@ -117,8 +107,8 @@ void FreeSixIMU::getRawValues(volatile int * raw_values) {
 }
 
 
-void FreeSixIMU::getValues(volatile float * values) {  
-  volatile int accval[3];
+void FreeSixIMU::getValues(float * values) {  
+  int accval[3];
   acc.readAccel(&accval[0], &accval[1], &accval[2]);
   values[0] = ((float) accval[0]);
   values[1] = ((float) accval[1]);
@@ -127,11 +117,13 @@ void FreeSixIMU::getValues(volatile float * values) {
   gyro.readGyro(&values[3]);
   
   //magn.getValues(&values[6]);
-
 }
 
-void FreeSixIMU::getGyroValues(volatile float * values) {  
+void FreeSixIMU::getGyroValues(float * values) {  
+  
   gyro.readGyro(&values[0]);
+  
+  //magn.getValues(&values[6]);
 }
 
 
@@ -144,10 +136,10 @@ void FreeSixIMU::getGyroValues(volatile float * values) {
 //
 //=====================================================================================================
 void FreeSixIMU::AHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz) {
-  volatile float recipNorm;
-  volatile float q0q0, q0q1, q0q2, q0q3, q1q1, q1q2, q1q3, q2q2, q2q3, q3q3;
-  volatile float halfex = 0.0f, halfey = 0.0f, halfez = 0.0f;
-  volatile float qa, qb, qc;
+  float recipNorm;
+  float q0q0, q0q1, q0q2, q0q3, q1q1, q1q2, q1q3, q2q2, q2q3, q3q3;
+  float halfex = 0.0f, halfey = 0.0f, halfez = 0.0f;
+  float qa, qb, qc;
 
   // Auxiliary variables to avoid repeated arithmetic
   q0q0 = q0 * q0;
@@ -194,7 +186,7 @@ void FreeSixIMU::AHRSupdate(float gx, float gy, float gz, float ax, float ay, fl
 
   // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
   if((ax != 0.0f) && (ay != 0.0f) && (az != 0.0f)) {
-    volatile float halfvx, halfvy, halfvz;
+    float halfvx, halfvy, halfvz;
     
     // Normalise accelerometer measurement
     recipNorm = invSqrt(ax * ax + ay * ay + az * az);
@@ -257,8 +249,8 @@ void FreeSixIMU::AHRSupdate(float gx, float gy, float gz, float ax, float ay, fl
 }
 
 
-void FreeSixIMU::getQ( volatile float * q) {
-  volatile float val[9];
+void FreeSixIMU::getQ(float * q) {
+  float val[9];
   getValues(val);
   
   /*
@@ -290,17 +282,17 @@ void FreeSixIMU::getQ( volatile float * q) {
 // Returns the Euler angles in radians defined with the Aerospace sequence.
 // See Sebastian O.H. Madwick report 
 // "An efficient orientation filter for inertial and intertial/magnetic sensor arrays" Chapter 2 Quaternion representation
-void FreeSixIMU::getEuler(volatile float * angles) {
-volatile float q[4]; // quaternion
+void FreeSixIMU::getEuler(float * angles) {
+float q[4]; // quaternion
   getQ(q);
-  angles[2] = atan2(2 * q[1] * q[2] - 2 * q[0] * q[3], 2 * q[0]*q[0] + 2 * q[1] * q[1] - 1) * 180/M_PI; // psi
-  angles[0] = -asin(2 * q[1] * q[3] + 2 * q[0] * q[2]) * 180/M_PI; // theta
-  angles[1] = atan2(2 * q[2] * q[3] - 2 * q[0] * q[1], 2 * q[0] * q[0] + 2 * q[3] * q[3] - 1) * 180/M_PI; // phi
+  angles[0] = atan2(2 * q[1] * q[2] - 2 * q[0] * q[3], 2 * q[0]*q[0] + 2 * q[1] * q[1] - 1) * 180/M_PI; // psi
+  angles[1] = -asin(2 * q[1] * q[3] + 2 * q[0] * q[2]) * 180/M_PI; // theta
+  angles[2] = atan2(2 * q[2] * q[3] - 2 * q[0] * q[1], 2 * q[0] * q[0] + 2 * q[3] * q[3] - 1) * 180/M_PI; // phi
 }
 
 
-void FreeSixIMU::getAngles(volatile float * angles) {
-  volatile float a[3]; //Euler
+void FreeSixIMU::getAngles(float * angles) {
+  float a[3]; //Euler
   getEuler(a);
 
   angles[0] = a[0];
@@ -316,36 +308,19 @@ void FreeSixIMU::getAngles(volatile float * angles) {
 
 
 
-void FreeSixIMU::getYawPitchRollGyro(volatile float * ypr, volatile float * values)
-{
-  volatile float q[4]; // quaternion
-  volatile float gx, gy, gz; // estimated gravity direction
+
+void FreeSixIMU::getYawPitchRoll(float * ypr) {
+  float q[4]; // quaternion
+  float gx, gy, gz; // estimated gravity direction
   getQ(q);
   
   gx = 2 * (q[1]*q[3] - q[0]*q[2]);
   gy = 2 * (q[0]*q[1] + q[2]*q[3]);
   gz = q[0]*q[0] - q[1]*q[1] - q[2]*q[2] + q[3]*q[3];
   
-  ypr[0] = atan(gy / sqrt(gx*gx + gz*gz))  * 180/M_PI;
+  ypr[0] = atan2(2 * q[1] * q[2] - 2 * q[0] * q[3], 2 * q[0]*q[0] + 2 * q[1] * q[1] - 1) * 180/M_PI;
   ypr[1] = atan(gx / sqrt(gy*gy + gz*gz))  * 180/M_PI;
-  ypr[2] = atan2(2 * q[1] * q[2] - 2 * q[0] * q[3], 2 * q[0]*q[0] + 2 * q[1] * q[1] - 1) * 180/M_PI;
-  gyro.readGyro(&values[0]);
-}
-
-
-void FreeSixIMU::getYawPitchRoll(volatile float * ypr) {
-  volatile float q[4]; // quaternion
-  volatile float gx, gy, gz; // estimated gravity direction
-  getQ(q);
-  
-  gx = 2 * (q[1]*q[3] - q[0]*q[2]);
-  gy = 2 * (q[0]*q[1] + q[2]*q[3]);
-  gz = q[0]*q[0] - q[1]*q[1] - q[2]*q[2] + q[3]*q[3];
-  
-  ypr[0] = atan(gy / sqrt(gx*gx + gz*gz))  * 180/M_PI;
-  ypr[1] = atan(gx / sqrt(gy*gy + gz*gz))  * 180/M_PI;
-  ypr[2] = atan2(2 * q[1] * q[2] - 2 * q[0] * q[3], 2 * q[0]*q[0] + 2 * q[1] * q[1] - 1) * 180/M_PI;
-  
+  ypr[2] = atan(gy / sqrt(gx*gx + gz*gz))  * 180/M_PI;
 }
 
 
