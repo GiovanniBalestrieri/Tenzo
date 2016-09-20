@@ -91,10 +91,10 @@ training_set = featuresets[:10000]
 test_set = featuresets[10000:]
 
 # Train with Naive Bayes
-#classifier = nltk.NaiveBayesClassifier.train(training_set)
-classifier_f = open("naiveBayes.pickle","rb")
-classifier = pickle.load(classifier_f)
-classifier_f.close()
+classifier = nltk.NaiveBayesClassifier.train(training_set)
+#classifier_f = open("naiveBayes.pickle","rb")
+#classifier = pickle.load(classifier_f)
+#classifier_f.close()
 
 print(" Original Naive Bayes Alg acc:", (nltk.classify.accuracy(classifier,test_set))*100)
 classifier.show_most_informative_features(15)
