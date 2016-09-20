@@ -5,11 +5,9 @@ from nltk.classify.scikitlearn import SklearnClassifier
 from sklearn.naive_bayes import MultinomialNB, GaussianNB ,BernoulliNB
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.svm import SVC,LinearSVC,NuSVC
-
 from nltk.corpus import stopwords
 from nltk.classify import ClassifierI
 from statistics import mode
-
 from nltk.tokenize import word_tokenize
 
 class VoteClassifier(ClassifierI):
@@ -67,6 +65,7 @@ ss.add(",")
 ss.add(".")
 ss.add("'s")
 ss.add("'")
+#ss.remove('not') # Meglio senza not, confonde
 all_clean = []
 
 for word in all_words:
@@ -84,7 +83,9 @@ print(all_words.most_common(15))
 # See how many times the word really is present in the reviews
 print("Presence of the word 'really':", all_words["really"])
 
-word_feature = list(all_words.keys())[:3000]
+
+print(len(all_words))
+word_feature = list(all_words.keys())[:4000]
 
 def find_feature(document):
 	#words = set(document)
@@ -99,11 +100,12 @@ def find_feature(document):
 
 featuresets = [(find_feature(rev),category) for (rev,category) in documents]
 
+print("Number of features: ",len(featuresets)) 
 random.shuffle(featuresets)
 
 # Define Training and Test Set
-training_set = featuresets[:10000]
-test_set = featuresets[10000:]
+training_set = featuresets[:6000]
+test_set = featuresets[6001:]
 
 # Train with Naive Bayes
 classifier = nltk.NaiveBayesClassifier.train(training_set)
@@ -114,11 +116,12 @@ classifier = nltk.NaiveBayesClassifier.train(training_set)
 print(" Original Naive Bayes Alg acc:", (nltk.classify.accuracy(classifier,test_set))*100)
 classifier.show_most_informative_features(15)
 
-#save_classifier = open("naiveBayes.pickle","wb")
-#pickle.dump(classifier,save_classifier)
-#save_classifier.close()
+save_classifier = open("naiveBayes.pickle","wb")
+pickle.dump(classifier,save_classifier)
+save_classifier.close()
 
 # Uses a wrapper around nltk classfier
+
 MNB_classifier = SklearnClassifier(MultinomialNB())
 MNB_classifier.train(training_set)
 print("Multinomial Classifier acc:", (nltk.classify.accuracy(MNB_classifier,test_set))*100)
@@ -139,9 +142,9 @@ SGD_classifier = SklearnClassifier(SGDClassifier())
 SGD_classifier.train(training_set)
 print("SGD Classifier acc:", (nltk.classify.accuracy(SGD_classifier,test_set))*100)
 
-#SVC_classifier = SklearnClassifier(SVC())
-#SVC_classifier.train(training_set)
-#print("SVC Classifier acc:", (nltk.classify.accuracy(SVC_classifier,test_set))*100)
+SVC_classifier = SklearnClassifier(SVC(kernel='linear',gamma='0.01'))
+SVC_classifier.train(training_set)
+print("SVC Classifier acc:", (nltk.classify.accuracy(SVC_classifier,test_set))*100)
 
 #save_classifier = open("SVC.pickle","wb")
 #pickle.dump(SVC_classifier,save_classifier)
