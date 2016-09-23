@@ -107,9 +107,15 @@ print "Length: ",len(all_words)
 
 # convert to nltk frequency distribution
 all_words = nltk.FreqDist(all_words)
-print("\t\t\tReally??")
+print("\t\t\tMost common words??")
 # Show most common words
 print(all_words.most_common(15))
 # See how many times the word really is present in the reviews
-print("Presence of the word 'really':", all_words["colosseo"])
+print("Presence of the word 'really':", all_words["Roma"])
 
+def mostCommon(perc):
+	number = (int) (len(all_words)*perc)
+	return all_words.most_common(number)
+
+word_feature  = mostCommon(0.1)
+print word_feature
