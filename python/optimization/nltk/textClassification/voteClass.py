@@ -63,7 +63,7 @@ ss=set(stopwords.words('english'))
 #print("Stopwords in English: ",ss)
 ss.add(",")
 ss.add(".")
-s.add("'s")
+ss.add("'s")
 ss.add("'")
 #ss.remove('not') # Meglio senza not, confonde
 all_clean = []
