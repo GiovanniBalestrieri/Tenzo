@@ -103,6 +103,10 @@ featuresets = [(find_feature(rev),category) for (rev,category) in documents]
 print("Number of features: ",len(featuresets)) 
 random.shuffle(featuresets)
 
+print featuresets[1]
+
+print "Training Bayesian Classifier"
+
 # Define Training and Test Set
 training_set = featuresets[:6000]
 test_set = featuresets[6001:]
