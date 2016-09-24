@@ -4,17 +4,22 @@ sys.setdefaultencoding('utf8')
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
+from nltk.classify.scikitlearn import SklearnClassifier
+from sklearn.naive_bayes import MultinomialNB, GaussianNB ,BernoulliNB
+from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.svm import SVC,LinearSVC,NuSVC
+
 
 test = csv.reader(io.open("test.csv","r",encoding='utf-8'),skipinitialspace=True)
 
 
 # Training Set
-pos_training = io.open("/var/lib/mysql-files/TRAIN_POS_G_trust2012_4@hotmail.it.csv","r",encoding='utf-8')
-neg_training = io.open("/var/lib/mysql-files/TRAIN_POS_B_trust2012_4@hotmail.it.csv","r",encoding='utf-8')
+pos_training = io.open("/var/lib/mysql-files/TRAIN_POS_G_trust2012_4@hotmail.it_25_04.csv","r",encoding='utf-8')
+neg_training = io.open("/var/lib/mysql-files/TRAIN_NEG_trust2012_4@hotmail.it_25_04.csv","r",encoding='utf-8')
 
 # Test Set
-pos_test = io.open("/var/lib/mysql-files/TEST_POS_trust2012@hotmail.it_all.csv","r",encoding='utf-8')
-neg_test = io.open("/var/lib/mysql-files/TEST_NEG_trust2012@hotmail.it_all.csv","r",encoding='utf-8')
+pos_test = io.open("/var/lib/mysql-files/TEST_POS_trust2012@hotmail.it_all_25_04.csv","r",encoding='utf-8')
+neg_test = io.open("/var/lib/mysql-files/TEST_NEG_trust2012@hotmail.it_all_25_04.csv","r",encoding='utf-8')
 
 #f = open('temp','w')
 #f.write('hi there\n')
@@ -171,14 +176,7 @@ for w in all_words_testSet:
 		all_clean_testSet.append(w)
 
 all_words_testSet = all_clean_testSet
-
 print "Length: ",len(all_words_testSet)
-
-
-
-
-
-
 
 # convert to nltk frequency distribution
 all_words = nltk.FreqDist(all_words)
@@ -191,8 +189,8 @@ print("Presence of the word 'really':", all_words["Roma"])
 def mostCommon(perc):
 	number = (int) (len(all_words)*perc)
 	return all_words.most_common(number)
-
-word_feature_temp  = mostCommon(0.1)
+# safe 0.8
+word_feature_temp  = mostCommon(1)
 word_feature = []
 for h in word_feature_temp:
 	word_feature.append(h[0])
@@ -211,13 +209,13 @@ featuresets = [(find_feature(rev),label) for (rev,label) in doc]
 totFeat = len (featuresets)
 print "Number of features: ", totFeat
 random.shuffle(featuresets)
-print featuresets[1]
+#print featuresets[1]
 #trSetPerc = 0.6
 
 # Define Training and Test Set
 #bound = (int) (totFeat*trSetPerc)
 training_set = featuresets
- #test_set = featuresets[bound+1:]
+#test_set = featuresets[bound+1:]
 
 # Let's create the featuresets for the Test Set:
 featuresets_test = [(find_feature(rev),label) for (rev,label) in docTest]
@@ -226,11 +224,12 @@ print "Number of features: ", totFeat
 random.shuffle(featuresets_test)
 #print featuresets_test[1]
 
-# Define Training and Test Set
-#bound = (int) (totFeat*trSetPerc)
 test_set = featuresets_test
  
-# Train with Naive Bayes
+###################################################################
+##                     Train with Naive Bayes                    ##
+###################################################################
+
 classifier = nltk.NaiveBayesClassifier.train(training_set)
 #classifier_f = open("naiveBayes.pickle","rb")
 #classifier = pickle.load(classifier_f)
@@ -238,4 +237,17 @@ classifier = nltk.NaiveBayesClassifier.train(training_set)
 
 print(" Original Naive Bayes Alg acc:", (nltk.classify.accuracy(classifier,test_set))*100)
 classifier.show_most_informative_features(15)
+
+###################################################################
+##                         Train with SVM                        ##
+###################################################################
+
+SVC_classifier = SklearnClassifier(SVC(kernel='linear',gamma=0.001))
+SVC_classifier.train(training_set)
+#classifier_f = open("naiveBayes.pickle","rb")
+#classifier = pickle.load(classifier_f)
+#classifier_f.close()
+
+print(" Support Vector Machine Classifier acc:", (nltk.classify.accuracy(SVC_classifier,test_set))*100)
+
 
