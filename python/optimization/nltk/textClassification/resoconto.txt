@@ -1,0 +1,34 @@
+######################################################################
+
+			Test with All instances
+
+######################################################################
+	
+	Training Set: till 25-04-2016
+
+Number of Training titles (+/-):  4007  ;  635
+Number of words:  31408
+removing stopwords IT ...
+removing stopwords EN ...
+Length:  25956
+				Test Set initialization
+Number of Test titles (+/-):  245  ;  147
+Number of words in TestSet:  3048
+removing stopwords IT ...
+removing stopwords EN ...
+Length:  2428
+
+- Naive Bayes classifier Acc:	 		 61.98%
+
+- Support Vector Machine linear Kernel Acc:	 62.5%
+
+- Support Vector Machine Gaussian Kernel Acc:	 62.5%
+
+- Multinomial Classifier acc: 			 63.01
+
+- LogisticRegression Classifier acc: 		 62.5
+
+- SGD Classifier acc:				 64.03
+
+- Linear SVC Classifier acc:			 62.5
+
