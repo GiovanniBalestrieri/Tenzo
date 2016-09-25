@@ -309,7 +309,7 @@ if linSvm:
 	#classifier = pickle.load(classifier_f)
 	#classifier_f.close()
 
-	print(" Support Vector Machine Linear acc:", (nltk.classify.accuracy(SVC_classifier,test_set))*100)
+	print(" Support Vector Machine Classifier acc:", (nltk.classify.accuracy(SVC_classifier,test_set))*100)
 
 #               Gaussian Hyperplane Separation
 
@@ -320,10 +320,10 @@ if gauSvm:
 	#classifier = pickle.load(classifier_f)
 	#classifier_f.close()
 
-	print(" Support Vector Machine RBF acc:", (nltk.classify.accuracy(SVCG_classifier,test_set))*100)
+	print(" Support Vector Machine Classifier acc:", (nltk.classify.accuracy(SVCG_classifier,test_set))*100)
 
 ###################################################################
-##                Train with Multinomial Classifier              ##
+##                         Train with SVM                        ##
 ###################################################################
 
 if mnb:
@@ -336,7 +336,7 @@ if mnb:
 	#save_classifier.close()
 
 ###################################################################
-##                 Train with LogisticRegression                 ##
+##                         Train with SVM                        ##
 ###################################################################
 
 if lrc:
