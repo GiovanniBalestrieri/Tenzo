@@ -4,7 +4,51 @@
 
 ######################################################################
 	
-	Training Set: till 25-04-2016
+	
+
+
+			Training Set: till 01-05-2016
+
+
+
+Number of Training titles (+/-):  8266  ;  247
+	Length after:  8266  ,  247
+Number of words:  41604
+	removing stopwords IT ...
+	removing stopwords EN ...
+Length:  28861
+				Test Set initialization
+Number of Test titles (+/-):  339  ;  30
+	After ->Number of Test titles (+/-):  84  ;  11
+Number of words in TestSet:  706
+	removing stopwords IT ...
+	removing stopwords EN ...
+Length:  529
+			Most common words??
+[('039', 418), ('roma', 247), ('club', 214), ('live', 169), ('party', 167), ('2016', 164), ('rebel', 158), ('museo', 134), ('festival', 134), ('vibe', 128), ('run', 120), ('palazzo', 113), ('pres', 112), ('rny', 106), ('night', 106), ('nike+', 101), ('dj', 100), ('cocktail', 100), ('nazionale', 100), ('l-ektrica', 90), ('...', 89), ('massimo', 88), ('presenta', 87), ('pigneto', 81), ('solo', 81)]
+	
+	Number of features TRAIN:  8513
+	Number of features TEST  95
+
+
+- Naive Bayes classifier Acc:	 		 87.36%
+
+- Support Vector Machine linear Kernel Acc:	 89,47%
+
+- Support Vector Machine Gaussian Kernel Acc:	 88.42%
+
+- Multinomial Classifier acc: 			 88.02%
+
+- LogisticRegression Classifier acc: 		 88.42%
+
+- SGD Classifier acc:				 87.36%
+
+- Linear SVC Classifier acc:			 89.47%
+
+
+#######################################################################
+
+			Training Set: till 25-04-2016
 
 Number of Training titles (+/-):  4007  ;  635
 Number of words:  31408
