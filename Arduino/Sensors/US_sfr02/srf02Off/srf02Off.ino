@@ -1,22 +1,15 @@
 
-
 #include <Wire.h>
 
 void setup() {
   Wire.begin();                // join i2c bus (address optional for master)
-  Serial.begin(9600);          // start serial communication at 9600bps
-
- setupUS();
+  Serial.begin(9600);     
 }
 
 int reading = 0;
 
-void setupUS()
+void loop() 
 {
-  
-}
-
-void loop() {
   // step 1: instruct sensor to read echoes
   Wire.beginTransmission(112); // transmit to device #112 (0x70)
   // the address specified in the datasheet is 224 (0xE0)

@@ -1,6 +1,5 @@
-
-
 #include <Wire.h>
+#include <Servo.h>
 
 int reading = 0;
 double sonarTimer= 0;
@@ -10,12 +9,15 @@ double sonarTimeTot =0;
 
 byte lowB,highB;
 
+Servo viber;
+
 void setup()
 {
   Wire.begin();                
   Serial.begin(9600);
   Serial.println("OK");
-
+  
+  viber.attach(4);
   setupSfr02();
 }
 
@@ -60,5 +62,5 @@ void loop()
   sonarTimeTot = sonarTimeTot + sonarTimer;
     //Serial.print(sonarTimer);   // print the reading
 
-  delay(1000);                  // wait a bit since people have to read the output :)
+  delay(200);                  // wait a bit since people have to read the output :)
 }

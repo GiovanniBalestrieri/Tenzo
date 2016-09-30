@@ -10,41 +10,42 @@
 			Training Set: till 01-05-2016
 
 
-
-Number of Training titles (+/-):  8266  ;  247
-	Length after:  8266  ,  247
-Number of words:  41604
-	removing stopwords IT ...
-	removing stopwords EN ...
-Length:  28861
+Number of Training titles (+/-):  1823  ;  1403
+ Length after:  1823  ,  1403
+Number of words:  20874
+removing stopwords IT ...
+removing stopwords EN ...
+Length:  16043
 				Test Set initialization
-Number of Test titles (+/-):  339  ;  30
-	After ->Number of Test titles (+/-):  84  ;  11
-Number of words in TestSet:  706
-	removing stopwords IT ...
-	removing stopwords EN ...
-Length:  529
+Number of Test titles (+/-):  1445  ;  56
+Removing duplicate entries
+ -> Number of Test titles (+/-):  258  ;  15
+Number of words in TestSet:  1956
+removing stopwords IT ...
+removing stopwords EN ...
+Length:  1483
 			Most common words??
-[('039', 418), ('roma', 247), ('club', 214), ('live', 169), ('party', 167), ('2016', 164), ('rebel', 158), ('museo', 134), ('festival', 134), ('vibe', 128), ('run', 120), ('palazzo', 113), ('pres', 112), ('rny', 106), ('night', 106), ('nike+', 101), ('dj', 100), ('cocktail', 100), ('nazionale', 100), ('l-ektrica', 90), ('...', 89), ('massimo', 88), ('presenta', 87), ('pigneto', 81), ('solo', 81)]
-	
-	Number of features TRAIN:  8513
-	Number of features TEST  95
+[('final_concert_event', 865), ('final_culture_event', 596), ('final_club_event', 584), ('final_theatre_event', 439), ('final_extra_event', 359), ('altro', 277), ('techno', 250), ('final_cinema_event', 234), ('039', 178), ('divertimento', 151), ('alternative', 150), ('final_sport_event', 149), ('pop', 143), ('classica', 139), ('rock', 138), ('museo', 124), ('club', 122), ('roma', 116), ('jazz', 115), ('bere', 111), ('mangiare', 111), ('run', 87), ('nike+', 80), ('house', 76), ('fiere', 74)]
 
 
-- Naive Bayes classifier Acc:	 		 87.36%
+Number of words in features considered in Train set:  1692
+Number of features TRAIN:  3226
+Number of features TEST  273
 
-- Support Vector Machine linear Kernel Acc:	 89,47%
 
-- Support Vector Machine Gaussian Kernel Acc:	 88.42%
+- Naive Bayes classifier Acc:	 		 66.93%
 
-- Multinomial Classifier acc: 			 88.02%
+- Support Vector Machine linear Kernel Acc:	 69.38%
 
-- LogisticRegression Classifier acc: 		 88.42%
+- Multinomial Classifier acc: 			 68.16%
 
-- SGD Classifier acc:				 87.36%
+- LogisticRegression Classifier acc: 		 70.61%
 
-- Linear SVC Classifier acc:			 89.47%
+- Stochastic gradient descent acc:		 75.51%
 
+- Linear SVC Classifier acc:			 68.16%
+
+-> VOTED Classifier: 				 72.25%
 
 #######################################################################
 
