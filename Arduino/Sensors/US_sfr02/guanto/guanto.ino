@@ -2,16 +2,17 @@
 #include <Servo.h>
 
 int reading = 0, readingM1 = 0;
+float reads[10];
 double sonarTimer= 0;
 // #TUNE
-int threshold = 40; 
+int threshold = 70; 
 long int contSonarRoutine= 0;
 long int maxsonarTimer = 0;
 double sonarTimeTot =0;
 boolean modeD = true, coro = false, cora = false;
 
 //Filter #TUNE
-float alpha = 0.9;
+float alpha = 0.7;
 
 byte lowB,highB;
 int us;
@@ -60,6 +61,7 @@ void viberRoutine()
     us = map(reading,255,25,0,255);
     analogWrite(9,us);
   }
+  readingM1 = reading;
 }
 
 void loop()
@@ -67,7 +69,7 @@ void loop()
   usRoutine();
   viberRoutine();
   SerialRoutine();
-  delay(20);
+  delay(100);
 }
 
 void usRoutine()
@@ -105,4 +107,5 @@ void filter()
 {
   reading = (1 - alpha)*readingM1 + alpha*reading;
 }
+
 
