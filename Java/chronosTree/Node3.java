@@ -16,6 +16,7 @@ public int son2_id;
 public int son3_id;
 public String generation;
 
+public int type;
 
 Node3(int id){
 	this.node_id = id;
@@ -31,8 +32,7 @@ Node3(int id, int f_id, String gen){
 	node_id = id;
 }
 
-
-public void setSon(int s1, int s2, int s3){
+public void setChildren(int s1, int s2, int s3){
 	son1_id = s1;
 	son2_id = s2;
 	son3_id = s3;
