@@ -1,0 +1,8 @@
+To compile: 
+
+javac test.java
+
+A Simple.java file will be created. To execute it just call:
+
+java Simple
+> Hello world
