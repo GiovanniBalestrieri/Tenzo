@@ -46,15 +46,14 @@ public int getId(){
 	return node_id;
 }
 
+
 public int getFirstSonId(){
 	return son1_id;
 }
 
-
 public int getSecondSonId(){
 	return son2_id;
 }
-
 
 public int getThirdSonId(){
 	return son3_id;

@@ -2,6 +2,10 @@
 #include <Servo.h>
 
 int reading = 0, readingM1 = 0;
+
+const int FILTERING = 1;
+
+
 float reads[10];
 double sonarTimer= 0;
 // #TUNE
@@ -12,7 +16,7 @@ double sonarTimeTot =0;
 boolean modeD = true, coro = false, cora = false;
 
 //Filter #TUNE
-float alpha = 0.7;
+float alpha = 0.9;
 
 byte lowB,highB;
 int us;
@@ -93,7 +97,8 @@ void usRoutine()
     reading |= Wire.read(); 
   }
 
-  filter();
+  if (FILTERING)
+    filter();
 
   contSonarRoutine++;  
   sonarTimer = micros() - sonarTimer;

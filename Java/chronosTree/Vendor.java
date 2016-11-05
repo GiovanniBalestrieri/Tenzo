@@ -4,7 +4,7 @@ The Vendor class allows the creation of a shop owner instance.
 Each vendor has a predetermined number of son. 
 */
 
-class Vendor{
+class Vendor {
 
 
 //will get memory only once and retain its value
@@ -19,7 +19,10 @@ System.out.println("Creating new Vendor");
 private int id;
 public int[] children;
 
+
 Vendor(int v_id){
+	
+
 	id = v_id;
 	children  = new int[5];
 	count_vendor++;
