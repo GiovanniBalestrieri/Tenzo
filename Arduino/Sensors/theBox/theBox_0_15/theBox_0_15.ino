@@ -348,8 +348,7 @@ void printCSVData()
   blu.print(temperature);
   blu.print(",");
   blu.print(luxVal);
-  blu.print(",");
-  blu.println("Z");
+  blu.println(",Z");
 }
 
 // #SERIAL
