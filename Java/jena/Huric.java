@@ -55,6 +55,10 @@ import org.ros.node.topic.Subscriber;
  * A simple {@link Publisher} {@link NodeMain}.
  */
 public class Huric extends AbstractNodeMain {
+	boolean isFurniture;
+	boolean isClothes;
+	boolean isBook;
+	boolean isDrink;
 
 	@Override
 	public GraphName getDefaultNodeName() {
@@ -80,6 +84,13 @@ public class Huric extends AbstractNodeMain {
 		}
 	}
 
+	public void resetCategories(){
+		isFurniture = false;
+		isBook = false;
+		isClothes = false;
+		isDrink = false;
+	}
+
 
 	@Override
 	public void onStart(final ConnectedNode connectedNode) {
@@ -94,13 +105,22 @@ public class Huric extends AbstractNodeMain {
 		final String ABOX_FILE = "semantic_map1";
 		final String absoluteFileName = JENA_PATH + fileName;
 		final String NS = SOURCE + TBOX_FILE + "#";
-		boolean listAllProps = false;
+
+		boolean verbose = false;
+		boolean debug = false;
+
+		final String ALTERNATIVE_REF = "hasAlternativeReference"; 
+		final String PREF_REF = "hasPreferredReference";
+		final String AFFORDANCE = "hasAffordance"; 
+		final String POSITION = "hasPosition"; 
 		final String COORD_X = "float_coordinates_x";
 		final String COORD_Y = "float_coordinates_y";
 		final String COORD_Z = "float_coordinates_z";
+		final String LEXICAL = "lexicalReference";
 		final String FURNITURE = "Furniture";
-		final boolean debug = false;
-		boolean isFurniture;
+		final String CLOTHES = "Clothes";
+		final String DRINK = "Drink";
+		final String BOOK = "Book";
 
 	    /**
 	      * Tbox and Abox
@@ -122,49 +142,77 @@ public class Huric extends AbstractNodeMain {
 	     * based on only the tBox, we will create a specialized 
 	     * reasoner on tbox and apply inferences on abox.
 	     * Thus, instead of:
-	     *  OntModel inf = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM_MICRO_RULE_INF, base);
-	     */
-	    
-	    Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
-	    reasoner = reasoner.bindSchema(tbox);
-	    OntModelSpec ontModelSpec=OntModelSpec.OWL_MEM_MICRO_RULE_INF;
-	    ontModelSpec.setReasoner(reasoner);
-	    InfModel infmodel = ModelFactory.createInfModel(reasoner,abox);
+	     * OntModel inf = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM_MICRO_RULE_INF, base);
+	     * 
+	     * Use: 
+	     *
+	     * Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+	     * reasoner = reasoner.bindSchema(tbox);
+	     * OntModelSpec ontModelSpec=OntModelSpec.OWL_MEM_MICRO_RULE_INF;
+	     * ontModelSpec.setReasoner(reasoner);
+	     * InfModel infmodel = ModelFactory.createInfModel(reasoner,abox);
+	     * 
+	     * This should be equivalent to creating ontModel with Reasoner capabilities
+	     * form aBox wth include inside
+		 */
+
+		OntModel infModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM_MICRO_RULE_INF, abox);
 
 	    System.out.println("\n\n-- All you know about an instance --\n\n");
 
 	    /* Find out all we know about an instance */
 
-	    OntProperty affordance=tbox.getOntProperty(NS+"hasAffordance");
-	    OntProperty position = tbox.getOntProperty(NS+"hasPosition");
+	    OntProperty affordance = infModel.getOntProperty(NS+AFFORDANCE);
+	    OntProperty position = infModel.getOntProperty(NS+POSITION);
+	    OntProperty alternativeReference = infModel.getOntProperty(NS+ALTERNATIVE_REF);
+	    OntProperty prefReference = infModel.getOntProperty(NS+PREF_REF);
 
 	    OntClass chair = tbox.getOntClass(NS + "Chair");
 
-	    Resource chairRes = infmodel.getResource(NS+ "Chair");
-	    System.out.println("Chair *:");
-	    printStatements(abox, chairRes, null, null);
+	    //Resource chairRes = infmodel.getResource(NS+ "Chair");
+	    //System.out.println("Chair *:");
+	    //printStatements(abox, chairRes, null, null);
 
 	    /* Loop through all instances */
 
 	    System.out.println("\n\n---- List all classes of ABox ----\n\n");
-	    ExtendedIterator classes = abox.listClasses(); 
+	    ExtendedIterator classes = infModel.listClasses(); 
 
 	    while (classes.hasNext()) {
-			// Reset furniture flag
-			isFurniture = false;
+			// Reset categories flag
+			resetCategories();
+
 	    	OntClass thisClass = (OntClass) classes.next();
 			ExtendedIterator superclasses = thisClass.listSuperClasses();
 		        
 			if (debug)
 	        	System.out.println("\nAnalyzing: " + thisClass.getURI() + " ...\n\n");
 
+	        //  Detects whether the class is of a type
 	        while (superclasses.hasNext()) {
 	            OntClass c = (OntClass) superclasses.next();
-	            if (!c.isAnon() && c.getURI().equals(NS+FURNITURE)){
-    	    		// Toggle furniture flag
-    	    		if (debug)
-                		System.out.println("\t[ FURNITURE ]");
-                	isFurniture = true;
+	            if (!c.isAnon()){
+	            	if (c.getURI().equals(NS+FURNITURE)){
+	    	    		// Toggle furniture flag
+	    	    		if (debug)
+	                		System.out.println("\t[ FURNITURE ]");
+	                	isFurniture = true;
+	                } else if (c.getURI().equals(NS+CLOTHES)){
+	    	    		// Toggle furniture flag
+	    	    		if (debug)
+	                		System.out.println("\t[ CLOTHES ]");
+	                	isClothes = true;
+	                } else if (c.getURI().equals(NS+BOOK)){
+	    	    		// Toggle furniture flag
+	    	    		if (debug)
+	                		System.out.println("\t[ BOOK ]");
+	                	isBook = true;
+	                } else if (c.getURI().equals(NS+DRINK)){
+	    	    		// Toggle furniture flag
+	    	    		if (debug)
+	                		System.out.println("\t[ DRINK ]");
+	                	isDrink = true;
+	                }
                 }
         	}
 
@@ -172,65 +220,156 @@ public class Huric extends AbstractNodeMain {
 	    	while (instances.hasNext()) {
 	    		Individual thisInstance = (Individual) instances.next();
 
-	    		if (thisInstance.hasProperty(position) && isFurniture) {
-					System.out.println("\n\n\n -------------------- \n\n\n");
+	    		if (isFurniture){
+	    			if (verbose){
+						System.out.println("\n\n\n -------------------- \n\n\n");
+		    			System.out.println("\n\tFound Furniture: " + thisInstance.toString());
+	    			}
 	    			float cx=-1000,cy=-1000,cz=-1000;
 
-	    			if (listAllProps){
-	    				printAllProperties(thisInstance);
+    				// Pick just position property	
+	    			if (thisInstance.hasProperty(position)){
+		    			Statement s = thisInstance.getProperty(position);
+
+		    			if (debug){
+			    			System.out.print( "\t\t\t\tgetPredicate:\t" + s.getPredicate().getLocalName() + " -> " );
+			    			System.out.println( s.getObject().toString() + "\n");
+						}
+
+						// Looking for a position
+		    			Individual pos = infModel.getIndividual(s.getObject().toString());  
+		    			for (StmtIterator j = pos.listProperties(); j.hasNext(); ) {
+		    				Statement coord = j.next();
+		    				if (coord.getObject().isLiteral()) {
+		    					if (coord.getPredicate().getLocalName().equals(COORD_X)){
+		    						cx = Float.parseFloat(coord.getLiteral().getLexicalForm());
+		    					} else if (coord.getPredicate().getLocalName().equals(COORD_Y)) {
+		    						cy = Float.parseFloat(coord.getLiteral().getLexicalForm());
+		    					} else if (coord.getPredicate().getLocalName().equals(COORD_Z)) {
+		    						cz = Float.parseFloat(coord.getLiteral().getLexicalForm());
+		    					}         
+		    				} 
+		    			}
+		    			System.out.format(" Pose:  ( %f, %f , %f )\n",cx,cy,cz); 
+		    		}
+
+		    		// Pick the preferred reference
+		    		if (thisInstance.hasProperty(prefReference)){
+		    			Statement s = thisInstance.getProperty(prefReference);
+		    			String lexiRef = "";
+
+		    			if (debug){
+			    			System.out.print( "\t\t\t\tgetPredicate:\t" + s.getPredicate().getLocalName() + " -> " );
+			    			System.out.println( s.getObject().toString() + "\n");
+						}
+
+						// Looking for a position
+		    			Individual alt_refs = infModel.getIndividual(s.getObject().toString());  
+		    			for (StmtIterator j = alt_refs.listProperties(); j.hasNext(); ) {
+		    				Statement ref = j.next();
+		    				if (ref.getObject().isLiteral()) {
+		    					if (debug)
+		    						System.out.print("\t\t\t"+ref.getPredicate().getLocalName()+"\n\n");
+		    					if (ref.getPredicate().getLocalName().equals(LEXICAL)){
+		    						lexiRef = (ref.getLiteral().getLexicalForm());
+		    					}        
+		    				} 
+		    			}
+		    			System.out.format(" Reference: %s\n\n",lexiRef); 
+		    		}
+	    		} else if (isBook) {
+		    		// Loop throught other type of instances
+		    		if (verbose){
+						System.out.println("\n\n\n -------------------- \n\n\n");
+		    			System.out.println("\n\tFound Book: " + thisInstance.toString());
+	    			}
+	    		} else if (isClothes) {
+		    		// Loop throught other type of instances
+		    		if (verbose){
+						System.out.println("\n\n\n -------------------- \n\n\n");
+		    			System.out.println("\n\tFound Clothes: " + thisInstance.toString());
+	    			}
+	    		} else if (isDrink) {
+		    		// Loop throught other type of instances
+		    		if (verbose){
+						System.out.println("\n\n\n -------------------- \n\n\n");
+		    			System.out.println("\n\tFound Drink: " + thisInstance.toString());
 	    			}
 
-		  			// Pick just position property
-	    			Statement s = thisInstance.getProperty(position);
+	    			float cx=-1000,cy=-1000,cz=-1000;
 
-	    			if (debug){
-		    			System.out.print( "\t\t\t\tgetPredicate:\t" + s.getPredicate().getLocalName() + " -> " );
-		    			System.out.println( s.getObject().toString() + "\n");
-					}
+    				// Pick just position property	
+	    			if (thisInstance.hasProperty(position)){
+		    			Statement s = thisInstance.getProperty(position);
 
-	    			Individual pos = abox.getIndividual(s.getObject().toString());  
-	    			for (StmtIterator j = pos.listProperties(); j.hasNext(); ) {
-	    				Statement coord = j.next();
-	    				if (coord.getObject().isLiteral()) {
-	    					if (coord.getPredicate().getLocalName().equals(COORD_X)){
-	    						cx = Float.parseFloat(coord.getLiteral().getLexicalForm());
-	    					} else if (coord.getPredicate().getLocalName().equals(COORD_Y)) {
-	    						cy = Float.parseFloat(coord.getLiteral().getLexicalForm());
-	    					} else if (coord.getPredicate().getLocalName().equals(COORD_Z)) {
-	    						cz = Float.parseFloat(coord.getLiteral().getLexicalForm());
-	    					}         
-	    				} 
-	    			}    		    			
-	    			System.out.println("\n\tFound Furniture: "+ /*+thisClass.toString()+" instance: " + */ thisInstance.toString() + "\n");
-	    			System.out.format(" @  ( %f, %f , %f )\n\n",cx,cy,cz); 
-	    		} else {
-		    		// Loop throught other type of instances
+		    			if (debug){
+			    			System.out.print( "\t\t\t\tgetPredicate:\t" + s.getPredicate().getLocalName() + " -> " );
+			    			System.out.println( s.getObject().toString() + "\n");
+						}
+
+						// Looking for a position
+		    			Individual pos = infModel.getIndividual(s.getObject().toString());  
+		    			for (StmtIterator j = pos.listProperties(); j.hasNext(); ) {
+		    				Statement coord = j.next();
+		    				if (coord.getObject().isLiteral()) {
+		    					if (coord.getPredicate().getLocalName().equals(COORD_X)){
+		    						cx = Float.parseFloat(coord.getLiteral().getLexicalForm());
+		    					} else if (coord.getPredicate().getLocalName().equals(COORD_Y)) {
+		    						cy = Float.parseFloat(coord.getLiteral().getLexicalForm());
+		    					} else if (coord.getPredicate().getLocalName().equals(COORD_Z)) {
+		    						cz = Float.parseFloat(coord.getLiteral().getLexicalForm());
+		    					}         
+		    				} 
+		    			}
+		    			System.out.format(" Pose:  ( %f, %f , %f )\n",cx,cy,cz); 
+		    		}
+
+
+		    		// Pick the preferred reference
+		    		if (thisInstance.hasProperty(prefReference)){
+		    			Statement s = thisInstance.getProperty(prefReference);
+		    			String lexiRef = "";
+
+		    			if (debug){
+			    			System.out.print( "\t\t\t\tgetPredicate:\t" + s.getPredicate().getLocalName() + " -> " );
+			    			System.out.println( s.getObject().toString() + "\n");
+						}
+
+						// Looking for a position
+		    			Individual alt_refs = infModel.getIndividual(s.getObject().toString());  
+		    			for (StmtIterator j = alt_refs.listProperties(); j.hasNext(); ) {
+		    				Statement ref = j.next();
+		    				if (ref.getObject().isLiteral()) {
+		    					if (debug)
+		    						System.out.print("\t\t\t"+ref.getPredicate().getLocalName()+"\n\n");
+		    					if (ref.getPredicate().getLocalName().equals(LEXICAL)){
+		    						lexiRef = (ref.getLiteral().getLexicalForm());
+		    					}        
+		    				} 
+		    			}
+		    			System.out.format(" Reference: %s\n\n",lexiRef); 
+		    		}
+
+
 	    		}
 	    	}
 	    }
 
-
 	    System.out.println("\n\n---- Properties of chair ----\n\n");
 
-	    for (ExtendedIterator<? extends OntResource> instances = chair.listInstances(); instances.hasNext(); ) {
-	      	OntResource chairInstance = instances.next();
-	      	System.out.println( "Chair instance: " + chairInstance.getProperty(affordance ).getString() );
-	    }
-
-
-	    System.out.println("\n\n---- Consistency Check ----\n\n");
 
 	    /* Consistency Check */
+	    System.out.println("\n\n---- Consistency Check ----\n\n");
 
 	    FileWriter out = null;
 
-		ValidityReport validity = infmodel.validate();
+		ValidityReport validity = infModel.validate();
 		if (validity.isValid()) {
 			System.out.println("Consistency Check:\n Passed\n");
 			System.out.println("Writing to file:\n\t"+fileName);
 			try{
 				out = new FileWriter(absoluteFileName);
-				infmodel.write(out,"RDF/XML");
+				infModel.write(out,"RDF/XML");
 			}
 			catch (IOException a){
 				System.out.println(" Occhio");
