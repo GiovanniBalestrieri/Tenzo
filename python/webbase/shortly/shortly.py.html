@@ -1,0 +1,45 @@
+<html><head>
+<title>shortly/shortly.py</title>
+<meta name="Generator" content="htmlizer/[twisted, version 16.0.0]" />
+<link rel="alternate" href="shortly/shortly.py" type="text/x-python" />
+
+</head>
+<body>
+<pre><span class="py-src-keyword">import</span> <span class="py-src-variable">os</span>
+<span class="py-src-keyword">import</span> <span class="py-src-variable">redis</span>
+<span class="py-src-keyword">import</span> <span class="py-src-variable">urlparse</span>
+<span class="py-src-keyword">from</span> <span class="py-src-variable">werkzeug</span>.<span class="py-src-variable">wrappers</span> <span class="py-src-keyword">import</span> <span class="py-src-variable">Request</span>, <span class="py-src-variable">Response</span>
+<span class="py-src-keyword">from</span> <span class="py-src-variable">werkzeug</span>.<span class="py-src-variable">routing</span> <span class="py-src-keyword">import</span> <span class="py-src-variable">Map</span>, <span class="py-src-variable">Rule</span>
+<span class="py-src-keyword">from</span> <span class="py-src-variable">werkzeug</span>.<span class="py-src-variable">exceptions</span> <span class="py-src-keyword">import</span> <span class="py-src-variable">HTTPException</span>, <span class="py-src-variable">NotFound</span>
+<span class="py-src-keyword">from</span> <span class="py-src-variable">werkzeug</span>.<span class="py-src-variable">wsgi</span> <span class="py-src-keyword">import</span> <span class="py-src-variable">SharedDataMiddleware</span>
+<span class="py-src-keyword">from</span> <span class="py-src-variable">werkzeug</span>.<span class="py-src-variable">utils</span> <span class="py-src-keyword">import</span> <span class="py-src-variable">redirect</span>
+<span class="py-src-keyword">from</span> <span class="py-src-variable">jinja2</span> <span class="py-src-keyword">import</span> <span class="py-src-variable">Environment</span>, <span class="py-src-variable">FileSystemLoader</span>
+
+<span class="py-src-keyword">class</span> <span class="py-src-identifier">Shortly</span>(<span class="py-src-parameter">object</span>):
+
+    <span class="py-src-keyword">def</span> <span class="py-src-identifier">__init__</span>(<span class="py-src-parameter">self</span>, <span class="py-src-parameter">config</span>):
+        <span class="py-src-variable">self</span>.<span class="py-src-variable">redis</span> = <span class="py-src-variable">redis</span>.<span class="py-src-variable">Redis</span>(<span class="py-src-variable">config</span>[<span class="py-src-string">'redis_host'</span>], <span class="py-src-variable">config</span>[<span class="py-src-string">'redis_port'</span>])
+
+    <span class="py-src-keyword">def</span> <span class="py-src-identifier">dispatch_request</span>(<span class="py-src-parameter">self</span>, <span class="py-src-parameter">request</span>):
+        <span class="py-src-keyword">return</span> <span class="py-src-variable">Response</span>(<span class="py-src-string">'Hello World!'</span>)
+
+    <span class="py-src-keyword">def</span> <span class="py-src-identifier">wsgi_app</span>(<span class="py-src-parameter">self</span>, <span class="py-src-parameter">environ</span>, <span class="py-src-parameter">start_response</span>):
+        <span class="py-src-variable">request</span> = <span class="py-src-variable">Request</span>(<span class="py-src-variable">environ</span>)
+        <span class="py-src-variable">response</span> = <span class="py-src-variable">self</span>.<span class="py-src-variable">dispatch_request</span>(<span class="py-src-variable">request</span>)
+        <span class="py-src-keyword">return</span> <span class="py-src-variable">response</span>(<span class="py-src-variable">environ</span>, <span class="py-src-variable">start_response</span>)
+
+    <span class="py-src-keyword">def</span> <span class="py-src-identifier">__call__</span>(<span class="py-src-parameter">self</span>, <span class="py-src-parameter">environ</span>, <span class="py-src-parameter">start_response</span>):
+        <span class="py-src-keyword">return</span> <span class="py-src-variable">self</span>.<span class="py-src-variable">wsgi_app</span>(<span class="py-src-variable">environ</span>, <span class="py-src-variable">start_response</span>)
+
+    <span class="py-src-keyword">def</span> <span class="py-src-identifier">create_app</span>(<span class="py-src-parameter">redis_host</span>=<span class="py-src-string">'localhost'</span>, <span class="py-src-parameter">redis_port</span>=<span class="py-src-number">6379</span>, <span class="py-src-parameter">with_static</span>=<span class="py-src-parameter">True</span>):
+        <span class="py-src-variable">app</span> = <span class="py-src-variable">Shortly</span>({
+            <span class="py-src-string">'redis_host'</span>:       <span class="py-src-variable">redis_host</span>,
+            <span class="py-src-string">'redis_port'</span>:       <span class="py-src-variable">redis_port</span>
+        })
+        <span class="py-src-keyword">if</span> <span class="py-src-variable">with_static</span>:
+            <span class="py-src-variable">app</span>.<span class="py-src-variable">wsgi_app</span> = <span class="py-src-variable">SharedDataMiddleware</span>(<span class="py-src-variable">app</span>.<span class="py-src-variable">wsgi_app</span>, {
+                <span class="py-src-string">'/static'</span>:  <span class="py-src-variable">os</span>.<span class="py-src-variable">path</span>.<span class="py-src-variable">join</span>(<span class="py-src-variable">os</span>.<span class="py-src-variable">path</span>.<span class="py-src-variable">dirname</span>(<span class="py-src-variable">__file__</span>), <span class="py-src-string">'static'</span>)
+            })
+        <span class="py-src-keyword">return</span> <span class="py-src-variable">app</span>
+</pre>
+</body>
