@@ -365,27 +365,29 @@ void loop() {
   } 
   
   // #LOOP
-  if (timerSec >= 1000000)
+  if (timerSec >= MAIN_LOOP_DISP_PERIOD)
   {
-    for(int i = 1; i<=scheduler.num_tasks;i++)
+    if (sakura.getPrintTimers())
     {
-      if (scheduler.isTaskAlive(i))
-      {
-        Serial.print("T"); Serial.print(i);
-        Serial.print("\t(");
-        Serial.print(scheduler.getTaskPeriod(i));
-        Serial.print(",\te,");
-        Serial.print(scheduler.getTaskPriority(i));
-        Serial.print(")\tJob queue:  ");
-        Serial.print(scheduler.getJobReleased(i));
-        //Serial.print("\tValid:  ");
-        //Serial.print(scheduler.isTaskValid(i));
-        //Serial.print("\tActive:  ");
-        //Serial.print(scheduler.isTaskActive(i));
-        Serial.print("\t");
-        Serial.println(scheduler.getTaskLabel(i));
+      for(int i = 1; i<=scheduler.num_tasks ;i++) {
+        if (scheduler.isTaskAlive(i)) {
+          Serial.print("T"); Serial.print(i);
+          Serial.print("\t(");
+          Serial.print(scheduler.getTaskPeriod(i));
+          Serial.print(",\te,");
+          Serial.print(scheduler.getTaskPriority(i));
+          Serial.print(")\tJob queue:  ");
+          Serial.print(scheduler.getJobReleased(i));
+          //Serial.print("\tValid:  ");
+          //Serial.print(scheduler.isTaskValid(i));
+          //Serial.print("\tActive:  ");
+          //Serial.print(scheduler.isTaskActive(i));
+          Serial.print("\t");
+          Serial.println(scheduler.getTaskLabel(i));
+        }
       }
     }
+    
     computeAverageExecTime();
     
     UXRoutine();
@@ -531,9 +533,22 @@ void wFilter(volatile float val[])
 
 void aFilter(volatile float val[])
 {
+  /*
+  Serial.print("I before:\t");
+  Serial.print(val[1]);
+  */
+
+
+
+  
   val[0] = (1-alphaA)*val[0] + alphaA*axm1;
   val[1] = (1-alphaA)*val[1] + alphaA*aym1;
   val[2] = (1-alphaA)*val[2] + alphaA*azm1;
+
+  /*
+  Serial.print("\tafter:\t");
+  Serial.println(val[1]);
+  */
   
   axm1 = val[0];
   aym1 = val[1];
@@ -592,16 +607,35 @@ void acquireGyroYPR()
   sixDOF.getValues(inertiaValues);  
   sixDOF.getAngles(angles);    
 
+
+  /*
+  Serial.print("\n\nwVal:\t [alpha] ");    
+  Serial.print(inertiaValues[3]);
+  */
+  
   for (int i = 0; i<3;i++)
   {
     rawAcc[i] = inertiaValues[i];
     wVal[i] = inertiaValues[3+i];
   }
-  
+
+  /*
+  Serial.print("\t [original] ");    
+  Serial.print(wVal[0]);
+  */
   if (sakura.getGyroFilterFlag())
   {    
+    /*
+     Serial.print("\twVal:\t [b] ");    
+    Serial.print(wVal[0]);
+    */
     medianGyroX.in(wVal[0]);
-    wVal[0] = medianGyroX.out();   
+    wVal[0] = medianGyroX.out(); 
+
+     /*
+    Serial.print("\t [a] ");
+    Serial.println(wVal[0]);
+    */
    
     medianGyroY.in(wVal[1]);
     wVal[1] = medianGyroY.out();   
@@ -609,6 +643,18 @@ void acquireGyroYPR()
     medianGyroZ.in(wVal[2]);
     wVal[2] = medianGyroZ.out();    
   }   
+
+  if (sakura.getAccFilterFlag())
+  {    
+    aFilter(inertiaValues); 
+
+    // Copy arrays only if needed
+    for (int i = 0; i<3;i++)
+    {
+      aF[i] = inertiaValues[i];
+    }
+  }   
+  
 }
 
 void acquireGyro() // ISR

@@ -180,17 +180,6 @@ void ITG3200::readTemp(float *_Temp) {
   *_Temp = 35 + (((_buff[0] << 8) | _buff[1]) + 13200) / 280.0;    // F=C*9/5+32  
 }
 
-void ITG3200::readGyroRaw(int *_GyroX, int *_GyroY, int *_GyroZ){
-  readmem(GYRO_XOUT, 6, _buff);
-  *_GyroX = ((_buff[0] << 8) | _buff[1]);
-  *_GyroY = ((_buff[2] << 8) | _buff[3]); 
-  *_GyroZ = ((_buff[4] << 8) | _buff[5]);
-}
-
-void ITG3200::readGyroRaw(int *_GyroXYZ){
-  readGyroRaw(_GyroXYZ, _GyroXYZ+1, _GyroXYZ+2);
-}
-
 void ITG3200::setRevPolarity(bool _Xpol, bool _Ypol, bool _Zpol) {
   polarities[0] = _Xpol ? -1 : 1;
   polarities[1] = _Ypol ? -1 : 1;
@@ -223,24 +212,61 @@ void ITG3200::zeroCalibrate(unsigned int totSamples, unsigned int sampleDelayMS)
   setOffsets(-tmpOffsets[0] / totSamples, -tmpOffsets[1] / totSamples, -tmpOffsets[2] / totSamples);
 }
 
+void ITG3200::readGyroRaw(int *_GyroXYZ){
+  readGyroRaw(_GyroXYZ, _GyroXYZ+1, _GyroXYZ+2);
+}
+
+
+void ITG3200::readGyroRaw(int *_GyroX, int *_GyroY, int *_GyroZ){
+  readmem(GYRO_XOUT, 6, _buff);
+  *_GyroX = ((_buff[0] << 8) | _buff[1]);
+  *_GyroY = ((_buff[2] << 8) | _buff[3]); 
+  *_GyroZ = ((_buff[4] << 8) | _buff[5]);
+
+  /*Serial.print("\n\n\tAAAA\t");
+  Serial.print(*_GyroX);
+  Serial.println("\t");
+  */
+  
+}
+
 void ITG3200::readGyroRawCal(int *_GyroX, int *_GyroY, int *_GyroZ) {
   readGyroRaw(_GyroX, _GyroY, _GyroZ);
+
+  /*
+  Serial.print("\n\n\tBoom\t");
+  Serial.print(*_GyroX);
+  Serial.println("\t");
+  */
+  
   *_GyroX += offsets[0];
   *_GyroY += offsets[1];
   *_GyroZ += offsets[2];
 }
 
-void ITG3200::readGyroRawCal(int *_GyroXYZ) {
-  readGyroRawCal(_GyroXYZ, _GyroXYZ+1, _GyroXYZ+2);
+void ITG3200::readGyro(int *_GyroX, int *_GyroY, int *_GyroZ){
+  
+  readGyroRawCal(_GyroX, _GyroX, _GyroX); // x,y,z will contain calibrated integer values from the sensor
+
+/*
+  Serial.print("\n\n\tBoom\t");
+  Serial.print(*_GyroX);
+*/
+  
+  *_GyroX =  *_GyroX / (float) (14.375 * polarities[0] * gains[0]);
+ *_GyroY =  *_GyroY / (float) (14.375 * polarities[1] * gains[1]);
+ *_GyroZ =  *_GyroZ / (float) (14.375 * polarities[2] * gains[2]);
+  
+  
+   /*
+  Serial.print("\n\n\tZZZ\t");
+  Serial.print(*_GyroX);
+  Serial.println("\t");
+  */
 }
 
-void ITG3200::readGyro(float *_GyroX, float *_GyroY, float *_GyroZ){
-  int x, y, z;
-  
-  readGyroRawCal(&x, &y, &z); // x,y,z will contain calibrated integer values from the sensor
-  *_GyroX =  x / 14.375 * polarities[0] * gains[0];
-  *_GyroY =  y / 14.375 * polarities[1] * gains[1];
-  *_GyroZ =  z / 14.375 * polarities[2] * gains[2];
+void ITG3200::readGyroRawCal(int *_GyroXYZ) {
+  readGyroRawCal(_GyroXYZ, _GyroXYZ+1, _GyroXYZ+2);
 }
 
 void ITG3200::readGyro(float *_GyroXYZ){

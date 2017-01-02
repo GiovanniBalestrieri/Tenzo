@@ -142,7 +142,7 @@ boolean  Ux::getPrintPIDVals()
 /**
  **  SET Methods
  **/
- 
+
 void Ux::setPrintMotorVals(boolean state)
 {
   printMotorsVals = state;

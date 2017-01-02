@@ -165,6 +165,7 @@ public:
   void readGyroRawCal(int *_GyroX, int *_GyroY, int *_GyroZ);
   void readGyroRawCal(int *_GyroXYZ);
   void readGyro(float *_GyroXYZ); // includes gain and offset
+  void readGyro(int *_GyroX, int *_GyrroY, int *_GyroZ); // includes gain and offset
   void readGyro(float *_GyroX, float *_GyroY, float *_GyroZ); // includes gain and offset    
   // Power management
   void reset(); // after reset all registers have default values

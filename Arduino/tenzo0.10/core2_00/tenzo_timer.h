@@ -7,6 +7,8 @@
 #ifndef tenzo_timer_h
 #define tenzo_timer_h
 
+/* Main Display Loop */
+#define MAIN_LOOP_DISP_PERIOD 1000000
 
 int HZ = 1000;	/* Tick frequency (Hz) */
 #define CONFIG_TICK_ADJUST 0

@@ -109,18 +109,27 @@ void FreeSixIMU::getRawValues(int * raw_values) {
 
 void FreeSixIMU::getValues(float * values) {  
   int accval[3];
+  int omegaval[3];
+  
   acc.readAccel(&accval[0], &accval[1], &accval[2]);
+  gyro.readGyroRawCal(&omegaval[0],&omegaval[1],&omegaval[2]);
+
+  /*
+  Serial.print("\n\n\tBoom\t");
+  Serial.print(omegaval[0]);
+  Serial.println("\t");
+  */
   values[0] = ((float) accval[0]);
   values[1] = ((float) accval[1]);
   values[2] = ((float) accval[2]);
-  
-  gyro.readGyro(&values[3]);
+  values[3] = ((float) omegaval[0]);
+  values[4] = ((float) omegaval[1]);
+  values[5] = ((float) omegaval[2]);
   
   //magn.getValues(&values[6]);
 }
 
 void FreeSixIMU::getGyroValues(float * values) {  
-  
   gyro.readGyro(&values[0]);
   
   //magn.getValues(&values[6]);
