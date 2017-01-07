@@ -1434,10 +1434,9 @@ void sendPidVal(int which,int mode)
   }
 }
 
-void printTimersSched()
-{
-    if (sakura.getPrintTimers())
-    {
+void printTimersSched() {
+    if (sakura.getPrintTimers()) {
+      
       // Print Samples rate: [sample/sec] \t execTime \t wcet
       //ISR
       Serial.print("t,ISR: ");
@@ -1487,8 +1486,6 @@ void printTimersSched()
         Serial.print("\tMax ");
         Serial.print(maxrtcTimer);
       }
-
-      
       
       Serial.print(",\nSerial: ");
       Serial.print(contSerialRoutine);
@@ -1513,8 +1510,7 @@ void printTimersSched()
 
 void printRoutine()
 {  
-  /*  // #doing 
-  */
+  /*  // #doing  */
   if (sakura.getPrintMotorValsUs())
   {
     Serial.print("V,  ");
