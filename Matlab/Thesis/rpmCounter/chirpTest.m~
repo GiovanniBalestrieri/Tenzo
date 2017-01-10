@@ -1,0 +1,28 @@
+t = linspace(0,100)
+
+pwm = 650*sin(exp(t))+700
+plot(t,pwm)
+
+%%
+
+t = 0:1:100
+
+pwm = sin(exp(t))
+plot(t,pwm)
+
+%%
+ Fs=100; % sample rate 
+tf=30; % 2 seconds
+t=0:1/Fs:tf-1/Fs;
+f0=1;
+fFinal = 300;
+k = (fFinal - f0)/Fs
+yy = zeros(size(t,2));
+for i=1:t(size(t,2)-1)
+    k*t(i)
+    ff = f0 + k*t(i)
+    yy(i) = 650*sin(ff)+1250;
+end
+
+y=650*cos(2*pi*(f0*t+t.^2/2))+ 1300;
+plot(t,yy)
