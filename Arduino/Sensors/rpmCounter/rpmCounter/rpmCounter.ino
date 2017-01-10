@@ -1,7 +1,13 @@
+#define SECOND_US 1000000
+
+int rev_sec = 0;
+int rev_min = 0;
+int rad_sec = 0;
 boolean working = false;
 const byte interruptPin = 2;
 volatile byte state = LOW;
 volatile long counter = 0;
+unsigned long timeTracker = 0;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -13,9 +19,16 @@ void setup() {
   pinMode(13, OUTPUT);
 }
 
-// the loop function runs over and over again forever
 void loop() {
   serialRoutine();
+  computeRevolutions();
+}
+
+void computeRevolutions() {
+  if (micros() - timeTracker>= SECOND_US) {
+    rev_sec = counter;
+    counter = 0;  
+  }  
 }
 
 void count() { // ISR
