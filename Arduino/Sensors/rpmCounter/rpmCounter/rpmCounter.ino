@@ -1,28 +1,30 @@
 boolean working = false;
-int analValue = 0, analogPin = 0;
+const byte interruptPin = 2;
+volatile byte state = LOW;
+volatile long counter = 0;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
   Serial.begin(9600);
   Serial.println("Yo");
-  // initialize digital pin 13 as an output.
+  
+  pinMode(interruptPin, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(interruptPin), count, FALLING);
   pinMode(13, OUTPUT);
 }
 
 // the loop function runs over and over again forever
 void loop() {
   serialRoutine();
- readAnalogValue();
 }
 
-void readAnalogValue(){
-  
-  analValue = analogRead(analogPin);
+void count() { // ISR
+  counter++;
 }
 
 void serialRoutine() {
-  Serial.print("\nValue:\t");
-  Serial.println(analValue);
+  Serial.print("\nCount:\t");
+  Serial.println(counter);
   
   if (Serial.available()>0){
     char t = Serial.read();
