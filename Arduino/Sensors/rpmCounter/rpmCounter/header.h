@@ -26,6 +26,7 @@ boolean landed = true;
 
 int currentUs = 0;
 boolean printServoSignal = false;
+boolean test = false;
 
 
 #define REF_SIGNAL 1300

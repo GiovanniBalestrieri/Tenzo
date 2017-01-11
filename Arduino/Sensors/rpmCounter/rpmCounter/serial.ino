@@ -69,6 +69,11 @@ void serialRoutine() {
       
       printRev =  !printRev;
       working = false; 
+    } else if (t == 't' && !working){
+      working = true;
+      
+      test = !test;
+      working = false; 
     }
   }           
 }
