@@ -37,7 +37,7 @@ boolean printServoSignal = false;
 boolean test = false;
 boolean testing = false;
 
-boolean printScheduler = true;
+boolean printScheduler = false;
 unsigned long timerSec = 0;
 unsigned long secRoutine = 0;
 
@@ -50,6 +50,6 @@ volatile  int signalPhase2Sequence = 0;
 volatile  int signalPhase3Sequence = 0;
 
 
-#define REF_SIGNAL 1300
-#define MAX_SIGNAL 2000
-#define MIN_SIGNAL 700
+volatile int  REF_SIGNAL = 1300;
+volatile int MAX_SIGNAL = 2000;
+volatile int  MIN_SIGNAL = 700;

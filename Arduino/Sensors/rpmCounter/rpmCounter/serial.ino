@@ -57,7 +57,7 @@ void serialRoutine() {
 
     if (t == 'a' && !working){
       working = true;
-      // FREE
+      currentUs += 5;
       working = false; 
     }
     else if (t == 'm' && !working){
@@ -109,6 +109,23 @@ void serialRoutine() {
       working = true;
       
       test = !test;
+      working = false; 
+    } else if (t == 'z' && !working){
+      working = true;
+      currentUs -= 5;
+      working = false; 
+    } else if (t == 'c' && !working){
+      working = true;
+      calibrate();
+      working = false; 
+    } else if (t == 's' && !working){
+      working = true;
+      printScheduler != printScheduler;
+      working = false; 
+    
+    } else if (t == 'd' && !working){
+      working = true;
+      detachMotors();
       working = false; 
     }
   }      

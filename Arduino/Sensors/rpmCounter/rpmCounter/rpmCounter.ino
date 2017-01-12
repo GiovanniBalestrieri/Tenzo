@@ -11,15 +11,12 @@ Scheduler scheduler = Scheduler(MAX_TASKS);
 void setup() {
   Serial.begin(9600);
 
-  myservo.attach(servoPin); 
-  myservo.writeMicroseconds(MAX_SIGNAL);
-  delay(2000);
-  myservo.writeMicroseconds(MIN_SIGNAL);
-  currentUs = MIN_SIGNAL;
-  
+  Serial.println("Calibrating");
+  calibrate();
   pinMode(interruptPin, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(interruptPin), count, FALLING);
   pinMode(13, OUTPUT);
+
 
   setupTimerInterrupt();  
   setupScheduler();
@@ -54,8 +51,30 @@ void loop() {
       // Task 3
       computeSignal();
       scheduler.jobCompletedById(bestId);
+      break;   
+      
+    case(4):
+      // Task 4
+      servoRoutineSS();
+      scheduler.jobCompletedById(bestId);
       break;        
   } 
+  /*
+ 
+  servoRoutine();
+  serialRoutine();
+  */
+}
+
+void updateCommand() {
+  
+  if (currentUs < MAX_SIGNAL) {
+    currentUs += 5;
+  }
+
+  if (currentUs>= REF_SIGNAL) {
+    currentUs = REF_SIGNAL;
+  }
 }
 
 void setupTimerInterrupt()
@@ -109,6 +128,7 @@ void computeSignal() {
     
     if (signalInitializeSequence <= REF_SIGNAL) {
       signalInitializeSequence += signalCounter;
+      currentUs = signalInitializeSequence;
     }
     
     signalCounter++;
@@ -184,25 +204,7 @@ void computeSignal() {
         currentUs = MIN_SIGNAL;
       } 
     }
-    /*
-    for (int i = 0; i<2000; i++) {
-      int val = MIN_SIGNAL;
-      if (i<500) {
-        val = MIN_SIGNAL;
-      }
-      else if (i<1000) {
-        val = REF_SIGNAL;
-      }
-      else if (i<1500) {
-        val = MAX_SIGNAL*0.7;
-      }
-      else {
-        val = MIN_SIGNAL;
-      }
-      myservo.writeMicroseconds((int) val);
-      delay(10);
-    }
-    */
+
     if (signalCounter == 2000) {
       currentUs = MIN_SIGNAL;
       test = false;
@@ -226,71 +228,24 @@ void computeSignal() {
   
 }
 
-/*
-void servoRoutine() {
-  myservo.writeMicroseconds(currentUs);
-  
-  if (initialize) {
-    initializing = true;
-    for (int i = MIN_SIGNAL; i<=REF_SIGNAL; i++) {
-      myservo.writeMicroseconds(i);
-      delay(10);
-    }
-    currentUs = REF_SIGNAL;
-    initialized = true;
-    initialize = false;
-    initializing = false;
-    Serial.println("Initialized");
-  }
-  
-  if (land) {
-    landing = true;
-    for (int i = currentUs; i>MIN_SIGNAL; i--) {
-      myservo.writeMicroseconds(i);
-      delay(10);
-    }
-    currentUs = MIN_SIGNAL;
-    landed = true;
-    land = false;
-    landing = false;
-    Serial.println("Landed");
-  }
-
-  
-  if (test && initialized) {
-    
-    Serial.println("Phase 1");
-    for (float i = 0; i<100; i=i+0.1) {
-      float val = ((MAX_SIGNAL - MIN_SIGNAL)/2) * sin(i) + MIN_SIGNAL;
-      myservo.writeMicroseconds((int) val);
-      delay(10);
-    }
-    
-    Serial.println("Phase 2");
+void servoRoutineSS(){
+      servoTimer = micros();     
+      // [max] 250 us [avg] 240 us   
+      //if (setupOk)
+        myservo.writeMicroseconds(currentUs);
       
-    for (int i = 0; i<2000; i++) {
-      int val = MIN_SIGNAL;
-      if (i<500) {
-        val = MIN_SIGNAL;
-      }
-      else if (i<1000) {
-        val = REF_SIGNAL;
-      }
-      else if (i<1500) {
-        val = MAX_SIGNAL*0.7;
-      }
-      else {
-        val = MIN_SIGNAL;
-      }
-      myservo.writeMicroseconds((int) val);
-      delay(10);
-    }
-    currentUs = MIN_SIGNAL;
-    test = false;
-    Serial.println("Tested");
-  }
+      //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
+      // update counter control  
+  
+      countServoAction++;  
+      servoTimer = micros() - servoTimer;
+      
+      if (maxservoTimer <= servoTimer)
+        maxservoTimer = servoTimer;
+      servoTimeTot = servoTimeTot + servoTimer;
+
+      contCtrl = 0;
 }
-*/
 
 ISR(TIMER2_COMPB_vect) // #ISR
 { 
@@ -305,12 +260,13 @@ ISR(TIMER2_COMPB_vect) // #ISR
   
 
 
+
     if (contCtrl == ctrlPeriod)
     {
       servoTimer = micros();     
       // [max] 250 us [avg] 240 us   
-      //if (setupOk)
-        //myservo.writeMicroseconds(currentUs);
+      if (setupOk)
+        myservo.writeMicroseconds(currentUs);
       
       //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
       // update counter control  
@@ -324,6 +280,7 @@ ISR(TIMER2_COMPB_vect) // #ISR
 
       contCtrl = 0;
     }
+    
     
         
   cont++;    
