@@ -37,30 +37,23 @@ void loop() {
   {
     case(1):
       // Task 1
-      //Serial.println("\n1");
       computeRevolutions();
       scheduler.jobCompletedById(bestId);
       break;
 
     case(2):
       // Task 2
-      //Serial.println("\n2");
       serialRoutine();
       scheduler.jobCompletedById(bestId);
       break;
 
     case(3):
       // Task 3
-      //servoRoutine();
-      //Serial.println("\n3");
+      //computeSignal();
       scheduler.jobCompletedById(bestId);
       break;
         
   } 
-  //serialRoutine();
-  
-  //Serial.print(" BestID: ");
-  //Serial.println(bestId);
 }
 
 void setupTimerInterrupt()
@@ -103,8 +96,96 @@ void setupScheduler()
   scheduler.createTasks(); 
 }
 
+void computeSignal() {
+
+  // TakeOff
+  if (initialize) {
+    initializing = true;
+    
+    signalInitializeSequence = currentUs;
+    
+    if (signalInitializeSequence <= REF_SIGNAL) {
+      signalInitializeSequence += signalCounter;
+    }
+    
+    signalCounter++;
+    if (signalInitializeSequence >= REF_SIGNAL) {
+      signalInitializeSequence = REF_SIGNAL;
+      currentUs = REF_SIGNAL;
+      initialized = true;
+      initialize = false;
+      initializing = false;
+
+      
+      signalCounter = 0;
+      Serial.println("Initialized");
+    }
+  }  
+
+  // Landing
+  if (land) {
+    landing = true;
+    
+    signalLandingSequence = currentUs;
+    
+    if (signalLandingSequence >= MIN_SIGNAL) {
+      signalInitializeSequence -= signalCounter;
+      currentUs = signalLandingSequence;
+    }
+    
+    signalCounter++;
+
+    if (signalLandingSequence <= MIN_SIGNAL) {
+      currentUs = MIN_SIGNAL;
+      landed = true;
+      land = false;
+      landing = false;
+      Serial.println("Landed");
+      
+      signalCounter = 0;
+    }
+    
+  }
+
+  
+  if (test && initialized) {
+    testing = true;
+    Serial.println("Phase 1");
+    
+    for (float i = 0; i<100; i=i+0.1) {
+      float val = ((MAX_SIGNAL - MIN_SIGNAL)/2) * sin(i) + MIN_SIGNAL;
+      myservo.writeMicroseconds((int) val);
+      delay(10);
+    }
+    
+    Serial.println("Phase 2");      
+    for (int i = 0; i<2000; i++) {
+      int val = MIN_SIGNAL;
+      if (i<500) {
+        val = MIN_SIGNAL;
+      }
+      else if (i<1000) {
+        val = REF_SIGNAL;
+      }
+      else if (i<1500) {
+        val = MAX_SIGNAL*0.7;
+      }
+      else {
+        val = MIN_SIGNAL;
+      }
+      myservo.writeMicroseconds((int) val);
+      delay(10);
+    }
+    currentUs = MIN_SIGNAL;
+    test = false;
+    Serial.println("Tested");
+  }
+  
+}
+
 void servoRoutine() {
   myservo.writeMicroseconds(currentUs);
+  
   if (initialize) {
     initializing = true;
     for (int i = MIN_SIGNAL; i<=REF_SIGNAL; i++) {
@@ -185,6 +266,7 @@ ISR(TIMER2_COMPB_vect) // #ISR
       servoTimer = micros();     
       // [max] 250 us [avg] 240 us   
       
+      myservo.writeMicroseconds(currentUs);
       
       //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
       // update counter control  

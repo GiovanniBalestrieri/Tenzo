@@ -31,13 +31,22 @@ boolean land = false;
 boolean landed = true;
 boolean landing = false;
 
-int currentUs = 0;
+volatile int currentUs = 0;
 boolean printServoSignal = false;
 boolean test = false;
+boolean testing = false;
 
 boolean printScheduler = true;
 unsigned long timerSec = 0;
 unsigned long secRoutine = 0;
+
+// SignalGenerator
+volatile  int signalCounter = 0;
+volatile  int signalInitializeSequence = 0;
+volatile  int signalLandSequence = 0;
+volatile  int signalPhase1Sequence = 0;
+volatile  int signalPhase2Sequence = 0;
+volatile  int signalPhase3Sequence = 0;
 
 
 #define REF_SIGNAL 1300
