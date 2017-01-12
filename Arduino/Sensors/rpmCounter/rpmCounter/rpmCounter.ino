@@ -15,6 +15,7 @@ void setup() {
   myservo.writeMicroseconds(MAX_SIGNAL);
   delay(2000);
   myservo.writeMicroseconds(MIN_SIGNAL);
+  currentUs = MIN_SIGNAL;
   
   pinMode(interruptPin, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(interruptPin), count, FALLING);
@@ -22,15 +23,17 @@ void setup() {
 
   setupTimerInterrupt();  
   setupScheduler();
+
+  
+  setupOk = true;
   
   timeTracker = micros();
   Serial.println("Welcome");
 }
 
-void loop() {
-  
+void loop() {  
   timerSec = micros() - secRoutine;
- //scheduler.checkPeriodicTasks();
+  
   bestId = scheduler.schedule();
   
   switch(bestId)
@@ -49,10 +52,9 @@ void loop() {
 
     case(3):
       // Task 3
-      //computeSignal();
+      computeSignal();
       scheduler.jobCompletedById(bestId);
-      break;
-        
+      break;        
   } 
 }
 
@@ -97,7 +99,8 @@ void setupScheduler()
 }
 
 void computeSignal() {
-
+  generatorTimer = micros();     
+  
   // TakeOff
   if (initialize) {
     initializing = true;
@@ -126,16 +129,16 @@ void computeSignal() {
   if (land) {
     landing = true;
     
-    signalLandingSequence = currentUs;
+    signalLandSequence = currentUs;
     
-    if (signalLandingSequence >= MIN_SIGNAL) {
-      signalInitializeSequence -= signalCounter;
-      currentUs = signalLandingSequence;
+    if (signalLandSequence >= MIN_SIGNAL) {
+      signalLandSequence -= signalCounter;
+      currentUs = signalLandSequence;
     }
     
     signalCounter++;
 
-    if (signalLandingSequence <= MIN_SIGNAL) {
+    if (signalLandSequence <= MIN_SIGNAL) {
       currentUs = MIN_SIGNAL;
       landed = true;
       land = false;
@@ -150,15 +153,38 @@ void computeSignal() {
   
   if (test && initialized) {
     testing = true;
-    Serial.println("Phase 1");
+    signalCounter++;
     
+    if (signalCounter == 0)
+      Serial.println("Phase 1");
+    if (signalCounter<1000) {
+      currentUs = ((MAX_SIGNAL - MIN_SIGNAL)/2) * sin(signalCounter) + MIN_SIGNAL;
+    }
+    /*
     for (float i = 0; i<100; i=i+0.1) {
-      float val = ((MAX_SIGNAL - MIN_SIGNAL)/2) * sin(i) + MIN_SIGNAL;
+      currentUs = ((MAX_SIGNAL - MIN_SIGNAL)/2) * sin(signalCounter) + MIN_SIGNAL;
       myservo.writeMicroseconds((int) val);
       delay(10);
     }
+    */
     
-    Serial.println("Phase 2");      
+    if (signalCounter>= 1000 && signalCounter <= 2000) {
+      if (signalCounter == 1000)
+        Serial.println("Phase 2");
+      if (signalCounter<500) {
+        currentUs = MIN_SIGNAL;
+      }
+      else if (signalCounter<1000) {
+        currentUs = REF_SIGNAL;
+      }
+      else if (signalCounter<1500) {
+        currentUs = MAX_SIGNAL*0.7;
+      }
+      else {
+        currentUs = MIN_SIGNAL;
+      } 
+    }
+    /*
     for (int i = 0; i<2000; i++) {
       int val = MIN_SIGNAL;
       if (i<500) {
@@ -176,13 +202,31 @@ void computeSignal() {
       myservo.writeMicroseconds((int) val);
       delay(10);
     }
-    currentUs = MIN_SIGNAL;
-    test = false;
-    Serial.println("Tested");
+    */
+    if (signalCounter == 2000) {
+      currentUs = MIN_SIGNAL;
+      test = false;
+      Serial.println("Tested");
+      signalCounter = 0;
+    }
   }
+  currentUs = (int) currentUs;
+
+
+  // Update counters
+  
+      contGeneratorRoutine++;  
+      generatorTimer = micros() - generatorTimer;
+      
+      if (maxgeneratorTimer <= generatorTimer)
+        maxgeneratorTimer = generatorTimer;
+      generatorTimeTot = generatorTimeTot + generatorTimer;
+
+      contGenerator = 0;
   
 }
 
+/*
 void servoRoutine() {
   myservo.writeMicroseconds(currentUs);
   
@@ -246,7 +290,7 @@ void servoRoutine() {
     Serial.println("Tested");
   }
 }
-
+*/
 
 ISR(TIMER2_COMPB_vect) // #ISR
 { 
@@ -265,8 +309,8 @@ ISR(TIMER2_COMPB_vect) // #ISR
     {
       servoTimer = micros();     
       // [max] 250 us [avg] 240 us   
-      
-      myservo.writeMicroseconds(currentUs);
+      //if (setupOk)
+        //myservo.writeMicroseconds(currentUs);
       
       //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
       // update counter control  
@@ -295,13 +339,13 @@ ISR(TIMER2_COMPB_vect) // #ISR
 }
 
 void resetCounters()
-{    
-    //cont=0;         
+{           
     contCalc=0; 
-    countCtrlCalc=0;
     countServoAction=0;  
     contSerialRoutine=0;   
-    
+    contGeneratorRoutine= 0;
+
+    contGenerator=0;
     servoTimeTot = 0;
     countISR = 0;
 }

@@ -10,6 +10,7 @@ volatile int bestId;
 volatile int rev_sec = 0;
 volatile int rev_min = 0;
 volatile float rad_sec = 0;
+volatile boolean setupOk = false;
 boolean working = false;
 const byte interruptPin = 2;
 const byte servoPin = 8;

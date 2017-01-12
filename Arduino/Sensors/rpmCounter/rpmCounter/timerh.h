@@ -19,6 +19,10 @@ volatile unsigned long isrTimeTot = 0;
 
 
 
+volatile unsigned long generatorTimer = 0;
+volatile unsigned long maxgeneratorTimer = 0;
+volatile unsigned long generatorTimeTot = 0;
+
 volatile unsigned long serialTimer = 0;
 volatile unsigned long maxserialTimer = 0;
 volatile unsigned long serialTimeTot = 0;
@@ -27,12 +31,9 @@ volatile int contCtrl=0;
 volatile int cont = 0;
 volatile int countISR = 0;
 volatile int countServoAction = 0;
-volatile int countCtrlCalc = 0;
-volatile int contGyroSamples=0;
-volatile int contEulerSamples=0;
-volatile int contSerialRoutine=0; // boh
-volatile int contSonarRoutine=0;
-volatile int contRtcRoutine=0;
+volatile int contSerialRoutine=0;
+volatile int contGenerator=0;
+volatile int contGeneratorRoutine= 0;
 volatile int contCalc=0;
 
 

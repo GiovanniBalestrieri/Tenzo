@@ -21,6 +21,14 @@ void computeAverageExecTime()
       serialTimeTot = serialTimeTot/contSerialRoutine;
     else 
       serialTimeTot = -999;  
+
+      
+    
+    // Compute average SerialRoutine time
+    if (contGeneratorRoutine >  0)
+      generatorTimeTot = generatorTimeTot/contGeneratorRoutine;
+    else 
+      generatorTimeTot = -999;  
 }
 
 
@@ -57,6 +65,14 @@ void printTimersSched() {
       Serial.print(serialTimeTot);
       Serial.print("\tMax ");
       Serial.println(maxserialTimer);
+
+      
+      Serial.print("Generator: ");
+      Serial.print(contGeneratorRoutine);
+      Serial.print("\t");
+      Serial.print(generatorTimeTot);
+      Serial.print("\tMax ");
+      Serial.println(maxgeneratorTimer);
       
       Serial.println();
     }

@@ -30,12 +30,12 @@ void Scheduler::createTasks()
     this->panic(1);
   }
   
-  if (this->create_task(2, 100, 0, 250, EDF, "SerialRoutine") == -1) {
+  if (this->create_task(2, 1000, 0, 1500, EDF, "SerialRoutine") == -1) {
     
     this->panic(1);
   }
   
-  if (this->create_task(3, 500, 0, 4000, EDF, "Compute Input") == -1) {
+  if (this->create_task(3, 15, 0, 50, EDF, "Generator Input") == -1) {
     
     this->panic(1);
   }
