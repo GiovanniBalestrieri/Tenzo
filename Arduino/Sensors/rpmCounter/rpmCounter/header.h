@@ -1,6 +1,11 @@
 #define SECOND_US 1000000
+#define MAIN_LOOP_DISP_PERIOD 1000000
 #define NUM_BLADES 2
 #define SEC_IN_MIN 60
+#define MAX_TASKS 10
+
+
+volatile int bestId;
 
 volatile int rev_sec = 0;
 volatile int rev_min = 0;
@@ -16,17 +21,23 @@ boolean printRevSec = true;
 boolean printRevMin = true;
 boolean printRadSec = true;
 
-boolean printRev = true;
+boolean printRev = false;
 
 // servo 
 boolean initialize = false;
 boolean initialized = false;
+boolean initializing = false;
 boolean land = false;
 boolean landed = true;
+boolean landing = false;
 
 int currentUs = 0;
 boolean printServoSignal = false;
 boolean test = false;
+
+boolean printScheduler = true;
+unsigned long timerSec = 0;
+unsigned long secRoutine = 0;
 
 
 #define REF_SIGNAL 1300

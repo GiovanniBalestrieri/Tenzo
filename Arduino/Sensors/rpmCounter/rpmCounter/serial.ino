@@ -1,5 +1,41 @@
 
 void serialRoutine() {
+  
+  serialTimer = micros();
+
+  // #LOOP
+  if (timerSec >= MAIN_LOOP_DISP_PERIOD)
+  {
+    if (printScheduler)
+    {
+      for(int i = 1; i<=scheduler.num_tasks ;i++) {
+        if (scheduler.isTaskAlive(i)) {
+          Serial.print("T"); Serial.print(i);
+          Serial.print("\t(");
+          Serial.print(scheduler.getTaskPeriod(i));
+          Serial.print(",\te,");
+          Serial.print(scheduler.getTaskPriority(i));
+          Serial.print(")\tJob queue:  ");
+          Serial.print(scheduler.getJobReleased(i));
+          //Serial.print("\tValid:  ");
+          //Serial.print(scheduler.isTaskValid(i));
+          //Serial.print("\tActive:  ");
+          //Serial.print(scheduler.isTaskActive(i));
+          Serial.print("\t");
+          Serial.println(scheduler.getTaskLabel(i));
+        }
+      }
+    }
+    
+    computeAverageExecTime();
+    
+    UXRoutine();
+    
+    resetCounters();
+    
+    secRoutine = micros();
+  }
+  
   if (printRev) {
     if (printRevSec) {
       Serial.print("r/s:\t");
@@ -75,6 +111,16 @@ void serialRoutine() {
       test = !test;
       working = false; 
     }
-  }           
+  }      
+
+
+  
+  contSerialRoutine++;
+  serialTimer = micros() - serialTimer;
+  
+    if (maxserialTimer <= serialTimer && !initializing && !landing)
+      maxserialTimer = serialTimer;
+  
+  serialTimeTot = serialTimeTot + serialTimer;
 }
 
