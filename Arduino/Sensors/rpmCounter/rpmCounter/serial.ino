@@ -54,8 +54,14 @@ void serialRoutine() {
   
   if (Serial.available()>0){
     char t = Serial.read();
-
-    if (t == 'a' && !working){
+    
+    if (t =='T') {
+      Serial.println("Ok");
+    }  
+    else if (t== 'M') {  
+      printCSVomega();
+    }
+    else if (t == 'a' && !working){
       working = true;
       currentUs += 5;
       working = false; 
@@ -118,11 +124,10 @@ void serialRoutine() {
       working = true;
       calibrate();
       working = false; 
-    } else if (t == 's' && !working){
+    } else if (t == 'k' && !working){
       working = true;
       printScheduler != printScheduler;
-      working = false; 
-    
+      working = false;     
     } else if (t == 'd' && !working){
       working = true;
       detachMotors();
@@ -139,5 +144,17 @@ void serialRoutine() {
       maxserialTimer = serialTimer;
   
   serialTimeTot = serialTimeTot + serialTimer;
+}
+void printCSVomega()
+{
+  Serial.print("A,");
+  Serial.print(millis());
+
+  Serial.print(",");
+  Serial.print(currentUs);
+
+  Serial.print(",");
+  Serial.print(rev_sec);
+  Serial.println(",Z");
 }
 

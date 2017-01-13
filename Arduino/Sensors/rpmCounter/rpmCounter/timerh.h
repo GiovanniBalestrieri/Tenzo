@@ -10,7 +10,7 @@
 
 volatile unsigned long ticks;
 
-volatile int ctrlPeriod = 1; // 10 ms
+volatile int ctrlPeriod = 10; // 10 ms
 
 volatile unsigned long isrTimer = 0;
 volatile unsigned long maxisrTimer = 0;

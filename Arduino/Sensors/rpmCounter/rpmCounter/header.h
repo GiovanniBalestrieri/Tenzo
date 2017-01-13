@@ -38,6 +38,7 @@ boolean test = false;
 boolean testing = false;
 
 boolean printScheduler = false;
+boolean verboseSerial = false;
 unsigned long timerSec = 0;
 unsigned long secRoutine = 0;
 
@@ -50,6 +51,7 @@ volatile  int signalPhase2Sequence = 0;
 volatile  int signalPhase3Sequence = 0;
 
 
-volatile int  REF_SIGNAL = 1300;
+volatile int  REF_SIGNAL = 1450;
 volatile int MAX_SIGNAL = 2000;
-volatile int  MIN_SIGNAL = 700;
+volatile int  MIN_SIGNAL = 1000;
+volatile int  MIN_SIGNAL0 = 1350;

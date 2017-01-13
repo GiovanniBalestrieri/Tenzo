@@ -11,7 +11,7 @@ Scheduler scheduler = Scheduler(MAX_TASKS);
 void setup() {
   Serial.begin(9600);
 
-  Serial.println("Calibrating");
+  //Serial.println("Calibrating");
   calibrate();
   pinMode(interruptPin, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(interruptPin), count, FALLING);
@@ -21,11 +21,11 @@ void setup() {
   setupTimerInterrupt();  
   setupScheduler();
 
-  
   setupOk = true;
+  delay(3);
   
   timeTracker = micros();
-  Serial.println("Welcome");
+  //Serial.println("Welcome");
 }
 
 void loop() {  
@@ -55,15 +55,10 @@ void loop() {
       
     case(4):
       // Task 4
-      servoRoutineSS();
+      //servoRoutineSS();
       scheduler.jobCompletedById(bestId);
       break;        
   } 
-  /*
- 
-  servoRoutine();
-  serialRoutine();
-  */
 }
 
 void updateCommand() {
@@ -107,8 +102,9 @@ void setupTimerInterrupt()
 
   // enable global interrupts:
   interrupts();
- 
-  Serial.println("[ OK ] Init Timers"); 
+
+ if (verboseSerial)
+    Serial.println("[ OK ] Init Timers"); 
 }
 
 void setupScheduler()
@@ -177,8 +173,8 @@ void computeSignal() {
     
     if (signalCounter == 0)
       Serial.println("Phase 1");
-    if (signalCounter<1000) {
-      currentUs = ((MAX_SIGNAL - MIN_SIGNAL)/2) * sin(signalCounter) + MIN_SIGNAL;
+    if (signalCounter<2000) {
+      currentUs = ((MAX_SIGNAL - MIN_SIGNAL)/2) * sin(signalCounter*0.1) + MIN_SIGNAL0;
     }
     /*
     for (float i = 0; i<100; i=i+0.1) {
@@ -188,25 +184,17 @@ void computeSignal() {
     }
     */
     
-    if (signalCounter>= 1000 && signalCounter <= 2000) {
-      if (signalCounter == 1000)
-        Serial.println("Phase 2");
-      if (signalCounter<500) {
-        currentUs = MIN_SIGNAL;
-      }
-      else if (signalCounter<1000) {
-        currentUs = REF_SIGNAL;
-      }
-      else if (signalCounter<1500) {
-        currentUs = MAX_SIGNAL*0.7;
+    if (signalCounter>= 2001 && signalCounter <= 3000) {
+       if (signalCounter<2500) {
+        currentUs = REF_SIGNAL+132;
       }
       else {
-        currentUs = MIN_SIGNAL;
-      } 
+        currentUs = MAX_SIGNAL*0.9;
+      }
     }
 
-    if (signalCounter == 2000) {
-      currentUs = MIN_SIGNAL;
+    if (signalCounter == 3000) {
+      currentUs = MIN_SIGNAL0;
       test = false;
       Serial.println("Tested");
       signalCounter = 0;

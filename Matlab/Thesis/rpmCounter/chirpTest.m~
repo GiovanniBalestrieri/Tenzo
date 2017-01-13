@@ -61,7 +61,7 @@
     % XBee expects the end of commands to be delineated by a carriage return.
     xbee = serial(port,'baudrate',9600,'terminator','CR','tag','Quad');
 
-    set(xbee, 'TimeOut', 15);  %I am willing to wait 1.5 secs for data to arive
+    set(xbee, 'TimeOut', 5);  %I am willing to wait 1.5 secs for data to arive
     % I wanted to make my buffer only big enough to store one message
     set(xbee, 'InputBufferSize',  390 )
     % Before you can write to your serial port, you need to open it:
@@ -87,48 +87,6 @@
         disp ('Communication problem. Check Hardware and retry.');
     end       
     
-    % Take Off
-    pause(1);
-    fprintf(xbee,'c');
-    disp('Sent: calibrate command');
-    pause(5);
-    ack = fscanf( xbee, '%s')
-    if (strcmp(deblank(ack), '...') == 1)
-        disp ('takiing off');
-    else
-        disp ('Communication problem. Check Hardware and retry.');
-    end     
-    
-    disp('Sent:  i');
-    fprintf(xbee,'i');
-    pause(4)
-    ack = fscanf( xbee, '%s')
-    if (strcmp(deblank(ack), 'Initialized') == 1)
-        disp (' OK Initialized');
-    else
-        disp ('Communication problem. Check Hardware and retry.');
-    end  
-    
-    % Land
-    
-% 
-%     fprintf(xbee,'l');
-%     disp('Sent: l');
-%     pause(1);
-%     ack = fscanf( xbee, '%s')
-%     if (strcmp(deblank(ack), 'Landing') == 1)
-%         disp ('Landing');
-%     else
-%         disp ('Communication problem. Check Hardware and retry.');
-%     end     
-%     pause(3)
-%     ack = fscanf( xbee, '%s')
-%     if (strcmp(deblank(ack), 'Landed') == 1)
-%         disp ('Landed');
-%     else
-%         disp ('Communication problem. Check Hardware and retry.');
-%     end       
-    
     
 %% Ask desired Sample Rate in Hz
     rate=input('Enter the samplerate in Hz. Max 500Hz. Non sgravare...      ');
@@ -136,16 +94,9 @@
     str = sprintf('SampleRate fixed to: %f.', delay);
     disp(str);
 
-%% Sending commands
-
-
-    fprintf(xbee,'t');
-    disp('Sent: t');
-    pause(1);  
-    
 %% Initializing
 
-buf_len = rate*1000;
+    buf_len = rate;
     index = 1:buf_len;
 
     % create variables for the Xaxis
@@ -177,7 +128,7 @@ buf_len = rate*1000;
                     C = textscan(sentence,'%c %d %d %d %c','delimiter',',');
                     Wx = C{2}
                     Wy = C{3}
-                    Wz = C{4}
+                    Wz = C{4};
 
                     % [gx, gy, gz] = [x, y, z];
                     time = [ time(2:end) ; double(Wx) ];
@@ -187,7 +138,7 @@ buf_len = rate*1000;
                     numberOfSamples = numberOfSamples + 1
 
                     % wait one second then record
-                    if numberOfSamples==rate*30 && recording
+                    if numberOfSamples==rate*20 && recording
                         disp('saving samples to file');
                         gDataToWrite = [time output input];
                         csvwrite('samples.txt',gDataToWrite);
@@ -211,24 +162,6 @@ buf_len = rate*1000;
     end
 %% Close connection    
 
-
-    fprintf(xbee,'l');
-    disp('Sent: l');
-    pause(1);
-    ack = fscanf( xbee, '%s')
-    if (strcmp(deblank(ack), 'Landing') == 1)
-        disp (' OK Landing');
-    else
-        disp ('Communication problem. Check Hardware and retry.');
-    end     
-    pause(3)
-    ack = fscanf( xbee, '%s')
-    if (strcmp(deblank(ack), 'Landed') == 1)
-        disp (' OK Initialized');
-    else
-        disp ('Communication problem. Check Hardware and retry.');
-    end       
-    
     fclose(xbee);
     delete(xbee);
     clear xbee

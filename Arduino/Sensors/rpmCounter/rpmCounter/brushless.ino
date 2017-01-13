@@ -1,13 +1,14 @@
 void calibrate() {
   myservo.detach();
   
+  Serial.println("Calibrating");
   myservo.attach(servoPin); 
   myservo.writeMicroseconds(MAX_SIGNAL);
-  delay(3000);
+  delay(2000);
   Serial.println("...");
   myservo.writeMicroseconds(MIN_SIGNAL);
   currentUs = MIN_SIGNAL;
-  delay(3000);
+  delay(2000);
 }
 void servoRoutine() {
   if (setupOk) {
