@@ -26,17 +26,17 @@ void Scheduler::initTaskset()
 
 void Scheduler::createTasks()
 {
-  if (this->create_task(1, 10, 0, 15, EDF, "Compute Revs") == -1) {
+  if (this->create_task(1, 2, 0, 10, EDF, "Compute Revs") == -1) {
     
     this->panic(1);
   }
   
-  if (this->create_task(2, 25, 0, 200, EDF, "SerialRoutine") == -1) {
+  if (this->create_task(2, 10, 0, 101, EDF, "SerialRoutine") == -1) {
     
     this->panic(1);
   }
   
-  if (this->create_task(3, 10, 0, 40, EDF, "Generator Input") == -1) {
+  if (this->create_task(3, 2, 0, 15, EDF, "Generator Input") == -1) {
     
     this->panic(1);
   }

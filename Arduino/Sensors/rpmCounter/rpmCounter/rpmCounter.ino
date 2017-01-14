@@ -172,29 +172,49 @@ void computeSignal() {
     signalCounter++;
     
     if (signalCounter == 0)
-      Serial.println("Phase 1");
-    if (signalCounter<2000) {
-      currentUs = ((MAX_SIGNAL - MIN_SIGNAL)/2) * sin(signalCounter*0.1) + MIN_SIGNAL0;
-    }
-    /*
-    for (float i = 0; i<100; i=i+0.1) {
-      currentUs = ((MAX_SIGNAL - MIN_SIGNAL)/2) * sin(signalCounter) + MIN_SIGNAL;
-      myservo.writeMicroseconds((int) val);
-      delay(10);
+      Serial.println("start");
+      /*
+    if (signalCounter<2500 && signalCounter > 500) {
+      currentUs = (MAX_SIGNAL - MIN_SIGNAL)/2 * sin(signalCounter*180/3.1415) + (MIN_SIGNAL + (MAX_SIGNAL - MIN_SIGNAL)/2);
+      if (currentUs > MAX_SIGNAL) {
+        currentUs = MAX_SIGNAL;
+      }
+      if (currentUs <MIN_SIGNAL) {
+        currentUs = MIN_SIGNAL;
+      }
     }
     */
-    
-    if (signalCounter>= 2001 && signalCounter <= 3000) {
-       if (signalCounter<2500) {
+    if (signalCounter>= 500 && signalCounter <= 2500) {
+       if (signalCounter<1200) {
         currentUs = REF_SIGNAL+132;
       }
       else {
-        currentUs = MAX_SIGNAL*0.9;
+        currentUs = MAX_SIGNAL*0.90;
+      }
+    }
+    if (signalCounter>= 2500 && signalCounter <= 3100) {
+       if (signalCounter<2800) {
+        currentUs = REF_SIGNAL+242;
+      }
+      else if (signalCounter<3000) {
+        currentUs = MAX_SIGNAL*0.90;
+      } else {
+        currentUs = MIN_SIGNAL;
       }
     }
 
-    if (signalCounter == 3000) {
-      currentUs = MIN_SIGNAL0;
+    if (signalCounter<9000 && signalCounter > 3100) {
+      currentUs = (MAX_SIGNAL - MIN_SIGNAL)/2 * sin(signalCounter*180/3.1415) + (MIN_SIGNAL + (MAX_SIGNAL - MIN_SIGNAL)/2);
+      if (currentUs > MAX_SIGNAL) {
+        currentUs = MAX_SIGNAL;
+      }
+      if (currentUs <MIN_SIGNAL) {
+        currentUs = MIN_SIGNAL;
+      }
+    }
+
+    if (signalCounter == 9000) {
+      currentUs = MIN_SIGNAL;
       test = false;
       Serial.println("Tested");
       signalCounter = 0;
@@ -216,6 +236,7 @@ void computeSignal() {
   
 }
 
+/*
 void servoRoutineSS(){
       servoTimer = micros();     
       // [max] 250 us [avg] 240 us   
@@ -234,6 +255,7 @@ void servoRoutineSS(){
 
       contCtrl = 0;
 }
+*/
 
 ISR(TIMER2_COMPB_vect) // #ISR
 { 

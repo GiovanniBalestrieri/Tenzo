@@ -33,6 +33,8 @@
     clc;
     delete('instrfindall');
     
+    testFinished = false;
+    testStarted = false;
     finished = false;
     recording = true;
     if recording 
@@ -131,7 +133,7 @@
     
     
 %% Ask desired Sample Rate in Hz
-    rate=input('Enter the samplerate in Hz. Max 500Hz. Non sgravare...      ');
+    rate=input('Enter the samplerate in Hz. Max 500Hz.\n Non sgravare...      ');
     delay = 1/rate;
     str = sprintf('SampleRate fixed to: %f.', delay);
     disp(str);
@@ -149,10 +151,13 @@ buf_len = rate*1000;
     index = 1:buf_len;
 
     % create variables for the Xaxis
-    time = zeros(buf_len,1);
-    output = zeros(buf_len,1);
-    input = zeros(buf_len,1);
+%     time = zeros(buf_len,1);
+%     output = zeros(buf_len,1);
+%     input = zeros(buf_len,1);
 
+time1 = 0;
+output1 = 0;
+input1 = 0;
     if recording
         %response = input('Press r to record 2 seconds of data');
         %if (strcmp(response,'r'))
@@ -162,7 +167,7 @@ buf_len = rate*1000;
         %end
     end
 %% Data collection and Plotting
-    while (~finished)
+    while (~finished && ~testFinished)
         % Polling 
         pause(delay);
         fprintf(xbee,'M') ; 
@@ -171,40 +176,55 @@ buf_len = rate*1000;
             while (get(xbee, 'BytesAvailable')~=0 && ~notArrived)
                 % read until terminator
                 sentence = fscanf( xbee, '%s'); % this reads in as a string (until a terminater is reached)
+                
+                if (strcmp(sentence,'start'))
+                   testStarted = true;
+                   disp('Test Started');
+                end
+                
+                if (strcmp(sentence,'Tested'))
+                   testFinished = true; 
+                   disp('Test Finished');
+                end
                 if (strcmp(sentence(1,1),'A'))
                     notArrived = true;
                     %decodes "sentence" seperated (delimted) by commaseck Unit')
                     C = textscan(sentence,'%c %d %d %d %c','delimiter',',');
-                    Wx = C{2}
-                    Wy = C{3}
-                    Wz = C{4}
+                    Wx = C{2};
+                    Wy = C{3};
+                    Wz = C{4};
 
                     % [gx, gy, gz] = [x, y, z];
-                    time = [ time(2:end) ; double(Wx) ];
-                    output = [ output(2:end) ; double(Wy) ];
-                    input = [ input(2:end) ; double(Wz) ]; 
-
-                    numberOfSamples = numberOfSamples + 1
-
-                    % wait one second then record
-                    if numberOfSamples==rate*30 && recording
-                        disp('saving samples to file');
-                        gDataToWrite = [time output input];
-                        csvwrite('samples.txt',gDataToWrite);
-                        disp('saving file to structure');
-                        dat.x = time;
-                        dat.y = output;
-                        dat.z = input;
-                        save('samples.mat','-struct','dat');
-                        disp('Saved.');
-
-                        finished = true;
-                    end
+                    %time = [ time(2:end) ; double(Wx) ];
+                    %output = [ output(2:end) ; double(Wy) ];
+                    %input = [ input(2:end) ; double(Wz) ]; 
+                    
+                    time1 = [ time1 ; double(Wx) ];
+                    output1 = [ output1 ; double(Wy)];
+                    input1 = [ input1 ; double(Wz)];
+                    
+                    numberOfSamples = numberOfSamples + 1                   
                 end
             end
         catch exeption
             disp('Warning');
         end
+    end
+    % wait one second then record                    if numberOfSamples==rate*30 && recording && testStarted
+    %if numberOfSamples==rate*30 && recording && testStarted
+    if testFinished
+        disp('Writing samples to file:');
+        %size(time1,1)
+        gDataToWrite = [time1 output1 input1];
+        csvwrite('samples.txt',gDataToWrite);
+        disp('saving file to structure');
+        dat.x = time1;
+        dat.y = output1;
+        dat.z = input1;
+        save('samples.mat','-struct','dat');
+        disp('Saved.');
+
+        finished = true;
     end
     if finished
        disp('Check your local folder.');
@@ -217,17 +237,10 @@ buf_len = rate*1000;
     pause(1);
     ack = fscanf( xbee, '%s')
     if (strcmp(deblank(ack), 'Landing') == 1)
-        disp (' OK Landing');
+        disp ('Landing');
     else
         disp ('Communication problem. Check Hardware and retry.');
     end     
-    pause(3)
-    ack = fscanf( xbee, '%s')
-    if (strcmp(deblank(ack), 'Landed') == 1)
-        disp (' OK Initialized');
-    else
-        disp ('Communication problem. Check Hardware and retry.');
-    end       
     
     fclose(xbee);
     delete(xbee);

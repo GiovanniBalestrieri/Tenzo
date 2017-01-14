@@ -126,7 +126,7 @@ void serialRoutine() {
       working = false; 
     } else if (t == 'k' && !working){
       working = true;
-      printScheduler != printScheduler;
+      printScheduler = !printScheduler;
       working = false;     
     } else if (t == 'd' && !working){
       working = true;
