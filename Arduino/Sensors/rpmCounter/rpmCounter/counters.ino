@@ -74,6 +74,16 @@ void printTimersSched() {
       Serial.print("\tMax ");
       Serial.println(maxgeneratorTimer);
       
+      
+      Serial.print("Revolutions: ");
+      Serial.print(contRevRoutine);
+      Serial.print("\t");
+      Serial.print(revTimeTot);
+      Serial.print("\tMax ");
+      Serial.println(maxRevTimer);
+      
       Serial.println();
     }
+    
+      
 }

@@ -1,5 +1,8 @@
 
 void computeRevolutions() {
+  
+  revTimer = micros();    
+  
   if (micros() - timeTracker >= SECOND_US) {
     rev_sec = counter/NUM_BLADES;
     rev_min = rev_sec*SEC_IN_MIN;
@@ -7,6 +10,16 @@ void computeRevolutions() {
     counter = 0;  
     timeTracker = micros();
   }  
+
+  contRevRoutine++;  
+      revTimer = micros() - revTimer;
+      
+      if (maxRevTimer <= revTimer)
+        maxRevTimer = revTimer;
+      revTimeTot = revTimeTot + revTimer;
+
+      contRev = 0;
+  
 }
 
 void count() { // ISR

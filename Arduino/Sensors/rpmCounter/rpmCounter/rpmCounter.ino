@@ -204,7 +204,7 @@ void computeSignal() {
     }
 
     if (signalCounter<9000 && signalCounter > 3100) {
-      currentUs = (MAX_SIGNAL - MIN_SIGNAL)/2 * sin(signalCounter*180/3.1415) + (MIN_SIGNAL + (MAX_SIGNAL - MIN_SIGNAL)/2);
+      currentUs = (MAX_SIGNAL - MIN_SIGNAL)/2 * sin(1000*3.1415/180) + (MIN_SIGNAL + (MAX_SIGNAL - MIN_SIGNAL)/2);
       if (currentUs > MAX_SIGNAL) {
         currentUs = MAX_SIGNAL;
       }
@@ -235,27 +235,6 @@ void computeSignal() {
       contGenerator = 0;
   
 }
-
-/*
-void servoRoutineSS(){
-      servoTimer = micros();     
-      // [max] 250 us [avg] 240 us   
-      //if (setupOk)
-        myservo.writeMicroseconds(currentUs);
-      
-      //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
-      // update counter control  
-  
-      countServoAction++;  
-      servoTimer = micros() - servoTimer;
-      
-      if (maxservoTimer <= servoTimer)
-        maxservoTimer = servoTimer;
-      servoTimeTot = servoTimeTot + servoTimer;
-
-      contCtrl = 0;
-}
-*/
 
 ISR(TIMER2_COMPB_vect) // #ISR
 { 
@@ -311,8 +290,10 @@ void resetCounters()
     countServoAction=0;  
     contSerialRoutine=0;   
     contGeneratorRoutine= 0;
+    contRevRoutine= 0;
 
     contGenerator=0;
+    contRev=0;
     servoTimeTot = 0;
     countISR = 0;
 }
