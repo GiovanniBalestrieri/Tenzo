@@ -184,16 +184,16 @@ void computeSignal() {
       }
     }
     */
-    if (signalCounter>= 500 && signalCounter <= 2500) {
-       if (signalCounter<1200) {
+    if (signalCounter>= 500 && signalCounter <= 3500) {
+       if (signalCounter<1500) {
         currentUs = REF_SIGNAL+132;
       }
       else {
         currentUs = MAX_SIGNAL*0.90;
       }
     }
-    if (signalCounter>= 2500 && signalCounter <= 3100) {
-       if (signalCounter<2800) {
+    if (signalCounter>= 3500 && signalCounter <= 5100) {
+       if (signalCounter<4800) {
         currentUs = REF_SIGNAL+242;
       }
       else if (signalCounter<3000) {
@@ -203,8 +203,8 @@ void computeSignal() {
       }
     }
 
-    if (signalCounter<9000 && signalCounter > 3100) {
-      currentUs = (MAX_SIGNAL - MIN_SIGNAL)/2 * sin(1000*3.1415/180) + (MIN_SIGNAL + (MAX_SIGNAL - MIN_SIGNAL)/2);
+    if (signalCounter<15000 && signalCounter > 5100) {
+      currentUs = (MAX_SIGNAL - MIN_SIGNAL)/2 * sin(0.1*signalCounter*3.1415/180) + (MIN_SIGNAL*1.1 + (MAX_SIGNAL - MIN_SIGNAL)/2);
       if (currentUs > MAX_SIGNAL) {
         currentUs = MAX_SIGNAL;
       }
@@ -213,7 +213,7 @@ void computeSignal() {
       }
     }
 
-    if (signalCounter == 9000) {
+    if (signalCounter == 15000) {
       currentUs = MIN_SIGNAL;
       test = false;
       Serial.println("Tested");
