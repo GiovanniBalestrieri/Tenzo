@@ -50,6 +50,8 @@ void serialRoutine() {
   } 
   if (printServoSignal) {
     Serial.println(currentUs);
+    Serial.print("value\t\t\t");
+    Serial.println(digitalRead(2));
   }
   
   if (Serial.available()>0){

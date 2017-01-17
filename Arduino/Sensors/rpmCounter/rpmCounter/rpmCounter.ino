@@ -9,12 +9,12 @@ Servo myservo;
 Scheduler scheduler = Scheduler(MAX_TASKS);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   //Serial.println("Calibrating");
   calibrate();
-  pinMode(interruptPin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(interruptPin), count, FALLING);
+  pinMode(interruptPin, INPUT);
+  ///attachInterrupt(digitalPinToInterrupt(interruptPin), count, FALLING);
   pinMode(13, OUTPUT);
 
 
@@ -241,18 +241,29 @@ ISR(TIMER2_COMPB_vect) // #ISR
   isrTimer = micros();
   // increments scheduler ticks
   ticks++;
-  contCtrl++;
   // update Tasks info
   scheduler.checkPeriodicTasks();
 
   //digitalWrite(pinInit, HIGH);
-  
+
+  // Gather encoder data
+  if (digitalRead(interruptPin)==1) {
+    if (!statePin) {
+      counter++;
+    }
+    statePin = true;
+  } else if (digitalRead(interruptPin)==0) {
+    statePin = false;
+  }
 
 
 
     if (contCtrl == ctrlPeriod)
     {
       servoTimer = micros();     
+
+      
+      contCtrl++;
       // [max] 250 us [avg] 240 us   
       if (setupOk)
         myservo.writeMicroseconds(currentUs);

@@ -7,8 +7,8 @@
 
 volatile int bestId;
 
-volatile int rev_sec = 0;
-volatile int rev_min = 0;
+volatile float rev_sec = 0;
+volatile float rev_min = 0;
 volatile float rad_sec = 0;
 volatile boolean setupOk = false;
 boolean working = false;
@@ -49,6 +49,12 @@ volatile  int signalLandSequence = 0;
 volatile  int signalPhase1Sequence = 0;
 volatile  int signalPhase2Sequence = 0;
 volatile  int signalPhase3Sequence = 0;
+
+// Optical Encoder
+volatile boolean lowState = false; // not used
+volatile boolean highState = false; // not used
+volatile boolean statePin = false;
+
 
 
 volatile int  REF_SIGNAL = 1450;

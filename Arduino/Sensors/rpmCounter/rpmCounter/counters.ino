@@ -23,6 +23,13 @@ void computeAverageExecTime()
       serialTimeTot = -999;  
 
       
+      
+    
+    // Compute average SerialRoutine time
+    if (contRevRoutine >  0)
+      revTimeTot = revTimeTot/contRevRoutine;
+    else 
+      revTimeTot = -999;  
     
     // Compute average SerialRoutine time
     if (contGeneratorRoutine >  0)
