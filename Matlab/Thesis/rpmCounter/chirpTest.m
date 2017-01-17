@@ -141,9 +141,6 @@
 %% Sending commands
 
 
-    fprintf(xbee,'t');
-    disp('Sent: t');
-    pause(1);  
     
 %% Initializing
 
@@ -166,6 +163,10 @@ input1 = 0;
             numberOfSamples = 0;
         %end
     end
+    
+    fprintf(xbee,'t');
+    disp('Sent: t');
+    %pause(1);  
 %% Data collection and Plotting
     while (~finished && ~testFinished)
         % Polling 

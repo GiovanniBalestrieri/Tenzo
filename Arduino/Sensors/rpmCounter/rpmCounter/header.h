@@ -1,21 +1,22 @@
 #define SECOND_US 1000000
 #define MAIN_LOOP_DISP_PERIOD 1000000
-#define NUM_BLADES 2
+float NUM_BLADES = 2;
 #define SEC_IN_MIN 60
 #define MAX_TASKS 10
 
 
 volatile int bestId;
 
-volatile float rev_sec = 0;
-volatile float rev_min = 0;
-volatile float rad_sec = 0;
+volatile double rev_sec = 0;
+volatile double rev_min = 0;
+volatile double rad_sec = 0;
 volatile boolean setupOk = false;
 boolean working = false;
 const byte interruptPin = 2;
 const byte servoPin = 8;
 volatile byte state = LOW;
 volatile long counter = 0;
+volatile long lastCounter = 0;
 unsigned long timeTracker = 0;
 
 boolean printRevSec = true;
@@ -49,11 +50,13 @@ volatile  int signalLandSequence = 0;
 volatile  int signalPhase1Sequence = 0;
 volatile  int signalPhase2Sequence = 0;
 volatile  int signalPhase3Sequence = 0;
+boolean firstTest = true;
 
 // Optical Encoder
 volatile boolean lowState = false; // not used
 volatile boolean highState = false; // not used
 volatile boolean statePin = false;
+volatile float dt= 0;
 
 
 

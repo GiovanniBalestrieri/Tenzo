@@ -12,6 +12,8 @@ volatile unsigned long ticks;
 
 volatile int ctrlPeriod = 1; // 1 tick
 
+volatile int revPeriod = 2; // 1 tick
+
 volatile unsigned long isrTimer = 0;
 volatile unsigned long maxisrTimer = 0;
 volatile unsigned long isrTimeTot = 0;
@@ -25,6 +27,9 @@ volatile unsigned long maxgeneratorTimer = 0;
 volatile unsigned long generatorTimeTot = 0;
 
 volatile unsigned long serialTimer = 0;
+volatile unsigned long signalTimer = 0;
+volatile unsigned long start = 0;
+
 volatile unsigned long maxserialTimer = 0;
 volatile unsigned long maxRevTimer = 0;
 volatile unsigned long serialTimeTot = 0;
