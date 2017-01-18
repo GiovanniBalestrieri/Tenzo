@@ -127,7 +127,7 @@ void computeSignal() {
     signalCounter++;
     if (signalInitializeSequence >= REF_SIGNAL) {
       signalInitializeSequence = REF_SIGNAL;
-      currentUs = REF_SIGNAL;
+      currentUs = MIN_SIGNAL;
       initialized = true;
       initialize = false;
       initializing = false;
@@ -194,7 +194,7 @@ void computeSignal() {
     if (signalTimer>= 500 && signalTimer < 5000) {
        if (signalTimer<600) {
         currentUs = MIN_SIGNAL;
-      } else if (signalTimer<1500) {
+      } else if (signalTimer<2000) {
         currentUs = MIN_SIGNAL*1.2;
       } else if (signalTimer<2500) {
         currentUs = MIN_SIGNAL*1.3;

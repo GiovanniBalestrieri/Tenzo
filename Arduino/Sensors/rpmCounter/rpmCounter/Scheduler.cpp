@@ -31,7 +31,7 @@ void Scheduler::createTasks()
     this->panic(1);
   }
   */
-  if (this->create_task(1, 5, 0, 10, EDF, "SerialRoutine") == -1) {
+  if (this->create_task(1, 5, 0, 5, EDF, "SerialRoutine") == -1) {
     
     this->panic(1);
   }

@@ -18,9 +18,9 @@ disp(size(x,1))
 
 iter = ceil(size(x,1)*0.2);
 
-xIde = x(4:iter);
-uIde = y(4:iter);
-yIde = z(4:iter);
+xIde = x(200:iter);
+uIde = y(200:iter);
+yIde = z(200:iter);
 
 xVal = x(iter:end);
 uVal = y(iter:end);
@@ -49,8 +49,10 @@ title('pwm [us]');
 %% Detrend
 
 % Removes the mean value from data
-yIdeDetrend = detrend(yIde,'constant');
-uIdeDetrend = detrend(uIde,'constant');
+[yIdeDetrend, Ty ]= detrend(yIde,0);
+uIdeDetrend = detrend(uIde,0);
+yValDetrend = detrend(yVal,'constant');
+uValDetrend = detrend(uVal,'constant');
 
 figure(2)
 subplot(2,1,1);
@@ -63,7 +65,7 @@ plot(xIde,uIdeDetrend,'r');
 
 
 
-% Designs a second order filter using a butterworth design guidelines
+%% Designs a second order filter using a butterworth design guidelines
 [b a] = butter(2,0.045,'low');
 
 % Plot the frequency response (normalized frequency)
@@ -94,46 +96,48 @@ Ts = dt(1);
 % Create Id data
 % zt  Training set
 zt = iddata(yIde,uIde,Ts);
-
-% zr Validation set
 zv = iddata(yVal,uVal,Ts);
-plot(zt)
 
-delay = delayest(zv)
-delay = delayest(zv,4,4)
+[ztDetrend, Ttest ]= detrend(zt,0);
+[zvDetrend, Tvalidation ]= detrend(zv,0);
+
+delay = delayest(zvDetrend)
+% estimated delay changes as a function of the model
+delay4 = delayest(zvDetrend,4,4)
 
 %% 
 
-V = arxstruc(zt,zv,struc(2,2,1:10));
+V = arxstruc(ztDetrend,zvDetrend,struc(2,2,1:10));
 [nn,Vm] = selstruc(V,0);
 
-FIRModel = impulseest(zt);
+FIRModel = impulseest(ztDetrend);
 clf
 h = impulseplot(FIRModel);
 showConfidence(h,3)
 
  
-V = arxstruc(zt,zv,struc(1:10,1:10,delay));
+V = arxstruc(ztDetrend,zvDetrend,struc(1:10,1:10,delay));
 
 nns = selstruc(V)
 
-%% Test arx e n4sid
+%% Identifiy linear discrete time model with arx
 
-th2 = arx(zt,[10 7 delay]);
-[ th4] = arx(zt,[2 2 delay]);
-compare(zt(1:end),th2,th4);
+th2 = arx(ztDetrend,nns);
+[ th4] = arx(ztDetrend,nns);
+compare(zvDetrend(1:end),th2,th4);
 
-pause()
-[m, x0m] = n4sid(zt,1:10,'Ts',Ts);
-[ms,x0] = n4sid(zt,1:10,'InputDelay',delay,'Ts',delay);
+%% Identifiy linear discrete time model with n4sid
+
+[m, x0m] = n4sid(ztDetrend,2,'InputDelay',delay,'Ts',Ts);
+[ms,x0] = n4sid(ztDetrend,1:10,'InputDelay',delay,'Ts',Ts);
 disp('Comparing ms and arx')
-compare(zt,ms,m)
+compare(zvDetrend,ms,m)
 pause()
 disp('Comparing ms1 and ms')
-compare(zt,ms,ms1)
+compare(zvDetrend,ms,th2)
 %% Manual compare
 
 t = 0:Ts:Ts*size(z,1)-1;
-lsim(th2,z,t,x0)
+lsim(th2,z+Ttest.InputOffset,t,x0)
 hold
-plot(t,y,'r')
+plot(t,y+Ttest.OutputOffset,'r')

@@ -18,9 +18,9 @@ disp(size(x,1))
 
 iter = ceil(size(x,1)*0.2);
 
-xIde = x(1:iter);
-uIde = y(1:iter);
-yIde = z(1:iter);
+xIde = x(200:iter);
+uIde = y(200:iter);
+yIde = z(200:iter);
 
 xVal = x(iter:end);
 uVal = y(iter:end);
@@ -45,20 +45,14 @@ title('pwm [us]');
 %figure(2)
 %plot(x,z,'r');
 
-% Designs a second order filter using a butterworth design guidelines
-[b a] = butter(2,0.2,'high');
-
-% Plot the frequency response (normalized frequency)
-figure(13)
-z_filtered = filter(b,a,z);
-plot(x,z_filtered,'r');
-
 
 %% Detrend
 
 % Removes the mean value from data
-yIdeDetrend = detrend(yIde,'constant');
-uIdeDetrend = detrend(uIde,'constant');
+[yIdeDetrend, Ty ]= detrend(yIde,0);
+uIdeDetrend = detrend(uIde,0);
+yValDetrend = detrend(yVal,'constant');
+uValDetrend = detrend(uVal,'constant');
 
 figure(2)
 subplot(2,1,1);
@@ -68,6 +62,16 @@ plot(xIde,yIdeDetrend,'r');
 subplot(2,1,2);
 title('Shaft angular velocity [rad/s]');
 plot(xIde,uIdeDetrend,'r');
+
+
+
+%% Designs a second order filter using a butterworth design guidelines
+[b a] = butter(2,0.045,'low');
+
+% Plot the frequency response (normalized frequency)
+figure(13)
+z_filtered = filter(b,a,yIdeDetrend);
+plot(xIde,z_filtered,'r');
 
 %% Diff
 dt = xIde(2:end) - xIde(1:end-1);
@@ -92,13 +96,14 @@ Ts = dt(1);
 % Create Id data
 % zt  Training set
 zt = iddata(yIde,uIde,Ts);
-
-% zr Validation set
 zv = iddata(yVal,uVal,Ts);
-plot(zt)
+
+[ztDetrend, Ttest ]= detrend(zt,0);
+[zvDetrend, Tvalidation ]= detrend(zv,0);
 
 delay = delayest(zv)
-delay = delayest(zv,4,4)
+% estimated delay changes as a function of the model
+delay4 = delayest(zv,4,4)
 
 %% 
 
@@ -110,7 +115,6 @@ clf
 h = impulseplot(FIRModel);
 showConfidence(h,3)
 
- m = n4sid(zt,1:10);
  
 V = arxstruc(zt,zv,struc(1:10,1:10,delay));
 
@@ -118,20 +122,21 @@ nns = selstruc(V)
 
 %% Test arx e n4sid
 
-th2 = arx(zt,[2 1 delay]);
-[ th4] = arx(zt,[1 1 delay]);
-compare(zt(1:end),th2,th4);
+th2 = arx(zt,nns);
+[ th4] = arx(zt,nns);
+compare(zv(1:end),th2,th4);
 
 pause()
-[ms,x0] = n4sid(zv,2,'InputDelay',delay);
-[ms1,x0] = n4sid(zv,2);
+[m, x0m] = n4sid(zt,2,'InputDelay',delay,'Ts',Ts);
+[ms,x0] = n4sid(zt,1:10,'InputDelay',delay,'Ts',Ts);
 disp('Comparing ms and arx')
-compare(zt,ms,th2)
+compare(zv,ms,m)
+pause()
 disp('Comparing ms1 and ms')
-compare(zt,ms,ms1)
+compare(zv,ms,th2)
 %% Manual compare
 
 t = 0:Ts:Ts*size(z,1)-1;
 lsim(th2,z,t,x0)
 hold
-plot(t,y,'r')
+plot(t,y+T.OutputOffset,'r')

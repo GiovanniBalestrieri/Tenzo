@@ -253,20 +253,20 @@ clear('instrfindall');
 
 dir .
 load('samples.mat')
+inizio = 115;
 
-
-x = x(2:end);
-y = y(2:end);
-z = z(2:end);
+x = x(1:end);
+y = y(1:end);
+z = z(1:end);
 
 disp('Number of Samples');
 disp(size(x,1))
 
 iter = ceil(size(x,1)*0.2);
 
-xIde = x(4:iter);
-uIde = y(4:iter);
-yIde = z(4:iter);
+xIde = x(inizio:iter);
+uIde = y(inizio:iter);
+yIde = z(inizio:iter);
 
 xVal = x(iter:end);
 uVal = y(iter:end);
