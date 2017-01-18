@@ -98,45 +98,50 @@ Ts = dt(1);
 zt = iddata(yIde,uIde,Ts);
 zv = iddata(yVal,uVal,Ts);
 
+z = iddata(y,z,Ts);
+
 [ztDetrend, Ttest ]= detrend(zt,0);
 [zvDetrend, Tvalidation ]= detrend(zv,0);
+[zDetrend, T ]= detrend(z,0);
 
-delay = delayest(zv)
+delay = delayest(zvDetrend)
 % estimated delay changes as a function of the model
-delay4 = delayest(zv,4,4)
+delay4 = delayest(zvDetrend,4,4)
 
 %% 
 
-V = arxstruc(zt,zv,struc(2,2,1:10));
+V = arxstruc(ztDetrend,zvDetrend,struc(2,2,1:10));
 [nn,Vm] = selstruc(V,0);
 
-FIRModel = impulseest(zt);
+FIRModel = impulseest(ztDetrend);
 clf
 h = impulseplot(FIRModel);
 showConfidence(h,3)
 
  
-V = arxstruc(zt,zv,struc(1:10,1:10,delay));
+V = arxstruc(ztDetrend,zvDetrend,struc(1:10,1:10,delay));
 
 nns = selstruc(V)
 
-%% Test arx e n4sid
+%% Identifiy linear discrete time model with arx
 
-th2 = arx(zt,nns);
-[ th4] = arx(zt,nns);
-compare(zv(1:end),th2,th4);
+th2 = arx(ztDetrend,nns);
+[ th4] = arx(ztDetrend,nns);
+compare(zvDetrend(1:end),th2,th4);
 
-pause()
-[m, x0m] = n4sid(zt,2,'InputDelay',delay,'Ts',Ts);
-[ms,x0] = n4sid(zt,1:10,'InputDelay',delay,'Ts',Ts);
+%% Identifiy linear discrete time model with n4sid
+
+[m, x0m] = n4sid(ztDetrend,2,'InputDelay',delay,'Ts',Ts);
+[ms,x0] = n4sid(ztDetrend,1:10,'InputDelay',delay,'Ts',Ts);
 disp('Comparing ms and arx')
-compare(zv,ms,m)
-pause()
+compare(zvDetrend,ms,m)
+
+%% Compare arx Vs n4Sid
 disp('Comparing ms1 and ms')
-compare(zv,ms,th2)
+compare(zvDetrend,ms,th2)
 %% Manual compare
 
 t = 0:Ts:Ts*size(z,1)-1;
-lsim(th2,z,t,x0)
+lsim(th2,z+Ttest.InputOffset,t,x0)
 hold
-plot(t,y+T.OutputOffset,'r')
+plot(t,y+Ttest.OutputOffset,'r')

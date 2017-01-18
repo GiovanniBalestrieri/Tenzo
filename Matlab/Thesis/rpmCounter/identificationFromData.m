@@ -6,12 +6,17 @@ plotDiff = false;
 
 %% Identification Data
 dir .
-load('samples.mat')
+load('eccolo.mat')
 
 
 x = x(2:end);
 y = y(2:end);
 z = z(2:end);
+
+
+xOriginal = x(2:end);
+yOriginal = y(2:end);
+zOriginal = z(2:end);
 
 disp('Number of Samples');
 disp(size(x,1))
@@ -41,29 +46,6 @@ title('Shaft angular velocity [rev/s]');
 subplot(2,1,2);
 plot(xIde,uIde,'r');
 title('pwm [us]');
-
-%figure(2)
-%plot(x,z,'r');
-
-
-%% Detrend
-
-% Removes the mean value from data
-[yIdeDetrend, Ty ]= detrend(yIde,0);
-uIdeDetrend = detrend(uIde,0);
-yValDetrend = detrend(yVal,'constant');
-uValDetrend = detrend(uVal,'constant');
-
-figure(2)
-subplot(2,1,1);
-% show results
-title('pwm [us]');
-plot(xIde,yIdeDetrend,'r');
-subplot(2,1,2);
-title('Shaft angular velocity [rad/s]');
-plot(xIde,uIdeDetrend,'r');
-
-
 
 %% Designs a second order filter using a butterworth design guidelines
 [b a] = butter(2,0.045,'low');
@@ -98,8 +80,11 @@ Ts = dt(1);
 zt = iddata(yIde,uIde,Ts);
 zv = iddata(yVal,uVal,Ts);
 
+z = iddata(y,z,Ts);
+
 [ztDetrend, Ttest ]= detrend(zt,0);
 [zvDetrend, Tvalidation ]= detrend(zv,0);
+[zDetrend, T ]= detrend(z,0);
 
 delay = delayest(zvDetrend)
 % estimated delay changes as a function of the model
@@ -114,10 +99,8 @@ FIRModel = impulseest(ztDetrend);
 clf
 h = impulseplot(FIRModel);
 showConfidence(h,3)
-
  
 V = arxstruc(ztDetrend,zvDetrend,struc(1:10,1:10,delay));
-
 nns = selstruc(V)
 
 %% Identifiy linear discrete time model with arx
@@ -132,12 +115,15 @@ compare(zvDetrend(1:end),th2,th4);
 [ms,x0] = n4sid(ztDetrend,1:10,'InputDelay',delay,'Ts',Ts);
 disp('Comparing ms and arx')
 compare(zvDetrend,ms,m)
-pause()
+
+%% Compare arx Vs n4Sid
 disp('Comparing ms1 and ms')
-compare(zvDetrend,ms,th2)
+compare(ztDetrend,ms,th2)
 %% Manual compare
 
-t = 0:Ts:Ts*size(z,1)-1;
-lsim(th2,z+Ttest.InputOffset,t,x0)
-hold
-plot(t,y+Ttest.OutputOffset,'r')
+t = 0:Ts:Ts*size(yOriginal,1)-1;
+[y,t,x] = lsim(ms,yOriginal,t,x0);
+hold on
+plot(t,zOriginal,'r');
+hold on
+plot(t,y,'b');
