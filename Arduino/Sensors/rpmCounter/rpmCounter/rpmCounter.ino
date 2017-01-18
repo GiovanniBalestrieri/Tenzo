@@ -10,8 +10,6 @@ Scheduler scheduler = Scheduler(MAX_TASKS);
 
 void setup() {
   Serial.begin(115200);
-
-  //Serial.println("Calibrating");
   calibrate();
   pinMode(interruptPin, INPUT);
   attachInterrupt(digitalPinToInterrupt(interruptPin), count, RISING);
@@ -22,10 +20,7 @@ void setup() {
   setupScheduler();
 
   setupOk = true;
-  delay(3);
-  
-  timeTracker = micros();
-  //Serial.println("Welcome");
+  delay(300);
 }
 
 void loop() {  
@@ -35,29 +30,31 @@ void loop() {
   
   switch(bestId)
   {
-    case(1):
-      // Task 1
-      computeRevolutions();
-      scheduler.jobCompletedById(bestId);
-      break;
 
-    case(2):
+    case(1):
       // Task 2
       serialRoutine();
       scheduler.jobCompletedById(bestId);
       break;
 
-    case(3):
+    case(2):
       // Task 3
       computeSignal();
       scheduler.jobCompletedById(bestId);
-      break;   
+      break; 
+      /*  
+    case(3):
+      // Task 1
+      computeRevolutions();
+      scheduler.jobCompletedById(bestId);
+      break;
       
     case(4):
       // Task 4
       //servoRoutineSS();
       scheduler.jobCompletedById(bestId);
-      break;        
+      break; 
+      */       
   } 
 }
 
@@ -194,24 +191,22 @@ void computeSignal() {
     }
     */
 
-    if (signalTimer>= 500 && signalTimer <= 3500) {
+    if (signalTimer>= 500 && signalTimer < 5000) {
        if (signalTimer<1500) {
-        currentUs = REF_SIGNAL+132;
-      }
-      else {
-        currentUs = MAX_SIGNAL*0.90;
-      }
-    } else if (signalTimer>= 3500 && signalTimer <= 5100) {
-       if (signalTimer<4800) {
-        currentUs = REF_SIGNAL+242;
-      }
-      else if (signalTimer<3000) {
-        currentUs = MAX_SIGNAL*0.90;
+        currentUs = MIN_SIGNAL*1.2;
+      } else if (signalTimer<2500) {
+        currentUs = MIN_SIGNAL*1.3;
       } else {
-        currentUs = MIN_SIGNAL;
+        currentUs = MIN_SIGNAL*1.5;
       }
-    } else if (signalTimer<15000 && signalTimer > 5100) {
-      currentUs = (MAX_SIGNAL - MIN_SIGNAL)/2 * sin(0.1*signalTimer*3.1415/180) + (MIN_SIGNAL*1.05 + (MAX_SIGNAL - MIN_SIGNAL)/2);
+    } else if (signalTimer>= 5000 && signalTimer <= 11000) {
+      if (signalTimer<10000) {        
+        currentUs = MIN_SIGNAL*1.2+(signalTimer-5000)*(300-1)/5000+1;
+      } else {
+        currentUs = MIN_SIGNAL*1.2;
+      }
+    } else if (signalTimer<20000 && signalTimer > 11000) {
+        currentUs = (MAX_SIGNAL - MIN_SIGNAL)*0.35/2 * sin(0.1*signalTimer*3.1415/180) + (MIN_SIGNAL*1.12) + (MAX_SIGNAL - MIN_SIGNAL)*0.35/2;
       if (currentUs > MAX_SIGNAL) {
         currentUs = MAX_SIGNAL;
       }
@@ -225,7 +220,7 @@ void computeSignal() {
       */
     }
 
-    if (signalTimer >= 15000) {
+    if (signalTimer >= 20000) {
       currentUs = MIN_SIGNAL;
       Serial.println("Tested");
       test = false;
@@ -266,13 +261,17 @@ ISR(TIMER2_COMPB_vect) // #ISR
   if (digitalRead(interruptPin)==1) {
     if (statePin == false) {
       counter++;
+      revTimer = micros();            
+      rev_sec = (counter/NUM_BLADES)*SECOND_US/(micros()-revTimer);
+      //rev_min = rev_sec*SEC_IN_MIN;
+      //rad_sec = rev_sec*3.1415/180;
+      counter=0;  
     }
     statePin = true;
   } else if (digitalRead(interruptPin)==0) {
     statePin = false;
   }
 */
-
 
     if (contCtrl == ctrlPeriod)
     {

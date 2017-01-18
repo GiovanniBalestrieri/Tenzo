@@ -31,12 +31,12 @@ void Scheduler::createTasks()
     this->panic(1);
   }
   */
-  if (this->create_task(2, 6, 0, 6, EDF, "SerialRoutine") == -1) {
+  if (this->create_task(1, 5, 0, 10, EDF, "SerialRoutine") == -1) {
     
     this->panic(1);
   }
   
-  if (this->create_task(3, 4, 0, 5, EDF, "Generator Input") == -1) {
+  if (this->create_task(2, 2, 0, 3, EDF, "Generator Input") == -1) {
     
     this->panic(1);
   }

@@ -247,3 +247,55 @@ input1 = 0;
     delete(xbee);
     clear xbee
 clear('instrfindall');
+
+%% Plot data
+
+
+dir .
+load('samples.mat')
+
+
+x = x(2:end);
+y = y(2:end);
+z = z(2:end);
+
+disp('Number of Samples');
+disp(size(x,1))
+
+iter = ceil(size(x,1)*0.2);
+
+xIde = x(4:iter);
+uIde = y(4:iter);
+yIde = z(4:iter);
+
+xVal = x(iter:end);
+uVal = y(iter:end);
+yVal = z(iter:end);
+
+figure(10)
+subplot(2,1,1);
+plot(x,y,'r');
+title('pwm [us]');
+subplot(2,1,2);
+plot(x,z,'r');
+title('Shaft angular velocity [rev/s]');
+
+figure(1)
+subplot(2,1,1);
+plot(xIde,yIde,'r');
+title('Shaft angular velocity [rev/s]');
+subplot(2,1,2);
+plot(xIde,uIde,'r');
+title('pwm [us]');
+
+%figure(2)
+%plot(x,z,'r');
+
+
+% Designs a second order filter using a butterworth design guidelines
+[b a] = butter(2,0.045,'low');
+
+% Plot the frequency response (normalized frequency)
+figure(13)
+z_filtered = filter(b,a,yIde);
+plot(xIde,z_filtered,'r');

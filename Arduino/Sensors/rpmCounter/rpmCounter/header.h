@@ -8,8 +8,8 @@ float NUM_BLADES = 2;
 volatile int bestId;
 
 volatile double rev_sec = 0;
-volatile double rev_min = 0;
-volatile double rad_sec = 0;
+volatile unsigned int rev_min = 0;
+volatile unsigned int rad_sec = 0;
 volatile boolean setupOk = false;
 boolean working = false;
 const byte interruptPin = 2;
@@ -17,7 +17,7 @@ const byte servoPin = 8;
 volatile byte state = LOW;
 volatile long counter = 0;
 volatile long lastCounter = 0;
-unsigned long timeTracker = 0;
+volatile float timeTracker = 0;
 
 boolean printRevSec = true;
 boolean printRevMin = true;
@@ -45,11 +45,11 @@ unsigned long secRoutine = 0;
 
 // SignalGenerator
 volatile  int signalCounter = 0;
-volatile  int signalInitializeSequence = 0;
-volatile  int signalLandSequence = 0;
-volatile  int signalPhase1Sequence = 0;
-volatile  int signalPhase2Sequence = 0;
-volatile  int signalPhase3Sequence = 0;
+ int signalInitializeSequence = 0;
+ int signalLandSequence = 0;
+ int signalPhase1Sequence = 0;
+ int signalPhase2Sequence = 0;
+ int signalPhase3Sequence = 0;
 boolean firstTest = true;
 
 // Optical Encoder
@@ -60,7 +60,7 @@ volatile float dt= 0;
 
 
 
-volatile int  REF_SIGNAL = 1450;
+volatile int  REF_SIGNAL = 1350;
 volatile int MAX_SIGNAL = 2000;
-volatile int  MIN_SIGNAL = 1000;
+volatile int  MIN_SIGNAL = 900;
 volatile int  MIN_SIGNAL0 = 1350;
