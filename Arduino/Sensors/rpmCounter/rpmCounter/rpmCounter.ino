@@ -192,12 +192,16 @@ void computeSignal() {
     */
 
     if (signalTimer>= 500 && signalTimer < 5000) {
-       if (signalTimer<1500) {
+       if (signalTimer<600) {
+        currentUs = MIN_SIGNAL;
+      } else if (signalTimer<1500) {
         currentUs = MIN_SIGNAL*1.2;
       } else if (signalTimer<2500) {
         currentUs = MIN_SIGNAL*1.3;
+      } else if (signalTimer<3500) {
+        currentUs = MIN_SIGNAL*1.4;
       } else {
-        currentUs = MIN_SIGNAL*1.5;
+        currentUs = MIN_SIGNAL*1.2;
       }
     } else if (signalTimer>= 5000 && signalTimer <= 11000) {
       if (signalTimer<10000) {        

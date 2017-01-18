@@ -112,7 +112,6 @@ clf
 h = impulseplot(FIRModel);
 showConfidence(h,3)
 
- m = n4sid(zt,1:10);
  
 V = arxstruc(zt,zv,struc(1:10,1:10,delay));
 
@@ -125,9 +124,11 @@ th2 = arx(zt,[10 7 delay]);
 compare(zt(1:end),th2,th4);
 
 pause()
-[ms,x0] = n4sid(zt,3,'InputDelay',delay);
+[m, x0m] = n4sid(zt,1:10,'Ts',Ts);
+[ms,x0] = n4sid(zt,1:10,'InputDelay',delay,'Ts',delay);
 disp('Comparing ms and arx')
-compare(zt,ms,th2)
+compare(zt,ms,m)
+pause()
 disp('Comparing ms1 and ms')
 compare(zt,ms,ms1)
 %% Manual compare
