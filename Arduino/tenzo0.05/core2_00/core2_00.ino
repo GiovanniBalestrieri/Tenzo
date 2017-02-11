@@ -418,7 +418,7 @@ volatile int dt=0;
 
 volatile float wF[3] = {0,0,0};
 volatile float aF[3] = {0,0,0};
-volatile boolean filterGyro = true;
+volatile boolean filterGyro = false;
 volatile boolean filterEst = true;
 volatile boolean filterAcc = true;
 volatile boolean initializedSetup = false;
@@ -721,11 +721,6 @@ ISR(TIMER3_COMPB_vect)
   // Mettilo altrimenti non funziona
   sei();
   
-  statusflag = readRegister(L3G4200D_Address, STATUS_REG);
-  while(!(statusflag & ZDA_REG) && (statusflag & ZOR_REG)&&!(statusflag & YDA_REG) && (statusflag & YOR_REG)&& !(statusflag & XDA_REG) && (statusflag & XOR_REG)) 
-  {
-    statusflag = readRegister(L3G4200D_Address, STATUS_REG);
-  }
   //read values
   getGyroValues(); 
   getAcc();
