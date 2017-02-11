@@ -996,6 +996,7 @@ void SerialRoutine()
       {
         //sakura.setPrintPIDVals(!sakura.getPrintPIDVals());
         //ux1.printAltitude();
+        sakura.setPrintTimers(!sakura.getPrintTimers());
       }
       else if (t == 'p')
       {
