@@ -671,11 +671,17 @@ void calcAngle() //ISR
 
 void estAngle() // ISR
 {
-  estXAngle = (estXAngle + x*(float)dt/1000000.0)*kG + angleXAcc*kA;
+
   
-  estYAngle = (estYAngle + y*(float)dt/1000000.0)*kG + angleYAcc*kA;
-  //estZAngle = (estZAngle + z*(float)dt/1000000.0)*0.02 + bearing1*0.98;
-  //psi*KG + yaw*KA;
+  if (!filterGyro) {  
+    estXAngle = (estXAngle + x*(float)dt/1000000.0)*kG + angleXAcc*kA;
+    estYAngle = (estYAngle + y*(float)dt/1000000.0)*kG + angleYAcc*kA;
+    //estZAngle = (estZAngle + z*(float)dt/1000000.0)*0.02 + bearing1*0.98;
+    //psi*KG + yaw*KA;
+  } else if (filterGyro)  {  
+    estXAngle = (estXAngle + wF[0]*(float)dt/1000000.0)*kG + angleXAcc*kA;
+    estYAngle = (estYAngle + wF[1]*(float)dt/1000000.0)*kG + angleYAcc*kA;
+  }
 
   // Filter Estimates with Median Filter
   if (filterEst)
@@ -1045,6 +1051,7 @@ void SerialRoutine()
       else if (t == 'z')
       {
         //sakura.setPrintPIDVals(!sakura.getPrintPIDVals());
+        sakura.setPrintTimers(!sakura.getPrintTimers());
       }
       else if (t == 'p')
       {
@@ -1846,11 +1853,10 @@ void getGyroValues()
 }
 
 
-void printOmega()
-{
+void printOmega() {
   if (filterGyro)
   {
-    Serial.print("o,");
+    Serial.print("oF,");
     Serial.print(wF[0]);
   
     Serial.print(",");
