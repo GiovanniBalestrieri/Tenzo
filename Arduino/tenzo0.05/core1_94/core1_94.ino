@@ -519,8 +519,8 @@ void setupTimerInterrupt()
 
   // Set compare match register to the desired timer count
   //OCR3A=77; //16*10^6/(200Hz*1024)-1 = 77 -> 200 Hz 
-  //OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
-  OCR3A=103; //16*10^6/(150Hz*1024)-1 = 103 -> 150 Hz 
+  OCR3A=193; //16*10^6/(80Hz*1024)-1 = 193 -> 80 Hz 
+  //OCR3A=103; //16*10^6/(150Hz*1024)-1 = 103 -> 150 Hz 
   //OCR3A=780; //16*10^6/(20Hz*1024)-1 = 780 -> 20 Hz 
   //OCR3A=50; //16*10^6/(308Hz*1024)-1 = 50 -> 308 Hz 
 
