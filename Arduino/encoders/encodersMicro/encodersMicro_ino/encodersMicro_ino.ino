@@ -40,7 +40,7 @@ void loop()
   convertTicksToAngle();
   serialRoutine();
   //bluRoutine();
-  printAngles();
+  //printAngles();
 }
 
 /*

@@ -377,7 +377,7 @@ matlabAdd = 2;
 portWin = 'Com3';
 portUnix = '/dev/rfcomm0';
 portUnixVitruvianoBlu = '/dev/rfcomm2';
-portUnixVitruvianoSerial = '/dev/ttyS101';
+portUnixVitruvianoSerial = '/dev/ttyACM0';
 useBlue = 0;
 xbeeBR = 115200;
 vitruvianoBR = 9600;
@@ -484,7 +484,7 @@ alpha = 0.7;
 omega = 0;
 
 % Boolean
-magneto = false;
+magneto = true;
 gyrosco = false;
 accelero = false;
 filterEst = false;
@@ -2059,20 +2059,21 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             end
             
             % Check whether the serial port is available
-            serials = instrhwinfo('serial');
-            serialCond1 = false;
-            for (i=1:size(serials.AvailableSerialPorts,1))
-                if (strcmp(serials.AvailableSerialPorts(i),portVitruviano))
-                    disp('Found Vitruviano');
-                    serialCond1 = true;
-                    break;
-                end
-            end
-            
-            if (~serialCond1)                           
-                warndlg('Serial port not found. Is it connected','Check Tenzo Bluetooth');
-                return;
-            end
+%             serials = instrhwinfo('serial')
+%             serials.AvailableSerialPorts
+%             serialCond1 = false;
+%             for (i=1:size(serials.AvailableSerialPorts,1))
+%                 if (strcmp(serials.AvailableSerialPorts(i),portVitruviano))
+%                     disp('Found Vitruviano');
+%                     serialCond1 = true;
+%                     break;
+%                 end
+%             end
+%             
+%             if (~serialCond1)                           
+%                 warndlg('Serial port not found. Is it connected','Check Tenzo Bluetooth');
+%                 return;
+%             end
 
             %  Setting up serial communication
             %  If the vitruviano variable doesn't exist, create it
@@ -3044,7 +3045,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                                 Ydata = [ Ydata(2:end) ; bearingM]; 
                             end
                         else
-                            disp('Warning! Received magneto data but not requested');
+                            %disp('Warning! Received magneto data but not requested');
                         end
                         
                         % Second incrementation to track stored data & Plot

@@ -418,7 +418,7 @@ volatile int dt=0;
 
 volatile float wF[3] = {0,0,0};
 volatile float aF[3] = {0,0,0};
-volatile boolean filterGyro = true;
+volatile boolean filterGyro = false;
 volatile boolean filterEst = false;
 volatile boolean filterAcc = true;
 volatile boolean initializedSetup = false;
@@ -584,7 +584,7 @@ void setup() {
   setupCommunication();
   //setupIMU();
 //  setupAcceleromter();
-//  setupGyro();
+  setupGyro();
   setupTimerInterrupt();  
   setupCtx();  
   sakura.welcome();
