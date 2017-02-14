@@ -30,7 +30,6 @@ void loop() {
   
   switch(bestId)
   {
-
     case(1):
       // Task 2
       serialRoutine();
@@ -41,20 +40,7 @@ void loop() {
       // Task 3
       computeSignal();
       scheduler.jobCompletedById(bestId);
-      break; 
-      /*  
-    case(3):
-      // Task 1
-      computeRevolutions();
-      scheduler.jobCompletedById(bestId);
-      break;
-      
-    case(4):
-      // Task 4
-      //servoRoutineSS();
-      scheduler.jobCompletedById(bestId);
-      break; 
-      */       
+      break;      
   } 
 }
 
@@ -160,9 +146,7 @@ void computeSignal() {
       
       signalCounter = 0;
     }
-    
   }
-
   
   if (test && initialized) {
     testing = true;    
@@ -172,24 +156,6 @@ void computeSignal() {
       firstTest = false;
     }    
     signalTimer = millis() - start;
-
-    /*
-    Serial.print("T:\t");
-    Serial.print(signalTimer);
-    Serial.print("\tC:\t");
-    Serial.println(signalCounter);
-    */
-      /*
-    if (signalCounter<2500 && signalCounter > 500) {
-      currentUs = (MAX_SIGNAL - MIN_SIGNAL)/2 * sin(signalCounter*180/3.1415) + (MIN_SIGNAL + (MAX_SIGNAL - MIN_SIGNAL)/2);
-      if (currentUs > MAX_SIGNAL) {
-        currentUs = MAX_SIGNAL;
-      }
-      if (currentUs <MIN_SIGNAL) {
-        currentUs = MIN_SIGNAL;
-      }
-    }
-    */
 
     if (signalTimer>= 500 && signalTimer < 5000) {
        if (signalTimer<600) {
@@ -218,10 +184,6 @@ void computeSignal() {
         currentUs = MIN_SIGNAL;
       }
 
-      /*
-      Serial.print("\t\t\tSinusoid:\t");
-      Serial.println(currentUs);
-      */
     }
 
     if (signalTimer >= 20000) {
@@ -233,7 +195,6 @@ void computeSignal() {
     }
   }
   currentUs = (int) currentUs;
-
 
   // Update counters
   contGeneratorRoutine++;  
@@ -250,7 +211,6 @@ void computeSignal() {
 ISR(TIMER2_COMPB_vect) // #ISR
 { 
   isrTimer = micros();
-
   
   contCtrl++;
       
@@ -258,24 +218,6 @@ ISR(TIMER2_COMPB_vect) // #ISR
   ticks++;
   // update Tasks info
   scheduler.checkPeriodicTasks();
-
-  //digitalWrite(pinInit, HIGH);
-/*
-  // Gather encoder data
-  if (digitalRead(interruptPin)==1) {
-    if (statePin == false) {
-      counter++;
-      revTimer = micros();            
-      rev_sec = (counter/NUM_BLADES)*SECOND_US/(micros()-revTimer);
-      //rev_min = rev_sec*SEC_IN_MIN;
-      //rad_sec = rev_sec*3.1415/180;
-      counter=0;  
-    }
-    statePin = true;
-  } else if (digitalRead(interruptPin)==0) {
-    statePin = false;
-  }
-*/
 
     if (contCtrl == ctrlPeriod)
     {
@@ -285,9 +227,6 @@ ISR(TIMER2_COMPB_vect) // #ISR
       if (setupOk)
         myservo.writeMicroseconds(currentUs);
       
-      //tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
-      // update counter control  
-  
       countServoAction++;  
       servoTimer = micros() - servoTimer;
       
@@ -298,8 +237,6 @@ ISR(TIMER2_COMPB_vect) // #ISR
       contCtrl = 0;
     }
     
-    
-        
   cont++;    
   countISR++;  
   
@@ -308,8 +245,7 @@ ISR(TIMER2_COMPB_vect) // #ISR
   if (maxisrTimer <= isrTimer)
     maxisrTimer = isrTimer;
   isrTimeTot = isrTimeTot + isrTimer;  
-  
-  //digitalWrite(pinInit, LOW);
+ 
 }
 
 void resetCounters()

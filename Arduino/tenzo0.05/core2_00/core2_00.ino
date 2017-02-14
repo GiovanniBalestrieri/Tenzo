@@ -583,7 +583,7 @@ void setupCommunication()
 void setup() {
   setupCommunication();
   //setupIMU();
-//  setupAcceleromter();
+  setupAcceleromter();
   setupGyro();
   setupTimerInterrupt();  
   setupCtx();  

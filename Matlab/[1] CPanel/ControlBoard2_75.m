@@ -721,6 +721,14 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         combo = [phidata;Rdata];
         
         save(filenamePerf,'combo')
+        
+        
+        % if graph angle timer is not active
+        if strcmp('on',get(angleTimer,'Running'))
+            stop(angleTimer);
+        end
+        
+        % #bea
     end
     
     %% Data Acquisition panel
@@ -914,7 +922,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         'Position', [70 20 100 30],...
         'Parent',hTabs(1), 'FontSize',13,'FontWeight','bold');
     
-    handles.conVitruvioTxt = uicontrol('Style','text', 'String','Vitruvio Off','ForegroundColor',[.99 .183 0.09], ...
+    handles.conVitruvioTxt = uicontrol('Style','text', 'String','Vitruvio','ForegroundColor',[.99 .183 0.09], ...
         'Position', [70 70 100 30],...
         'Parent',hTabs(1), 'FontSize',13,'FontWeight','bold');
     
@@ -2380,6 +2388,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 cmd(2,:) = weights2*bits;
                 sendMess(cmd);
             elseif (serial2)
+                % #bea
                cmd = 'e';
                
                % Request data to Tenzo if connected

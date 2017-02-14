@@ -3,8 +3,8 @@ clc
 clear all
 
 %% load data
-%load('../errorTenzo')
-load('../estCtrl55PowerDynamic')
+load('../errorTenzo.mat')
+%load('../estCtrl55PowerDynamic')
 
 % First 100 data are the encoder values
 enc = combo(1:100);
