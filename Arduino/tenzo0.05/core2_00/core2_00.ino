@@ -23,7 +23,7 @@ float angles[3];
  unsigned long start=0, signalTimer=0;
  float currentDelta=0.0f;
 
- int MAX_SIGNAL_DELTA = 100, MIN_SIGNAL_DELTA = 0;
+ int MAX_SIGNAL_DELTA = 200, MIN_SIGNAL_DELTA = 0;
 
 /*
  * deltaT : Control loop frequency (Verbose_motors /NonVerbose)
@@ -2193,21 +2193,24 @@ void computeSignal() {
 
     if (signalTimer >= 10000) {
       currentDelta = 0;
-      Serial.println("Tested");
+      //Serial.println("Tested");
       test = false;
       firstTest = true;
       signalTimer = 0;
       land();
+      Serial.print("stop,z");
+    } else {    
+      Serial.print("y,");
+      Serial.print(signalTimer);
+      Serial.print(",");
+      Serial.print(tenzoProp.getThrottle());
+      Serial.print(",");
+      Serial.print(currentDelta);  
+      Serial.println(",z");
     }
-
-
     
-  Serial.print(signalTimer);
-  Serial.print("\tD\t");
-  Serial.println(currentDelta);
-  currentDelta = (int) currentDelta;  
-  tenzoProp.setSpeeds(tenzoProp.getThrottle(), 0, currentDelta, 0, 0);
-
+    currentDelta = (int) currentDelta;  
+    tenzoProp.setSpeeds(tenzoProp.getThrottle(), 0, currentDelta, 0, 0);  
   }
   
 }
