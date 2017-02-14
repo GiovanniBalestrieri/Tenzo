@@ -19,6 +19,12 @@ Propulsion tenzoProp(sakura.getM(1),sakura.getM(2),sakura.getM(3),sakura.getM(4)
  
 float angles[3];
 
+ boolean test=false, testing=false, firstTest =true;
+ unsigned long start=0, signalTimer=0;
+ float currentDelta=0.0f;
+
+ int MAX_SIGNAL_DELTA = 100, MIN_SIGNAL_DELTA = 0;
+
 /*
  * deltaT : Control loop frequency (Verbose_motors /NonVerbose)
  * 15: 50Hz
@@ -48,7 +54,7 @@ int warning = 0;
  * VTOL settings
  */
  // Take Off settings
-int rampTill = 1100; // rampTill = 1270;
+int rampTill = 1270; // rampTill = 1270;
 int idle = 1000;
 int motorRampDelayFast = 2;
 int motorRampDelayMedium = 5;
@@ -736,10 +742,10 @@ void SerialRoutine()
   {
       char t = Serial.read();
       
-      //if (t == '1')
-      //  tenzoProp.stopAll();      
-      if (t == 'c')
-      {
+      if (t == '1') {
+        Serial.println("YOOLO");
+        test = true; 
+      } else if (t == 'c') {
         // Serial communication        
         Serial.println("K");
         sendStatesRemote = true;
@@ -1351,11 +1357,13 @@ void SerialRoutine()
     //{
       //count = 0;      
       
-      //control();    
+      //control();   
+      computeSignal(); 
       controlCascade();
       //controlW();      
-      
       countCtrlAction++;
+
+      
       printRoutine();
       
       // Updates counters
@@ -1542,30 +1550,8 @@ void printTimers()
 
 void printRoutine()
 {  
-  /*  // #doing 
-  */
-  if (sakura.getPrintMotorValsUs())
-  {
-    
-    Serial.print("V,  ");
-    Serial.print(tenzoProp.getwUs1());
-    Serial.print(" | ");
-    Serial.print(tenzoProp.getwUs2());
-    Serial.print(" | ");
-    Serial.print(tenzoProp.getwUs3());
-    Serial.print(" | ");
-    Serial.println(tenzoProp.getwUs4());
-    
-    /*
-    tempM1 = tenzoProp.getwUs1();
-    tempM2 = tenzoProp.getwUs2();
-    tempM3 = tenzoProp.getwUs3();
-    tempM4 = tenzoProp.getwUs4();
-    
-    */
-    
-    //Serial.println("V,  ");
-    
+  if (sakura.getPrintMotorValsUs()) {
+    printMotorValues();
   }
     
   if (sakura.getPrintAccs())
@@ -1573,15 +1559,24 @@ void printRoutine()
   if (sakura.getPrintOmegas())
     printOmega();
     
-  if (sakura.getSendBlueAngle())
-  {
+  if (sakura.getSendBlueAngle()) {
    printSerialAngleFus();
    //printSerialAngleNew();
   }
   
   if (sendStatesRemote)
     sendStates();
-  //printT();
+}
+
+void printMotorValues() {
+    Serial.print("V\t");
+    Serial.print(tenzoProp.getwUs1());
+    Serial.print("\t");
+    Serial.print(tenzoProp.getwUs2());
+    Serial.print("\t");
+    Serial.print(tenzoProp.getwUs3());
+    Serial.print("\t");
+    Serial.println(tenzoProp.getwUs4());
 }
 
 void sendStates()
@@ -2150,6 +2145,73 @@ void control()
   }  
 }
 
+void computeSignal() {
+
+// #bea
+
+
+  if (test && initialized) {
+    testing = true;    
+    if (firstTest) {
+      Serial.println("start");
+      start = millis();
+      firstTest = false;
+    }    
+    signalTimer = millis() - start;
+
+/*
+    if (signalTimer>= 500 && signalTimer < 5000) {
+       if (signalTimer<600) {
+        currentUs = MIN_SIGNAL_DELTA;
+      } else if (signalTimer<2000) {
+        currentUs = MIN_SIGNAL_DELTA*1.2;
+      } else if (signalTimer<2500) {
+        currentUs = MIN_SIGNAL_DELTA*1.3;
+      } else if (signalTimer<3500) {
+        currentUs = MIN_SIGNAL_DELTA*1.4;
+      } else {
+        currentUs = MIN_SIGNAL*1.2;
+      }
+    } else
+   if (signalTimer>= 0 && signalTimer <= 500) {
+      if (signalTimer<500) {        
+        currentDelta = MIN_SIGNAL_DELTA*1.2+(signalTimer)*(1000-1)/1000+1;
+      } else {
+        currentDelta = (MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*1.2;
+      }
+    } else */ if (signalTimer<10000 && signalTimer > 0) {
+        currentDelta = (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*0.35/2 * sin(0.3*signalTimer*3.1415/180)  + (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*0.35/2;
+      
+    }
+
+    if (currentDelta > MAX_SIGNAL_DELTA) {
+        currentDelta = MAX_SIGNAL_DELTA;
+      }
+      if (currentDelta <MIN_SIGNAL_DELTA) {
+        currentDelta = MIN_SIGNAL_DELTA;
+      }
+
+    if (signalTimer >= 10000) {
+      currentDelta = 0;
+      Serial.println("Tested");
+      test = false;
+      firstTest = true;
+      signalTimer = 0;
+      land();
+    }
+
+
+    
+  Serial.print(signalTimer);
+  Serial.print("\tD\t");
+  Serial.println(currentDelta);
+  currentDelta = (int) currentDelta;  
+  tenzoProp.setSpeeds(tenzoProp.getThrottle(), 0, currentDelta, 0, 0);
+
+  }
+  
+}
+
 void controlCascade()
 {
   if (enablePid)
@@ -2287,10 +2349,19 @@ void controlCascade()
       //Serial.println();
       OutputPitch = 0;
     }
-  }
+
+
+
+
   
-  // Set computed speed
-  tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
+    // Set computed speed
+    tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
+    
+  }
+  /*
+    // Set computed speed
+    tenzoProp.setSpeeds(tenzoProp.getThrottle(), OutputCascPitchW, OutputCascRollW, OutputCascYawW, OutputCascAlt);
+  */
 }
 
 void controlW()

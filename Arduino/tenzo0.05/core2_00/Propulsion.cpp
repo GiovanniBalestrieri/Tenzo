@@ -32,12 +32,25 @@ int Propulsion::getThrottle()
 
 void Propulsion::setThrottle(int t)
 {
-  if (t<=MIN_SIGNAL)
+  if (t<=MIN_SIGNAL) {
     this->throttle = MIN_SIGNAL;
-  else if (t>MAX_SIGNAL)
+    wUs1 = MIN_SIGNAL;
+    wUs2 = MIN_SIGNAL;
+    wUs3 = MIN_SIGNAL; 
+    wUs4 = MIN_SIGNAL;
+  } else if (t>MAX_SIGNAL) {
     this->throttle = MAX_SIGNAL;
-  else
-    this->throttle = t;
+    wUs1 = MAX_SIGNAL;
+    wUs2 = MAX_SIGNAL;
+    wUs3 = MAX_SIGNAL; 
+    wUs4 = MAX_SIGNAL;
+  } else {
+    this->throttle = t;    
+    wUs1 = t;
+    wUs2 = t;
+    wUs3 = t; 
+    wUs4 = t;
+  }
 }
 
 void Propulsion::init()
