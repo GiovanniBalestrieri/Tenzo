@@ -5,16 +5,11 @@
 int encoderPin1 = 0;
 int encoderPin2 = 1;
 
-SoftwareSerial blu(10, 11); // RX, TX 
-
-
 volatile int lastEncoded = 0;
 volatile long encoderValue = 0;
 
-long lastencoderValue = 0;
-
-int lastMSB = 0;
-int lastLSB = 0;
+volatile  int MSB = 0;
+volatile int LSB = 0;
 double angle;
 
 boolean matlab = false;
@@ -22,8 +17,8 @@ boolean requestedSerial = false;
 boolean requestedBlu = false;
 
 void setup() {
-  Serial.begin (9600);
-  blu.begin(9600);
+  Serial.begin (115200);
+  //blu.begin(9600);
 
   pinMode(encoderPin1, INPUT); 
   pinMode(encoderPin2, INPUT);
@@ -36,7 +31,7 @@ void setup() {
   attachInterrupt(encoderPin1, updateEncoder, CHANGE); 
   attachInterrupt(encoderPin2, updateEncoder, CHANGE);
 
-  blu.println("Setup Completed");
+  //blu.println("Setup Completed");
   Serial.println("Setup Completed");
 }
 
@@ -44,9 +39,11 @@ void loop()
 { 
   convertTicksToAngle();
   serialRoutine();
-  bluRoutine();
+  //bluRoutine();
+  printAngles();
 }
 
+/*
 // To communicate with the module you need to send a 
 // connection request using 'c'. It will answer with K
 void bluRoutine()
@@ -85,6 +82,8 @@ void bluRoutine()
   }
 }
 
+*/
+
 void convertTicksToAngle()
 {
    angle = (float) encoderValue*360/(RESOLUTION*4);  
@@ -120,9 +119,9 @@ void serialRoutine()
 
 void updateEncoder()
 {
-  int MSB = digitalRead(2); //MSB = most significant bit
-  int LSB = digitalRead(3); //LSB = least significant bit
-
+  MSB = digitalRead(2); //MSB = most significant bit
+  LSB = digitalRead(3); //LSB = least significant bit
+  Serial.println(MSB);
   int encoded = (MSB << 1) |LSB; //converting the 2 pin value to single number
   int sum  = (lastEncoded << 2) | encoded; //adding it to the previous encoded value
 
@@ -134,6 +133,7 @@ void updateEncoder()
   lastEncoded = encoded; //store this value for next time
 }
 
+/*
 void printBluAngles()
 {
   blu.print("e,");
@@ -143,6 +143,7 @@ void printBluAngles()
   blu.println(",z");
   requestedBlu = false;
 }
+*/
 
 void printAngles()
 {

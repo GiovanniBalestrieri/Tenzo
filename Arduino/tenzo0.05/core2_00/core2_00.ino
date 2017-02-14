@@ -424,7 +424,6 @@ volatile boolean filterAcc = true;
 volatile boolean initializedSetup = false;
 volatile boolean initializedGyroCalib = false;
 
-
 volatile float bearing1;
 
 volatile float angleXAcc;
