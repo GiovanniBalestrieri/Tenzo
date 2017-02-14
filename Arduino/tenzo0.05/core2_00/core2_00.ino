@@ -1112,14 +1112,14 @@ void SerialRoutine()
         Serial.print("\t\t\t\t\t\t\t\t\t");
         Serial.println(consKdWRoll);
       }
-      else if (t == 'ò')
+      else if (t == '+')
       {
         // request pid val
         SetpointCascRoll = SetpointCascRoll - 1;
         Serial.print("V,SetpointCascRoll:  ");
         Serial.println(SetpointCascRoll);
       }      
-      else if (t == 'à')
+      else if (t == '*')
       {
         SetpointCascRoll = SetpointCascRoll + 1;
         Serial.print("V,SetpointCascRoll:  ");
