@@ -2150,7 +2150,10 @@ void computeSignal() {
 // #bea
 
 
-  if (test && initialized) {
+  if (test) {
+    if (!initialized){
+      initialize();
+    }
     testing = true;    
     if (firstTest) {
       Serial.println("start");
@@ -2196,21 +2199,26 @@ void computeSignal() {
       //Serial.println("Tested");
       test = false;
       firstTest = true;
-      signalTimer = 0;te
+      signalTimer = 0;
       land();
       Serial.print("stop,z");
-    } else {    
+    } 
+
+    if (test) {
       Serial.print("y,");
       Serial.print(signalTimer);
       Serial.print(",");
       Serial.print(tenzoProp.getThrottle());
       Serial.print(",");
       Serial.print(currentDelta);  
-      Serial.println(",z");
-    }
+      Serial.print(",");
+      Serial.print(estXAngle);
+      Serial.println(",zIde");
     
     currentDelta = (int) currentDelta;  
-    tenzoProp.setSpeeds(tenzoProp.getThrottle(), 0, currentDelta, 0, 0);  
+    tenzoProp.setSpeeds(tenzoProp.getThrottle(), 0, currentDelta, 0, 0);
+    
+    }  
   }
   
 }

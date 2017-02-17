@@ -136,6 +136,7 @@ global timerXbee;
 global gyroTimer;       
 global accTimer;
 global angleTimer;
+global ideTimer;
 
 % Pid Tuning
 global aggAltKp;
@@ -377,7 +378,7 @@ matlabAdd = 2;
 portWin = 'Com3';
 portUnix = '/dev/rfcomm0';
 portUnixVitruvianoBlu = '/dev/rfcomm2';
-portUnixVitruvianoSerial = '/dev/ttyACM0';
+portUnixVitruvianoSerial = '/dev/ttyACM1';
 useBlue = 0;
 xbeeBR = 115200;
 vitruvianoBR = 9600;
@@ -525,6 +526,9 @@ delete(timerfindall);
 gyroTimer = timer('ExecutionMode','FixedRate','Period',gyroFreq,'TimerFcn',{@graphGyro});
 
 angleTimer = timer('ExecutionMode','FixedRate','Period',angleFreq,'TimerFcn',{@graphAngles});
+
+
+ideTimer = timer('ExecutionMode','FixedRate','Period',angleFreq,'TimerFcn',{@graphIde});
                    
 accTimer = timer('ExecutionMode','FixedRate','Period',accFreq,'TimerFcn',{@graphAcc});
   
@@ -694,14 +698,14 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
     % Starts the angle request
     function startPerfAngCallback(~,~,~)
-        disp('starting Performance Test');
         fh = figure(10);
         askedPerf = true;
         anglesRequestedVitruviano = true;
         
         % if graph angle timer is not active
-        if strcmp('off',get(angleTimer,'Running'))
-            %start(angleTimer);
+        if strcmp('off',get(ideTimer,'Running'))
+            start(ideTimer);
+        disp('starting Performance Test');
             sendNMess('1')
         end
         
@@ -727,8 +731,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         
         
         % if graph angle timer is not active
-        if strcmp('on',get(angleTimer,'Running'))
-            stop(angleTimer);
+        if strcmp('on',get(ideTimer,'Running'))
+            stop(ideTimer);
         end
         
         % #bea
@@ -1905,6 +1909,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             gyrosco = false;
             stop(gyroTimer);
             stop(angleTimer);
+            stop(ideTimer);
             stop(accTimer);
         end
         
@@ -1916,6 +1921,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             try
                 start(gyroTimer);
                 stop(angleTimer);
+                stop(ideTimer);
                 stop(accTimer);
             catch exception
                 disp '******** InstrumentSubscription ERROR *********'
@@ -1933,6 +1939,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             try
                 stop(gyroTimer);
                 stop(angleTimer);
+                stop(ideTimer);
                 start(accTimer);                    
             catch exception
                 disp '******** InstrumentSubscription ERROR *********'
@@ -1950,6 +1957,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                stop(gyroTimer);
                start(angleTimer);
                stop(accTimer); 
+               stop(ideTimer); 
             catch exception
                 disp '******** InstrumentSubscription ERROR *********'
                 disp (exception.message);
@@ -2405,6 +2413,41 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             end
         else
             disp('Not received yet Angles');
+        end
+    end
+
+
+%% Plot Theta phi psi
+    function graphIde(obj,event,~)
+        % To debug uncomment the following line
+        %disp('Angles');
+        anglesRequested = true;
+        anglesRequestedVitruviano = true;
+        
+        % Requests data only if previous ones have been received and plotted
+        
+        if estReceived || anglesRequested
+            if (serial1 || serial0)
+                %Initialize the cmd array
+                cmd = zeros(8,4,'uint8');
+                % You can send 
+                % cmd(1,1) = uint8(magnID); OR
+                cmd(1,1) = uint8(estID);
+                % Sends 1 to activate PID
+                bits = reshape(bitget(0,32:-1:1),8,[]);
+                cmd(2,:) = weights2*bits;
+                sendMess(cmd);
+            elseif (serial2)
+                % #bea
+               cmdVitruvio = 'a';
+               
+               % Request data to Vitruviano if connected
+               if (vitruvio && anglesRequestedVitruviano)
+                    sendVitruvianoMess(cmdVitruvio);
+               end
+            end
+        else
+            disp('Angles not yet received ');
         end
     end
 
@@ -3125,8 +3168,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                     
                     elseif tag == 'y'
                          % Magn
-                        %disp('Est');
-                        [R,sec,throttle,delta,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                        disp('Mess:');
+                        disp(mess);
+                        [R,sec,throttle,delta,xx,yy,t] = strread(mess,'%s%f%f%f%f%f%s',1,'delimiter',',');
 
                             Rdata = [ Rdata(2:end) ; sec ];
                             Pdata = [ Pdata(2:end) ; throttle ];
@@ -3163,7 +3207,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                            savePerfAngCallback();
                         end
                     elseif strcmp('stop',tag)
-                        disp('yolo')
+                        disp('Stop Ide acquisition')
                         savePerfAngCallback()                        
                     elseif tag == throttleTag
                         % TODO

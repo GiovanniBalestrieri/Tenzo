@@ -16,6 +16,8 @@ boolean matlab = false;
 boolean requestedSerial = false;
 boolean requestedBlu = false;
 
+unsigned long timer = 0;
+
 void setup() {
   Serial.begin (115200);
   //blu.begin(9600);
@@ -33,6 +35,7 @@ void setup() {
 
   //blu.println("Setup Completed");
   Serial.println("Setup Completed");
+  timer = micros();
 }
 
 void loop()
@@ -97,7 +100,7 @@ void serialRoutine()
     if (t=='a')
     {
       requestedSerial = true;
-      if (matlab)
+      //if (matlab)
         printAngles();
     }
     else if (t=='c')
@@ -147,10 +150,13 @@ void printBluAngles()
 
 void printAngles()
 {
+  timer = millis();
   Serial.print("e,");
   Serial.print(angle);
   Serial.print(",");
   Serial.print(encoderValue);
-  Serial.println(",z");
+  Serial.print(",");
+  Serial.print(timer);
+  Serial.println(",zVitruvio");
   requestedSerial = false;
 }
