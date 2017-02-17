@@ -2196,7 +2196,7 @@ void computeSignal() {
       //Serial.println("Tested");
       test = false;
       firstTest = true;
-      signalTimer = 0;
+      signalTimer = 0;te
       land();
       Serial.print("stop,z");
     } else {    
