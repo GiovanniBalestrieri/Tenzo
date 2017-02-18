@@ -378,7 +378,7 @@ matlabAdd = 2;
 portWin = 'Com3';
 portUnix = '/dev/rfcomm0';
 portUnixVitruvianoBlu = '/dev/rfcomm2';
-portUnixVitruvianoSerial = '/dev/ttyACM1';
+portUnixVitruvianoSerial = '/dev/ttyACM0';
 useBlue = 0;
 xbeeBR = 115200;
 vitruvianoBR = 9600;
@@ -715,7 +715,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         % if graph angle timer is not active
         if strcmp('off',get(ideTimer,'Running'))
             start(ideTimer);
-        disp('starting Performance Test');
+            disp('starting Performance Test');
+            sendVitruvianoMess('1')
             sendNMess('1')
         end
         
@@ -731,11 +732,11 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         
         
         % Compute min Sq Err
-        err = immse(phidata,Rdata)
+        err = immse(IdeDataRoll,IdeDataEstRoll)
         set(handles.minSqErrVal,'Visible','on');
         set(handles.minSqErrVal,'String',err);
         % Save result and array
-        boom = [phidata;Rdata;Pdata;Ydata];
+        boom = [IdeDataDelta;IdeDataThrottle;IdeDataTimeTenzo;IdeDataTimeVitruvio;IdeDataEstRoll;IdeDataRoll];
         
         save(filenamePerf,'boom')
         
@@ -744,6 +745,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         if strcmp('on',get(ideTimer,'Running'))
             stop(ideTimer);
         end
+        
+        % Stop data acquisition Vitruviano
+        sendVitruvianoMess('2')
         
         % #bea
     end
@@ -2088,8 +2092,13 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             end
             
             % Check whether the serial port is available
+            
+            % #bea
+            
 %             serials = instrhwinfo('serial')
 %             serials.AvailableSerialPorts
+
+
 %             serialCond1 = false;
 %             for (i=1:size(serials.AvailableSerialPorts,1))
 %                 if (strcmp(serials.AvailableSerialPorts(i),portVitruviano))
@@ -2111,8 +2120,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 
                 % Max wait time
                 set(vitruviano, 'TimeOut', 10);  
+                set(vitruviano,'terminator','LF');
                 % One message long buffer
-                set(vitruviano, 'InputBufferSize',14)
+                set(vitruviano, 'InputBufferSize',50)
                 % Open the serial
                 fopen(vitruviano);    
             elseif (exist('vitruviano','var'))                
@@ -2451,11 +2461,11 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 sendMess(cmd);
             elseif (serial2)
                 % #bea
-               cmdVitruvio = 'a';
+               %cmdVitruvio = 'a';
                
                % Request data to Vitruviano if connected
                if (vitruvio && anglesRequestedVitruviano)
-                    sendVitruvianoMess(cmdVitruvio);
+                    %sendVitruvianoMess(cmdVitruvio);
                end
             end
         else
@@ -2844,6 +2854,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         %disp(count);        
         disp(mess); 
         
+        print('vitruviano')
+        
         if count > 0
             mess = deblank(mess);
         end
@@ -2910,10 +2922,14 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             end
             if count > 2
                 footer = mess(size(mess,2));
+                
+                print('Ok')
                 % if message is correct - No CRC needed in lab tests
                 if footer == footerTag
+                print('footer')
                     tag = mess(1);
                     if tag == 'e'
+                        print('vitruviano')
                         %disp('Vitruviano encoder');
                         % Acc time serial
                         [R,phiVitruvio,thetaVitruvio,timeVitruvio,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
@@ -2937,6 +2953,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         [mess,count] = fscanf(xbee);
         
         disp(mess); 
+        mess(1)
         count;
         if count > 0
             mess = deblank(mess);
@@ -3177,8 +3194,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                         magnReceived = true;
                     
                     elseif tag == 'y'
-                         % Magn
-                        disp('Mess:');
+                        disp('Identification:');
                         disp(mess);
                         [R,sec,throttle,delta,xx,t] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
 

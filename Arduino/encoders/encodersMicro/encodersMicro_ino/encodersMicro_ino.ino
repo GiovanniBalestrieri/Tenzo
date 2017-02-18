@@ -15,7 +15,7 @@ double angle;
 boolean matlab = false;
 boolean requestedSerial = false;
 boolean requestedBlu = false;
-
+boolean identifying = false;
 unsigned long timer = 0;
 
 void setup() {
@@ -43,7 +43,8 @@ void loop()
   convertTicksToAngle();
   serialRoutine();
   //bluRoutine();
-  //printAngles();
+  if (identifying)
+    printAngles();
 }
 
 /*
@@ -106,13 +107,24 @@ void serialRoutine()
     else if (t=='c')
     {
       // Connection request from CPanel
-      Serial.print("K");
+      Serial.println("K");
       matlab = true;
+    }
+    
+    else if (t=='1')
+    {
+      // Starting identification data acquisition     
+      identifying = true;
+    }
+    else if (t=='2')
+    {
+      // Starting identification data acquisition     
+      identifying = false;
     }
     else if (t=='X')
     {
       // Disconnection request from CPanel
-      Serial.print("X");
+      Serial.println("X");
       matlab = false;
     }
     else if (t=='r')
