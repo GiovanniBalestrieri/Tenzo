@@ -447,7 +447,9 @@ accFreq = 0.2;
 angleFreq = 0.2;
 
 buf_len = 100;
+buf_len_ide = 1000;
 index = 1:buf_len;
+indexIde = 1:buf_len_ide;
 indexPerf = 1:totStackPerf;
 
 % create variables for the Xaxis
@@ -466,6 +468,14 @@ azdata = zeros(buf_len,1);
 Rdata = zeros(buf_len,1);
 Pdata = zeros(buf_len,1);
 Ydata = zeros(buf_len,1);
+
+% Identification buffers
+IdeDataRoll = zeros(buf_len_ide,1);
+IdeDataDelta = zeros(buf_len_ide,1);
+IdeDataTimeTenzo = zeros(buf_len_ide,1);
+IdeDataTimeVitruvio = zeros(buf_len_ide,1);
+IdeDataThrottle = zeros(buf_len_ide,1);
+IdeDataEstRoll = zeros(buf_len_ide,1);
 
 % Kalman & Complementary Filter errors variables for the Axis
 EKXdata = zeros(buf_len,1);
@@ -1389,7 +1399,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
         % Max wait time
         set(s, 'TimeOut', 5); 
-        % set(s,'terminator','CR');
+        set(s,'terminator','CR');
         set(s,'BaudRate',xbeeBR);
         fopen(s);
 
@@ -2191,12 +2201,13 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
             %  Setting up serial communication
             %  If the xbee variable doesn't exist, create it
-            if (~exist('xbee','var'))
+            if (~exist('xbee','var')) 
                 xbee = serial(portUnix,'baudrate',xbeeBR,'tag',tag);
                 %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
 
                 % Max wait time
                 set(xbee, 'TimeOut', 10);  
+                set(xbee,'terminator','LF');
                 % One message long buffer
                 set(xbee, 'InputBufferSize',inputBuffSize)
                 % Open the serial
@@ -2222,6 +2233,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
                 % Max wait time
                 set(xbee, 'TimeOut', 10);  
+                set(xbee,'terminator','LF');
                 % One message long buffer
                 set(xbee, 'InputBufferSize',inputBuffSize)
                 % Open the serial
@@ -2284,7 +2296,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
     %% Send topics
     function sendNMess(obj)
-        fprintf(xbee,obj);    
+        mess = obj;
+        fprintf(xbee,mess);    
         %disp('Sending: ');
         %disp(obj);
         
@@ -2399,7 +2412,6 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 cmd(2,:) = weights2*bits;
                 sendMess(cmd);
             elseif (serial2)
-                % #bea
                cmd = 'e';
                
                % Request data to Tenzo if connected
@@ -2904,11 +2916,12 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                     if tag == 'e'
                         %disp('Vitruviano encoder');
                         % Acc time serial
-                        [R,phiVitruvio,thetaVitruvio,t] = strread(mess,'%s%f%f%s',1,'delimiter',',');
+                        [R,phiVitruvio,thetaVitruvio,timeVitruvio,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
                         
                         % Save Data from encoder
-                        phidata = [ phidata(2:end) ; double(phiVitruvio) ];
-                        thetadata = [ thetadata(2:end) ; double(thetaVitruvio) ]; 
+                        IdeDataRoll = [ IdeDataRoll(2:end) ; double(phiVitruvio) ];
+                        %thetadata = [ thetadata(2:end) ; double(thetaVitruvio) ]; 
+                        IdeDataTimeVitruvio = [ IdeDataTimeVitruvio(2:end) ; double(timeVitruvio)]; 
                          
                         if askedPerf
                            fullStackCounter = fullStackCounter + 1; 
@@ -2922,9 +2935,6 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     % #bluetooth #record #plot
     function serialProtocol2()
         [mess,count] = fscanf(xbee);
-        %disp('Reading incoming buffer. Dimensions:');
-        % Debug stuff
-        %disp(count);
         
         disp(mess); 
         count;
@@ -3170,11 +3180,12 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                          % Magn
                         disp('Mess:');
                         disp(mess);
-                        [R,sec,throttle,delta,xx,yy,t] = strread(mess,'%s%f%f%f%f%f%s',1,'delimiter',',');
+                        [R,sec,throttle,delta,xx,t] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
 
-                            Rdata = [ Rdata(2:end) ; sec ];
-                            Pdata = [ Pdata(2:end) ; throttle ];
-                            Ydata = [ Ydata(2:end) ; delta]; 
+                            IdeDataTimeTenzo = [ IdeDataTimeTenzo(2:end) ; sec ];
+                            IdeDataThrottle = [ IdeDataThrottle(2:end) ; throttle ];
+                            IdeDataDelta = [ IdeDataDelta(2:end) ; delta]; 
+                            IdeDataEstRoll = [ IdeDataEstRoll(2:end) ; xx]; 
 
                             % Second incrementation to track stored data & Plot
                             if askedPerf

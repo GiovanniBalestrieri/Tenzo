@@ -124,7 +124,7 @@ void updateEncoder()
 {
   MSB = digitalRead(2); //MSB = most significant bit
   LSB = digitalRead(3); //LSB = least significant bit
-  Serial.println(MSB);
+  
   int encoded = (MSB << 1) |LSB; //converting the 2 pin value to single number
   int sum  = (lastEncoded << 2) | encoded; //adding it to the previous encoded value
 
@@ -153,10 +153,13 @@ void printAngles()
   timer = millis();
   Serial.print("e,");
   Serial.print(angle);
+  
+  /*
   Serial.print(",");
   Serial.print(encoderValue);
+  */
   Serial.print(",");
   Serial.print(timer);
-  Serial.println(",zVitruvio");
+  Serial.println(",zVit");
   requestedSerial = false;
 }

@@ -505,7 +505,7 @@ void setupGyro()
   // Configure L3G4200  - 250, 500 or 2000 deg/sec
   setupL3G4200D(2000); 
   //wait for the sensor to be ready   
-  delay(1500); 
+  delay(1000); 
   
   biasCalcTime = micros();
   calcBias();
@@ -2201,7 +2201,7 @@ void computeSignal() {
       firstTest = true;
       signalTimer = 0;
       land();
-      Serial.print("stop,z");
+      Serial.println("stop,z");
     } 
 
     if (test) {
