@@ -379,7 +379,7 @@ matlabAdd = 2;
 portWin = 'Com3';
 portUnix = '/dev/rfcomm0';
 portUnixVitruvianoBlu = '/dev/rfcomm2';
-portUnixVitruvianoSerial = '/dev/ttyACM1';
+portUnixVitruvianoSerial = '/dev/ttyACM0';
 useBlue = 0;
 xbeeBR = 115200;
 vitruvianoBR = 9600;
@@ -445,7 +445,7 @@ langIta = 'en';
 % Samples frequency
 gyroFreq = 0.2;
 accFreq = 0.2;
-angleFreq = 0.2;
+angleFreq = 0.05;
 
 buf_len = 100;
 buf_len_ide = 4000;
@@ -534,6 +534,7 @@ disp('Welcome to the CPanel');
 %% Stop and Delete all timers
 delete(timerfindall);
 %stop(timerfindall);
+delete(timerfindall)
 
 gyroTimer = timer('ExecutionMode','FixedRate','Period',gyroFreq,'TimerFcn',{@graphGyro});
 
@@ -716,10 +717,12 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         
         % if graph angle timer is not active
         if strcmp('off',get(ideTimer,'Running'))
-            start(ideTimer);
+            
             disp('starting Performance Test');
             sendVitruvianoMess('1')
-            sendNMess('1')
+            sendNMess('1')            
+            start(ideTimer);
+            
         end
         
         fullStackCounter = 0;
@@ -3142,9 +3145,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                         end
                         
                         % Call Stop Perf if tot data reached
-                        if fullStackCounter >= (totStackPerf*2.4) && askedPerf
-                           savePerfAngCallback();
-                        end
+%                         if fullStackCounter >= (totStackPerf*2.4) && askedPerf
+%                            savePerfAngCallback();
+%                         end
 
                         %Plot the X magnitude
                         h1 = subplot(3,1,1,'Parent',hTabs(3));
@@ -3209,13 +3212,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                                %stem(ax2,indexIde,errorEst)   
                                grid on;                            
 
-                            end
-%                         
-%                             % Call Stop Perf if tot data reached
-%                             if fullStackCounter >= 1000
-%                                 disp('OVER  1000 Samples!')
-%                                %savePerfAngCallback();
-%                             end  
+                           end
                         elseif strcmp(status,'S')
                             disp('Stop Ide acquisition')
                             savePerfAngCallback()   
