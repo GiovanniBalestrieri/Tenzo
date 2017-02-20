@@ -448,7 +448,7 @@ accFreq = 0.2;
 angleFreq = 0.05;
 
 buf_len = 100;
-buf_len_ide = 4000;
+buf_len_ide = 500;
 index = 1:buf_len;
 indexIde = 1:buf_len_ide;
 indexPerf = 1:totStackPerf;

@@ -2199,15 +2199,20 @@ void computeSignal() {
       } else {
         currentUs = MIN_SIGNAL*1.2;
       }
-    } else
-   if (signalTimer>= 0 && signalTimer <= 500) {
-      if (signalTimer<500) {        
-        currentDelta = MIN_SIGNAL_DELTA*1.2+(signalTimer)*(1000-1)/1000+1;
-      } else {
-        currentDelta = (MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*1.2;
-      }
-    } else */ 
-    if (signalTimer<30000 && signalTimer >= 2000) {
+    } else */
+    float boom = 0.35;
+    if (signalTimer>= 3000 && signalTimer <= 10000) {
+      if (signalTimer<4000) {
+        // [ 3s , 4s]        
+        currentDelta = (MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom;
+      } else if (signalTimer<5000 && signalTimer >= 4000) {
+        currentDelta = MIN_SIGNAL_DELTA;
+      } if (signalTimer<6000 && signalTimer >= 5500)  {        
+        currentDelta = -(MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/3;
+      } else if (signalTimer<10000 && signalTimer >= 6000) {
+        currentDelta = MIN_SIGNAL_DELTA;
+      } 
+    } else if (signalTimer<30000 && signalTimer >= 10000) {
         currentDelta = (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*0.35/2 * sin(0.3*signalTimer*3.1415/180)  + (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*0.35/2;
     } else if (signalTimer < 2000) {
         currentDelta = MIN_SIGNAL_DELTA;
@@ -2216,8 +2221,9 @@ void computeSignal() {
     if (currentDelta > MAX_SIGNAL_DELTA) {
         currentDelta = MAX_SIGNAL_DELTA;
     }
-    if (currentDelta <MIN_SIGNAL_DELTA) {
-        currentDelta = MIN_SIGNAL_DELTA;
+    
+    if (currentDelta < -MAX_SIGNAL_DELTA) {
+        currentDelta = -MAX_SIGNAL_DELTA;
     }
 
     if (signalTimer >= 30000) {
