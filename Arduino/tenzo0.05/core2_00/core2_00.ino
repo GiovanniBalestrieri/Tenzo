@@ -2157,6 +2157,7 @@ void computeSignal() {
     testing = true;    
     if (firstTest) {
       Serial.println("start");
+    delay(2000);
       start = millis();
       firstTest = false;
     }    
@@ -2182,27 +2183,37 @@ void computeSignal() {
       } else {
         currentDelta = (MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*1.2;
       }
-    } else */ if (signalTimer<10000 && signalTimer > 0) {
-        currentDelta = (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*0.35/2 * sin(0.3*signalTimer*3.1415/180)  + (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*0.35/2;
-      
+    } else */ 
+    if (signalTimer<30000 && signalTimer >= 2000) {
+        currentDelta = (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*0.35/2 * sin(0.01*signalTimer*3.1415/180)  + (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*0.35/2;
+    } else if (signalTimer < 2000) {
+        currentDelta = MIN_SIGNAL_DELTA;
     }
-
+      
     if (currentDelta > MAX_SIGNAL_DELTA) {
         currentDelta = MAX_SIGNAL_DELTA;
-      }
-      if (currentDelta <MIN_SIGNAL_DELTA) {
+    }
+    if (currentDelta <MIN_SIGNAL_DELTA) {
         currentDelta = MIN_SIGNAL_DELTA;
-      }
+    }
 
-    if (signalTimer >= 10000) {
+    if (signalTimer >= 30000) {
       currentDelta = 0;
       //Serial.println("Tested");
       test = false;
       firstTest = true;
+      Serial.print("y,");
+      Serial.print(signalTimer);
+      Serial.print(",");
+      Serial.print(tenzoProp.getThrottle());
+      Serial.print(",");
+      Serial.print(currentDelta);  
+      Serial.print(",");
+      Serial.print(estXAngle);  
+      Serial.println(",S,z");
       signalTimer = 0;
       land();
-      Serial.println("stop,z");
-    } 
+    }
 
     if (test) {
       Serial.print("y,");
@@ -2212,11 +2223,12 @@ void computeSignal() {
       Serial.print(",");
       Serial.print(currentDelta);  
       Serial.print(",");
-      Serial.print(estXAngle);
-      Serial.println(",zIde");
+      Serial.print(estXAngle);  
+      // Added status pre temrinator
+      Serial.println(",N,z");
     
-    currentDelta = (int) currentDelta;  
-    tenzoProp.setSpeeds(tenzoProp.getThrottle(), 0, currentDelta, 0, 0);
+      currentDelta = (int) currentDelta;  
+      tenzoProp.setSpeeds(tenzoProp.getThrottle(), 0, currentDelta, 0, 0);
     
     }  
   }

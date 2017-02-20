@@ -43,8 +43,10 @@ void loop()
   convertTicksToAngle();
   serialRoutine();
   //bluRoutine();
-  if (identifying)
+  if (identifying){
     printAngles();
+    delay(10);
+  }
 }
 
 /*
@@ -109,6 +111,7 @@ void serialRoutine()
       // Connection request from CPanel
       Serial.println("K");
       matlab = true;
+      encoderValue = 0;
     }
     
     else if (t=='1')
@@ -172,6 +175,6 @@ void printAngles()
   */
   Serial.print(",");
   Serial.print(timer);
-  Serial.println(",zVit");
+  Serial.println(",z");
   requestedSerial = false;
 }

@@ -251,6 +251,7 @@ global timerSamples;
 % Performance
 global fullStack;
 global fullStackCounter;
+global fullIdeCounter;
 global totStackPerf;
 
 %% Serial Protocol 2 - Bluetooth
@@ -378,7 +379,7 @@ matlabAdd = 2;
 portWin = 'Com3';
 portUnix = '/dev/rfcomm0';
 portUnixVitruvianoBlu = '/dev/rfcomm2';
-portUnixVitruvianoSerial = '/dev/ttyACM0';
+portUnixVitruvianoSerial = '/dev/ttyACM1';
 useBlue = 0;
 xbeeBR = 115200;
 vitruvianoBR = 9600;
@@ -447,7 +448,7 @@ accFreq = 0.2;
 angleFreq = 0.2;
 
 buf_len = 100;
-buf_len_ide = 1000;
+buf_len_ide = 4000;
 index = 1:buf_len;
 indexIde = 1:buf_len_ide;
 indexPerf = 1:totStackPerf;
@@ -523,6 +524,7 @@ bufferSend = zeros(1, outputBuffSize);
 % Performance
 totStackPerf = 100;
 fullStackCounter = 0;
+fullIdeCounter = 0;
 fullStack = zeros(4,totStackPerf);
 filenamePerf = 'errorTenzo.mat';
   
@@ -714,13 +716,14 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         
         % if graph angle timer is not active
         if strcmp('off',get(ideTimer,'Running'))
-            start(ideTimer);
+            %start(ideTimer);
             disp('starting Performance Test');
             sendVitruvianoMess('1')
             sendNMess('1')
         end
         
         fullStackCounter = 0;
+        fullIdeCounter = 0;
     end
 
     function savePerfAngCallback(~,~,~)
@@ -729,8 +732,6 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         askedPerf = false;        
         anglesRequestedVitruviano = false;
         
-        
-        
         % Compute min Sq Err
         err = immse(IdeDataRoll,IdeDataEstRoll)
         set(handles.minSqErrVal,'Visible','on');
@@ -738,12 +739,13 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         % Save result and array
         boom = [IdeDataDelta;IdeDataThrottle;IdeDataTimeTenzo;IdeDataTimeVitruvio;IdeDataEstRoll;IdeDataRoll];
         
-        save(filenamePerf,'boom')
+        %save(filenamePerf,'boom')
+        save(filenamePerf,'IdeDataDelta','IdeDataEstRoll','IdeDataRoll','IdeDataThrottle','IdeDataTimeTenzo','IdeDataTimeVitruvio')
         
         
         % if graph angle timer is not active
         if strcmp('on',get(ideTimer,'Running'))
-            stop(ideTimer);
+            %stop(ideTimer);
         end
         
         % Stop data acquisition Vitruviano
@@ -1584,7 +1586,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         end
     end
 
-    function resetCallback(src,eventData)
+    function resetCallback(src,~)
        if tenzo == true
             if takeOffAck == 1
                 % Initialize the cmd array
@@ -2120,7 +2122,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 
                 % Max wait time
                 set(vitruviano, 'TimeOut', 10);  
-                set(vitruviano,'terminator','LF');
+                set(vitruviano,'Terminator','LF');
                 % One message long buffer
                 set(vitruviano, 'InputBufferSize',50)
                 % Open the serial
@@ -2130,7 +2132,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 fopen(vitruviano);    
             end
             
-            vitCallback = @(~, ~) disp('Caught error For Vitruviano StoreDataTimer');
+            %vitCallback = @(~, ~) disp('Caught error For Vitruviano StoreDataTimer');
             
             % variable vitruvio defines the connection status
             vitruvio = false;
@@ -2143,7 +2145,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             end          
             % Wireless communication
             timerVitruviano = timer('ExecutionMode','FixedRate','Period',0.1,...
-                'TimerFcn',{@storeDataFromSerialVitruviano},'ErrorFcn', vitCallback);
+                'TimerFcn',{@storeDataFromSerialVitruviano});%,'ErrorFcn', vitCallback);
             try
                 start(timerVitruviano);  
             catch
@@ -2430,7 +2432,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                end
                % Request data to Vitruviano if connected
                if (vitruvio && anglesRequestedVitruviano)
-                    sendVitruvianoMess('a');
+                    %sendVitruvianoMess('a');
                end
             end
         else
@@ -2449,24 +2451,14 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         % Requests data only if previous ones have been received and plotted
         
         if estReceived || anglesRequested
-            if (serial1 || serial0)
-                %Initialize the cmd array
-                cmd = zeros(8,4,'uint8');
-                % You can send 
-                % cmd(1,1) = uint8(magnID); OR
-                cmd(1,1) = uint8(estID);
-                % Sends 1 to activate PID
-                bits = reshape(bitget(0,32:-1:1),8,[]);
-                cmd(2,:) = weights2*bits;
-                sendMess(cmd);
-            elseif (serial2)
+            if (serial2)
                 % #bea
                %cmdVitruvio = 'a';
                
                % Request data to Vitruviano if connected
-               if (vitruvio && anglesRequestedVitruviano)
+               %if (vitruvio && anglesRequestedVitruviano)
                     %sendVitruvianoMess(cmdVitruvio);
-               end
+               %end
             end
         else
             disp('Angles not yet received ');
@@ -2848,14 +2840,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     function serialProtocol2Vitruviano()
         % Vitruviano serial object is valid. Safe
         [mess,count] = fscanf(vitruviano);
-        
-        %disp('[Vitruviano] Reading incoming buffer. Dim:');
-        % Debug stuff
-        %disp(count);        
-        disp(mess); 
-        
-        print('vitruviano')
-        
+               
         if count > 0
             mess = deblank(mess);
         end
@@ -2863,7 +2848,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         % New connection:
         if (vitruvio == false) && ~strcmp(mess,'')
                 if (strcmp(mess,'K') && vitruvioConnectionRequested)
-                vitruvio = true;
+                vitruvio = true
                 set(handles.connectVitruviano,'String','Vitruviano');
                 set(handles.conVitruvioTxt,'ForegroundColor', [.21 .96 .07],'String','Vitruvio');    
                 disp ('Connection with Vitruviano 2.0 established. Rock & Roll!'); 
@@ -2874,7 +2859,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 end
                 vitruvioConnectionRequested = false;
             elseif (~strcmp(mess,'K') &&  vitruvioConnectionRequested)
-                vitruvio = false;
+                vitruvio = false
                 set(handles.connectVitruviano,'BackgroundColor',[.21 .96 .07],'String','Vitruvio');
                 set(handles.conVitruvioTxt,'ForegroundColor',[.99 .183 0.09] ,'String','Offline');
                 %if speakCmd && vocalVerb>=1 
@@ -2923,27 +2908,24 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             if count > 2
                 footer = mess(size(mess,2));
                 
-                print('Ok')
                 % if message is correct - No CRC needed in lab tests
-                if footer == footerTag
-                print('footer')
+                %if footer == footerTag
                     tag = mess(1);
-                    if tag == 'e'
-                        print('vitruviano')
-                        %disp('Vitruviano encoder');
-                        % Acc time serial
-                        [R,phiVitruvio,thetaVitruvio,timeVitruvio,t] = strread(mess,'%s%f%f%f%s',1,'delimiter',',');
+                    if (strcmp(tag,'e') && anglesRequestedVitruviano)
+                        [R,phiVitruvio,timeVitruvio,t] = strread(mess,'%s%f%f%s',1,'delimiter',',');
+                        
+                        disp(mess);
                         
                         % Save Data from encoder
-                        IdeDataRoll = [ IdeDataRoll(2:end) ; double(phiVitruvio) ];
+                        IdeDataRoll = [ IdeDataRoll(2:end) ; phiVitruvio ];
                         %thetadata = [ thetadata(2:end) ; double(thetaVitruvio) ]; 
-                        IdeDataTimeVitruvio = [ IdeDataTimeVitruvio(2:end) ; double(timeVitruvio)]; 
+                        IdeDataTimeVitruvio = [ IdeDataTimeVitruvio(2:end) ; timeVitruvio]; 
                          
                         if askedPerf
-                           fullStackCounter = fullStackCounter + 1; 
+                           fullStackCounter = fullStackCounter + 1;                      
                         end                        
                     end
-                end
+                %end
             end
         end        
     end
@@ -2952,9 +2934,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     function serialProtocol2()
         [mess,count] = fscanf(xbee);
         
-        disp(mess); 
-        mess(1)
-        count;
+        %disp(mess); 
         if count > 0
             mess = deblank(mess);
         end
@@ -3132,7 +3112,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                         
                         % Second incrementation to track stored data & Plot
                         if askedPerf
-                           fullStackCounter = fullStackCounter + 1 
+                           fullIdeCounter = fullIdeCounter + 1;
                            
                            %size(index);
                            %size(phidata);
@@ -3195,47 +3175,44 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                     
                     elseif tag == 'y'
                         disp('Identification:');
-                        disp(mess);
-                        [R,sec,throttle,delta,xx,t] = strread(mess,'%s%f%f%f%f%s',1,'delimiter',',');
+                        [R,sec,throttle,delta,xx,status,Terminator] = strread(mess,'%s%f%f%f%f%s%s',1,'delimiter',',');
 
+                        if strcmp(status,'N')
+                            disp(mess);
                             IdeDataTimeTenzo = [ IdeDataTimeTenzo(2:end) ; sec ];
                             IdeDataThrottle = [ IdeDataThrottle(2:end) ; throttle ];
                             IdeDataDelta = [ IdeDataDelta(2:end) ; delta]; 
                             IdeDataEstRoll = [ IdeDataEstRoll(2:end) ; xx]; 
 
                             % Second incrementation to track stored data & Plot
-                            if askedPerf
-                               fullStackCounter = fullStackCounter + 1 
+                           if askedPerf
+                               fullIdeCounter = fullIdeCounter + 1
 
-                               %size(index);
-                               %size(phidata);
-                               %size(Rdata);
-
-    %                            figure(fh)  
-    %                            ax1 = subplot(2,1,1);  
-    %                            plot(ax1,index,phidata,'b','LineWidth',2);
-    %                            hold on
-    %                            plot(ax1,index,Rdata,'r','LineWidth',2);
-    %                            hold off
-    %                            grid on;                         
+                               figure(fh)  
+                               ax1 = subplot(2,1,1);  
+                               plot(ax1,indexIde,IdeDataEstRoll,'b','LineWidth',2);
+                               hold off
+                               grid on;                         
 
                                % compute error
-                               %errorEst = phidata - Rdata;
+                               %errorEst = IdeDataRoll - IdeDataEstRoll;
 
-                               %ax2 = subplot(2,1,2);
-                               %stem(ax2,index,errorEst)   
-                               %grid on;                            
+                               ax2 = subplot(2,1,2);
+                               plot(ax2,indexIde,IdeDataDelta,'r','LineWidth',2);
+                               %stem(ax2,indexIde,errorEst)   
+                               grid on;                            
 
                             end
-                        
-                        % Call Stop Perf if tot data reached
-                        if fullStackCounter >= 600
-                            disp('YOLO!')
-                           savePerfAngCallback();
-                        end
-                    elseif strcmp('stop',tag)
-                        disp('Stop Ide acquisition')
-                        savePerfAngCallback()                        
+%                         
+%                             % Call Stop Perf if tot data reached
+%                             if fullStackCounter >= 1000
+%                                 disp('OVER  1000 Samples!')
+%                                %savePerfAngCallback();
+%                             end  
+                        elseif strcmp(status,'S')
+                            disp('Stop Ide acquisition')
+                            savePerfAngCallback()   
+                        end                            
                     elseif tag == throttleTag
                         % TODO
                         [R,throttleActualValue,N] = strread(mess,'%s%f%s',1,'delimiter',',');
