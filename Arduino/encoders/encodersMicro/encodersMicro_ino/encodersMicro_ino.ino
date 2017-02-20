@@ -16,7 +16,7 @@ boolean matlab = false;
 boolean requestedSerial = false;
 boolean requestedBlu = false;
 boolean identifying = false;
-unsigned long timer = 0;
+unsigned long timer = 0, start;
 
 void setup() {
   Serial.begin (115200);
@@ -35,7 +35,6 @@ void setup() {
 
   //blu.println("Setup Completed");
   Serial.println("Setup Completed");
-  timer = micros();
 }
 
 void loop()
@@ -120,6 +119,7 @@ void serialRoutine()
     {
       // Starting identification data acquisition     
       identifying = true;
+      start = millis();
     }
     else if (t=='2')
     {
@@ -167,7 +167,7 @@ void printBluAngles()
 
 void printAngles()
 {
-  timer = millis();
+  timer = millis() - start;
   Serial.print("e,");
   Serial.print(angle);
   

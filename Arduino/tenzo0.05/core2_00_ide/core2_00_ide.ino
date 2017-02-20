@@ -2208,7 +2208,7 @@ void computeSignal() {
       }
     } else */ 
     if (signalTimer<30000 && signalTimer >= 2000) {
-        currentDelta = (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*0.35/2 * sin(0.01*signalTimer*3.1415/180)  + (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*0.35/2;
+        currentDelta = (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*0.35/2 * sin(0.3*signalTimer*3.1415/180)  + (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*0.35/2;
     } else if (signalTimer < 2000) {
         currentDelta = MIN_SIGNAL_DELTA;
     }

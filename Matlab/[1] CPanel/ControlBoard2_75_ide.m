@@ -379,7 +379,7 @@ matlabAdd = 2;
 portWin = 'Com3';
 portUnix = '/dev/rfcomm0';
 portUnixVitruvianoBlu = '/dev/rfcomm2';
-portUnixVitruvianoSerial = '/dev/ttyACM0';
+portUnixVitruvianoSerial = '/dev/ttyACM1';
 useBlue = 0;
 xbeeBR = 115200;
 vitruvianoBR = 9600;
@@ -2302,6 +2302,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 sendMess(cmd);
             elseif (serial2)
                 cmd = 'X';
+
                 sendNMess(cmd);
             end
             
