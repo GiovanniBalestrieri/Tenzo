@@ -716,7 +716,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         
         % if graph angle timer is not active
         if strcmp('off',get(ideTimer,'Running'))
-            %start(ideTimer);
+            start(ideTimer);
             disp('starting Performance Test');
             sendVitruvianoMess('1')
             sendNMess('1')
@@ -745,7 +745,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         
         % if graph angle timer is not active
         if strcmp('on',get(ideTimer,'Running'))
-            %stop(ideTimer);
+            stop(ideTimer);
         end
         
         % Stop data acquisition Vitruviano
@@ -2453,12 +2453,18 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         if estReceived || anglesRequested
             if (serial2)
                 % #bea
-               %cmdVitruvio = 'a';
+               cmdVitruvio = 'a';
+               cmdTenzo = 't';
+               
+               % Request data to Tenzo if connected
+               if tenzo
+                sendNMess(cmdTenzo);
+               end
                
                % Request data to Vitruviano if connected
-               %if (vitruvio && anglesRequestedVitruviano)
-                    %sendVitruvianoMess(cmdVitruvio);
-               %end
+               if (vitruvio && anglesRequestedVitruviano)
+                    sendVitruvianoMess(cmdVitruvio);
+               end
             end
         else
             disp('Angles not yet received ');
@@ -3174,6 +3180,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                         magnReceived = true;
                     
                     elseif tag == 'y'
+                        % #bea
                         disp('Identification:');
                         [R,sec,throttle,delta,xx,status,Terminator] = strread(mess,'%s%f%f%f%f%s%s',1,'delimiter',',');
 
