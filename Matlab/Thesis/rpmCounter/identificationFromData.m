@@ -6,8 +6,7 @@ plotDiff = false;
 
 %% Identification Data
 dir .
-load('eccolo.mat')
-
+load('samplesRock2.mat')
 
 x = x(2:end);
 y = y(2:end);
