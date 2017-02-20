@@ -43,10 +43,12 @@ void loop()
   convertTicksToAngle();
   serialRoutine();
   //bluRoutine();
+  /*
   if (identifying){
     printAngles();
     delay(10);
   }
+  */
 }
 
 /*
