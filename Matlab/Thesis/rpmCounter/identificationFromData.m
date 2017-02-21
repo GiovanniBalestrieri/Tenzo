@@ -6,7 +6,7 @@ plotDiff = false;
 
 %% Identification Data
 dir .
-load('samplesRock2.mat')
+load('samples.mat')
 
 x = x(2:end);
 y = y(2:end);
@@ -46,29 +46,29 @@ subplot(2,1,2);
 plot(xIde,uIde,'r');
 title('pwm [us]');
 
-%% Designs a second order filter using a butterworth design guidelines
-[b a] = butter(2,0.045,'low');
-
-% Plot the frequency response (normalized frequency)
-figure(13)
-z_filtered = filter(b,a,yIdeDetrend);
-plot(xIde,z_filtered,'r');
+% %% Designs a second order filter using a butterworth design guidelines
+% [b a] = butter(2,0.045,'low');
+% 
+% % Plot the frequency response (normalized frequency)
+% figure(13)
+% z_filtered = filter(b,a,yIdeDetrend);
+% plot(xIde,z_filtered,'r');
 
 %% Diff
 dt = xIde(2:end) - xIde(1:end-1);
 dy = yIde(2:end) - yIde(1:end-1);
 du = uIde(2:end) - uIde(1:end-1);
-
-if (plotDiff) 
-    figure(3)
-    subplot(2,1,1);
-    % show results
-    title('dy/dt [rad/s^2]');
-    plot(dy./dt,'r');
-    subplot(2,1,2);
-    title('du/dt [us/s]');
-    plot(du./dt,'r');
-end
+% 
+% if (plotDiff) 
+%     figure(3)
+%     subplot(2,1,1);
+%     % show results
+%     title('dy/dt [rad/s^2]');
+%     plot(dy./dt,'r');
+%     subplot(2,1,2);
+%     title('du/dt [us/s]');
+%     plot(du./dt,'r');
+% end
 
 disp('Ts from data');
 mean(dt(1))
@@ -97,7 +97,7 @@ V = arxstruc(ztDetrend,zvDetrend,struc(2,2,1:10));
 FIRModel = impulseest(ztDetrend);
 clf
 h = impulseplot(FIRModel);
-showConfidence(h,3)
+%showConfidence(h,3)
  
 V = arxstruc(ztDetrend,zvDetrend,struc(1:10,1:10,delay));
 nns = selstruc(V)
@@ -121,8 +121,14 @@ compare(ztDetrend,ms,th2)
 %% Manual compare
 
 t = 0:Ts:Ts*size(yOriginal,1)-1;
-[y,t,x] = lsim(ms,yOriginal,t,x0);
+[y,t,x] = lsim(m,yOriginal,t);
+
+% Create iddata Time domain signal
+ddata = iddata(yOriginal,y,Ts)
+plot(ddata)
+
+mTrend = retrend(ddata,T)
 hold on
 plot(t,zOriginal,'r');
 hold on
-plot(t,y,'b');
+plot(t,mTrend.u,'b');

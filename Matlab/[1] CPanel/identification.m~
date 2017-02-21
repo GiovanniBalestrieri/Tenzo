@@ -50,6 +50,8 @@ size(uIde)
 size(t)
 [y,t,x] = lsim(H,uIde',t,0);
 hold on
+plot(t,zOriginal,'r');
+hold on
 plot(t,y,'b');
 
 %% Preparing Training and Validation Sets
