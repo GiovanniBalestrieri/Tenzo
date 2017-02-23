@@ -110,25 +110,74 @@ compare(zvDetrend(1:end),th2,th4);
 
 %% Identifiy linear discrete time model with n4sid
 
+% Training
 [m, x0m] = n4sid(ztDetrend,2,'InputDelay',delay,'Ts',Ts);
 [ms,x0] = n4sid(ztDetrend,1:10,'InputDelay',delay,'Ts',Ts);
+
+% Validation
+
+[mv, x0mv] = n4sid(zvDetrend,2,'InputDelay',delay,'Ts',Ts);
+[msv,x0v] = n4sid(zvDetrend,1:10,'InputDelay',delay,'Ts',Ts);
+
+
+% Complete
+
+[mc, x0mc] = n4sid(zDetrend,2,'InputDelay',delay,'Ts',Ts);
+[msc,x0c] = n4sid(zDetrend,1:10,'InputDelay',delay,'Ts',Ts);
+%% Compare n4Sid trained with TestSet
+
 disp('Comparing ms and arx')
 compare(zvDetrend,ms,m)
-
-%% Compare arx Vs n4Sid
+% Test set
 disp('Comparing ms1 and ms')
-compare(ztDetrend,ms,th2)
+compare(ztDetrend,ms,m)
+% Complete set
+disp('Comparing th2 and ms')
+compare(zDetrend,ms,m)
+%% Compare n4Sid trained with validation set
+
+disp('Comparing ms and arx')
+compare(zvDetrend,msv,mv)
+% Test set
+disp('Comparing ms1 and ms')
+compare(ztDetrend,msv,mv)
+% Complete set
+disp('Comparing th2 and ms')
+compare(zDetrend,msv,mv)
+%% Compare n4Sid trained with Full set
+
+disp('Comparing ms and arx')
+compare(zvDetrend,msc,mc)
+% Test set
+disp('Comparing ms1 and ms')
+compare(ztDetrend,msc,mc)
+% Complete set
+disp('Comparing th2 and ms')
+compare(zDetrend,msc,mc)
+
+plot(zDetrend)
+plot(z)
 %% Manual compare
 
 t = 0:Ts:Ts*size(yOriginal,1)-1;
-[y,t,x] = lsim(m,yOriginal,t);
+y= lsim(m,yOriginal,t);
+
+t = 0:Ts:Ts*size(z,1)-1;
+y= lsim(m,yOriginal,t);
 
 % Create iddata Time domain signal
-ddata = iddata(yOriginal,y,Ts)
-plot(ddata)
-
-mTrend = retrend(ddata,T)
+simulatedDData = iddata(yOriginal,y,Ts)
+plot(simulatedDData)
+%%
+mTrend = retrend(simulatedDData,T)
 hold on
-plot(t,zOriginal,'r');
+plot(zDetrend,'g')
+hold on
+plot(z,'r-')
+reT = retrend(zDetrend,T)
+hold on
+plot(reT,'b*')
+%%
+%plot(t,zOriginal,'r');
 hold on
 plot(t,mTrend.u,'b');

@@ -52,6 +52,8 @@ size(t)
 hold on
 plot(t,y,'b');
 
+% Retrend simulated data
+
 %% Preparing Training and Validation Sets
 
 uOriginal = uIde(2:end);
