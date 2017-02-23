@@ -11,6 +11,7 @@ a = load('errorTenzo.mat')
 %% Prepare Data
 
 timeTenzo = a.IdeDataTimeTenzo;
+timeTenzoSec = timeTenzo*0.001;
 timeVitruvio = a.IdeDataTimeVitruvio;
 yIde = a.IdeDataRoll;
 yIdeEst = a.IdeDataEstRoll;
@@ -37,20 +38,27 @@ plot(uIde);
 
 %% Discrete Transfer function of motors
 clear tf
-Ts_motor = 9 ; %ms
-H = tf(0.0001195,[1 -0.9368],Ts_motor,'InputDelay',8)
-
-step(H);
+Ts_motor = 0.009 ; %ms
+%H = tf(0.0001195,[1 -0.9368],Ts_motor,'InputDelay',8)
+%%
+H = load('estimation/motor87perc.mat')
+Hd = c2d(H.tf1,Ts_motor)
+step(Hd);
 
 timeTenzo = a.IdeDataTimeTenzo;
 size(timeTenzo)
-t = 0:Ts_motor:Ts_motor*size(timeTenzo,1)-1*Ts_motor;
-
+t = 0:Ts_motor:timeTenzo(end);
+size(t)
 size(uIde)
 size(t)
-[y,t,x] = lsim(H,uIde',t,0);
+[y,t,x] = lsim(Hd,uIde',t,0);
+hold on
+subplot(2,1,1)
+plot(t,y,'b');
 hold on
 plot(t,y,'b');
+subplot(2,1,2)
+plot(t,uIde,'b');
 
 % Retrend simulated data
 
