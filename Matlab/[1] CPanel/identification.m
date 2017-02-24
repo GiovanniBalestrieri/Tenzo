@@ -17,7 +17,8 @@ yIde = a.IdeDataRoll;
 yIdeEst = a.IdeDataEstRoll;
 uDelta = a.IdeDataDelta;
 uBase = a.IdeDataThrottle;
-uIde = uDelta + uBase;
+uIdeM1 = uDelta + uBase;
+uIdeM2 = - uDelta + uBase;
 %% Plot Data
 
 figure(11)
@@ -34,7 +35,9 @@ figure(12)
 plot(a.IdeDataTimeTenzo,a.IdeDataDelta);
 
 figure(15)
-plot(uIde);
+plot(uIdeM1,'r');
+hold on 
+plot(uIdeM2,'b');
 
 %% Discrete Transfer function of motors
 clear tf
@@ -45,20 +48,21 @@ H = load('estimation/motor87perc.mat')
 Hd = c2d(H.tf1,Ts_motor)
 step(Hd);
 
-timeTenzo = a.IdeDataTimeTenzo;
-size(timeTenzo)
-t = 0:Ts_motor:timeTenzo(end);
-size(t)
-size(uIde)
-size(t)
-[y,t,x] = lsim(Hd,uIde',t,0);
+t = 0:Ts_motor:Ts_motor*(size(uIdeM1,1)-1);
+
+[yM1,t,x] = lsim(Hd,uIdeM1',t,0);
+[yM2,t,x] = lsim(Hd,uIdeM2',t,0);
 hold on
 subplot(2,1,1)
-plot(t,y,'b');
+plot(t,yM1,'b');
 hold on
-plot(t,y,'b');
+plot(t,yM2,'r');
 subplot(2,1,2)
-plot(t,uIde,'b');
+plot(t,uIdeM1,'b');
+hold on 
+plot(t,uIdeM2,'r');
+
+
 
 % Retrend simulated data
 
