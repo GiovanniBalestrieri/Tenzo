@@ -17,7 +17,8 @@ yIde = a.IdeDataRoll;
 yIdeEst = a.IdeDataEstRoll;
 uDelta = a.IdeDataDelta;
 uBase = a.IdeDataThrottle;
-uIde = uDelta + uBase;
+uIdeM1 = uDelta + uBase;
+uIdeM2 = - uDelta + uBase;
 %% Plot Data
 
 figure(11)
@@ -34,34 +35,83 @@ figure(12)
 plot(a.IdeDataTimeTenzo,a.IdeDataDelta);
 
 figure(15)
-plot(uIde);
+plot(uIdeM1,'r');
+hold on 
+plot(uIdeM2,'b');
 
 %% Discrete Transfer function of motors
 clear tf
 Ts_motor = 0.009 ; %ms
 %H = tf(0.0001195,[1 -0.9368],Ts_motor,'InputDelay',8)
-%%
-H = load('estimation/motor87perc.mat')
-Hd = c2d(H.tf1,Ts_motor)
-step(Hd);
 
-timeTenzo = a.IdeDataTimeTenzo;
-size(timeTenzo)
-t = 0:Ts_motor:timeTenzo(end);
-t = 0:Ts_motor:Ts*(size(inputOriginal,1)-1);
-size(t)
-size(uIde)
-size(t)
-[y,t,x] = lsim(Hd,uIde',t,0);
+%% Prepare simulated output fitting 85%
+
+% Motor dynamics tf1 
+H = load('estimation/motor87perc.mat')
+Hd1 = c2d(H.tf1,Ts_motor)
+
+% Motor dynamics with n4sid
+H = load('estimation/discreteMotortf.mat')
+H = H.mv
+step(Hd1,'b');
+hold on
+step(H,'r');
+
+% Simulate motor output
+t = 0:Ts_motor:Ts_motor*(size(uIdeM1,1)-1);
+
+[yM1,t,x] = lsim(Hd1,uIdeM1',t,0);
+[yM2,t,x] = lsim(Hd1,uIdeM2',t,0);
+[yM3,t,x] = lsim(H,uIdeM1',t);
+[yM4,t,x] = lsim(H,uIdeM2',t);
 hold on
 subplot(2,1,1)
-plot(t,y,'b');
+%plot(t,yM1,'b');
+%hold on
+%plot(t,yM2,'r');
+%hold on
+plot(t,yM3,'r');
 hold on
-plot(t,y,'b');
+plot(t,yM4,'b');
 subplot(2,1,2)
-plot(t,uIde,'b');
+plot(t,uIdeM1,'b');
+hold on 
+plot(t,uIdeM2,'r');
 
-% Retrend simulated data
+%% Convert to torque input signal
+
+% Computing Thrust force. It is the result of vertical forces acting on all
+% blade elements of one propeller
+Radius = 0.115 % m
+Ct = 0.11
+rho = 1.2041 % kg/m^3
+Aprop = pi*Radius^2
+
+%MOTOR 3
+% Convert to RPM
+yM3_rpm= yM3*60
+Thrust_newton_3 = Ct*rho*Aprop*(yM3_rpm).^2*Radius^2
+Thrust_kg_3 = Thrust_newton_3/9.81
+
+
+%MOTOR 4
+% Convert to RPM
+yM4_rpm= yM4*60
+Thrust_newton_4 = Ct*rho*Aprop*(yM4_rpm).^2*Radius^2
+Thrust_kg_4 = Thrust_newton_4/9.81
+
+figure(20)
+title('Thrust in kg')
+plot(Thrust_kg_4,'r')
+hold on 
+plot(Thrust_kg_3,'b')
+grid on
+legend('Motor3','Motor4')
+
+% Computing Torque
+arm = 0.23 %m
+Tau = 
+
 
 %% Preparing Training and Validation Sets
 
