@@ -168,7 +168,7 @@ compare(zDetrend,msc)
 t = 0:Ts:Ts*(size(inputOriginal,1)-1);
 size(t)
 size(inputOriginal)
-y= lsim(msc,inputOriginal,t);
+y= lsim(mv,inputOriginal,t);
 
 plot(y)
 % Create iddata Time domain signal
@@ -184,6 +184,8 @@ hold on
 plot(z,'r-')
 
 legend('Simulated','measured')
+
+save('discreteMotortf.mat','mv')
 %%
 figure(11)
 plot(simulatedDData,'c')
