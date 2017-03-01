@@ -34,6 +34,15 @@ plot(a.IdeDataRoll);
 figure(12)
 plot(a.IdeDataTimeTenzo,a.IdeDataDelta);
 
+m1 = a.IdeDataDelta;
+m2 = -a.IdeDataDelta;
+plot(m1,'b')
+hold on
+plot(m2,'r')
+diff = m1-m2
+figure(30)
+plot(diff)
+
 figure(15)
 plot(uIdeM1,'r');
 hold on 
@@ -78,26 +87,38 @@ plot(t,uIdeM1,'b');
 hold on 
 plot(t,uIdeM2,'r');
 
+
+figure(16)
+subplot(2,1,1)
+plot(t,yM3,'r');
+grid on
+title('Output - Shaft angular velocity [rev/s]');
+subplot(2,1,2)
+plot(t,uIdeM1,'b');
+grid on
+title('Input - pwm [us]');
+
 %% Convert to torque input signal
 
 % Computing Thrust force. It is the result of vertical forces acting on all
 % blade elements of one propeller
 Radius = 0.115 % m
-Ct = 0.11
-rho = 1.2041 % kg/m^3
+Radius_in = 9 % in
+Ct = 0.18
+rho = 1.225 % kg/m^3
 Aprop = pi*Radius^2
 
 %MOTOR 3
 % Convert to RPM
 yM3_rpm= yM3*60
-Thrust_newton_3 = Ct*rho*Aprop*(yM3_rpm).^2*Radius^2
+Thrust_newton_3 = Ct*rho*Aprop*(yM3).^2*Radius^2;
 Thrust_kg_3 = Thrust_newton_3/9.81
 
 
 %MOTOR 4
 % Convert to RPM
 yM4_rpm= yM4*60
-Thrust_newton_4 = Ct*rho*Aprop*(yM4_rpm).^2*Radius^2
+Thrust_newton_4 = Ct*rho*Aprop*(yM4).^2*Radius^2;
 Thrust_kg_4 = Thrust_newton_4/9.81
 
 figure(20)
@@ -108,41 +129,31 @@ plot(Thrust_kg_3,'b')
 grid on
 legend('Motor3','Motor4')
 
+
+figure(21)
+title('Thrust in Newton')
+plot(Thrust_newton_4,'r')
+hold on 
+plot(Thrust_newton_3,'b')
+grid on
+legend('Motor3','Motor4')
+
 % Computing Torque
 arm = 0.23 %m
-Tau = arm*(Thrust_newton_4-Thrust_newton_3)
+Tau1 = arm*(Thrust_newton_4-Thrust_newton_3)
+
+% Oppure
+Tau = arm*Ct*rho*Aprop*Radius^2*((yM4).^2 - (yM3).^2)
 
 
-%% Preparing Training and Validation Sets
-
-uOriginal = uIde(2:end);
-yOriginal = yIde(2:end);
-yEstOriginal = yIdeEst(2:end);
-
-disp('Number of Samples');
-disp(size(uIde,1))
-disp(size(yIde,1))
-disp(size(yIdeEst,1))
-
-iter = ceil(size(uIde,1)*0.3);
-
-uIde = uOriginal(1:iter);
-yIde = yOriginal(1:iter);
-yIdeEst = yEstOriginal(1:iter);
+figure(23)
+plot(Tau1-Tau)
 
 
-disp('Number of Samples');
-disp(size(uIde,1))
-disp(size(yIde,1))
-disp(size(yIdeEst,1))
+%% Identification
+% Computing deltaT for Tenzo and Vitruviano
 
-uVal = uOriginal(iter:end);
-yVal = yOriginal(iter:end);
-yEstVal = yEstOriginal(iter:end);
-
-%% Computing deltaT for Tenzo and Vitruviano
-
-%% Diff
+% Diff
 plotDiff = 0;
 dTtenzo = timeTenzo(2:end) - timeTenzo(1:end-1);
 dTvitruviano = timeVitruvio(2:end) - timeVitruvio(1:end-1);
@@ -164,67 +175,120 @@ dtv = mean(dTvitruviano)
 Ts = dtt;
 
 %% Create time series Y-U data
+sTauTest = size(Tau,1)
+sThetaTest = size(a.IdeDataRoll,1)
 
+sampleTest = sTauTest*0.3
+sampleVal = sTauTest*0.7
 
-% Create Id data
-% zt  Training set
-zt = iddata(yIde,uIde,Ts);
-zt1 = iddata(yIdeEst,uIde,Ts);
+% Test Set
+TauTest = Tau(1:sampleTest)
+ThetaTest = a.IdeDataRoll(1:sampleTest)
 
-% zv Validation set
-zt1 = iddata(yIdeEst,uIde,Ts);
+% Validation Set
+TauVal = Tau(sampleTest+1:sampleVal)
+ThetaVal = a.IdeDataRoll(sampleTest+1:sampleVal)
 
-% Complete Set
-z = iddata(y,z,Ts);
+IOtest = iddata(ThetaTest,TauTest,Ts);
+IOval = iddata(ThetaVal,TauVal,Ts);
+IOcomplete = iddata(a.IdeDataRoll,Tau,Ts);
 
-[ztDetrend, Ttest ]= detrend(zt,0);
-[zt1Detrend, TtestTenzo ]= detrend(zt1,0);
-[zvDetrend, Tvalidation ]= detrend(zv,0);
-%[zDetrend, T ]= detrend(z,0);
+[IOcompleteDetrend, Tio ]= detrend(IOcomplete,0);
+[IOtestDetrend, Tiotest ]= detrend(IOtest,0);
+[IOvalDetrend, Tioval ]= detrend(IOval,0);
 
-delay = delayest(ztDetrend)
-delay1 = delayest(zt1Detrend)
-% estimated delay changes as a function of the model
-delay4 = delayest(zt1Detrend,4,4)
+delay1 = delayest(IOvalDetrend)
+
+delay2 = delayest(IOtestDetrend)
+
+delay3 = delayest(IOcompleteDetrend)
 
 
 
 %% 
 
-V = arxstruc(ztDetrend,zvDetrend,struc(2,2,1:10));
+V = arxstruc(IOtestDetrend,IOvalDetrend,struc(2,2,1:10));
 [nn,Vm] = selstruc(V,0);
 
-FIRModel = impulseest(ztDetrend);
+FIRModel = impulseest(IOtestDetrend);
 clf
 h = impulseplot(FIRModel);
 showConfidence(h,3)
  
-V = arxstruc(ztDetrend,zvDetrend,struc(1:10,1:10,delay));
+V = arxstruc(IOtestDetrend,IOvalDetrend,struc(1:10,1:10,delay));
 nns = selstruc(V)
 
 %% Identifiy linear discrete time model with arx
 
-th2 = arx(ztDetrend,nns);
-[ th4] = arx(ztDetrend,nns);
-compare(zvDetrend(1:end),th2,th4);
+th2 = arx(IOtestDetrend,nns);
+[ th4] = arx(IOtestDetrend,nns);
+compare(IOvalDetrend(1:end),th2,th4);
+compare(IOtestDetrend(1:end),th2,th4);
+compare(IOcompleteDetrend(1:end),th2,th4);
 
 %% Identifiy linear discrete time model with n4sid
 
-[m, x0m] = n4sid(ztDetrend,2,'InputDelay',delay,'Ts',Ts);
-[ms,x0] = n4sid(ztDetrend,1:10,'InputDelay',delay,'Ts',Ts);
+% Training
+[mt, x0t] = n4sid(IOtestDetrend,2,'InputDelay',delay1,'Ts',Ts);
+[mts,x0ts] = n4sid(IOtestDetrend,1:10,'InputDelay',delay1,'Ts',Ts);
+
+
+% Validation
+[mv, x0v] = n4sid(IOvalDetrend,2,'InputDelay',delay1,'Ts',Ts);
+[mvs,x0vs] = n4sid(IOvalDetrend,1:10,'InputDelay',delay1,'Ts',Ts);
+
+
+% Complete
+[mc, x0c] = n4sid(IOcompleteDetrend,2,'InputDelay',delay1,'Ts',Ts);
+[mcs,x0cs] = n4sid(IOcompleteDetrend,1:10,'InputDelay',delay1,'Ts',Ts);
+
+
+%% Compare n4Sid trained with TestSet
+
 figure
-disp('Comparing ms and m')
-compare(ztDetrend,ms,m)
-
-%% Compare arx Vs n4Sid
+disp('Comparing ms and arx')
+compare(IOtestDetrend,mts,mt)
+% Test set
+figure
 disp('Comparing ms1 and ms')
-compare(ztDetrend,ms,th2)
-%% Manual compare
+compare(IOvalDetrend,mts,mt)
+% Complete set
+figure
+disp('Comparing th2 and ms')
+compare(IOcompleteDetrend,mts,mt)
+%% Compare n4Sid trained with validation set
 
-t = 0:Ts:Ts*size(yOriginal,1)-1;
-[y,t,x] = lsim(ms,yOriginal,t,x0);
-hold on
-plot(t,zOriginal,'r');
-hold on
-plot(t,y,'b');
+figure
+disp('Comparing ms and arx')
+compare(IOtestDetrend,mv,mvs)
+% Test set
+figure
+disp('Comparing ms1 and ms')
+compare(IOvalDetrend,mv,mvs)
+% Complete set
+figure
+disp('Comparing th2 and ms')
+compare(IOcompleteDetrend,mv,mvs)
+%% Compare n4Sid trained with Full set
+
+figure
+disp('Comparing ms and arx')
+compare(IOtestDetrend,mcs)
+% Test set
+figure
+disp('Comparing ms1 and ms')
+compare(IOvalDetrend,mcs)
+% Complete set
+figure
+disp('Comparing th2 and ms')
+compare(IOcompleteDetrend,mcs)
+
+%% Manual compare
+% 
+% t = 0:Ts:Ts*size(yOriginal,1)-1;
+% [y,t,x] = lsim(ms,yOriginal,t,x0);
+% hold on
+% plot(t,zOriginal,'r');
+% hold on
+% plot(t,y,'b');
 
