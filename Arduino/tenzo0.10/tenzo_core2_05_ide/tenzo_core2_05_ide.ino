@@ -8,6 +8,10 @@
 // cont_safe = cont
 // cli()
 
+
+// Init Log
+Inertial inertial = Inertial();
+
 // Init User Experience agent Sakura
 Ux sakura;
 
@@ -105,15 +109,16 @@ void setupCommunication()
   }
 }
 
-void setupIMU()
-{ 
-  sixDOF.init(); //init the Acc and Gyro
+void setupIMU() { 
+  inertial.init();
+  //sixDOF.init();
   delay(5);
   if (!sakura.getProcessing())
   {
     Serial.println("[ Ok ] IMU ");
   }
 }
+
 void setupSonar()
 { 
   ux1.init();

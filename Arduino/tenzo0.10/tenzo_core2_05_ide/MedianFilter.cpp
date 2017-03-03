@@ -13,6 +13,10 @@
 #include "MedianFilter.h"
 
 	
+MedianFilter::MedianFilter() {
+  // Test nothing to initialize  
+}
+
 
 MedianFilter::MedianFilter(byte size, int seed)
 {

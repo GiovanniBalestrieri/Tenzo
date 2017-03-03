@@ -7,7 +7,8 @@
 class MedianFilter
 {
 public:
-	MedianFilter(byte size, int seed);
+ MedianFilter();
+ MedianFilter(byte size, int seed);
 	int in( volatile int value);
 	int out(); 
 	//void printData();		// used for debugging

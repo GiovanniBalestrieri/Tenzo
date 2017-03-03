@@ -7,6 +7,14 @@
 
 #ifndef Ctx_h
   #define Ctx_h
+
+  int ACC_X_AXIS_PIN = 0;
+  int ACC_Y_AXIS_PIN = 1;
+  int ACC_Z_AXIS_PIN = 2;
+  int gyroBiasSamples = 500;
+  int gyroSensibility = 2000; // 500 // 250 [deg/s]
+
+  float alphaA= 0.993, alphaW = 0.8;  
   
   
   boolean printSerial = true;
@@ -28,8 +36,8 @@
   // Filters
   boolean removeSpikesNumerically = false;
   // ISR
-  volatile boolean filterGyro = true;
-  volatile boolean filterAcc = true;
+  boolean filterGyro = true;
+  boolean filterAcc = true;
   
   
   

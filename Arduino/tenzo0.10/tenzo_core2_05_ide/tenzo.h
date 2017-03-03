@@ -14,14 +14,13 @@
 #include "tenzo_timer.h"
 #include "MedianFilter.h"
 #include "FreeSixIMU.h"
-//#include "FIMU_ADXL345.h"
-//#include "FIMU_ITG3200.h"
 #include "Scheduler.h"
 #include "Sonar.h"
 #include "RTClib.h"
 #include "Logs.h"
 #include "MelodyUtils.h"
 #include "Pitches.h"
+#include "Inertial.h"
 
 volatile int bestId;
 
