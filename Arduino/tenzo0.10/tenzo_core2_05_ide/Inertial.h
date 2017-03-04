@@ -19,6 +19,11 @@ extern boolean filterGyro;
 extern boolean filterAcc;
 extern float alphaA;
 extern float alphaW;
+extern const float pi;
+extern const float k_compl_filter_acc;
+extern const float k_compl_filter_gyro;
+extern unsigned long timerInertial1;
+extern unsigned long timerInertial2;
 
 class Inertial
 {
@@ -43,6 +48,7 @@ class Inertial
     float getRollRaw();
     float getPitchRaw();
     float getYawRaw();
+    void getYawPitchRoll(float *);
 
     // Accelerometer
     void getAcc();
@@ -52,6 +58,7 @@ class Inertial
     float getAccXFilt();
     float getAccYFilt();
     float getAccZFilt();
+    void estAngleFromAcc();
 
     // Gyroscope
     float getAngularVel(int axis);    
@@ -70,16 +77,19 @@ class Inertial
     void wFilter(float val[]);
     void accFilter(float val[]);
 
-  
+    unsigned long dt;
   
    
   private:
     float _phi;
     float _phiEst;
+    float _phiAcc;
     float _psi;
     float _psiEst;
+    float _psiAcc;
     float _theta;
     float _thetaEst;
+    float _thetaAcc;
     float _wx;
     float _wy;
     float _wz;

@@ -15,7 +15,15 @@
   int gyroSensibility = 2000; // 500 // 250 [deg/s]
 
   float alphaA= 0.993, alphaW = 0.8;  
-  
+
+  const float pi = 3.1415;
+
+  // Complementary Filter gains
+  const float k_compl_filter_acc = 0.025;
+  const float k_compl_filter_gyro = 0.975;
+
+  unsigned long timerInertial1= 0;
+  unsigned long timerInertial2= 0;
   
   boolean printSerial = true;
   boolean processing = false;

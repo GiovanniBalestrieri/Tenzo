@@ -58,6 +58,8 @@ Inertial::Inertial(){
   _gyroBiasY = 0;
   _gyroBiasZ = 0;
 
+  dt = 0;
+
   // Init MedianFilters
   extern MedianFilter medianGyroX;
   extern MedianFilter medianGyroY;
@@ -78,6 +80,38 @@ void Inertial::init(){
   // Init Magnetometer
   
 }
+
+/**
+ * Returns phi, theta, psi (roll, pitch,yaw) estimates
+ */
+ void Inertial::getYawPitchRoll(float *angles) {
+
+    dt = micros() - dt;
+    // update phiAcc and thetaAcc
+    this->estAngleFromAcc();
+
+    // Estimate Angles 
+    angles[0] = (angles[0]  + _wx*(float)dt/1000000.0)*k_compl_filter_gyro + _phiAcc*k_compl_filter_acc;
+    angles[1] = (angles[1]  + _wy*(float)dt/1000000.0)*k_compl_filter_gyro + _thetaAcc*k_compl_filter_acc;  
+    dt = micros();
+ }
+
+ /**
+ * Returns phi, theta, psi (roll, pitch,yaw) estimates
+ */
+ void Inertial::estAngleFromAcc(){ 
+  if (filterAcc)
+  {
+    _phiAcc = (atan2(-_aF[0],-_aF[2])) * RAD_TO_DEG;
+    _thetaAcc = (atan2(-_aF[1],-_aF[2])) * RAD_TO_DEG;
+  }
+  else 
+  {
+    _phiAcc = (atan2(-_ax,-_az)) * RAD_TO_DEG;
+    _thetaAcc = (atan2(-_ay,-_az)) * RAD_TO_DEG;
+  }
+ }
+
 
 /**
  * Initialize Magnetometer
