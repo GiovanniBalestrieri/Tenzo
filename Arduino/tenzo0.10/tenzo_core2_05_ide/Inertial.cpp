@@ -61,9 +61,9 @@ Inertial::Inertial(){
   dt = 0;
 
   // Init MedianFilters
-  extern MedianFilter medianGyroX;
-  extern MedianFilter medianGyroY;
-  extern MedianFilter medianGyroZ;
+   MedianFilter medianGyroX(3,0);
+   MedianFilter medianGyroY(3,0);
+   MedianFilter medianGyroZ(3,0);
 }
 
 /*
@@ -73,9 +73,11 @@ void Inertial::init(){
 
   // Init Accelerometer
   this->setupAccelerometer();
+  Serial.println("[ Ok ] Acc");
 
   // Init Gyroscope
   this->setupGyroscope();
+  Serial.println("[ Ok ] Gyro");
 
   // Init Magnetometer
   
@@ -188,6 +190,7 @@ void Inertial::setupL3G4200D(int scale) {
  * Computes Gyro bias
  */
 void Inertial::calcGyroBias() {
+  
   for (int i = 0; i<gyroBiasSamples; i++)
   {
     delay(5);
@@ -195,8 +198,8 @@ void Inertial::calcGyroBias() {
     _gyroBiasTempX = _gyroBiasTempX + _wx;
     _gyroBiasTempY = _gyroBiasTempY + _wy;
     _gyroBiasTempZ = _gyroBiasTempZ + _wz;
+   
   }
-
   _gyroBiasX = _gyroBiasTempX / gyroBiasSamples;
   _gyroBiasY = _gyroBiasTempY / gyroBiasSamples;
   _gyroBiasZ = _gyroBiasTempZ / gyroBiasSamples;
@@ -205,16 +208,6 @@ void Inertial::calcGyroBias() {
 }
 
 void Inertial::getAngularVel() {
-  byte xMSB;
-  byte xLSB;
-  int xC;
-  byte yMSB;
-  byte yLSB;
-  int yC;
-  byte zMSB;
-  byte zLSB;
-  int zC;
-  
   // Get Data if available
   byte statusflag = readRegister(L3G4200D_Address, STATUS_REG);
   while(!(statusflag & ZDA_REG) && (statusflag & ZOR_REG)&&!(statusflag & YDA_REG) && (statusflag & YOR_REG)&& !(statusflag & XDA_REG) && (statusflag & XOR_REG)) 
@@ -226,20 +219,23 @@ void Inertial::getAngularVel() {
   xMSB = readRegister(L3G4200D_Address, 0x29);
   xLSB = readRegister(L3G4200D_Address, 0x28);
   xC = ((xMSB << 8) | xLSB);
-  medianGyroX.in(xC);
-  _wx = medianGyroX.out();    
+  //medianGyroX.in(xC);
+  //_wx = medianGyroX.out();    
+    _wx = xC;
 
   yMSB = readRegister(L3G4200D_Address, 0x2B);
   yLSB = readRegister(L3G4200D_Address, 0x2A);
   yC = ((yMSB << 8) | yLSB);
-  medianGyroY.in(yC);
-  _wy = medianGyroY.out();    
+  //medianGyroY.in(yC);
+  //_wy = medianGyroY.out();     
+    _wy = yC;
 
   zMSB = readRegister(L3G4200D_Address, 0x2D);
   zLSB = readRegister(L3G4200D_Address, 0x2C);
   zC = ((zMSB << 8) | zLSB);
-  medianGyroZ.in(zC);
-  _wz = medianGyroZ.out();    
+  //medianGyroZ.in(zC);
+  //_wz = medianGyroZ.out();  
+    _wz = zC;   
   
   if (_initializedGyroCalib)
     this->removeBiasAndScaleGyroData();
@@ -251,7 +247,20 @@ void Inertial::getAngularVel() {
       _wF[2] = _wz;
       wFilter(_wF);
    }
+
 }
+
+/**
+ * Returns angular velocities in a float array
+ */
+ /*
+void Inertial::getGyroValues(float *vals[],int n){
+  *vals = new float[n];
+  (*vals)[0] = _wx;
+  (*vals)[1] = _wy;
+  (*vals)[2] = _wz;
+}
+*/
 
 
 void Inertial::wFilter(float val[])

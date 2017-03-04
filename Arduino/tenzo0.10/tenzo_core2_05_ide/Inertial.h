@@ -25,6 +25,10 @@ extern const float k_compl_filter_gyro;
 extern unsigned long timerInertial1;
 extern unsigned long timerInertial2;
 
+#define XAXIS 0
+#define YAXIS 1
+#define ZAXIS 2
+
 class Inertial
 {
   public:
@@ -62,6 +66,7 @@ class Inertial
 
     // Gyroscope
     float getAngularVel(int axis);    
+    //void getGyroValues(float *x[],int);    
     void getAngularVel();    
     void setupL3G4200D(int);
     boolean getGyroCalibrationStatus();
@@ -78,6 +83,17 @@ class Inertial
     void accFilter(float val[]);
 
     unsigned long dt;
+    
+    byte xMSB;
+    byte xLSB;
+    int xC;
+    byte yMSB;
+    byte yLSB;
+    int yC;
+    byte zMSB;
+    byte zLSB;
+    int zC;
+  
   
    
   private:

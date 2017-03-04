@@ -44,7 +44,7 @@
   // Filters
   boolean removeSpikesNumerically = false;
   // ISR
-  boolean filterGyro = true;
+  boolean filterGyro = false;
   boolean filterAcc = true;
   
   

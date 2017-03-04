@@ -19,7 +19,7 @@ Ux sakura;
 Propulsion tenzoProp(sakura.getM(1),sakura .getM(2),sakura.getM(3),sakura.getM(4));
 
 // Init FreeSixIMU object
-FreeSixIMU sixDOF = FreeSixIMU();
+//FreeSixIMU sixDOF = FreeSixIMU();
 
 // Init Sonar
 Sonar ux1 = Sonar();
@@ -44,9 +44,9 @@ NonLinearPid cascadeAltPid(consKpCascAlt, consKiCascAlt, consKdCascAlt);
 
         
 // Median Filter
-MedianFilter medianGyroX(3,0);
-MedianFilter medianGyroY(3,0);
-MedianFilter medianGyroZ(3,0);
+//MedianFilter medianGyroX(3,0);
+//MedianFilter medianGyroY(3,0);
+//MedianFilter medianGyroZ(3,0);
 
 void setupTimerInterrupt()
 {
@@ -94,19 +94,21 @@ void setupCtx()
 void setupCommunication()
 {
   Wire.begin();
-  Serial.begin(115200); 
+  Serial.begin(57600); 
   //Serial.begin(sakura.getBaudRate()); 
   if (!sakura.getProcessing())
   {
     Serial.println("[ Ok ] InitCOM ");
   }
-  
+
+  /*
   Serial1.begin(115200); 
   //Serial.begin(sakura.getBaudRate()); 
   if (!sakura.getProcessing())
   {
     Serial1.println("[ Ok ] InitCOM1 ");
   }
+  */
 }
 
 void setupIMU() { 
@@ -208,7 +210,7 @@ void getYPR()
     // Preemptable section
     //sei();            
       // [max] 9800 us [avg] 4450 us
-      sixDOF.getYawPitchRoll(angles);   // 
+    inertial.getYawPitchRoll(angles);   // 
     //cli();
     
     contEulerSamples++; 
@@ -607,16 +609,14 @@ ISR(TIMER3_COMPB_vect) // #ISR
 
 void acquireGyroYPR() 
 {
+  inertial.getAngularVel();
+
+  /*
   // #DEBUG
   //sixDOF.getYawPitchRollGyro(angles,wVal);
   sixDOF.getValues(inertiaValues);  
   sixDOF.getAngles(angles);    
 
-
-  /*
-  Serial.print("\n\nwVal:\t [alpha] ");    
-  Serial.print(inertiaValues[3]);
-  */
   
   for (int i = 0; i<3;i++)
   {
@@ -624,23 +624,11 @@ void acquireGyroYPR()
     wVal[i] = inertiaValues[3+i];
   }
 
-  /*
-  Serial.print("\t [original] ");    
-  Serial.print(wVal[0]);
-  */
   if (sakura.getGyroFilterFlag())
-  {    
-    /*
-     Serial.print("\twVal:\t [b] ");    
-    Serial.print(wVal[0]);
-    */
+  {      
     medianGyroX.in(wVal[0]);
     wVal[0] = medianGyroX.out(); 
 
-     /*
-    Serial.print("\t [a] ");
-    Serial.println(wVal[0]);
-    */
    
     medianGyroY.in(wVal[1]);
     wVal[1] = medianGyroY.out();   
@@ -658,25 +646,14 @@ void acquireGyroYPR()
     {
       aF[i] = inertiaValues[i];
     }
-  }   
+  }  
+
+   */
   
 }
 
-void acquireGyro() // ISR
-{     
-  sixDOF.getGyroValues(wVal);
-  
-  if (sakura.getGyroFilterFlag())
-  {    
-    medianGyroX.in(wVal[0]);
-    wVal[0] = medianGyroX.out();   
-   
-    medianGyroY.in(wVal[1]);
-    wVal[1] = medianGyroY.out();   
-   
-    medianGyroZ.in(wVal[2]);
-    wVal[2] = medianGyroZ.out();    
-  }   
+void acquireGyro() {
+  inertial.getAngularVel();
 }
 
 void SerialRoutine()
@@ -1825,7 +1802,7 @@ void printSerialAngleFus()
   Serial.println(",z");
 }
 
-void controlCascade()  // ISR
+void controlCascade() 
 {
   if (enablePid)
   {
