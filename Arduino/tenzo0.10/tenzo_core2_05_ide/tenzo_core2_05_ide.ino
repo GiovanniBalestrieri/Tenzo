@@ -226,9 +226,8 @@ void getAngVelYPR()
     eulerTimer = micros();
     
     //sei();            
-      // [max]  6570 us [avg] 6290 us -> 155 Hz
-    acquireGyroYPR();
-    
+      // [max]  4800 us [avg] 5330 us -> 155 Hz
+    acquireGyroAcc();
     inertial.getYawPitchRoll(angles);   
     //cli();
     
@@ -343,6 +342,7 @@ void loop() {
 
     case(3):
       // Task 3
+      delay(1);
       Serial.println("\t\t\t\t\t\t\t\t\t\tGPS");
       scheduler.jobCompletedById(bestId);
       break;
@@ -371,41 +371,8 @@ void loop() {
       scheduler.jobCompletedById(bestId);
       Serial.println("\t\t\t\t\t\t\t\t\t\tLOG");
       break;     
-  } 
-  
-  // #LOOP
-  if (timerSec >= MAIN_LOOP_DISP_PERIOD)
-  {
-    if (sakura.getPrintTimers())
-    {
-      for(int i = 1; i<=scheduler.num_tasks ;i++) {
-        if (scheduler.isTaskAlive(i)) {
-          Serial.print("T"); Serial.print(i);
-          Serial.print("\t(");
-          Serial.print(scheduler.getTaskPeriod(i));
-          Serial.print(",\te,");
-          Serial.print(scheduler.getTaskPriority(i));
-          Serial.print(")\tJob queue:  ");
-          Serial.print(scheduler.getJobReleased(i));
-          //Serial.print("\tValid:  ");
-          //Serial.print(scheduler.isTaskValid(i));
-          //Serial.print("\tActive:  ");
-          //Serial.print(scheduler.isTaskActive(i));
-          Serial.print("\t");
-          Serial.println(scheduler.getTaskLabel(i));
-        }
-      }
-    }
+  }  
     
-    computeAverageExecTime();
-    
-    UXRoutine();
-    
-    resetCounters();
-    
-    secRoutine = micros();
-  }
-  
 }
 
 
@@ -609,50 +576,9 @@ ISR(TIMER3_COMPB_vect) // #ISR
   digitalWrite(pinInit, LOW);
 }
 
-void acquireGyroYPR() 
-{
+void acquireGyroAcc() {
   inertial.getAngularVel();
-  inertial.getAcc();
-
-  /*
-  // #DEBUG
-  //sixDOF.getYawPitchRollGyro(angles,wVal);
-  sixDOF.getValues(inertiaValues);  
-  sixDOF.getAngles(angles);    
-
-  
-  for (int i = 0; i<3;i++)
-  {
-    rawAcc[i] = inertiaValues[i];
-    wVal[i] = inertiaValues[3+i];
-  }
-
-  if (sakura.getGyroFilterFlag())
-  {      
-    medianGyroX.in(wVal[0]);
-    wVal[0] = medianGyroX.out(); 
-
-   
-    medianGyroY.in(wVal[1]);
-    wVal[1] = medianGyroY.out();   
-   
-    medianGyroZ.in(wVal[2]);
-    wVal[2] = medianGyroZ.out();    
-  }   
-
-  if (sakura.getAccFilterFlag())
-  {    
-    aFilter(inertiaValues); 
-
-    // Copy arrays only if needed
-    for (int i = 0; i<3;i++)
-    {
-      aF[i] = inertiaValues[i];
-    }
-  }  
-
-   */
-  
+  inertial.getAcc();  
 }
 
 void acquireGyro() {
@@ -661,9 +587,34 @@ void acquireGyro() {
 
 void SerialRoutine()
 {
-  
-         printSerialAngleFus();
   serialTimer = micros();
+
+  // #LOOP
+  if (timerSec >= MAIN_LOOP_DISP_PERIOD) {
+    if (sakura.getPrintTimers()) {
+      for(int i = 1; i<=scheduler.num_tasks ;i++) {
+        if (scheduler.isTaskAlive(i)) {
+          Serial.print("T"); Serial.print(i);
+          Serial.print("\t(");
+          Serial.print(scheduler.getTaskPeriod(i));
+          Serial.print(",\te,");
+          Serial.print(scheduler.getTaskPriority(i));
+          Serial.print(")\tJob queue:  ");
+          Serial.print(scheduler.getJobReleased(i));
+          Serial.print("\t");
+          Serial.println(scheduler.getTaskLabel(i));
+        }
+      }
+    }
+    
+    computeAverageExecTime();
+    
+    UXRoutine();
+    
+    resetCounters();
+    
+    secRoutine = micros();
+  }
   
   if (Serial.available())
   {
@@ -1427,6 +1378,7 @@ void printTimersSched() {
       
       // Print Samples rate: [sample/sec] \t execTime \t wcet
       //ISR
+      Serial.println();
       Serial.print("t,ISR: ");
       Serial.print(countISR);
       Serial.print("\t");
@@ -1491,8 +1443,6 @@ void printTimersSched() {
         Serial.println(OutputCascPitchW);
       }
       
-      //Serial.println(",z");
-      Serial.println();
     }
 }
 
