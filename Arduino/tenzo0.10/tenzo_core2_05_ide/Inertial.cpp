@@ -253,14 +253,17 @@ void Inertial::getAngularVel() {
 /**
  * Returns angular velocities in a float array
  */
- /*
-void Inertial::getGyroValues(float *vals[],int n){
-  *vals = new float[n];
-  (*vals)[0] = _wx;
-  (*vals)[1] = _wy;
-  (*vals)[2] = _wz;
+float Inertial::getAngularVel(int axis){
+  float res;
+  if (axis == XAXIS)
+     res = _wx;
+  else if (axis == YAXIS)
+     res = _wy;
+  else if (axis == ZAXIS)
+     res = _wz;
+  return res;
 }
-*/
+
 
 
 void Inertial::wFilter(float val[])

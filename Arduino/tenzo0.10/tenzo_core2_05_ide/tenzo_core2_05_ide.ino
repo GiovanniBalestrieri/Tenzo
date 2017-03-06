@@ -1703,12 +1703,22 @@ void protocol1()
 void printOmega()
 {
   Serial.print("o,");
+  Serial.print(inertial.getAngularVel(XAXIS));
+  Serial.print(",");
+  Serial.print(inertial.getAngularVel(YAXIS));
+  Serial.print(",");
+  Serial.print(inertial.getAngularVel(ZAXIS));
+  Serial.println(",z");
+
+  /*
+  Serial.print("o,");
   Serial.print(wVal[0]);
   Serial.print(",");
   Serial.print(wVal[1]);
   Serial.print(",");
   Serial.print(wVal[2]);
   Serial.println(",z");
+  */
 }
 
 void printAcc()
