@@ -20,8 +20,8 @@ extern boolean filterAcc;
 extern float alphaA;
 extern float alphaW;
 extern const float pi;
-extern const float k_compl_filter_acc;
-extern const float k_compl_filter_gyro;
+//extern const float k_compl_filter_acc;
+//extern const float k_compl_filter_gyro;
 extern unsigned long timerInertial1;
 extern unsigned long timerInertial2;
 
@@ -48,6 +48,8 @@ class Inertial
 
     float getRollEst();
     float getPitchEst();
+    float getRollEstAcc();
+    float getPitchEstAcc();
     float getYawEst();
     float getRollRaw();
     float getPitchRaw();

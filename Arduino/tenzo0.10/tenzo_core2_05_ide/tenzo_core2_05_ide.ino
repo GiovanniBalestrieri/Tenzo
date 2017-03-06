@@ -94,7 +94,7 @@ void setupCtx()
 void setupCommunication()
 {
   Wire.begin();
-  Serial.begin(57600); 
+  Serial.begin(115200); 
   //Serial.begin(sakura.getBaudRate()); 
   if (!sakura.getProcessing())
   {
@@ -228,6 +228,8 @@ void getAngVelYPR()
     //sei();            
       // [max]  6570 us [avg] 6290 us -> 155 Hz
     acquireGyroYPR();
+    
+    inertial.getYawPitchRoll(angles);   
     //cli();
     
     contEulerSamples++; 
@@ -610,6 +612,7 @@ ISR(TIMER3_COMPB_vect) // #ISR
 void acquireGyroYPR() 
 {
   inertial.getAngularVel();
+  inertial.getAcc();
 
   /*
   // #DEBUG
@@ -658,6 +661,8 @@ void acquireGyro() {
 
 void SerialRoutine()
 {
+  
+         printSerialAngleFus();
   serialTimer = micros();
   
   if (Serial.available())
@@ -1725,6 +1730,7 @@ void printAcc()
 {
   if (!sakura.getAccFilterFlag())
   {
+    /*
     Serial.print("a,");
     Serial.print(rawAcc[0]);
     Serial.print(",");
@@ -1732,9 +1738,26 @@ void printAcc()
     Serial.print(",");
     Serial.print(rawAcc[2]);
     Serial.println(",z");
+    */
+    
+    Serial.print("a,");
+    Serial.print(inertial.getAccX());
+    Serial.print(",");
+    Serial.print(inertial.getAccY());
+    Serial.print(",");
+    Serial.print(inertial.getAccZ());
+    Serial.println(",z");
   }
   else
   {
+    Serial.print("a,");
+    Serial.print(inertial.getAccXFilt());
+    Serial.print(",");
+    Serial.print(inertial.getAccYFilt());
+    Serial.print(",");
+    Serial.print(inertial.getAccZFilt());
+    Serial.println(",z");
+    /*
     Serial.print("a,");
     Serial.print(aF[0]);
     Serial.print(",");
@@ -1742,6 +1765,7 @@ void printAcc()
     Serial.print(",");
     Serial.print(aF[2]);
     Serial.println(",z");
+    */
   }
   
   /*
@@ -1809,6 +1833,12 @@ void printSerialAngleFus()
   Serial.print(angles[1]);
   Serial.print(",");
   Serial.print(angles[2]);
+  /*
+  Serial.print(",Acc Roll\t");
+  Serial.print(inertial.getRollEstAcc());
+  Serial.print(",Acc Roll\t");
+  Serial.print(inertial.getPitchEstAcc());
+  */
   Serial.println(",z");
 }
 

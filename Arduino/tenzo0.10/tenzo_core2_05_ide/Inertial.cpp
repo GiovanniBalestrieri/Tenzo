@@ -41,6 +41,11 @@ int yRawMax = 272;
 int zRawMin = 419;
 int zRawMax = 288;
 
+
+  // Complementary Filter gains
+  const float k_compl_filter_acc = 0.025;
+  const float k_compl_filter_gyro = 0.975;
+
 /*
  * Constructor: 
  *              Loads configuration values from ctx
@@ -113,6 +118,7 @@ void Inertial::init(){
     _thetaAcc = (atan2(-_ay,-_az)) * RAD_TO_DEG;
   }
  }
+
 
 
 /**
@@ -335,4 +341,64 @@ void Inertial::getAcc() {
       accFilter(_aF);
    }
 }
+
+/**
+ * Get filtered Accelerometer's values - X Axis
+ */
+float Inertial::getAccXFilt() {
+  return _aF[0];
+}
+
+/**
+ * Get filtered Accelerometer's values - Y Axis
+ */
+float Inertial::getAccYFilt() {
+  return _aF[1];
+}
+
+/**
+ * Get filtered Accelerometer's values - Z Axis
+ */
+float Inertial::getAccZFilt() {
+  return _aF[2];
+}
+
+
+/**
+ * Get  Accelerometer's values - X Axis
+ */
+float Inertial::getAccX() {
+  return _ax;
+}
+
+/**
+ * Get  Accelerometer's values - X Axis
+ */
+float Inertial::getAccY() {
+  return _ay;
+}
+
+/**
+ * Get  Accelerometer's values - Z Axis
+ */
+float Inertial::getAccZ() {
+  return _az;
+}
+
+/**
+ * Get  Accelerometer's values - Z Axis
+ */
+float Inertial::getRollEstAcc() {
+  return _phiAcc;
+}
+
+
+/**
+ * Get  Accelerometer's values - Z Axis
+ */
+float Inertial::getPitchEstAcc() {
+  return _thetaAcc;
+}
+
+ 
 
