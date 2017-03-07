@@ -342,7 +342,7 @@ void loop() {
 
     case(3):
       // Task 3
-      delay(1);
+      computeSignal();
       Serial.println("\t\t\t\t\t\t\t\t\t\tGPS");
       scheduler.jobCompletedById(bestId);
       break;
@@ -616,14 +616,33 @@ void SerialRoutine()
     secRoutine = micros();
   }
   
+  if (test) {
+    
+      Serial.print("y,");
+      Serial.print(signalTimer);
+      Serial.print(",");
+      Serial.print(tenzoProp.getThrottle());
+      Serial.print(",");
+      Serial.print(currentDelta);  
+      Serial.print(",");
+      Serial.print(estXAngle);  
+      // Added status pre temrinator
+      if (last) {
+        Serial.println(",S,z");
+      } else {
+        Serial.println(",N,z");
+      }     
+  }
+  
+  
   if (Serial.available())
   {
       char t = Serial.read();
       
-      //if (t == '1')
-      //  tenzoProp.stopAll();      
-      if (t == 'c')
-      {
+      if (t == '1') {
+        Serial.println("Data Acquisition Started");
+        test = true; 
+      } else if (t == 'c') {
         // Serial communication        
         Serial.println("K");
         sendStatesRemote = true;
