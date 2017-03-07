@@ -67,7 +67,7 @@ void computeSignal() {
       //Serial.println("Tested");
       test = false;
       firstTest = true;
-      /*
+      
       Serial.print("y,");
       Serial.print(signalTimer);
       Serial.print(",");
@@ -77,7 +77,7 @@ void computeSignal() {
       Serial.print(",");
       Serial.print(estXAngle);  
       Serial.println(",S,z");
-      */
+      
       signalTimer = 0;
       //land();
     }

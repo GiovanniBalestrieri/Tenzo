@@ -13,7 +13,7 @@
 #include "FlightParams.h"
 #include "tenzo_timer.h"
 #include "MedianFilter.h"
-#include "FreeSixIMU.h"
+//#include "FreeSixIMU.h"
 #include "Scheduler.h"
 #include "Sonar.h"
 #include "RTClib.h"

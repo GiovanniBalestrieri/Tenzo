@@ -616,8 +616,7 @@ void SerialRoutine()
     secRoutine = micros();
   }
   
-  if (test) {
-    
+  if (test) {    
       Serial.print("y,");
       Serial.print(signalTimer);
       Serial.print(",");
@@ -626,12 +625,7 @@ void SerialRoutine()
       Serial.print(currentDelta);  
       Serial.print(",");
       Serial.print(estXAngle);  
-      // Added status pre temrinator
-      if (last) {
-        Serial.println(",S,z");
-      } else {
-        Serial.println(",N,z");
-      }     
+      Serial.println(",N,z");
   }
   
   

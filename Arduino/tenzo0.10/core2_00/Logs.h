@@ -8,7 +8,7 @@
 #include "logPaths.h"
   
 #include <SD.h>
-#include <RTClib.h>
+#include "RTClib.h"
 
 extern const char logPath[],wcetPath[],warningPath[],errorPath[];
 
