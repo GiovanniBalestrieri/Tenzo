@@ -42,7 +42,7 @@ int readChar2;
  unsigned long start=0, signalTimer=0;
  float currentDelta=0.0f;
 
- int MAX_SIGNAL_DELTA = 200, MIN_SIGNAL_DELTA = 0;
+ int MAX_SIGNAL_DELTA = 250, MIN_SIGNAL_DELTA = 0;
 
 
 
