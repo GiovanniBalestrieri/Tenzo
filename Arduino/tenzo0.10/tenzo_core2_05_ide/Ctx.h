@@ -8,6 +8,11 @@
 #ifndef Ctx_h
   #define Ctx_h
 
+
+
+  #define LOGGER_OFF
+  #define RTC_OFF
+  
   int ACC_X_AXIS_PIN = 0;
   int ACC_Y_AXIS_PIN = 1;
   int ACC_Z_AXIS_PIN = 2;

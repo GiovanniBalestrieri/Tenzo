@@ -16,8 +16,15 @@
 //#include "FreeSixIMU.h"
 #include "Scheduler.h"
 #include "Sonar.h"
-#include "RTClib.h"
-#include "Logs.h"
+
+#ifndef RTC_OFF
+  #include "RTClib.h"
+#endif
+
+#ifndef LOGGER_OFF
+  #include "Logs.h"
+#endif
+
 #include "MelodyUtils.h"
 #include "Pitches.h"
 #include "Inertial.h"

@@ -36,4 +36,14 @@ int k3ReadInt;
 float readPropVal,readIntVal,readDerVal,readSetVal;
 int readChar2;
 
+
+// Identification variables
+ boolean test=false, testing=false, firstTest =true;
+ unsigned long start=0, signalTimer=0;
+ float currentDelta=0.0f;
+
+ int MAX_SIGNAL_DELTA = 200, MIN_SIGNAL_DELTA = 0;
+
+
+
 #endif

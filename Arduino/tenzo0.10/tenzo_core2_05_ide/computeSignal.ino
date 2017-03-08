@@ -1,14 +1,13 @@
 
- boolean test=false, testing=false, firstTest =true;
- unsigned long start=0, signalTimer=0;
- float currentDelta=0.0f;
-
- int MAX_SIGNAL_DELTA = 200, MIN_SIGNAL_DELTA = 0;
 
 
 void computeSignal() {
 
+  signalComputeTimer = micros();
+  
   if (test) {
+
+    
     if (!initialized){
       initialize();
     }
@@ -100,7 +99,17 @@ void computeSignal() {
       tenzoProp.setSpeeds(tenzoProp.getThrottle(), 0, currentDelta, 0, 0);
     
     }  
+
+    
+    
   }
+  contSignalRoutine++;
+  signalComputeTimer = micros() - signalComputeTimer;
+  
+    if (maxsignalTimer <= signalComputeTimer)
+      maxsignalTimer = signalComputeTimer;
+  
+  signalTimeTot = signalTimeTot + signalComputeTimer;
   
 }
 

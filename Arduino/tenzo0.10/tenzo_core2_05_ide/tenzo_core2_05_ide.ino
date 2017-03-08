@@ -25,12 +25,17 @@ Propulsion tenzoProp(sakura.getM(1),sakura .getM(2),sakura.getM(3),sakura.getM(4
 Sonar ux1 = Sonar();
 
 // Init RTC
-RTC_DS1307 RTC;
-DateTime now;
+#ifndef RTC_OFF
+  RTC_DS1307 RTC;
+  DateTime now;
+#endif        
+
 
 // Init Log
-Logs logger = Logs();
-        
+#ifndef LOGGER_OFF
+  Logs logger = Logs();
+#endif        
+
 // Init scheduler with MAX_TASKS
 Scheduler scheduler = Scheduler(MAX_TASKS);
 
@@ -145,6 +150,8 @@ void setupPinOut()
   }
 }
 
+
+#ifndef RTC_OFF
 void setupRTC()
 {
   RTC.begin();
@@ -155,7 +162,10 @@ void setupRTC()
     Serial.println("[ OK ] RTC");
   }
 }
+#endif
 
+
+#ifndef LOGGER_OFF
 void setupLog()
 {
   boolean tmp;
@@ -168,6 +178,7 @@ void setupLog()
       Serial.println("[ KO ] SDCARD\nContinuing without log:");
   }
 }
+#endif
 
 void setupPropulsion()
 {
@@ -187,11 +198,15 @@ void setup()
   setupCommunication();
   setupIMU();
   setupSonar();
-  setupRTC();
+  #ifndef RTC_OFF
+    setupRTC();
+  #endif
   setupTimerInterrupt();  
   setupCtx();  
   setupPropulsion();
-  setupLog();   
+  #ifndef LOGGER_OFF
+    setupLog();   
+  #endif
   sakura.welcome();
   setupScheduler();
 
@@ -292,6 +307,7 @@ void sonarRoutine()
   sonarTimeTot = sonarTimeTot + sonarTimer;
 }
 
+#ifndef RTC_OFF
 void getDateTimeRTC()
 {
   rtcTimer = micros();
@@ -309,7 +325,10 @@ void getDateTimeRTC()
   }
   rtcTimeTot = rtcTimeTot + rtcTimer;
 }
+#endif
 
+
+#ifndef LOGGER_OFF
 void logRoutine()
 {
   if (newCrossThreshold)
@@ -318,6 +337,7 @@ void logRoutine()
     newCrossThreshold = false;
   }
 }
+#endif
 
 void loop() {  
   timerSec = micros() - secRoutine;
@@ -343,7 +363,7 @@ void loop() {
     case(3):
       // Task 3
       computeSignal();
-      Serial.println("\t\t\t\t\t\t\t\t\t\tGPS");
+      //Serial.println("\t\t\t\t\t\t\t\t\t\tGPS");
       scheduler.jobCompletedById(bestId);
       break;
       
@@ -361,13 +381,18 @@ void loop() {
       
     case(6):
       // Task 6 !!! FP !! Dummy
-      getDateTimeRTC();
+      
+      #ifndef RTC_OFF
+        getDateTimeRTC();
+      #endif
       scheduler.jobCompletedById(bestId);
       break;  
          
     case(7):
       // Task 7 !!! DP !! LOG
-      logRoutine();
+      #ifndef LOGGER_OFF
+        logRoutine();
+      #endif
       scheduler.jobCompletedById(bestId);
       Serial.println("\t\t\t\t\t\t\t\t\t\tLOG");
       break;     
@@ -423,6 +448,13 @@ void computeAverageExecTime()
       serialTimeTot = serialTimeTot/contSerialRoutine;
     else 
       serialTimeTot = -999;
+
+      
+    // Compute average SerialRoutine time
+    if (contSignalRoutine >  0)
+      signalTimeTot = signalTimeTot/contSignalRoutine;
+    else 
+      signalTimeTot = -999;
         
     
     // Compute average SonarRoutine time
@@ -444,7 +476,8 @@ void resetCounters()
     contCalc=0; 
     countCtrlCalc=0;
     countServoAction=0;  
-    contSerialRoutine=0;    
+    contSerialRoutine=0;   
+    contSignalRoutine=0;    
     contGyroSamples=0;     
     contSonarRoutine=0;     
     contRtcRoutine=0;     
@@ -457,6 +490,7 @@ void resetCounters()
     sonarTimeTot = 0;
     rtcTimeTot = 0;
     countISR = 0;
+    signalTimeTot = 0;
 }
 
 void calcAngle() // #ISR
@@ -624,7 +658,7 @@ void SerialRoutine()
       Serial.print(",");
       Serial.print(currentDelta);  
       Serial.print(",");
-      Serial.print(estXAngle);  
+      Serial.print(angles[0]);  
       Serial.println(",N,z");
   }
   
@@ -986,7 +1020,10 @@ void SerialRoutine()
       }         
       else if (t == '.')
       {
-        printDate();
+        
+        #ifndef RTC_OFF
+          printDate();
+        #endif
       }         
       else if (t == ':')
       {
@@ -1392,21 +1429,24 @@ void printTimersSched() {
       // Print Samples rate: [sample/sec] \t execTime \t wcet
       //ISR
       Serial.println();
-      Serial.print("t,ISR: ");
+      Serial.print("\nt,ISR: ");
       Serial.print(countISR);
       Serial.print("\t");
       Serial.print(isrTimeTot);
       Serial.print("\tMax ");
       Serial.print(maxisrTimer);
-      
+
+      /*
       Serial.print(",\nCtrl: ");
       Serial.print(countCtrlCalc);
       Serial.print("\t");
       Serial.print(controlTimeTot);
       Serial.print("\t Max");
       Serial.print(maxcontrolTimer);
+
+      */
       
-      Serial.print(",\nGyro: ");
+      Serial.print(",\nIMU+Ctrl: ");
       Serial.print(contGyroSamples);
       Serial.print("\t");
       Serial.print(gyroTimeTot);
@@ -1419,10 +1459,18 @@ void printTimersSched() {
       Serial.print(servoTimeTot);
       Serial.print("\tMax ");
       Serial.print(maxservoTimer);
+      
+      
+      Serial.print(",\nSignal: ");
+      Serial.print(contSignalRoutine);
+      Serial.print("\t");
+      Serial.print(signalTimeTot);
+      Serial.print("\tMax ");
+      Serial.print(maxsignalTimer);
 
       if (SONAR)
       {
-        Serial.print(",\nSonar: ");
+        Serial.print("\nSonar: ");
         Serial.print(contSonarRoutine);
         Serial.print("\t");
         Serial.print(sonarTimeTot);
@@ -1432,7 +1480,7 @@ void printTimersSched() {
       
       if (RTC_ON)
       {
-        Serial.print(",\nRTC:\t ");
+        Serial.print("\nRTC:\t ");
         Serial.print(contRtcRoutine);
         Serial.print("\t");
         Serial.print(rtcTimeTot);
@@ -1440,12 +1488,12 @@ void printTimersSched() {
         Serial.print(maxrtcTimer);
       }
       
-      Serial.print(",\nSerial: ");
+      Serial.print("\nSerial: ");
       Serial.print(contSerialRoutine);
       Serial.print("\t");
       Serial.print(serialTimeTot);
       Serial.print("\tMax ");
-      Serial.println(maxserialTimer);
+      Serial.print(maxserialTimer);
       
       if (enablePid)
       {
@@ -1453,7 +1501,7 @@ void printTimersSched() {
         Serial.print(OutputCascRollW);
         // Print    timeservo: 
         Serial.print(",\t");        
-        Serial.println(OutputCascPitchW);
+        Serial.print(OutputCascPitchW);
       }
       
     }
@@ -2002,6 +2050,7 @@ void changePidState(boolean cond)
   }
 }
 
+#ifndef RTC_OFF
 void printDate()
 {
   //We print the day
@@ -2025,4 +2074,5 @@ void printDate()
   Serial.print(sonarTimer);
   Serial.println();
 }
+#endif
 
