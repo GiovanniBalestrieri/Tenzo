@@ -10,7 +10,7 @@ volatile long encoderValue = 0;
 
 volatile  int MSB = 0;
 volatile int LSB = 0;
-double angle;
+volatile double angle;
 
 boolean matlab = false;
 boolean requestedSerial = false;
@@ -39,15 +39,14 @@ void setup() {
 
 void loop()
 { 
-  convertTicksToAngle();
+  //convertTicksToAngle();
   serialRoutine();
   //bluRoutine();
-  /*
+  
   if (identifying){
     printAngles();
-    delay(10);
-  }
-  */
+    delay(9);
+  }  
 }
 
 /*
@@ -151,6 +150,8 @@ void updateEncoder()
     encoderValue --;
 
   lastEncoded = encoded; //store this value for next time
+
+  convertTicksToAngle();
 }
 
 /*

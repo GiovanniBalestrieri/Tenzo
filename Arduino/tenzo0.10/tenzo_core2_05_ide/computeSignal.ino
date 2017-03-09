@@ -15,7 +15,7 @@ void computeSignal() {
     if (firstTest) {
       Serial.println("start");
       // TODO remove
-      delay(2000);
+      //delay(2000);
       start = millis();
       firstTest = false;
     }    

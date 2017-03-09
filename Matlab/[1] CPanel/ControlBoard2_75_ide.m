@@ -379,12 +379,13 @@ matlabAdd = 2;
 portWin = 'Com3';
 portUnix = '/dev/rfcomm0';
 portUnixVitruvianoBlu = '/dev/rfcomm2';
-portUnixVitruvianoSerial = '/dev/ttyACM1';
+portUnixVitruvianoSerial = '/dev/ttyACM0';
 useBlue = 0;
 xbeeBR = 115200;
 vitruvianoBR = 9600;
 % buffer size should be the same as the one specified on the Arduino side
-inputBuffSize = 47+1;
+inputBuffSizeProtocol = 47+1;
+inputBuffSize = 100;
 outputBuffSize = 31;
 terminator = 'CR';
 tag = 'Quad';
@@ -446,9 +447,10 @@ langIta = 'en';
 gyroFreq = 0.2;
 accFreq = 0.2;
 angleFreq = 0.05;
+ideFreq = 0.01; % 10 ms
 
 buf_len = 100;
-buf_len_ide = 500;
+buf_len_ide = 1000;
 index = 1:buf_len;
 indexIde = 1:buf_len_ide;
 indexPerf = 1:totStackPerf;
@@ -541,7 +543,7 @@ gyroTimer = timer('ExecutionMode','FixedRate','Period',gyroFreq,'TimerFcn',{@gra
 angleTimer = timer('ExecutionMode','FixedRate','Period',angleFreq,'TimerFcn',{@graphAngles});
 
 
-ideTimer = timer('ExecutionMode','FixedRate','Period',angleFreq,'TimerFcn',{@graphIde});
+ideTimer = timer('ExecutionMode','FixedRate','Period',ideFreq,'TimerFcn',{@graphIde});
                    
 accTimer = timer('ExecutionMode','FixedRate','Period',accFreq,'TimerFcn',{@graphAcc});
   
@@ -713,6 +715,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     function startPerfAngCallback(~,~,~)
         fh = figure(10);
         askedPerf = true;
+        fullIdeCounter = 0;
         anglesRequestedVitruviano = true;
         
         % if graph angle timer is not active
@@ -720,6 +723,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             
             disp('starting Performance Test');
             sendVitruvianoMess('1')
+            % #bea
+            
             sendNMess('1')            
             start(ideTimer);
             
@@ -730,15 +735,14 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     end
 
     function savePerfAngCallback(~,~,~)
-        disp('Stop and save Performance Test');
         
         askedPerf = false;        
         anglesRequestedVitruviano = false;
         
         % Compute min Sq Err
-        err = immse(IdeDataRoll,IdeDataEstRoll)
-        set(handles.minSqErrVal,'Visible','on');
-        set(handles.minSqErrVal,'String',err);
+        %err = immse(IdeDataRoll,IdeDataEstRoll)
+        %set(handles.minSqErrVal,'Visible','on');
+        %set(handles.minSqErrVal,'String',err);
         % Save result and array
         boom = [IdeDataDelta;IdeDataThrottle;IdeDataTimeTenzo;IdeDataTimeVitruvio;IdeDataEstRoll;IdeDataRoll];
         
@@ -750,9 +754,11 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         if strcmp('on',get(ideTimer,'Running'))
             stop(ideTimer);
         end
-        
-        % Stop data acquisition Vitruviano
+       
+        % Force Stop data acquisition Vitruviano
         sendVitruvianoMess('2')
+        
+        disp('Stop and save Performance Test');
         
         % #bea
     end
@@ -2127,7 +2133,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 set(vitruviano, 'TimeOut', 10);  
                 set(vitruviano,'Terminator','LF');
                 % One message long buffer
-                set(vitruviano, 'InputBufferSize',50)
+                set(vitruviano, 'InputBufferSize',100)
                 % Open the serial
                 fopen(vitruviano);    
             elseif (exist('vitruviano','var'))                
@@ -2147,8 +2153,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 vitruvioConnectionRequested = true;
             end          
             % Wireless communication
-            timerVitruviano = timer('ExecutionMode','FixedRate','Period',0.1,...
-                'TimerFcn',{@storeDataFromSerialVitruviano});%,'ErrorFcn', vitCallback);
+            timerVitruviano = timer('ExecutionMode','FixedRate','Period',0.01,...
+                'TimerFcn',{@storeDataFromSerialVitruviano});
             try
                 start(timerVitruviano);  
             catch
@@ -2259,8 +2265,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             
             % Testing Wireless communication
             if isempty(timerXbee)
-                timerXbee = timer('ExecutionMode','FixedRate','Period',0.1,...
-                    'TimerFcn',{@storeDataFromSerial},'ErrorFcn', xbeeCallback);
+                timerXbee = timer('ExecutionMode','FixedRate','Period',0.01,...
+                    'TimerFcn',{@storeDataFromSerial});%,'ErrorFcn', xbeeCallback);
                 try
                     start(timerXbee);  
                 catch
@@ -2449,26 +2455,26 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     function graphIde(obj,event,~)
         % To debug uncomment the following line
         %disp('Angles');
-        anglesRequested = true;
+        %anglesRequested = true;
         anglesRequestedVitruviano = true;
         
         % Requests data only if previous ones have been received and plotted
         
-        if estReceived || anglesRequested
+        if estReceived || anglesRequestedVitruviano
             if (serial2)
                 % #bea
-               cmdVitruvio = 'a';
-               cmdTenzo = 't';
+               %cmdVitruvio = 'a';
+               %cmdTenzo = 't';
                
                % Request data to Tenzo if connected
-               if tenzo
-                sendNMess(cmdTenzo);
-               end
+%                if tenzo
+%                 sendNMess(cmdTenzo);
+%                end
                
                % Request data to Vitruviano if connected
-               if (vitruvio && anglesRequestedVitruviano)
-                    sendVitruvianoMess(cmdVitruvio);
-               end
+%                if (vitruvio && anglesRequestedVitruviano)
+%                     sendVitruvianoMess(cmdVitruvio);
+%                end
             end
         else
             disp('Angles not yet received ');
@@ -2820,13 +2826,15 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
     end
 
     function storeDataFromSerial(~,~,~)
-        while (get(xbee, 'BytesAvailable')~=0)
-            if (serial2)
-                serialProtocol2();
-            elseif (serial1)
-                serialProtocol1();
-            elseif (serial0)
-                serialProtocol0();
+        if (exist('xbee','var') || ~isempty(xbee))
+            while (get(xbee, 'BytesAvailable')~=0)
+                if (serial2)
+                    serialProtocol2();
+                elseif (serial1)
+                    serialProtocol1();
+                elseif (serial0)
+                    serialProtocol0();
+                end
             end
         end
     end 
@@ -2930,7 +2938,10 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                         IdeDataRoll = [ IdeDataRoll(2:end) ; phiVitruvio ];
                         %thetadata = [ thetadata(2:end) ; double(thetaVitruvio) ]; 
                         IdeDataTimeVitruvio = [ IdeDataTimeVitruvio(2:end) ; timeVitruvio]; 
-                         
+                        
+                        % notify received requested angle
+                        anglesRequestedVitruviano = false;
+                        
                         if askedPerf
                            fullStackCounter = fullStackCounter + 1;                      
                         end                        
