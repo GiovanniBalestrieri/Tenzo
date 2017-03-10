@@ -36,7 +36,7 @@ void computeSignal() {
       }
     } else */
     float boom = 0.45;
-    float boom2 = 0.75;
+    float boom2 = 0.85;
     if (signalTimer>= 3000 && signalTimer <= 10000) {
       if (signalTimer<4000) {
         // [ 3s , 4s]        
@@ -44,12 +44,12 @@ void computeSignal() {
       } else if (signalTimer<5000 && signalTimer >= 4000) {
         currentDelta = MIN_SIGNAL_DELTA;
       } if (signalTimer<6000 && signalTimer >= 5500)  {        
-        currentDelta = -(MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/3;
+        currentDelta = -(MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
       } else if (signalTimer<10000 && signalTimer >= 6000) {
         currentDelta = MIN_SIGNAL_DELTA;
       } 
     } else if (signalTimer<30000 && signalTimer >= 10000) {
-        currentDelta = (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*boom2/2 * sin(0.3*signalTimer*3.1415/180)  + (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*boom/2;
+        currentDelta = (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*boom2 * sin(0.3*signalTimer*3.1415/180)  + (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*boom/2;
     } else if (signalTimer < 2000) {
         currentDelta = MIN_SIGNAL_DELTA;
     }
@@ -76,6 +76,8 @@ void computeSignal() {
       Serial.print(currentDelta);  
       Serial.print(",");
       Serial.print(estXAngle);  
+      Serial.print(",");
+      Serial.print(angleEnc);
       Serial.println(",S,z");
       
       signalTimer = 0;

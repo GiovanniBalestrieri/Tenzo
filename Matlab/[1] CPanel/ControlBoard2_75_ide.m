@@ -611,17 +611,21 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             end
         end        
         if val == hTabs(6)
-            if ~tenzo && vitruvio
-                disp('Connection required!');
-                warndlg('Connection required to acquire data','Attention');
-            end
-            if ~vitruvio && tenzo
-                disp('Vitruviano not connected. Please connect first');                
-                warndlg('No connections detected','Vitruviano');
-            end
-            if ~vitruvio && ~tenzo                
+%             if ~tenzo && vitruvio
+%                 disp('Connection required!');
+%                 warndlg('Connection required to acquire data','Attention');
+%             end
+%             if ~vitruvio && tenzo
+%                 disp('Vitruviano not connected. Please connect first');                
+%                 warndlg('No connections detected','Vitruviano');
+%             end
+%             if ~vitruvio && ~tenzo                
+%                 disp('No connection detected. Please connect first');                
+%                 warndlg('No connections detected','Vitruviano & Tenzo');
+%             end
+            if ~tenzo                
                 disp('No connection detected. Please connect first');                
-                warndlg('No connections detected','Vitruviano & Tenzo');
+                warndlg('No connections detected',' Tenzo');
             end
         end
     end
@@ -722,11 +726,11 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         if strcmp('off',get(ideTimer,'Running'))
             
             disp('starting Performance Test');
-            sendVitruvianoMess('1')
+            %sendVitruvianoMess('1')
             % #bea
             
             sendNMess('1')            
-            start(ideTimer);
+            %start(ideTimer);
             
         end
         
@@ -756,7 +760,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
         end
        
         % Force Stop data acquisition Vitruviano
-        sendVitruvianoMess('2')
+        %sendVitruvianoMess('2')
         
         disp('Stop and save Performance Test');
         
@@ -2149,14 +2153,14 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             if (serial2)
                 cmd = 'c';
                 %sendNMess(cmd);
-                sendVitruvianoMess(cmd);
+                %sendVitruvianoMess(cmd);
                 vitruvioConnectionRequested = true;
             end          
             % Wireless communication
             timerVitruviano = timer('ExecutionMode','FixedRate','Period',0.01,...
                 'TimerFcn',{@storeDataFromSerialVitruviano});
             try
-                start(timerVitruviano);  
+                %start(timerVitruviano);  
             catch
                 disp('TimerVitruviano');
                 disp '******** InstrumentSubscription ERROR *********'
@@ -3197,13 +3201,14 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                     elseif tag == 'y'
                         % #bea
                         disp('Identification:');
-                        [R,sec,throttle,delta,xx,status,Terminator] = strread(mess,'%s%f%f%f%f%s%s',1,'delimiter',',');
+                        [R,sec,delta,xx,enc,status,Terminator] = strread(mess,'%s%f%f%f%f%s%s',1,'delimiter',',');
 
                         if strcmp(status,'N')
                             disp(mess);
                             IdeDataTimeTenzo = [ IdeDataTimeTenzo(2:end) ; sec ];
-                            IdeDataThrottle = [ IdeDataThrottle(2:end) ; throttle ];
+                            %IdeDataThrottle = [ IdeDataThrottle(2:end) ; throttle ];
                             IdeDataDelta = [ IdeDataDelta(2:end) ; delta]; 
+                            IdeDataRoll = [ IdeDataRoll(2:end) ; enc ];
                             IdeDataEstRoll = [ IdeDataEstRoll(2:end) ; xx]; 
 
                             % Second incrementation to track stored data & Plot
@@ -3213,7 +3218,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                                figure(fh)  
                                ax1 = subplot(2,1,1);  
                                plot(ax1,indexIde,IdeDataEstRoll,'b','LineWidth',2);
-                               hold off
+                               
+                               plot(ax1,indexIde,IdeDataRoll,'r','LineWidth',2);
                                grid on;                         
 
                                % compute error

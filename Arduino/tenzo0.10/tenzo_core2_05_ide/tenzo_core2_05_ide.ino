@@ -9,6 +9,14 @@
 // cli()
 
 
+
+volatile int lastEncoded = 0;
+volatile long encoderValue = 0;
+
+volatile  int MSB = 0;
+volatile int LSB = 0;
+volatile double angleEnc;
+
 // Init Log
 Inertial inertial = Inertial();
 
@@ -192,8 +200,51 @@ void setupScheduler()
   scheduler.createTasks(); 
 }
 
+void setupEncoders(){
+  int encoderPin1 = 2 /* pin 2 */, encoderPin2 = 19;
+  pinMode(digitalPinToInterrupt(encoderPin1), INPUT); 
+  pinMode(digitalPinToInterrupt(encoderPin2), INPUT);
+
+  digitalWrite(digitalPinToInterrupt(encoderPin1), HIGH); //turn pullup resistor on
+  digitalWrite(digitalPinToInterrupt(encoderPin2), HIGH); //turn pullup resistor on
+
+  //call updateEncoder() when any high/low changed seen
+  //on interrupt 0 (pin 2), or interrupt 1 (pin 3) 
+  attachInterrupt(digitalPinToInterrupt(encoderPin1), updateEncoder, CHANGE); 
+  attachInterrupt(digitalPinToInterrupt(encoderPin2), updateEncoder, CHANGE);
+
+}
+
+
+void updateEncoder() { // ISR
+  
+  MSB = digitalRead(2); //MSB = most significant bit
+  LSB = digitalRead(19); //LSB = least significant bit
+  
+  int encoded = (MSB << 1) |LSB; //converting the 2 pin value to single number
+  int sum  = (lastEncoded << 2) | encoded; //adding it to the previous encoded value
+
+  if(sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011) 
+    encoderValue ++;
+  if(sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000) 
+    encoderValue --;
+
+  lastEncoded = encoded; //store this value for next time
+
+  convertTicksToAngle();
+}
+
+
+#define RESOLUTION 128
+void convertTicksToAngle()
+{
+   angleEnc = (float) encoderValue*360/(RESOLUTION*4);  
+}
+
+
 void setup() 
 {
+  setupEncoders();
   setupPinOut();
   setupCommunication();
   setupIMU();
@@ -649,17 +700,22 @@ void SerialRoutine()
     
     secRoutine = micros();
   }
+
   
   if (test) {    
       Serial.print("y,");
       Serial.print(signalTimer);
+      /*
       Serial.print(",");
       Serial.print(tenzoProp.getThrottle());
+      */
       Serial.print(",");
       Serial.print(currentDelta);  
       Serial.print(",");
       Serial.print(angles[0]);  
-      Serial.println(",N,z");
+      Serial.print(",");
+      Serial.print(angleEnc);
+      Serial.println("N,z");
   }
   
   
@@ -670,6 +726,7 @@ void SerialRoutine()
       if (t == '1') {
         Serial.println("Data Acquisition Started");
         test = true; 
+        encoderValue = 0;
       } else if (t == 'c') {
         // Serial communication        
         Serial.println("K");

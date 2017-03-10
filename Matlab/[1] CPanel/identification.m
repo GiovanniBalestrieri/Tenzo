@@ -48,6 +48,30 @@ plot(uIdeM1,'r');
 hold on 
 plot(uIdeM2,'b');
 
+%% Computing deltaT for Tenzo and Vitruviano
+
+% Diff
+plotDiff = 0;
+dTtenzo = timeTenzo(2:end) - timeTenzo(1:end-1);
+dTvitruviano = timeVitruvio(2:end) - timeVitruvio(1:end-1);
+
+if (plotDiff) 
+%     figure(3)
+%     subplot(2,1,1);
+%     % show results
+%     title('dy/dt [rad/s^2]');
+%     plot(dy./dt,'r');
+%     subplot(2,1,2);
+%     title('du/dt [us/s]');
+%     plot(du./dt,'r');
+end
+
+disp('Ts from data')
+dtt = mean(dTtenzo)
+dtv = mean(dTvitruviano)
+Ts = dtt;
+
+
 %% Discrete Transfer function of motors
 clear tf
 Ts_motor = 0.009 ; %ms
@@ -60,6 +84,7 @@ H = load('estimation/motor87perc.mat')
 Hd1 = c2d(H.tf1,Ts_motor)
 
 % Motor dynamics with n4sid
+figure(21)
 H = load('estimation/discreteMotortf.mat')
 H = H.mv
 step(Hd1,'b');
@@ -73,6 +98,8 @@ t = 0:Ts_motor:Ts_motor*(size(uIdeM1,1)-1);
 [yM2,t,x] = lsim(Hd1,uIdeM2',t,0);
 [yM3,t,x] = lsim(H,uIdeM1',t);
 [yM4,t,x] = lsim(H,uIdeM2',t);
+
+figure(22)
 hold on
 subplot(2,1,1)
 %plot(t,yM1,'b');
@@ -151,28 +178,7 @@ plot(Tau1-Tau)
 
 
 %% Identification
-% Computing deltaT for Tenzo and Vitruviano
 
-% Diff
-plotDiff = 0;
-dTtenzo = timeTenzo(2:end) - timeTenzo(1:end-1);
-dTvitruviano = timeVitruvio(2:end) - timeVitruvio(1:end-1);
-
-if (plotDiff) 
-%     figure(3)
-%     subplot(2,1,1);
-%     % show results
-%     title('dy/dt [rad/s^2]');
-%     plot(dy./dt,'r');
-%     subplot(2,1,2);
-%     title('du/dt [us/s]');
-%     plot(du./dt,'r');
-end
-
-disp('Ts from data')
-dtt = mean(dTtenzo)
-dtv = mean(dTvitruviano)
-Ts = dtt;
 
 %% Create time series Y-U data
 sTauTest = size(Tau,1)
@@ -197,7 +203,7 @@ IOcomplete = iddata(a.IdeDataRoll,Tau,Ts);
 [IOtestDetrend, Tiotest ]= detrend(IOtest,0);
 [IOvalDetrend, Tioval ]= detrend(IOval,0);
 
-delay1 = delayest(IOvalDetrend)
+delay = delayest(IOvalDetrend)
 
 delay2 = delayest(IOtestDetrend)
 
