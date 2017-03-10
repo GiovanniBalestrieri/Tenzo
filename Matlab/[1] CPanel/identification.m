@@ -258,7 +258,7 @@ compare(IOvalDetrend,mts,mt)
 % Complete set
 figure
 disp('Comparing th2 and ms')
-compare(IOcompleteDetrend,mts,mt)
+compare(IOcompleteDetrend,mt)
 %% Compare n4Sid trained with validation set
 
 figure
