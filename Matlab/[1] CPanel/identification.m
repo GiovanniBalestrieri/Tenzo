@@ -3,7 +3,7 @@ clc
 %% Load data
 
 %a = load('ideTest1.mat')
-a = load('errorTenzo.mat')
+a = load('errorTenzoFirst.mat')
 
 
 
@@ -21,12 +21,8 @@ uIdeM1 = uDelta + uBase;
 uIdeM2 = - uDelta + uBase;
 %% Plot Data
 
-figure(11)
-plot(a.IdeDataTimeTenzo,a.IdeDataEstRoll);
-
 figure(13)
-plot(a.IdeDataTimeVitruvio,a.IdeDataRoll);
-
+plot(a.IdeDataTimeTenzo,a.IdeDataRoll,'r',a.IdeDataTimeTenzo,a.IdeDataEstRoll,'b');
 
 figure(14)
 plot(a.IdeDataRoll);
@@ -84,12 +80,13 @@ H = load('estimation/motor87perc.mat')
 Hd1 = c2d(H.tf1,Ts_motor)
 
 % Motor dynamics with n4sid
-figure(21)
+
 H = load('estimation/discreteMotortf.mat')
 H = H.mv
-step(Hd1,'b');
-hold on
-step(H,'r');
+% figure(21)
+% step(Hd1,'b');
+% hold on
+% step(H,'r');
 
 % Simulate motor output
 t = 0:Ts_motor:Ts_motor*(size(uIdeM1,1)-1);
@@ -204,7 +201,7 @@ IOcomplete = iddata(a.IdeDataRoll,Tau,Ts);
 [IOvalDetrend, Tioval ]= detrend(IOval,0);
 
 delay = delayest(IOvalDetrend)
-
+delay1 = delay;
 delay2 = delayest(IOtestDetrend)
 
 delay3 = delayest(IOcompleteDetrend)
@@ -213,24 +210,24 @@ delay3 = delayest(IOcompleteDetrend)
 
 %% 
 
-V = arxstruc(IOtestDetrend,IOvalDetrend,struc(2,2,1:10));
-[nn,Vm] = selstruc(V,0);
-
-FIRModel = impulseest(IOtestDetrend);
-clf
-h = impulseplot(FIRModel);
-showConfidence(h,3)
- 
-V = arxstruc(IOtestDetrend,IOvalDetrend,struc(1:10,1:10,delay));
-nns = selstruc(V)
-
-%% Identifiy linear discrete time model with arx
-
-th2 = arx(IOtestDetrend,nns);
-[ th4] = arx(IOtestDetrend,nns);
-compare(IOvalDetrend(1:end),th2,th4);
-compare(IOtestDetrend(1:end),th2,th4);
-compare(IOcompleteDetrend(1:end),th2,th4);
+% V = arxstruc(IOtestDetrend,IOvalDetrend,struc(2,2,1:10));
+% [nn,Vm] = selstruc(V,0);
+% 
+% FIRModel = impulseest(IOtestDetrend);
+% clf
+% h = impulseplot(FIRModel);
+% showConfidence(h,3)
+%  
+% V = arxstruc(IOtestDetrend,IOvalDetrend,struc(1:10,1:10,delay));
+% nns = selstruc(V)
+% 
+% %% Identifiy linear discrete time model with arx
+% 
+% th2 = arx(IOtestDetrend,nns);
+% [ th4] = arx(IOtestDetrend,nns);
+% compare(IOvalDetrend(1:end),th2,th4);
+% compare(IOtestDetrend(1:end),th2,th4);
+% compare(IOcompleteDetrend(1:end),th2,th4);
 
 %% Identifiy linear discrete time model with n4sid
 

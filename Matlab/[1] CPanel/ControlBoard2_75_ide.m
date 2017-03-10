@@ -381,11 +381,11 @@ portUnix = '/dev/rfcomm0';
 portUnixVitruvianoBlu = '/dev/rfcomm2';
 portUnixVitruvianoSerial = '/dev/ttyACM0';
 useBlue = 0;
-xbeeBR = 115200;
+xbeeBR = 57600;
 vitruvianoBR = 9600;
 % buffer size should be the same as the one specified on the Arduino side
 inputBuffSizeProtocol = 47+1;
-inputBuffSize = 100;
+inputBuffSize = 200;
 outputBuffSize = 31;
 terminator = 'CR';
 tag = 'Quad';
@@ -450,7 +450,7 @@ angleFreq = 0.05;
 ideFreq = 0.01; % 10 ms
 
 buf_len = 100;
-buf_len_ide = 1000;
+buf_len_ide = 1300;
 index = 1:buf_len;
 indexIde = 1:buf_len_ide;
 indexPerf = 1:totStackPerf;
@@ -542,11 +542,9 @@ gyroTimer = timer('ExecutionMode','FixedRate','Period',gyroFreq,'TimerFcn',{@gra
 
 angleTimer = timer('ExecutionMode','FixedRate','Period',angleFreq,'TimerFcn',{@graphAngles});
 
-
 ideTimer = timer('ExecutionMode','FixedRate','Period',ideFreq,'TimerFcn',{@graphIde});
                    
 accTimer = timer('ExecutionMode','FixedRate','Period',accFreq,'TimerFcn',{@graphAcc});
-  
 
 %% Delete all serial connections
 delete(instrfindall)
@@ -3218,8 +3216,9 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                                figure(fh)  
                                ax1 = subplot(2,1,1);  
                                plot(ax1,indexIde,IdeDataEstRoll,'b','LineWidth',2);
-                               
+                               hold on
                                plot(ax1,indexIde,IdeDataRoll,'r','LineWidth',2);
+                               hold off
                                grid on;                         
 
                                % compute error

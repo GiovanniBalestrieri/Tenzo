@@ -70,7 +70,7 @@ void Propulsion::calibrateOnce()
    	servo4.writeMicroseconds(MIN_SIGNAL);
   
   	//Serial.println("Done!");
-  	throttle = 790;
+  	throttle = IDLE_THRESHOLD;
 }
 
 void Propulsion::calibrateAgain()

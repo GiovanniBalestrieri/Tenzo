@@ -3,7 +3,7 @@
   #define ControlPid_h
 
 // number of ticks to wait before actuation
-volatile int ctrlPeriod = 6;
+volatile int ctrlPeriod = 8;
 
 float angles[3];
 float inertiaValues[6];

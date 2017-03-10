@@ -107,7 +107,7 @@ void setupCtx()
 void setupCommunication()
 {
   Wire.begin();
-  Serial.begin(115200); 
+  Serial.begin(baudRate); 
   //Serial.begin(sakura.getBaudRate()); 
   if (!sakura.getProcessing())
   {
@@ -715,43 +715,41 @@ void SerialRoutine()
       Serial.print(angles[0]);  
       Serial.print(",");
       Serial.print(angleEnc);
-      Serial.println("N,z");
+      Serial.println(",N,z");
   }
   
   
-  if (Serial.available())
-  {
+  if (Serial.available()) {
       char t = Serial.read();
       
       if (t == '1') {
         Serial.println("Data Acquisition Started");
-        test = true; 
+        test = true;
         encoderValue = 0;
       } else if (t == 'c') {
         // Serial communication        
         Serial.println("K");
         sendStatesRemote = true;
       }      
-      if (t == 'X')
-      {
+      if (t == 'X') {
         // Serial communication        
         Serial.println("X");
         sendStatesRemote = true;
       } 
-      else if (t == 'r')
+      else if (t == 'r') {
         tenzoProp.resetMotors();
-      else if (t == 'q')
-      {
+        tenzoProp.calibrateOnce();
+        tenzoProp.init(); 
+      }
+      else if (t == 'q') {
         tenzoProp.setThrottle(tenzoProp.getThrottle() + 10);
-        if (!sakura.getProcessing())
-        {
+        if (!sakura.getProcessing()) {
           Serial.print("m,");
           Serial.print(tenzoProp.getThrottle());
           Serial.println(",z");
         }
       }
-      else if (t == 'a')
-      {
+      else if (t == 'a') {
         tenzoProp.setThrottle(tenzoProp.getThrottle() - 10);
         
         if (!sakura.getProcessing())
@@ -762,96 +760,80 @@ void SerialRoutine()
         }
       }
       // PID values modification from remote
-      else if (t == 'u')
-      { 
+      else if (t == 'u') { 
          k1ReadChar = Serial.read();
          // Read Pid values Requested csv format
          if (k1ReadChar == 44)
          {
            readChar2 = Serial.parseInt();
            
-           if (readChar2 == 31)
-           {
+           if (readChar2 == 31) {
              // show roll Cons
              sendPidVal(0,0);           
            }
-           else if (readChar2 == 32)
-           {
+           else if (readChar2 == 32) {
              // show roll agg              
              sendPidVal(0,1);              
            }
-           else if (readChar2 == 33)
-           {
+           else if (readChar2 == 33) {
              // w Roll cons 
              sendPidVal(3,0);  
            } 
-           else if (readChar2 == 34)
-           {
+           else if (readChar2 == 34) {
              // show pitch cons  
              sendPidVal(1,0);              
            }
-           else if (readChar2 == 35)
-           {
+           else if (readChar2 == 35) {
              // pitch agg        
              sendPidVal(1,1);      
            }
-           else if (readChar2 == 36)
-           {           
+           else if (readChar2 == 36) {           
              // w pitch cons 
              sendPidVal(4,0); 
            }  
-           else if (readChar2 == 37)
-           {
+           else if (readChar2 == 37) {
              // yaw cons
              sendPidVal(2,0);   
            }
-           else if (readChar2 == 38)
-           {
+           else if (readChar2 == 38) {
              // yaw agg        
              sendPidVal(2,1);      
            }
-           else if (readChar2 == 39)
-           {
+           else if (readChar2 == 39) {
              // w yaw cons
              sendPidVal(5,0); 
            } 
            // Setting pid values from remote #pid #remote
            // u,4,kp,ki,kd,set,z
-           else if (readChar2 == 4)
-           {
+           else if (readChar2 == 4) {
              // comma
              kReadChar = Serial.read();
-             if (kReadChar == 44)
-             {
+             if (kReadChar == 44) {
                //Serial.println("KODIO");
                // read mode
                k3ReadInt = Serial.parseInt();
                //Serial.println(k3);
                
                kReadChar = Serial.read();
-               if (kReadChar == 44)
-               {
+               if (kReadChar == 44) {
                  // read kp
                  readPropVal = Serial.parseFloat();
                //Serial.println(p);
                  
                  kReadChar = Serial.read();
-                 if (kReadChar == 44)
-                 {
+                 if (kReadChar == 44) {
                    // read ki
                    readIntVal = Serial.parseFloat();
                //Serial.println(i);
                    
                    kReadChar = Serial.read();
-                   if (kReadChar == 44)
-                   {
+                   if (kReadChar == 44) {
                      // read kd
                      readDerVal = Serial.parseFloat();
                //Serial.println(d);
                      
                      kReadChar = Serial.read();
-                     if (kReadChar == 44)
-                     {
+                     if (kReadChar == 44) {
                        // read new SetPoint
                        readSetVal = Serial.parseFloat();
                //Serial.println(set);
@@ -875,8 +857,7 @@ void SerialRoutine()
                   readIntVal=0;
                   // ADD setpoint check pensaci un po'
               
-               if (k3ReadInt == 31)
-               {
+               if (k3ReadInt == 31) {
                  // show roll Cons
                  consKpCascRoll = readPropVal;
                  consKdCascRoll = readDerVal;
@@ -886,8 +867,7 @@ void SerialRoutine()
                  // Send actual Vals     
                  sendPidVal(0,0);           
                }
-               else if (k3ReadInt == 32)
-               {
+               else if (k3ReadInt == 32) {
                  // show roll agg  
                  aggKpCascRoll = readPropVal;
                  aggKdCascRoll = readDerVal;
@@ -897,8 +877,7 @@ void SerialRoutine()
                  // Send actual Vals            
                  sendPidVal(0,1);              
                }
-               else if (k3ReadInt == 33)
-               {
+               else if (k3ReadInt == 33) {
                  // w Roll cons
                  consKpCascRollW = readPropVal;
                  consKdCascRollW = readDerVal;
@@ -908,8 +887,7 @@ void SerialRoutine()
                  // Send actual Vals  
                  sendPidVal(3,0);  
                } 
-               else if (k3ReadInt == 34)
-               {
+               else if (k3ReadInt == 34) {
                  // show pitch cons  
                  consKpCascPitch = readPropVal;
                  consKdCascPitch = readDerVal;
@@ -919,8 +897,7 @@ void SerialRoutine()
                  // Send actual Vals 
                  sendPidVal(1,0);              
                }
-               else if (k3ReadInt == 35)
-               {
+               else if (k3ReadInt == 35) {
                  // pitch agg 
                  aggKpCascPitch = readPropVal;
                  aggKdCascPitch = readDerVal;
@@ -930,8 +907,7 @@ void SerialRoutine()
                  // Send actual Vals        
                  sendPidVal(1,1);      
                }
-               else if (k3ReadInt == 36)
-               {           
+               else if (k3ReadInt == 36) {           
                  // w pitch cons 
                  consKpCascPitchW = readPropVal;
                  consKdCascPitchW = readDerVal;
@@ -941,8 +917,7 @@ void SerialRoutine()
                  // Send actual Vals 
                  sendPidVal(4,0); 
                }  
-               else if (k3ReadInt == 37)
-               {
+               else if (k3ReadInt == 37) {
                  // yaw cons
                  consKpCascYaw = readPropVal;
                  consKdCascYaw = readDerVal;
@@ -952,8 +927,7 @@ void SerialRoutine()
                  // Send actual Vals 
                  sendPidVal(2,0);   
                }
-               else if (k3ReadInt == 38)
-               {
+               else if (k3ReadInt == 38) {
                  // yaw agg  
                  aggKpCascYaw = readPropVal;
                  aggKdCascYaw = readDerVal;
@@ -961,8 +935,7 @@ void SerialRoutine()
                  SetpointCascYaw = readSetVal;      
                  sendPidVal(2,1);      
                }
-               else if (k3ReadInt == 39)
-               {
+               else if (k3ReadInt == 39) {
                  // w yaw cons 
                  consKpCascYawW = readPropVal;
                  consKdCascYawW = readDerVal;
@@ -976,8 +949,7 @@ void SerialRoutine()
            }
          }
       }
-      else if (t == 'v')
-      {        
+      else if (t == 'v') {        
         //if (!sakura.getProcessing())
         //{
           //Serial.println(tenzoProp.getThrottle());
@@ -996,32 +968,26 @@ void SerialRoutine()
           Serial.println(consKdCascRoll);
         //}
       }      
-      else if (t == 'x')
-      {
-        resetMotorsPidOff();
-        
+      else if (t == 'x') {
+        resetMotorsPidOff();        
         tenzoProp.detachAll();
         
         // To add in method
       }    
-      else if (t == 'i')
-      {
+      else if (t == 'i') {
         initialize();
         // Do not alter max serial Routine exec time
         initializing = true;
       }
-      else if (t == 'L')
-      {
+      else if (t == 'L') {
         land();
         // Do not alter max serial Routine exec time
         landing = true;
       }
-      else if (t == 'm')
-      {
+      else if (t == 'm') {
          sakura.setPrintMotorValsUs(!sakura.getPrintMotorValsUs()); 
       }
-      else if (t == 'n')
-      {
+      else if (t == 'n') {
          sakura.setPrintAccs(!sakura.getPrintAccs()); 
       }
       else if (t == 'o')
@@ -1512,7 +1478,7 @@ void printTimersSched() {
       
       Serial.print(",\nServo: ");
       Serial.print(countServoAction);
-      Serial.print("\t");
+      Serial.print("\t\t");
       Serial.print(servoTimeTot);
       Serial.print("\tMax ");
       Serial.print(maxservoTimer);
