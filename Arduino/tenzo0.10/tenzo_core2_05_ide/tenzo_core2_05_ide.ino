@@ -1457,7 +1457,7 @@ void printTimersSched() {
       Serial.print("\t");
       Serial.print(isrTimeTot);
       Serial.print("\tMax ");
-      Serial.print(maxisrTimer);
+      Serial.println(maxisrTimer);
 
       /*
       Serial.print(",\nCtrl: ");
@@ -1474,14 +1474,14 @@ void printTimersSched() {
       Serial.print("\t");
       Serial.print(gyroTimeTot);
       Serial.print("\tMax ");      
-      Serial.print(maxgyroTimer);
+      Serial.println(maxgyroTimer);
       
       Serial.print(",\nServo: ");
       Serial.print(countServoAction);
       Serial.print("\t\t");
       Serial.print(servoTimeTot);
       Serial.print("\tMax ");
-      Serial.print(maxservoTimer);
+      Serial.println(maxservoTimer);
       
       
       Serial.print(",\nSignal: ");
@@ -1489,7 +1489,7 @@ void printTimersSched() {
       Serial.print("\t");
       Serial.print(signalTimeTot);
       Serial.print("\tMax ");
-      Serial.print(maxsignalTimer);
+      Serial.println(maxsignalTimer);
 
       if (SONAR)
       {
@@ -1498,7 +1498,7 @@ void printTimersSched() {
         Serial.print("\t");
         Serial.print(sonarTimeTot);
         Serial.print("\tMax ");
-        Serial.print(maxsonarTimer);
+        Serial.println(maxsonarTimer);
       }
       
       if (RTC_ON)
@@ -1508,7 +1508,7 @@ void printTimersSched() {
         Serial.print("\t");
         Serial.print(rtcTimeTot);
         Serial.print("\tMax ");
-        Serial.print(maxrtcTimer);
+        Serial.println(maxrtcTimer);
       }
       
       Serial.print("\nSerial: ");
@@ -1516,7 +1516,7 @@ void printTimersSched() {
       Serial.print("\t");
       Serial.print(serialTimeTot);
       Serial.print("\tMax ");
-      Serial.print(maxserialTimer);
+      Serial.println(maxserialTimer);
       
       if (enablePid)
       {
@@ -1524,7 +1524,7 @@ void printTimersSched() {
         Serial.print(OutputCascRollW);
         // Print    timeservo: 
         Serial.print(",\t");        
-        Serial.print(OutputCascPitchW);
+        Serial.println(OutputCascPitchW);
       }
       
       Serial.println();
