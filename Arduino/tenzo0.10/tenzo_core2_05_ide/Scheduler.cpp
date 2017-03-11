@@ -30,7 +30,7 @@ void Scheduler::createTasks()
     this->panic(1);
   }
   
-  if (this->create_task(2, 20, 0, 20, EDF, "SerialRoutine") == -1) {
+  if (this->create_task(2, 24, 0, 24, EDF, "SerialRoutine") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }
