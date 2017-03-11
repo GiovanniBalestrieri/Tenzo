@@ -450,7 +450,7 @@ angleFreq = 0.05;
 ideFreq = 0.01; % 10 ms
 
 buf_len = 100;
-buf_len_ide = 1300;
+buf_len_ide = 2000;
 index = 1:buf_len;
 indexIde = 1:buf_len_ide;
 indexPerf = 1:totStackPerf;

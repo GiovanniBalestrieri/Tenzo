@@ -3,7 +3,7 @@ clc
 %% Load data
 
 %a = load('ideTest1.mat')
-a = load('errorTenzoFirst.mat')
+a = load('errorTenzo.mat')
 
 
 
@@ -16,7 +16,7 @@ timeVitruvio = a.IdeDataTimeVitruvio;
 yIde = a.IdeDataRoll;
 yIdeEst = a.IdeDataEstRoll;
 uDelta = a.IdeDataDelta;
-uBase = a.IdeDataThrottle;
+uBase = 1420;
 uIdeM1 = uDelta + uBase;
 uIdeM2 = - uDelta + uBase;
 %% Plot Data
@@ -30,6 +30,10 @@ plot(a.IdeDataRoll);
 figure(12)
 plot(a.IdeDataTimeTenzo,a.IdeDataDelta);
 
+
+figure(19)
+plot(a.IdeDataDelta);
+
 m1 = a.IdeDataDelta;
 m2 = -a.IdeDataDelta;
 plot(m1,'b')
@@ -40,9 +44,9 @@ figure(30)
 plot(diff)
 
 figure(15)
-plot(uIdeM1,'r');
+plot(a.IdeDataTimeTenzo,uIdeM1,'r');
 hold on 
-plot(uIdeM2,'b');
+plot(a.IdeDataTimeTenzo,uIdeM2,'b');
 
 %% Computing deltaT for Tenzo and Vitruviano
 
@@ -64,7 +68,7 @@ end
 
 disp('Ts from data')
 dtt = mean(dTtenzo)
-dtv = mean(dTvitruviano)
+%dtv = mean(dTvitruviano)
 Ts = dtt;
 
 
@@ -73,7 +77,7 @@ clear tf
 Ts_motor = 0.009 ; %ms
 %H = tf(0.0001195,[1 -0.9368],Ts_motor,'InputDelay',8)
 
-%% Prepare simulated output fitting 85%
+% Prepare simulated output fitting 85%
 
 % Motor dynamics tf1 
 H = load('estimation/motor87perc.mat')
@@ -171,7 +175,7 @@ Tau = arm*Ct*rho*Aprop*Radius^2*((yM4).^2 - (yM3).^2)
 
 
 figure(23)
-plot(Tau1-Tau)
+plot(Tau1+Tau)
 
 
 %% Identification
@@ -186,6 +190,7 @@ sampleVal = sTauTest*0.7
 
 % Test Set
 TauTest = Tau(1:sampleTest)
+plot(Tau)
 ThetaTest = a.IdeDataRoll(1:sampleTest)
 
 % Validation Set
