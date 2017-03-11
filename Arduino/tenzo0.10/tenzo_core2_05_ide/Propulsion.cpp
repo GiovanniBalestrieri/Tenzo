@@ -70,7 +70,7 @@ void Propulsion::calibrateOnce()
    	servo4.writeMicroseconds(MIN_SIGNAL);
   
   	//Serial.println("Done!");
-  	throttle = IDLE_THRESHOLD;
+  	this->throttle = MIN_SIGNAL;
 }
 
 void Propulsion::calibrateAgain()
@@ -81,6 +81,7 @@ void Propulsion::calibrateAgain()
 
 void Propulsion::setSpeeds(int throttle, float rollpid, float pitchpid, float yawpid, float altpid)
 {
+  this->throttle = throttle;
   // compute motor inputs
   wUs1 = throttle + altpid - pitchpid + yawpid;
   wUs2 = throttle + altpid + rollpid - yawpid;
