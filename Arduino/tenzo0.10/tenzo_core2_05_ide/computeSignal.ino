@@ -22,7 +22,7 @@ void computeSignal() {
     }    
     signalTimer = millis() - start;
 
-    float boom = 0.45;
+    float boom = 0.25;
     float boom2 = 0.65;
     if (signalTimer>= 3000 && signalTimer <= 20000) {
       if (signalTimer<4000) {
@@ -54,9 +54,9 @@ void computeSignal() {
         // [9 , 11]      PAUSA 
         currentDelta = MIN_SIGNAL_DELTA;
       } 
-    } else if (signalTimer<30000 && signalTimer >= 20001) {
+    }/* else if (signalTimer<30000 && signalTimer >= 20001) {
         currentDelta = (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*boom2 * sin(0.3*signalTimer*3.1415/180)  + (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*boom/2;
-    } else if (signalTimer < 2000) {
+    } */else if (signalTimer < 2000) {
         currentDelta = MIN_SIGNAL_DELTA;
     }
       
