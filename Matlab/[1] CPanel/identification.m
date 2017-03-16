@@ -3,7 +3,7 @@ clc
 %% Load data
 
 %a = load('ideTest1.mat')
-a = load('errorTenzo.mat')
+a = load('errorTenzoSecond.mat')
 
 
 
@@ -31,6 +31,7 @@ figure(12)
 plot(a.IdeDataTimeTenzo,a.IdeDataDelta);
 
 
+%649 1124
 figure(19)
 plot(a.IdeDataDelta);
 
@@ -186,16 +187,22 @@ sTauTest = size(Tau,1)
 sThetaTest = size(a.IdeDataRoll,1)
 
 sampleTest = sTauTest*0.3
+
+
 sampleVal = sTauTest*0.7
 
 % Test Set
+sampleTest = 1124
+
 TauTest = Tau(1:sampleTest)
+TauTest = Tau(649:sampleTest)
 plot(Tau)
 ThetaTest = a.IdeDataRoll(1:sampleTest)
+ThetaTest = a.IdeDataRoll(649:sampleTest);
 
 % Validation Set
-TauVal = Tau(sampleTest+1:sampleVal)
-ThetaVal = a.IdeDataRoll(sampleTest+1:sampleVal)
+TauVal = Tau(sampleTest+1:end)
+ThetaVal = a.IdeDataRoll(sampleTest+1:end)
 
 IOtest = iddata(ThetaTest,TauTest,Ts);
 IOval = iddata(ThetaVal,TauVal,Ts);
