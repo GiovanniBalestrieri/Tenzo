@@ -259,15 +259,8 @@ void setup()
   #ifndef LOGGER_OFF
     setupLog();   
   #endif
-  sakura.welcome();
   setupScheduler();
-
-  MelodyUtils mel(8);
-  //mel.Glis(NOTE_C5, NOTE_C3, 3);
-  //delay(1000);
-  mel.Trem(NOTE_C3, 200, 15);
-  delay(100);
-  mel.Trem(NOTE_C7, 100, 10);
+  sakura.welcome();
 }
 
 void getYPR()

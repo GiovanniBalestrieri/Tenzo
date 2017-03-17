@@ -40,4 +40,9 @@ boolean initializing = false;
 boolean initialized = false;
 boolean sendStatesRemote = false;
 
+// Identification control sequences
+boolean mode1 = true;
+boolean mode2 = false;
+boolean mode3 = false;
+
 #endif

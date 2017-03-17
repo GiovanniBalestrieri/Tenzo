@@ -1,16 +1,8 @@
-boolean mode1 = true;
-boolean mode2 = false;
-boolean mode3 = false;
-
-
-
 void computeSignal() {
 
   signalComputeTimer = micros();
   
-  if (test) {
-
-    
+  if (test) {    
     if (!initialized){
       initialize();
     }
@@ -71,8 +63,10 @@ void computeSignal() {
           } else if (signalTimer<6000 && signalTimer >= 4000) {
             // [ 4s , 6s]        PAUSA 
             currentDelta = MIN_SIGNAL_DELTA;
-        }      
+          }      
+      }
     }
+    
     if (currentDelta > MAX_SIGNAL_DELTA) {
         currentDelta = MAX_SIGNAL_DELTA;
     }
@@ -103,33 +97,24 @@ void computeSignal() {
       land();
     }
 
-    if (test) {
-    
-      currentDelta = (int) currentDelta;  
-      tenzoProp.setSpeeds(tenzoProp.getThrottle(), 0, currentDelta, 0, 0);
-    
-    }  
-
-    
+    currentDelta = (int) currentDelta;  
+    tenzoProp.setSpeeds(tenzoProp.getThrottle(), 0, currentDelta, 0, 0);
     
   }
+  
   contSignalRoutine++;
   signalComputeTimer = micros() - signalComputeTimer;
   
-    if (maxsignalTimer <= signalComputeTimer)
-      maxsignalTimer = signalComputeTimer;
+  if (maxsignalTimer <= signalComputeTimer)
+    maxsignalTimer = signalComputeTimer;
   
-  signalTimeTot = signalTimeTot + signalComputeTimer;
-  
+  signalTimeTot = signalTimeTot + signalComputeTimer; 
 }
 
 void computeSignalOld() {
-
   signalComputeTimer = micros();
   
   if (test) {
-
-    
     if (!initialized){
       initialize();
     }
@@ -199,34 +184,15 @@ void computeSignalOld() {
     }
 
     if (test) {
-      /*
-      Serial.print("y,");
-      Serial.print(signalTimer);
-      Serial.print(",");
-      Serial.print(tenzoProp.getThrottle());
-      Serial.print(",");
-      Serial.print(currentDelta);  
-      Serial.print(",");
-      Serial.print(estXAngle);  
-      // Added status pre temrinator
-      Serial.println(",N,z");
-      */
-    
       currentDelta = (int) currentDelta;  
       tenzoProp.setSpeeds(tenzoProp.getThrottle(), 0, currentDelta, 0, 0);
-    
     }  
-
-    
-    
   }
   contSignalRoutine++;
   signalComputeTimer = micros() - signalComputeTimer;
   
-    if (maxsignalTimer <= signalComputeTimer)
-      maxsignalTimer = signalComputeTimer;
+  if (maxsignalTimer <= signalComputeTimer)
+    maxsignalTimer = signalComputeTimer;
   
   signalTimeTot = signalTimeTot + signalComputeTimer;
-  
 }
-
