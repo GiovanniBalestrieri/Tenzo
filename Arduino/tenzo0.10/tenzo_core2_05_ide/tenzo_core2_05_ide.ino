@@ -296,6 +296,7 @@ void getAngVelYPR()
     if (maxeulerTimer <= eulerTimer)
       maxeulerTimer = eulerTimer;
     eulerTimeTot = eulerTimeTot + eulerTimer;
+    
     contGyroSamples++;        
     gyroTimer = micros() - gyroTimer;
     if (maxgyroTimer <= gyroTimer)
@@ -697,12 +698,9 @@ void SerialRoutine()
 
   
   if (test) {    
+    /*
       Serial.print("y,");
       Serial.print(signalTimer);
-      /*
-      Serial.print(",");
-      Serial.print(tenzoProp.getThrottle());
-      */
       Serial.print(",");
       Serial.print(currentDelta);  
       Serial.print(",");
@@ -710,6 +708,7 @@ void SerialRoutine()
       Serial.print(",");
       Serial.print(angleEnc);
       Serial.println(",N,z");
+      */
   }
   
   
@@ -720,6 +719,8 @@ void SerialRoutine()
         Serial.println("Data Acquisition Started");
         test = true;
         encoderValue = 0;
+      } else if (t == '2') {
+        printSamples();
       } else if (t == 'c') {
         // Serial communication        
         Serial.println("K");

@@ -48,7 +48,15 @@
   // ISR
   boolean filterGyro = false;
   boolean filterAcc = true;
-  
+
+
+  // Acquisition
+  int counterSamples = 0;
+  #define maxSamples 200
+  unsigned int timeSamples[maxSamples];
+  float deltaSamples[maxSamples];
+  float estAngleSamples[maxSamples];
+  int angleSamples[maxSamples];
   
   
 #endif

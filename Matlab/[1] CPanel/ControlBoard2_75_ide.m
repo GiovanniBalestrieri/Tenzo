@@ -2229,7 +2229,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                 %xbee = serial(portWin,'baudrate',xbeeBR,'terminator',terminator,'tag',tag);
 
                 % Max wait time
-                set(xbee, 'TimeOut', 10);  
+                %set(xbee, 'TimeOut', 10);  
                 set(xbee,'terminator','LF');
                 % One message long buffer
                 set(xbee, 'InputBufferSize',inputBuffSize)
@@ -2267,7 +2267,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
             
             % Testing Wireless communication
             if isempty(timerXbee)
-                timerXbee = timer('ExecutionMode','FixedRate','Period',0.01,...
+                timerXbee = timer('ExecutionMode','FixedRate','Period',0.02,...
                     'TimerFcn',{@storeDataFromSerial});%,'ErrorFcn', xbeeCallback);
                 try
                     start(timerXbee);  
@@ -3231,9 +3231,13 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
 
                            end
                         elseif strcmp(status,'S')
+                            disp('Onboard Acquisition ended')
+                            cmd = '2';
+                            sendNMess(cmd); 
+                        elseif strcmp(status,'P')
                             disp('Stop Ide acquisition')
                             savePerfAngCallback()   
-                        end                            
+                        end  
                     elseif tag == throttleTag
                         % TODO
                         [R,throttleActualValue,N] = strread(mess,'%s%f%s',1,'delimiter',',');

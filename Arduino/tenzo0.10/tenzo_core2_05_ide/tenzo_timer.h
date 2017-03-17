@@ -23,9 +23,7 @@ int HZ = 1000;	/* Tick frequency (Hz) */
 #define time_before_eq(a,b)	time_after_eq(b,a)
 
 // Set period (frequency) scheduler's frequency
-// 80 Hz = 0.0125
-float period_sched = 0.0093; //us
-int freq_sched = 108; //Hz
+float period_sched = 0.0093; //ms
 
 volatile unsigned long ticks;
 

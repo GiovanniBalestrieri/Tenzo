@@ -17,7 +17,7 @@ int warning = 0;
  * VTOL settings
  */
  // Take Off settings
-int rampTill = 1420; // rampTill = 1270;
+int rampTill = 1400; // rampTill = 1270;
 int idle = 1000;
 int motorRampDelayFast = 2;
 int motorRampDelayMedium = 5;
