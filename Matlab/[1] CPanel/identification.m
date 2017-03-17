@@ -173,7 +173,7 @@ Tau1 = arm*(Thrust_newton_4-Thrust_newton_3)
 
 % Oppure
 Tau = arm*Ct*rho*Aprop*Radius^2*((yM4).^2 - (yM3).^2)
-
+Tau = arm*Ct*rho*Aprop*Radius^2*((uIdeM2).^2 - (uIdeM1).^2)
 
 figure(23)
 plot(Tau1+Tau)
@@ -187,7 +187,6 @@ sTauTest = size(Tau,1)
 sThetaTest = size(a.IdeDataRoll,1)
 
 sampleTest = sTauTest*0.3
-
 
 sampleVal = sTauTest*0.7
 
