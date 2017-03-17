@@ -1,4 +1,6 @@
-
+boolean mode1 = true;
+boolean mode2 = false;
+boolean mode3 = false;
 
 
 
@@ -24,42 +26,53 @@ void computeSignal() {
 
     float boom = 0.25;
     float boom2 = 0.65;
-    if (signalTimer>= 3000 && signalTimer <= 20000) {
-      if (signalTimer<4000) {
-        // [ 3s , 4s]        
-        currentDelta = (MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
-      } else if (signalTimer<6000 && signalTimer >= 4000) {
-        // [ 4s , 6s]        PAUSA 
-        currentDelta = MIN_SIGNAL_DELTA;
-      } else if (signalTimer<6500 && signalTimer >= 6000) {
-        // [ 6 , 6.5]        
-        currentDelta = (MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
-      } if (signalTimer<8000 && signalTimer >= 6500)  {        
-        // [ 6.5 , 8]  PAUSA 
-        currentDelta = MIN_SIGNAL_DELTA;
-      }  else if (signalTimer<9000 && signalTimer >= 8000) {
-        // [8 , 9]        
-        currentDelta = -(MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
-      } if (signalTimer<11000 && signalTimer >= 9000)  {        
-        // [9 , 11]      PAUSA 
-        currentDelta = MIN_SIGNAL_DELTA;
-      }  else if (signalTimer<11500 && signalTimer >= 11000) {
-        currentDelta = -(MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
-      } else if (signalTimer<14000 && signalTimer >= 11500)  {        
-        // [9 , 11]      PAUSA 
-        currentDelta = MIN_SIGNAL_DELTA;
-      } else if (signalTimer<15000 && signalTimer >= 14000) {
-        currentDelta = -(MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
-      } else if (signalTimer<20000 && signalTimer >= 15000)  {        
-        // [9 , 11]      PAUSA 
-        currentDelta = MIN_SIGNAL_DELTA;
-      } 
-    }/* else if (signalTimer<30000 && signalTimer >= 20001) {
-        currentDelta = (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*boom2 * sin(0.3*signalTimer*3.1415/180)  + (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*boom/2;
-    } */else if (signalTimer < 2000) {
-        currentDelta = MIN_SIGNAL_DELTA;
+    if (mode3) {
+        if (signalTimer>= 3000 && signalTimer <= 20000) {
+          if (signalTimer<4000) {
+            // [ 3s , 4s]        
+            currentDelta = (MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
+          } else if (signalTimer<6000 && signalTimer >= 4000) {
+            // [ 4s , 6s]        PAUSA 
+            currentDelta = MIN_SIGNAL_DELTA;
+          } else if (signalTimer<6500 && signalTimer >= 6000) {
+            // [ 6 , 6.5]        
+            currentDelta = (MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
+          } if (signalTimer<8000 && signalTimer >= 6500)  {        
+            // [ 6.5 , 8]  PAUSA 
+            currentDelta = MIN_SIGNAL_DELTA;
+          }  else if (signalTimer<9000 && signalTimer >= 8000) {
+            // [8 , 9]        
+            currentDelta = -(MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
+          } if (signalTimer<11000 && signalTimer >= 9000)  {        
+            // [9 , 11]      PAUSA 
+            currentDelta = MIN_SIGNAL_DELTA;
+          }  else if (signalTimer<11500 && signalTimer >= 11000) {
+            currentDelta = -(MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
+          } else if (signalTimer<14000 && signalTimer >= 11500)  {        
+            // [9 , 11]      PAUSA 
+            currentDelta = MIN_SIGNAL_DELTA;
+          } else if (signalTimer<15000 && signalTimer >= 14000) {
+            currentDelta = -(MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
+          } else if (signalTimer<20000 && signalTimer >= 15000)  {        
+            // [9 , 11]      PAUSA 
+            currentDelta = MIN_SIGNAL_DELTA;
+          } 
+        }/* else if (signalTimer<30000 && signalTimer >= 20001) {
+            currentDelta = (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*boom2 * sin(0.3*signalTimer*3.1415/180)  + (MAX_SIGNAL_DELTA - MIN_SIGNAL_DELTA)*boom/2;
+        } */else if (signalTimer < 2000) {
+            currentDelta = MIN_SIGNAL_DELTA;
+        }
+
+    } else if (mode1) {
+        if (signalTimer>= 3000 && signalTimer <= 20000) {
+          if (signalTimer<4000) {
+            // [ 3s , 4s]        
+            currentDelta = (MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
+          } else if (signalTimer<6000 && signalTimer >= 4000) {
+            // [ 4s , 6s]        PAUSA 
+            currentDelta = MIN_SIGNAL_DELTA;
+        }      
     }
-      
     if (currentDelta > MAX_SIGNAL_DELTA) {
         currentDelta = MAX_SIGNAL_DELTA;
     }

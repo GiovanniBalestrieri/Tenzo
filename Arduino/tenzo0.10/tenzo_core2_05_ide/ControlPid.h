@@ -20,14 +20,11 @@ volatile boolean enableWRollPid = true;
 volatile boolean enableWPitchPid = true;
 volatile boolean enableWYawPid = false;
 volatile boolean enableAltitudePid = false;
-
-
  
 boolean inConsRoll = false; 
 boolean inConsPitch = false;
 boolean verbosePidValuesFeedback = true;
-boolean verboseFilterAccMatlab = true;          
-
+boolean verboseFilterAccMatlab = true;
 
 /*
  * Cascade Pid & settings
