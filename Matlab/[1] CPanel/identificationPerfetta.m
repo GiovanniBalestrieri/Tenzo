@@ -5,9 +5,14 @@ clc
 %a = load('ideTest1.mat')
 a = load('errorTenzo.mat')
 
-% Test Set
+% Test Set 1
 inizio = 1702
 fine = 1820
+
+
+% Test Set 2
+inizio = 1552
+fine = 1731
 
 
 
@@ -34,13 +39,24 @@ plot(timeTenzoSec(inizio:fine),a.IdeDataDelta(inizio:fine));
 grid on
 title('Input - duty cycle difference between M1 and M2 [us]');
 
+figure(43)
+subplot(2,1,1)
+plot(a.IdeDataRoll(inizio:fine),'r');
+grid on
+title('Output - Roll [°]');
+subplot(2,1,2)
+plot(a.IdeDataDelta(inizio:fine));
+grid on
+title('Input - duty cycle difference between M1 and M2 [us]');
+
+
 m1 = a.IdeDataDelta;
 m2 = -a.IdeDataDelta;
 
-figure(15)
-plot(timeTenzoSec,uIdeM1,'r');
-hold on 
-plot(timeTenzoSec,uIdeM2,'b');
+% figure(15)
+% plot(timeTenzoSec,uIdeM1,'r');
+% hold on 
+% plot(timeTenzoSec,uIdeM2,'b');
 
 
 
@@ -157,6 +173,8 @@ title('Output - Torque with motor Dynamic Neglected [nM]');
 dTtenzo = timeTenzoSec(inizio+1:fine+1) - timeTenzoSec(inizio:fine);
 dtt = mean(dTtenzo)
 Ts = dtt;
+Ts = 0.019
+Ts = 0.024
 
 TauMotorDynamic = TauDynamic(inizio:fine);
 Theta = a.IdeDataRoll(inizio:fine);
@@ -199,7 +217,7 @@ delay2 = delayest(IOtestDetrend)
 %% Identifiy linear discrete time model with n4sid
 
 % Training
-[mt, x0t] = n4sid(IOtestDetrend,2,'InputDelay',2,'Ts',Ts);
+[mt, x0t] = n4sid(IOtestDetrend,2,'Ts',Ts);
 [mts,x0ts] = n4sid(IOtestDetrend,1:10,'InputDelay',3,'Ts',Ts);
 
 
@@ -212,7 +230,7 @@ delay2 = delayest(IOtestDetrend)
 % Dynamic set
 figure
 disp('Comparing ms1 and ms')
-compare(IOtestDetrend,mts,mt)
+compare(IOtestDetrend,mts)
 % Raw set
 figure
 disp('Comparing th2 and ms')

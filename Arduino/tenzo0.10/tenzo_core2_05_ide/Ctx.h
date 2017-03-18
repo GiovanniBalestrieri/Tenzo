@@ -52,8 +52,8 @@
 
   // Acquisition
   int counterSamples = 0;
-  #define maxSamples 300
-  unsigned int timeSamples[maxSamples];
+  #define maxSamples 450
+  //unsigned int timeSamples[maxSamples];
   float deltaSamples[maxSamples];
   //float estAngleSamples[maxSamples];
   int angleSamples[maxSamples];

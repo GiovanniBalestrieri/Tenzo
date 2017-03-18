@@ -57,7 +57,7 @@ void computeSignal() {
 
     } else if (mode1) {
         if (signalTimer>= 3000 && signalTimer <= 20000) {
-          if (signalTimer<8000 && signalTimer >= 7000) {
+          if (signalTimer<7600 && signalTimer >= 7000) {
             // [ 7s , 8s]        
             currentDelta = (MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
           } else {
@@ -95,9 +95,9 @@ void computeSignal() {
       land();
     }
 
-    if (signalTimer>= 6900 && signalTimer <= 9900) {
+    if (signalTimer>= 6950 && signalTimer <= 11450) {
       // Save samples 
-      timeSamples[counterSamples] = signalTimer;
+      //timeSamples[counterSamples] = signalTimer;
       deltaSamples[counterSamples] = currentDelta  ;
       //estAngleSamples[counterSamples] = angles[0];
       angleSamples[counterSamples] = (int) angleEnc*100;
@@ -122,7 +122,7 @@ void computeSignal() {
 void printSamples(){
   for (int i = 0; i < maxSamples; i++){
      Serial.print("y,");
-      Serial.print(timeSamples[i]);
+      Serial.print(19);
       Serial.print(",");
       Serial.print(deltaSamples[i]);  
       Serial.print(",");
