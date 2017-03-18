@@ -252,13 +252,10 @@ compare(IOtestDetrend,mts)
 figure
 disp('Comparing th2 and ms')
 compare(IOvalDetrend,mv,mvs)
-%% Compare n4Sid trained with validation set
+%% Save Identified Discrete Time System
 
-figure
-disp('Comparing ms and arx')
-compare(IOtestDetrend,mv,mvs)
-% Test set
-figure
-disp('Comparing ms1 and ms')
-compare(IOvalDetrend,mv,mvs)
+
+save('discreteDynamicTenzo.mat','mts')
+
+
 
