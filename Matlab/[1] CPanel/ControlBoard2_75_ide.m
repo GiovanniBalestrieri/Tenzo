@@ -3201,8 +3201,8 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                         disp('Identification:');
                         [R,sec,delta,xx,enc,status,Terminator] = strread(mess,'%s%f%f%f%f%s%s',1,'delimiter',',');
 
+                        disp(mess);
                         if strcmp(status,'N')
-                            disp(mess);
                             IdeDataTimeTenzo = [ IdeDataTimeTenzo(2:end) ; sec ];
                             %IdeDataThrottle = [ IdeDataThrottle(2:end) ; throttle ];
                             IdeDataDelta = [ IdeDataDelta(2:end) ; delta]; 
@@ -3210,7 +3210,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                             IdeDataEstRoll = [ IdeDataEstRoll(2:end) ; xx]; 
 
                             % Second incrementation to track stored data & Plot
-                           if askedPerf
+                           %if askedPerf
                                fullIdeCounter = fullIdeCounter + 1
 
                                figure(fh)  
@@ -3229,7 +3229,7 @@ Listener = addlistener(hTabGroup,'SelectedTab','PostSet',@tabGroupCallBack);
                                %stem(ax2,indexIde,errorEst)   
                                grid on;                            
 
-                           end
+                           %end
                         elseif strcmp(status,'S')
                             disp('Onboard Acquisition ended')
                             cmd = '2';

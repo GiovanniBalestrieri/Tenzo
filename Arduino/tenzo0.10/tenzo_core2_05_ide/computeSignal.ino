@@ -84,8 +84,6 @@ void computeSignal() {
       Serial.print("y,");
       Serial.print(signalTimer);
       Serial.print(",");
-      Serial.print(tenzoProp.getThrottle());
-      Serial.print(",");
       Serial.print(currentDelta);  
       Serial.print(",");
       Serial.print(estXAngle);  
@@ -97,11 +95,11 @@ void computeSignal() {
       land();
     }
 
-    if (signalTimer>= 6950 && signalTimer <= 8950) {
+    if (signalTimer>= 6900 && signalTimer <= 9900) {
       // Save samples 
       timeSamples[counterSamples] = signalTimer;
       deltaSamples[counterSamples] = currentDelta  ;
-      estAngleSamples[counterSamples] = angles[0];
+      //estAngleSamples[counterSamples] = angles[0];
       angleSamples[counterSamples] = (int) angleEnc*100;
       if (counterSamples <= maxSamples)
         counterSamples++;
@@ -128,7 +126,8 @@ void printSamples(){
       Serial.print(",");
       Serial.print(deltaSamples[i]);  
       Serial.print(",");
-      Serial.print(estAngleSamples[i]);  
+      //Serial.print(estAngleSamples[i]);  
+      Serial.print(1);  
       Serial.print(",");
       float a = (float) angleSamples[i];
       Serial.print(a/100);

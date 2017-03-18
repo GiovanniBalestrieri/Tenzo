@@ -3,7 +3,7 @@ clc
 %% Load data
 
 %a = load('ideTest1.mat')
-a = load('errorTenzoSecond.mat')
+a = load('errorTenzo.mat')
 
 
 
