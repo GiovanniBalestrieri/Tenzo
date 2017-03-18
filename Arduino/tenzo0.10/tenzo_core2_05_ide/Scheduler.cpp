@@ -34,7 +34,7 @@ void Scheduler::createTasks()
     this->panic(1);
   }
   
-  if (this->create_task(3, 26, 0, 26, EDF, "Signal") == -1) {
+  if (this->create_task(3, 23, 0, 23, EDF, "Signal") == -1) {
     //puts("ERROR: cannot create task led_cycle\n");
     this->panic(1);
   }

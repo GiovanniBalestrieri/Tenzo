@@ -15,6 +15,11 @@ inizio = 1552
 fine = 1731
 
 
+% Test 
+inizio = 1552
+fine = 1755
+
+
 
 %% Prepare Data
 
@@ -48,6 +53,18 @@ subplot(2,1,2)
 plot(a.IdeDataDelta(inizio:fine));
 grid on
 title('Input - duty cycle difference between M1 and M2 [us]');
+
+
+figure(44)
+subplot(2,1,1)
+plot(a.IdeDataRoll,'r');
+grid on
+title('Output - Roll [°]');
+subplot(2,1,2)
+plot(a.IdeDataDelta(inizio:fine));
+grid on
+title('Input - duty cycle difference between M1 and M2 [us]');
+
 
 
 m1 = a.IdeDataDelta;
@@ -173,8 +190,8 @@ title('Output - Torque with motor Dynamic Neglected [nM]');
 dTtenzo = timeTenzoSec(inizio+1:fine+1) - timeTenzoSec(inizio:fine);
 dtt = mean(dTtenzo)
 Ts = dtt;
-Ts = 0.019
-Ts = 0.024
+%Ts = 0.019
+Ts = 0.021
 
 TauMotorDynamic = TauDynamic(inizio:fine);
 Theta = a.IdeDataRoll(inizio:fine);
@@ -217,8 +234,8 @@ delay2 = delayest(IOtestDetrend)
 %% Identifiy linear discrete time model with n4sid
 
 % Training
-[mt, x0t] = n4sid(IOtestDetrend,2,'Ts',Ts);
-[mts,x0ts] = n4sid(IOtestDetrend,1:10,'InputDelay',3,'Ts',Ts);
+[mt, x0t] = n4sid(IOtestDetrend,2,'InputDelay',2,'Ts',Ts);
+[mts,x0ts] = n4sid(IOtestDetrend,1:10,'InputDelay',8,'Ts',Ts);
 
 
 % Validation
