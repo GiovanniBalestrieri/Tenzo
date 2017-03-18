@@ -5,13 +5,16 @@ clc
 %a = load('ideTest1.mat')
 a = load('errorTenzo.mat')
 
+% Test Set
+inizio = 1702
+fine = 1820
 
 
 
 %% Prepare Data
 
 timeTenzo = a.IdeDataTimeTenzo;
-timeTenzoSec = timeTenzo*0.001;
+timeTenzoSec = (timeTenzo-1000)*0.001;
 timeVitruvio = a.IdeDataTimeVitruvio;
 yIde = a.IdeDataRoll;
 yIdeEst = a.IdeDataEstRoll;
@@ -22,32 +25,22 @@ uIdeM2 = - uDelta + uBase;
 %% Plot Data
 
 figure(13)
-plot(a.IdeDataTimeTenzo,a.IdeDataRoll,'r',a.IdeDataTimeTenzo,a.IdeDataEstRoll,'b');
-
-figure(14)
-plot(a.IdeDataRoll);
-
-figure(12)
-plot(a.IdeDataTimeTenzo,a.IdeDataDelta);
-
-
-%649 1124
-figure(19)
-plot(a.IdeDataDelta);
+subplot(2,1,1)
+plot(timeTenzoSec(inizio:fine),a.IdeDataRoll(inizio:fine),'r');
+grid on
+title('Output - Roll [°]');
+subplot(2,1,2)
+plot(timeTenzoSec(inizio:fine),a.IdeDataDelta(inizio:fine));
+grid on
+title('Input - duty cycle difference between M1 and M2 [us]');
 
 m1 = a.IdeDataDelta;
 m2 = -a.IdeDataDelta;
-plot(m1,'b')
-hold on
-plot(m2,'r')
-diff = m1-m2
-figure(30)
-plot(diff)
 
 figure(15)
-plot(a.IdeDataTimeTenzo,uIdeM1,'r');
+plot(timeTenzoSec,uIdeM1,'r');
 hold on 
-plot(a.IdeDataTimeTenzo,uIdeM2,'b');
+plot(timeTenzoSec,uIdeM2,'b');
 
 
 
@@ -82,28 +75,19 @@ t = 0:Ts_motor:Ts_motor*(size(uIdeM1,1)-1);
 figure(22)
 hold on
 subplot(2,1,1)
-%plot(t,yM1,'b');
-%hold on
-%plot(t,yM2,'r');
-%hold on
 plot(t,yM3,'r');
 hold on
 plot(t,yM4,'b');
-subplot(2,1,2)
-plot(t,uIdeM1,'b');
-hold on 
-plot(t,uIdeM2,'r');
-
-
-figure(16)
-subplot(2,1,1)
-plot(t,yM3,'r');
 grid on
 title('Output - Shaft angular velocity [rev/s]');
 subplot(2,1,2)
 plot(t,uIdeM1,'b');
-grid on
+hold on 
+plot(t,uIdeM2,'r');
 title('Input - pwm [us]');
+grid on
+ 
+
 
 %% Convert to torque input signal
 
@@ -153,29 +137,26 @@ arm = 0.23 %m
 TauDynamic = arm*Ct*rho*Aprop*Radius^2*((yM4).^2 - (yM3).^2)
 TauRaw = arm*Ct*rho*Aprop*Radius^2*((uIdeM2).^2 - (uIdeM1).^2)
 
-% figure(23)
-% plot(Tau1+Tau)
+figure(23)
+plot(timeTenzoSec(inizio:fine),TauDynamic(inizio:fine),'r');
+%hold on
+%plot(a.IdeDataTimeTenzo(inizio:fine),TauRaw(inizio:fine),'b');
+grid on
+title('Output - Torque with motor Dynamic included [nM]');
+
+figure(24)
+plot(timeTenzoSec(inizio:fine),TauRaw(inizio:fine),'b');
+grid on
+title('Output - Torque with motor Dynamic Neglected [nM]');
 
 
 %% Identification
-
-
-%% Create time series Y-U data
-
-% Test Set
-inizio = 1702
-fine = 1852
-
+% Create time series Y-U data
 
 % Computing deltaT for Tenzo and Vitruviano
-dTtenzo = timeTenzo(inizio+1:fine+1) - timeTenzo(inizio:fine);
+dTtenzo = timeTenzoSec(inizio+1:fine+1) - timeTenzoSec(inizio:fine);
 dtt = mean(dTtenzo)
 Ts = dtt;
-
-
-% plot(TauDynamic,'r')
-% hold on
-% plot(TauRaw,'b')
 
 TauMotorDynamic = TauDynamic(inizio:fine);
 Theta = a.IdeDataRoll(inizio:fine);
@@ -186,8 +167,9 @@ TauMotorRaw = TauRaw(inizio:fine);
 IOdynamic = iddata(Theta,TauMotorDynamic,Ts);
 IOraw = iddata(Theta,TauMotorRaw,Ts);
 
-[IOtestDetrend, Tiotest ]= detrend(IOdynamic,0);
-[IOvalDetrend, Tioval ]= detrend(IOraw,0);
+
+[IOtestDetrend, Tiotest ]= detrend(IOdynamic,1);
+[IOvalDetrend, Tioval ]= detrend(IOraw,1);
 
 delay = delayest(IOvalDetrend)
 delay1 = delay;
@@ -195,20 +177,20 @@ delay2 = delayest(IOtestDetrend)
 
 %% 
 
-V = arxstruc(IOtestDetrend,IOvalDetrend,struc(2,2,1:10));
-[nn,Vm] = selstruc(V,0);
-
-FIRModel = impulseest(IOtestDetrend);
-clf
-h = impulseplot(FIRModel);
-showConfidence(h,3)
-%  
-V = arxstruc(IOtestDetrend,IOvalDetrend,struc(1:10,1:10,delay));
-nns = selstruc(V)
+% V = arxstruc(IOtestDetrend,IOvalDetrend,struc(2,2,1:10));
+% [nn,Vm] = selstruc(V,0);
+% 
+% FIRModel = impulseest(IOtestDetrend);
+% clf
+% h = impulseplot(FIRModel);
+% showConfidence(h,3)
+% %  
+% V = arxstruc(IOtestDetrend,IOvalDetrend,struc(1:10,1:10,delay));
+% nns = selstruc(V)
 % 
 % %% Identifiy linear discrete time model with arx
-% 
-th2 = arx(IOtestDetrend,nns);
+% % 
+% th2 = arx(IOtestDetrend,nns);
 % [ th4] = arx(IOtestDetrend,nns);
 % compare(IOvalDetrend(1:end),th2,th4);
 % compare(IOtestDetrend(1:end),th2,th4);
@@ -217,8 +199,8 @@ th2 = arx(IOtestDetrend,nns);
 %% Identifiy linear discrete time model with n4sid
 
 % Training
-[mt, x0t] = n4sid(IOtestDetrend,2,'InputDelay',delay1,'Ts',Ts);
-[mts,x0ts] = n4sid(IOtestDetrend,1:10,'InputDelay',delay1,'Ts',Ts);
+[mt, x0t] = n4sid(IOtestDetrend,2,'InputDelay',2,'Ts',Ts);
+[mts,x0ts] = n4sid(IOtestDetrend,1:10,'InputDelay',3,'Ts',Ts);
 
 
 % Validation
@@ -244,27 +226,4 @@ compare(IOtestDetrend,mv,mvs)
 figure
 disp('Comparing ms1 and ms')
 compare(IOvalDetrend,mv,mvs)
-
-%% Compare n4Sid trained with Full set
-
-figure
-disp('Comparing ms and arx')
-compare(IOtestDetrend,mcs)
-% Test set
-figure
-disp('Comparing ms1 and ms')
-compare(IOvalDetrend,mcs)
-% Complete set
-figure
-disp('Comparing th2 and ms')
-compare(IOcompleteDetrend,mcs)
-
-%% Manual compare
-% 
-% t = 0:Ts:Ts*size(yOriginal,1)-1;
-% [y,t,x] = lsim(ms,yOriginal,t,x0);
-% hold on
-% plot(t,zOriginal,'r');
-% hold on
-% plot(t,y,'b');
 
