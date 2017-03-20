@@ -1,0 +1,28 @@
+%% Tenzo Decoupled dynamics
+% mar 20 2017
+clc 
+clear all
+%%  Roll
+
+% retrieve identified System
+rollSys = open('transferFunctions/discreteDynamicTenzo.mat');
+
+% get transfer function
+rollSysTfDisc = tf(rollSys.mts)
+
+% convert to continuous
+rollSysTfCont = d2c(rollSysTfDisc)
+
+% Check step response discrete Vs Continuous
+figure(1)
+step(rollSysTfDisc,'b')
+hold on 
+step(rollSysTfCont,'r')
+
+% get numerator and denominator 
+[num_tf , den_tf] = tfdata(rollSysTfDisc,'v')
+
+
+% Set input saturation
+satThrust = 10000;
+open('PhiTheta.slx');
