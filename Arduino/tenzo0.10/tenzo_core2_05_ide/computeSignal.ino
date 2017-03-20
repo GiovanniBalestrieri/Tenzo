@@ -57,7 +57,7 @@ void computeSignal() {
 
     } else if (mode1) {
         if (signalTimer>= 3000 && signalTimer <= 20000) {
-          if (signalTimer<7650 && signalTimer >= 7000) {
+          if (signalTimer<765 0 && signalTimer >= 7000) {
             // [ 7s , 8s]        
             currentDelta = (MAX_SIGNAL_DELTA -MIN_SIGNAL_DELTA)*boom/2;
           } else {
