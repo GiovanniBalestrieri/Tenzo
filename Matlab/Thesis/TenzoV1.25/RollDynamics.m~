@@ -62,11 +62,11 @@ Kforce = Ct*rho*Aprop*2*Whovering*Radius^2;
 armLength = 0.23;
 
 %Saturation
-pwmUpperBound = 500;
-pwmLowerBound = -500;
+pwmUpperBound = 1800;
+pwmLowerBound = 1000;
 
 %saturation
-enableSaturation = -1;
+enableSaturation = 1;
 % linearized
 mode = 1;
 
