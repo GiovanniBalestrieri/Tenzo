@@ -68,12 +68,13 @@ pwmLowerBound = 1000;
 dmUpperBound = 300;
 dmLowerBound = -300;
 
-rpmUpperBound = 6000;
+rpmUpperBound = 90;
 rpmLowerBound = 0;
 
-%saturation
+% saturations 
 enablePwmSaturation = -1;
 enableRpmSaturation = 1;
+
 % linearized
 mode = 1;
 
