@@ -84,10 +84,10 @@ rpmLowerBound = 0;
 
 % saturations 
 enablePwmSaturation = -1;
-enableRpmSaturation = 1;
+enableRpmSaturation = -1;
 
 % Measurement Error
-enableMisErr = 1;
+enableMisErr = -1;
 
 % linearized
 mode = 1;
@@ -124,7 +124,11 @@ Ccomplete = [ zeros(1,4) rollC.c ]
 
 Dcomplete = [ zeros(1,1) ]
 
-rollComplete = ss(Acomplete,Bcomplete,Ccomplete,Dcomplete,'statename',states,'inputname',input,'outputname',output)
+rollComplete = ss(Acomplete,Bcomplete,Ccomplete,Dcomplete,Ts,'statename',states,'inputname',input,'outputname',output)
 
 step(rollComplete)
 
+tfRollComplete = tf(rollComplete)
+
+% get numerator and denominator Roll
+[roll_c_num , roll_c_den] = tfdata(tfRollComplete,'v');
