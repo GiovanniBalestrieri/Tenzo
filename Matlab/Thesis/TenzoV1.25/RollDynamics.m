@@ -34,11 +34,11 @@ step(rollDynamics)
 %% Computing linearized 
 % Computing Thrust force. It is the result of vertical forces acting on all
 % blade elements of one propeller
-Radius = 0.115 % m
-Radius_in = 9 % in
-Ct = 0.18
-rho = 1.225 % kg/m^3
-Aprop = pi*Radius^2
+Radius = 0.115; % m
+Radius_in = 9; % in
+Ct = 0.18;
+rho = 1.225; % kg/m^3
+Aprop = pi*Radius^2;
 
 % Convert to RPM
 Kforce = Ct*rho*Aprop*2*Whovering*Radius^2;
@@ -48,7 +48,24 @@ Kforce = Ct*rho*Aprop*2*Whovering*Radius^2;
 
 
 % get numerator and denominator Roll
-[roll_num_tf_discrete , roll_den_tf_discrete] = tfdata(rollDynamics,'v')
+[roll_num_tf_discrete , roll_den_tf_discrete] = tfdata(rollDynamics,'v');
+
+%% Constant definition and simulation
+
+
+armLength = 0.23;
+
+%Saturation
+pwmUpperBound = 2000;
+pwmLowerBound = 1001;
+
+%saturation
+enableSaturation = -1;
+% linearized
+mode = 1;
+
+% nonlinear
+%mode = -1;
 
 open('testRollContSolo');
 

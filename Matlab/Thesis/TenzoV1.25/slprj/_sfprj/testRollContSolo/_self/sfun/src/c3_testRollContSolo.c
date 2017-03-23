@@ -174,16 +174,6 @@ static void sf_gateway_c3_testRollContSolo(SFc3_testRollContSoloInstanceStruct
   real_T c3_nargin = 1.0;
   real_T c3_nargout = 1.0;
   real_T c3_force;
-  real_T c3_u;
-  const mxArray *c3_y = NULL;
-  real_T c3_b_u;
-  const mxArray *c3_b_y = NULL;
-  real_T c3_c_u;
-  const mxArray *c3_c_y = NULL;
-  real_T c3_d_u;
-  const mxArray *c3_d_y = NULL;
-  real_T c3_e_u;
-  const mxArray *c3_e_y = NULL;
   real_T c3_a;
   real_T c3_b_a;
   real_T c3_c_a;
@@ -194,8 +184,6 @@ static void sf_gateway_c3_testRollContSolo(SFc3_testRollContSoloInstanceStruct
   real_T c3_x;
   real_T c3_b_x;
   real_T c3_c_x;
-  real_T c3_f_u;
-  const mxArray *c3_f_y = NULL;
   real_T *c3_b_rpm;
   real_T *c3_b_force;
   c3_b_force = (real_T *)ssGetOutputPortSignal(chartInstance->S, 1);
@@ -230,39 +218,14 @@ static void sf_gateway_c3_testRollContSolo(SFc3_testRollContSoloInstanceStruct
   CV_EML_FCN(0, 0);
   _SFD_EML_CALL(0U, chartInstance->c3_sfEvent, 6);
   c3_Radius = 0.115;
-  sf_mex_printf("%s =\\n", "Radius");
-  c3_u = c3_Radius;
-  c3_y = NULL;
-  sf_mex_assign(&c3_y, sf_mex_create("y", &c3_u, 0, 0U, 0U, 0U, 0), false);
-  sf_mex_call_debug(sfGlobalDebugInstanceStruct, "disp", 0U, 1U, 14, c3_y);
   _SFD_EML_CALL(0U, chartInstance->c3_sfEvent, 7);
   c3_Radius_in = 9.0;
-  sf_mex_printf("%s =\\n", "Radius_in");
-  c3_b_u = c3_Radius_in;
-  c3_b_y = NULL;
-  sf_mex_assign(&c3_b_y, sf_mex_create("y", &c3_b_u, 0, 0U, 0U, 0U, 0), false);
-  sf_mex_call_debug(sfGlobalDebugInstanceStruct, "disp", 0U, 1U, 14, c3_b_y);
   _SFD_EML_CALL(0U, chartInstance->c3_sfEvent, 8);
   c3_Ct = 0.18;
-  sf_mex_printf("%s =\\n", "Ct");
-  c3_c_u = c3_Ct;
-  c3_c_y = NULL;
-  sf_mex_assign(&c3_c_y, sf_mex_create("y", &c3_c_u, 0, 0U, 0U, 0U, 0), false);
-  sf_mex_call_debug(sfGlobalDebugInstanceStruct, "disp", 0U, 1U, 14, c3_c_y);
   _SFD_EML_CALL(0U, chartInstance->c3_sfEvent, 9);
   c3_rho = 1.225;
-  sf_mex_printf("%s =\\n", "rho");
-  c3_d_u = c3_rho;
-  c3_d_y = NULL;
-  sf_mex_assign(&c3_d_y, sf_mex_create("y", &c3_d_u, 0, 0U, 0U, 0U, 0), false);
-  sf_mex_call_debug(sfGlobalDebugInstanceStruct, "disp", 0U, 1U, 14, c3_d_y);
   _SFD_EML_CALL(0U, chartInstance->c3_sfEvent, 10);
   c3_Aprop = 0.041547562843725017;
-  sf_mex_printf("%s =\\n", "Aprop");
-  c3_e_u = c3_Aprop;
-  c3_e_y = NULL;
-  sf_mex_assign(&c3_e_y, sf_mex_create("y", &c3_e_u, 0, 0U, 0U, 0U, 0), false);
-  sf_mex_call_debug(sfGlobalDebugInstanceStruct, "disp", 0U, 1U, 14, c3_e_y);
   _SFD_EML_CALL(0U, chartInstance->c3_sfEvent, 13);
   c3_a = c3_rpm;
   c3_b_a = c3_a;
@@ -279,11 +242,6 @@ static void sf_gateway_c3_testRollContSolo(SFc3_testRollContSoloInstanceStruct
   c3_b_x = c3_x;
   c3_c_x = c3_b_x;
   c3_Thrust_kg = c3_c_x / 9.81;
-  sf_mex_printf("%s =\\n", "Thrust_kg");
-  c3_f_u = c3_Thrust_kg;
-  c3_f_y = NULL;
-  sf_mex_assign(&c3_f_y, sf_mex_create("y", &c3_f_u, 0, 0U, 0U, 0U, 0), false);
-  sf_mex_call_debug(sfGlobalDebugInstanceStruct, "disp", 0U, 1U, 14, c3_f_y);
   _SFD_EML_CALL(0U, chartInstance->c3_sfEvent, 17);
   c3_force = c3_Thrust_newton;
   _SFD_EML_CALL(0U, chartInstance->c3_sfEvent, -17);
@@ -1037,10 +995,10 @@ extern void utFree(void*);
 
 void sf_c3_testRollContSolo_get_check_sum(mxArray *plhs[])
 {
-  ((real_T *)mxGetPr((plhs[0])))[0] = (real_T)(1667258018U);
-  ((real_T *)mxGetPr((plhs[0])))[1] = (real_T)(3267547961U);
-  ((real_T *)mxGetPr((plhs[0])))[2] = (real_T)(3652912492U);
-  ((real_T *)mxGetPr((plhs[0])))[3] = (real_T)(2836603239U);
+  ((real_T *)mxGetPr((plhs[0])))[0] = (real_T)(3021806512U);
+  ((real_T *)mxGetPr((plhs[0])))[1] = (real_T)(2810463200U);
+  ((real_T *)mxGetPr((plhs[0])))[2] = (real_T)(2264082831U);
+  ((real_T *)mxGetPr((plhs[0])))[3] = (real_T)(77994780U);
 }
 
 mxArray *sf_c3_testRollContSolo_get_autoinheritance_info(void)
@@ -1052,7 +1010,7 @@ mxArray *sf_c3_testRollContSolo_get_autoinheritance_info(void)
     autoinheritanceFields);
 
   {
-    mxArray *mxChecksum = mxCreateString("zgNYGJobDJAn1AkNFFC3DB");
+    mxArray *mxChecksum = mxCreateString("8JuZqudrypSeqryZ9k8I3D");
     mxSetField(mxAutoinheritanceInfo,0,"checksum",mxChecksum);
   }
 
@@ -1210,7 +1168,7 @@ static void chart_debug_initialization(SimStruct *S, unsigned int
 
         /* Initialization of MATLAB Function Model Coverage */
         _SFD_CV_INIT_EML(0,1,1,0,0,0,0,0,0,0,0);
-        _SFD_CV_INIT_EML_FCN(0,0,"eML_blk_kernel",0,-1,356);
+        _SFD_CV_INIT_EML_FCN(0,0,"eML_blk_kernel",0,-1,362);
         _SFD_SET_DATA_COMPILED_PROPS(0,SF_DOUBLE,0,NULL,0,0,0,0.0,1.0,0,0,
           (MexFcnForType)c3_sf_marshallOut,(MexInFcnForType)NULL);
         _SFD_SET_DATA_COMPILED_PROPS(1,SF_DOUBLE,0,NULL,0,0,0,0.0,1.0,0,0,
@@ -1235,7 +1193,7 @@ static void chart_debug_initialization(SimStruct *S, unsigned int
 
 static const char* sf_get_instance_specialization(void)
 {
-  return "EleXj0yLKIHARuYufkFgAE";
+  return "6n9fLz13JOYdOokQ7WCOPF";
 }
 
 static void sf_opaque_initialize_c3_testRollContSolo(void *chartInstanceVar)
@@ -1415,10 +1373,10 @@ static void mdlSetWorkWidths_c3_testRollContSolo(SimStruct *S)
   }
 
   ssSetOptions(S,ssGetOptions(S)|SS_OPTION_WORKS_WITH_CODE_REUSE);
-  ssSetChecksum0(S,(94710659U));
-  ssSetChecksum1(S,(1095236837U));
-  ssSetChecksum2(S,(2608582049U));
-  ssSetChecksum3(S,(3738391140U));
+  ssSetChecksum0(S,(1041862810U));
+  ssSetChecksum1(S,(4062224167U));
+  ssSetChecksum2(S,(502677816U));
+  ssSetChecksum3(S,(1746458270U));
   ssSetmdlDerivatives(S, NULL);
   ssSetExplicitFCSSCtrl(S,1);
   ssSupportsMultipleExecInstances(S,1);
