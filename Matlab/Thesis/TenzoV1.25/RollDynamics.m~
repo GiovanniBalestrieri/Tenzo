@@ -65,8 +65,15 @@ armLength = 0.23;
 pwmUpperBound = 1800;
 pwmLowerBound = 1000;
 
+dmUpperBound = 300;
+dmLowerBound = -300;
+
+rpmUpperBound = 6000;
+rpmLowerBound = 0;
+
 %saturation
-enableSaturation = 1;
+enablePwmSaturation = -1;
+enableRpmSaturation = 1;
 % linearized
 mode = 1;
 
