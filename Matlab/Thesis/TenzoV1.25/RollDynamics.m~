@@ -114,21 +114,31 @@ Br_segn2 = Br_segn(1:2,2)
 
 states = {'x1m1','x2m1','x1m2','x2m2','xr1','xr2'}
 output = {'phi'}
-input={'deltaPwm'}
+input= {'PwmMotor1','PwmMotor2'}
 
 Acomplete = [ motorC.a zeros(2,4) ; zeros(2,2) motorC.a zeros(2,2); (Br_segn1)*motorC.c (Br_segn2)*motorC.c rollC.a ]
 
-Bcomplete = [ motorC.b ; -motorC.b; zeros(2,1)]
+Bcomplete = [ motorC.b zeros(2,1) ; zeros(2,1) motorC.b; zeros(2,2) ]
 
 Ccomplete = [ zeros(1,4) rollC.c ]
 
-Dcomplete = [ zeros(1,1) ]
+Dcomplete = [ zeros(1,2) ]
 
 rollComplete = ss(Acomplete,Bcomplete,Ccomplete,Dcomplete,Ts,'statename',states,'inputname',input,'outputname',output)
 
 step(rollComplete)
 
 tfRollComplete = tf(rollComplete)
-
+tfRollComplete(1)
 % get numerator and denominator Roll
-[roll_c_num , roll_c_den] = tfdata(tfRollComplete,'v');
+[roll_c_num_1 , roll_c_den_1] = tfdata(tfRollComplete(1),'v');
+[roll_c_num_2 , roll_c_den_2] = tfdata(tfRollComplete(2),'v');
+
+N = {roll_c_num_1;roll_c_den_1};   % Cell array for N(s)
+D = {roll_c_num_2;roll_c_den_2}; % Cell array for D(s)
+Hmimo = tf(N,D,Ts)
+
+figure
+step(Hmimo)
+hold on
+step(tfRollComplete)
