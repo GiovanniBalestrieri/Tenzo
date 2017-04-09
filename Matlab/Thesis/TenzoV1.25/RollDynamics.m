@@ -8,7 +8,6 @@ clc
 
 Whovering = 1420;
 Ts = 0.021;
-
 %% Loading identified motor dynamics
 motorDynamics = load('discreteMotortf.mat')
 motorDynamics = motorDynamics.mv
@@ -19,13 +18,29 @@ disp('Evaluating step response for motor dynamics. Press X');
 pause()
 opt = stepDataOptions('InputOffset',0,'StepAmplitude',1420);
 step(motorDynamics,opt)
-motorDynamics = d2d(motorDynamics,0.021)
+motorDynamics2 = d2d(motorDynamics,0.021)
+
+%Comparing systems
+eig(motorDynamics.a)
+eig(motorDynamics2.a)
+
+%comparing step response
+step(motorDynamics,'r',motorDynamics2,'g')
+
+t=1:0.009:110
+u = sin(0.10.*t)+sin(10.*t);
+lsim(motorDynamics,u,t)
+hold on
+t=1:0.021:110
+u = sin(0.10.*t)+sin(10.*t);
+lsim(motorDynamics2,u,t)
+
 
 % get numerator and denominator Roll
-[motor_num_tf_discrete , motor_den_tf_discrete] = tfdata(motorDynamics,'v')
+[motor_num_tf_discrete , motor_den_tf_discrete] = tfdata(motorDynamics2,'v')
 
 % Computing observator canonical form
-motorC = canon(motorDynamics,'companion');
+motorC = canon(motorDynamics2,'companion');
 motorC1 = motorC;
 motorC2 = motorC;
 
@@ -116,7 +131,7 @@ states = {'x1m1','x2m1','x1m2','x2m2','xr1','xr2'}
 output = {'phi'}
 input= {'PwmMotor1','PwmMotor2'}
 
-Acomplete = [ motorC.a zeros(2,4) ; zeros(2,2) motorC.a zeros(2,2); (Br_segn1)*motorC.c (Br_segn2)*motorC.c rollC.a ]
+Acomplete = [ motorC.a zeros(3,5) ; zeros(3,2) motorC.a zeros(3,2); (Br_segn1)*motorC.c (Br_segn2)*motorC.c rollC.a ]
 
 Bcomplete = [ motorC.b zeros(2,1) ; zeros(2,1) motorC.b; zeros(2,2) ]
 
