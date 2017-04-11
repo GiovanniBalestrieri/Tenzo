@@ -135,6 +135,7 @@ cprintf([1,0.5,0],'tenzo_nominale\n\n');
 
 states = {'xe','ye','ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb'};
 
+If = 0;
 A = [ 0 0 0 1 0 0 0 0 0 0 0 0;
       0 0 0 0 1 0 0 0 0 0 0 0;
       0 0 0 0 0 1 0 0 0 0 0 0;

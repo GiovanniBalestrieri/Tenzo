@@ -1,9 +1,8 @@
 %% Roll Dynamics 22 mar 2017
 % Giovanni Balestrieri 
 % Info @ userk.co.uk
-
 clc
-
+clear all
 %% Create 
 
 Whovering = 1420;
@@ -37,7 +36,6 @@ rollDynamics = rollDynamics.mts
 disp('Evaluating step response for roll dynamics. Press X');
 pause()
 step(rollDynamics)
-
 
 % Computing observator canonical form
 rollC = canon(rollDynamics,'companion');
@@ -93,9 +91,10 @@ enableMisErr = -1;
 mode = 1;
 
 % nonlinear
-%mode = -1;
+mode = -1;
 
-open('testRollContSolo');
+%open('testRollContSolo');
+open('rollDynamicsNonLinear');
 
 
 %% Computing augmentedsystem
@@ -116,7 +115,7 @@ states = {'x1m1','x2m1','x1m2','x2m2','xr1','xr2'}
 output = {'phi'}
 input= {'PwmMotor1','PwmMotor2'}
 
-Acomplete = [ motorC.a zeros(2,4) ; zeros(2,2) motorC.a zeros(2,2); (Br_segn1)*motorC.c (Br_segn2)*motorC.c rollC.a ]
+Acomplete = [ motorC.a zeros(3,4) ; zeros(3,2) motorC.a zeros(3,2); (Br_segn1)*motorC.c (Br_segn2)*motorC.c rollC.a ]
 
 Bcomplete = [ motorC.b zeros(2,1) ; zeros(2,1) motorC.b; zeros(2,2) ]
 
