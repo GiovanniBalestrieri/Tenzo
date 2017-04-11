@@ -3,7 +3,7 @@
 % Info @ userk.co.uk
 clc
 clear all
-%% Create 
+ 
 
 Whovering = 1420;
 Ts = 0.021;
