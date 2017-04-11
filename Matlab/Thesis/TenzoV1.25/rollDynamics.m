@@ -85,7 +85,7 @@ enablePwmSaturation = -1;
 enableRpmSaturation = -1;
 
 % Measurement Error
-enableMisErr = -1;
+enableMisErr = 1;
 
 % linearized
 mode = 1;
