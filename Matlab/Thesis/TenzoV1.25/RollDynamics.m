@@ -71,8 +71,8 @@ Kforce = Ct*rho*Aprop*2*Whovering*Radius^2;
 armLength = 0.23;
 
 %Saturation
-pwmUpperBound = 1800;
-pwmLowerBound = 1000;
+pwmUpperBound = 1700;
+pwmLowerBound = 1100;
 
 dmUpperBound = 300;
 dmLowerBound = -300;
@@ -85,7 +85,7 @@ enablePwmSaturation = 1;
 enableRpmSaturation = -1;
 
 % Measurement Error
-enableMisErr = -1;
+enableMisErr = 1;
 
 % Output Perturbation
 enableOutputPert = -1;
