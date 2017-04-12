@@ -5,7 +5,7 @@ clc
 clear all
  
 
-Whovering = 1420;
+Whovering = 750;
 Ts = 0.021;
 
 %% Loading identified motor dynamics
@@ -15,8 +15,8 @@ motorDynamics = motorDynamics.mv
 
 
 disp('Evaluating step response for motor dynamics. Press X');
-pause()
-opt = stepDataOptions('InputOffset',0,'StepAmplitude',1420);
+%pause()
+opt = stepDataOptions('InputOffset',0,'StepAmplitude',750);
 step(motorDynamics,opt)
 motorDynamics = d2d(motorDynamics,0.021)
 
@@ -34,7 +34,7 @@ rollDynamics = load('discreteDynamicTenzo.mat');
 rollDynamics = rollDynamics.mts
 
 disp('Evaluating step response for roll dynamics. Press X');
-pause()
+%pause()
 step(rollDynamics)
 
 % Computing observator canonical form
@@ -67,6 +67,19 @@ Kforce = Ct*rho*Aprop*2*Whovering*Radius^2;
 
 %% Constant definition and simulation
 
+% initial value of error derivative
+de = 0;
+em1 = 0;
+thresholdError = 5;
+
+% Affine constants
+k = 10;
+M = 200;
+
+% Bounding box
+Me = 5;
+Mde = 10;
+
 
 armLength = 0.23;
 
@@ -81,107 +94,107 @@ rpmUpperBound = 90;
 rpmLowerBound = 0;
 
 % saturations 
-enablePwmSaturation = 1;
-enableRpmSaturation = -1;
+enablePwmSaturation = -1;
+enableRpmSaturation = 1;
 
 % Measurement Error
-enableMisErr = 1;
+enableMisErr = -1;
 
 % Output Perturbation
 enableOutputPert = -1;
 
-% linearized
-mode = 1;
 
 % nonlinear
-%mode = -1;
+mode = -1;
 
 %open('testRollContSolo');
 open('rollDynamicsNonLinear');
 
-%% LQG 
-
+%% Valuta Err e DErr
+size(derErr.Data)
+plot(derErr.Data(2:end-2),Err.Data(2:end-2),'-o')
+grid on
 
 %% LQ regulator
-linRollSys = open('rollOpenLoopLin.mat')
-% stable system
-roll = linRollSys.openLoop;
-roll = minreal(roll)
-rank(ctrb(roll.a,roll.b))
-nRoll = size(roll.a,1)
-pRoll = size(roll.b,2)
-qRoll = size(roll.c,1)
-eig(roll)
-step(roll);
-
-
-
-
-
-
-
-
-
-
-%Calcolo retroazione dallo stato
-disp('Uso la funzione lqr per calcolare il guadagno K (la retroazione dallo stato u=Kx)')
-Q=eye(nRoll)
-R=eye(pRoll)
-K = dlqr(roll.a,roll.b,Q,R);
-disp('Matrice di guadagno K: [comando K = dlqr(A,B,Q,R)]');
-disp(K);
-disp('Autovalori a ciclo chiuso: [comando eig(A-B*K)]');
-eK = eig(roll.a-roll.b*K);
-disp(eK);
-
-disp('Premere un t1asto per continuare...')
-pause;
-
-%% Calcolo di un compensatore stabilizzante (2/3)
-clc;
-%Calcolo guadagno del filtro di Kalman
-disp('Uso la funzione lqr per calcolare il guadagno L del filtro di Kalman')
-W=eye(nRoll)
-V=eye(qRoll)
-L= dlqr(roll.a',roll.c',W,V)';
-disp('Matrice di guadagno L: [comando L = lqr(A'',C'',W,V)'']');
-disp(L);
-disp('Autovalori del filtro di Kalman: [comando eig(A-L*C)]');
-eL = eig(roll.a-L*roll.c);
-disp(eL);
-
-disp('Premere un tasto per continuare...')
-pause;
-
-%% Calcolo di un compensatore stabilizzante (3/3)
-clc;
-%Costruisco il regolatore
-disp('Costruisco il regolatore come filtro di Kalman + retroazione dallo stato stimato')
-Ac = roll.a-roll.b*K-L*roll.c+L*roll.d*K;
-Bc = L;
-Cc = -K;
-Dc = zeros(size(K,1),size(L,2));
-disp('Ac = A-B*K-L*C+L*D*K');
-disp(Ac);
-disp('Bc = L, Cc = -K, Dc = zeros(size(K,1),size(L,2))')
-disp('Autovalori a ciclo chiuso:');
-controllore = ss(Ac,Bc,Cc,Dc,Ts);
-CicloChiuso = feedback(series(controllore, roll),eye(pRoll), 1); %Retroazione positiva
-[Acl,Bcl,Ccl,Dcl] = ssdata(CicloChiuso);
-eCl = eig(Acl);
-disp(eCl);
-
-Aoss=roll.a-V*roll.c;
-Bossw=[roll.b-V*roll.d V]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
-Coss=eye(size(AMin));
-Doss=zeros(size(Bossw));
-
-
-disp('La figura mostra la risposta al gradino del sistema di controllo');
-
-step(CicloChiuso);
-disp('Premere un tasto per continuare...')
-pause;
+% linRollSys = open('rollOpenLoopLin.mat')
+% % stable system
+% roll = linRollSys.openLoop;
+% roll = minreal(roll)
+% rank(ctrb(roll.a,roll.b))
+% nRoll = size(roll.a,1)
+% pRoll = size(roll.b,2)
+% qRoll = size(roll.c,1)
+% eig(roll)
+% step(roll);
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% %Calcolo retroazione dallo stato
+% disp('Uso la funzione lqr per calcolare il guadagno K (la retroazione dallo stato u=Kx)')
+% Q=eye(nRoll)
+% R=eye(pRoll)
+% K = dlqr(roll.a,roll.b,Q,R);
+% disp('Matrice di guadagno K: [comando K = dlqr(A,B,Q,R)]');
+% disp(K);
+% disp('Autovalori a ciclo chiuso: [comando eig(A-B*K)]');
+% eK = eig(roll.a-roll.b*K);
+% disp(eK);
+% 
+% disp('Premere un t1asto per continuare...')
+% pause;
+% 
+% %% Calcolo di un compensatore stabilizzante (2/3)
+% clc;
+% %Calcolo guadagno del filtro di Kalman
+% disp('Uso la funzione lqr per calcolare il guadagno L del filtro di Kalman')
+% W=eye(nRoll)
+% V=eye(qRoll)
+% L= dlqr(roll.a',roll.c',W,V)';
+% disp('Matrice di guadagno L: [comando L = lqr(A'',C'',W,V)'']');
+% disp(L);
+% disp('Autovalori del filtro di Kalman: [comando eig(A-L*C)]');
+% eL = eig(roll.a-L*roll.c);
+% disp(eL);
+% 
+% disp('Premere un tasto per continuare...')
+% pause;
+% 
+% %% Calcolo di un compensatore stabilizzante (3/3)
+% clc;
+% %Costruisco il regolatore
+% disp('Costruisco il regolatore come filtro di Kalman + retroazione dallo stato stimato')
+% Ac = roll.a-roll.b*K-L*roll.c+L*roll.d*K;
+% Bc = L;
+% Cc = -K;
+% Dc = zeros(size(K,1),size(L,2));
+% disp('Ac = A-B*K-L*C+L*D*K');
+% disp(Ac);
+% disp('Bc = L, Cc = -K, Dc = zeros(size(K,1),size(L,2))')
+% disp('Autovalori a ciclo chiuso:');
+% controllore = ss(Ac,Bc,Cc,Dc,Ts);
+% CicloChiuso = feedback(series(controllore, roll),eye(pRoll), 1); %Retroazione positiva
+% [Acl,Bcl,Ccl,Dcl] = ssdata(CicloChiuso);
+% eCl = eig(Acl);
+% disp(eCl);
+% 
+% Aoss=roll.a-V*roll.c;
+% Bossw=[roll.b-V*roll.d V]; % perche ho u,y,d come ingressi, si noti che B-vD ha dim di B ma anche V ha dim di B
+% Coss=eye(size(AMin));
+% Doss=zeros(size(Bossw));
+% 
+% 
+% disp('La figura mostra la risposta al gradino del sistema di controllo');
+% 
+% step(CicloChiuso);
+% disp('Premere un tasto per continuare...')
+% pause;
 
 %% Provo una sintesi piu' veloce modificando i pesi
 % clc;
@@ -305,46 +318,46 @@ pause;
 
 
 %% Computing augmentedsystem
-
-Brall = rollC.b*armLength*Kforce
-Br_segn = Brall*[1 -1]
-
-Br_segn11 = Br_segn(1,1)
-Br_segn12 = Br_segn(1,2)
-Br_segn21 = Br_segn(2,1)
-Br_segn22 = Br_segn(2,2)
-
-Br_segn1 = Br_segn(1:2,1)
-Br_segn2 = Br_segn(1:2,2)
-
-
-states = {'x1m1','x2m1','x1m2','x2m2','xr1','xr2'}
-output = {'phi'}
-input= {'PwmMotor1','PwmMotor2'}
-
-Acomplete = [ motorC.a zeros(3,4) ; zeros(3,2) motorC.a zeros(3,2); (Br_segn1)*motorC.c (Br_segn2)*motorC.c rollC.a ]
-
-Bcomplete = [ motorC.b zeros(2,1) ; zeros(2,1) motorC.b; zeros(2,2) ]
-
-Ccomplete = [ zeros(1,4) rollC.c ]
-
-Dcomplete = [ zeros(1,2) ]
-
-rollComplete = ss(Acomplete,Bcomplete,Ccomplete,Dcomplete,Ts,'statename',states,'inputname',input,'outputname',output)
-
-step(rollComplete)
-
-tfRollComplete = tf(rollComplete)
-tfRollComplete(1)
-% get numerator and denominator Roll
-[roll_c_num_1 , roll_c_den_1] = tfdata(tfRollComplete(1),'v');
-[roll_c_num_2 , roll_c_den_2] = tfdata(tfRollComplete(2),'v');
-
-N = {roll_c_num_1;roll_c_den_1};   % Cell array for N(s)
-D = {roll_c_num_2;roll_c_den_2}; % Cell array for D(s)
-Hmimo = tf(N,D,Ts)
-
-figure
-step(Hmimo)
-hold on
-step(tfRollComplete)
+% 
+% Brall = rollC.b*armLength*Kforce
+% Br_segn = Brall*[1 -1]
+% 
+% Br_segn11 = Br_segn(1,1)
+% Br_segn12 = Br_segn(1,2)
+% Br_segn21 = Br_segn(2,1)
+% Br_segn22 = Br_segn(2,2)
+% 
+% Br_segn1 = Br_segn(1:2,1)
+% Br_segn2 = Br_segn(1:2,2)
+% 
+% 
+% states = {'x1m1','x2m1','x1m2','x2m2','xr1','xr2'}
+% output = {'phi'}
+% input= {'PwmMotor1','PwmMotor2'}
+% 
+% Acomplete = [ motorC.a zeros(3,4) ; zeros(3,2) motorC.a zeros(3,2); (Br_segn1)*motorC.c (Br_segn2)*motorC.c rollC.a ]
+% 
+% Bcomplete = [ motorC.b zeros(2,1) ; zeros(2,1) motorC.b; zeros(2,2) ]
+% 
+% Ccomplete = [ zeros(1,4) rollC.c ]
+% 
+% Dcomplete = [ zeros(1,2) ]
+% 
+% rollComplete = ss(Acomplete,Bcomplete,Ccomplete,Dcomplete,Ts,'statename',states,'inputname',input,'outputname',output)
+% 
+% step(rollComplete)
+% 
+% tfRollComplete = tf(rollComplete)
+% tfRollComplete(1)
+% % get numerator and denominator Roll
+% [roll_c_num_1 , roll_c_den_1] = tfdata(tfRollComplete(1),'v');
+% [roll_c_num_2 , roll_c_den_2] = tfdata(tfRollComplete(2),'v');
+% 
+% N = {roll_c_num_1;roll_c_den_1};   % Cell array for N(s)
+% D = {roll_c_num_2;roll_c_den_2}; % Cell array for D(s)
+% Hmimo = tf(N,D,Ts)
+% 
+% figure
+% step(Hmimo)
+% hold on
+% step(tfRollComplete)
