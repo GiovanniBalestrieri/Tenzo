@@ -80,6 +80,9 @@ M = 200;
 Me = 5;
 Mde = 10;
 
+% iperbole
+lambdaErr = 0.00001;
+
 
 armLength = 0.23;
 
@@ -109,10 +112,11 @@ mode = -1;
 
 %open('testRollContSolo');
 open('rollDynamicsNonLinear');
+sim('rollDynamicsNonLinear');
 
 %% Valuta Err e DErr
 size(derErr.Data)
-plot(derErr.Data(2:end-2),Err.Data(2:end-2),'-o')
+plot(derErr.Data(120:end-2),Err.Data(120:end-2),'--')
 grid on
 
 %% LQ regulator
