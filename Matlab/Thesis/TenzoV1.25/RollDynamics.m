@@ -115,8 +115,14 @@ open('rollDynamicsNonLinear');
 sim('rollDynamicsNonLinear');
 
 %% Valuta Err e DErr
-size(derErr.Data)
-plot(derErr.Data(120:end-2),Err.Data(120:end-2),'--')
+size(derErr.Data);
+plot3(derErr.Data(120:end-2),Err.Data(120:end-2),Err.Time(120:end-2),'--gs',...
+'MarkerSize',10,...
+    'MarkerEdgeColor','b')
+xlabel('Error derivative')
+ylabel('Error ')
+zlabel('Time')
+title('de Vs e vs T')
 grid on
 
 %% LQ regulator
