@@ -251,7 +251,7 @@ compare(IOtestDetrend,mts)
 % Raw set
 figure
 disp('Comparing th2 and ms')
-compare(IOvalDetrend,mv,mvs)
+compare(IOvalDetrend,mvs)
 %% Save Identified Discrete Time System
 
 
