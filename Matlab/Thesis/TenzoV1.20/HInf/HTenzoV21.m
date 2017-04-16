@@ -164,6 +164,7 @@ WTF = [     0   -lx*Kt  0  lx*Kt;
             -Kt -Kt -Kt -Kt];  
 
 Bw = B*WTF;
+Bw = B;
  
 outputsLocal = {'phi'; 'theta';'psi';'ze'};
 Clocal = [ 0 0 0 0 0 0 1 0 0 0 0 0; 
@@ -403,6 +404,9 @@ if strcmp(answer2,'y')
     sigma(modello_tf,[],'o-')
     grid on
 end
+
+eig(tenzo_min_nominale.a)
+rank(tenzo_min_nominale.a)
 
 %% 2) - Passo primo: 
 
