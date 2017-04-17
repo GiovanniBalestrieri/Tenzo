@@ -77,11 +77,11 @@ k = 10;
 M = 200;
 
 % Bounding box
-Me = 5;
-Mde = 10;
+Me = 15;
+Mde = 70;
 
 % iperbole
-lambdaErr = 0.00001;
+lambdaErr = 0.00000001;
 
 
 armLength = 0.23;
@@ -113,6 +113,19 @@ mode = -1;
 %open('testRollContSolo');
 open('rollDynamicsNonLinear');
 sim('rollDynamicsNonLinear');
+
+%% Plot switching criteria
+
+time = -5:0.1:5;
+f = 0.00000001./time;
+f1 = -f;
+plot(f,time)
+hold on 
+plot(f1,time)
+grid on
+title("Switching function")
+xlabel("error")
+ylabel("d error")
 
 %% Valuta Err e DErr
 size(derErr.Data);
