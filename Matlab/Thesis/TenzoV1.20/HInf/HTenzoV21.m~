@@ -120,7 +120,7 @@ omegaPertOut = 6;
 cstPertOut = 0;
 
 % Noise
-randomAmpNoise =  1;
+randomAmpNoise =  1.5;
 amplitudeNoise = 2;
 omegaNoise = 370; % ~60Hz
 
@@ -323,7 +323,7 @@ disp('Removing unobservable and unreachable modes from Tenzo.');
     0 0 0 1/Izz];
 
 % define B matrix related to wi anuglar velocities
-%BMinw = [Bw(3,:);Bw(6:end,:)];
+BMinw = [Bw(3,:);Bw(6:end,:)];
  
 outputsLocal = {'phi'; 'theta';'psi';'ze'};
 ClocalMin = [  
@@ -333,12 +333,12 @@ ClocalMin = [
             1 0 0 0 0 0 0 0];
         
 statesMin = {'ze','vze','phi','theta','psi','wxb','wyb','wzb'};
-inputName = {'w1^2','w2^2','w3^2','w40^2'};
+inputName = {'w1^2','w2^2','w3^2','w4^2'};
 
 disp('x,y position and velocities have been removed.');
 disp('When we linearize the non linear model, these informations are lost');
 
-tenzo_min_unc = uss(AMin,BMin,ClocalMin,D,'statename',statesMin,'inputName',inputName,'outputname',outputsLocal);
+tenzo_min_unc = uss(AMin,BMinw,ClocalMin,D,'statename',statesMin,'inputName',inputName,'outputname',outputsLocal);
 tenzo_min_nominale=tenzo_min_unc.NominalValue;
 
 % Sottosistema ragg e oss con decomposizione di Kalman
@@ -423,7 +423,7 @@ cprintf('hyper', [char(10) '2) Passo 1: LQR' char(10) char(10)]);
 lxx = lx.NominalValue;
 lyy = ly.NominalValue;
 Ktmm = Ktm.NominalValue;
-Kt.Nomi
+Ktt = Kt.NominalValue;
 % Stabilizzazione LQR
 
 disp('Stabilizzazione mediante LQR dallo stato stimato');
@@ -433,7 +433,7 @@ pause();
 rho1 = 0.01;
 rho2 = 1;
 rho3 = 100;
-alphaK = 0.9;
+alphaK = 0.3;
 alphaKLQR = alphaK;
 
 cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
@@ -442,7 +442,7 @@ cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
 Q = tenzo_min_nominale.c'*tenzo_min_nominale.c;
 
 %RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
-R = eye(size(BMinw,2));
+R = eye(size(BMin,2));
 
 R1 = rho1*eye(p);
 R2 = rho2*eye(p);
@@ -525,10 +525,10 @@ B0 = tenzo_min_nominale.b;
 C0 = tenzo_min_nominale.c;
 D0 = tenzo_min_nominale.d;
 
-Kopt = Kopt_3;
+Kopt = Kopt_1;
 
-set_param('LQRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
-set_param('LqrTenzo/Optima Controller/F1','Gain','Kopt1');
+set_param('LqrTenzoWMotors/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
+set_param('LqrTenzoWMotors/Optima Controller/F1','Gain','Kopt');
 
 
 if strcmp(answer10,'y')
@@ -631,8 +631,15 @@ end
 
 cprintf('hyper', [char(10) 'b) Kalman with V\n']);
 
+
+alphaK = 
+
+
 % 1st Attempt 
 sigma_1 = 0.5;
+
+
+
 V_1 = sigma_1^2*tenzo_min_nominale.b*tenzo_min_nominale.b'; % matrice di intensità
 W_1 = eye(p);
 L_1 = lqr((tenzo_min_nominale.a+alphaK*eye(n))',tenzo_min_nominale.c',V_1,W_1)';

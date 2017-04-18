@@ -135,23 +135,23 @@ compare(zvDetrend(1:end),th2,th4);
 %% Compare n4Sid trained with TestSet
 
 disp('Comparing ms and arx')
-compare(zvDetrend,ms,m)
+compare(zvDetrend,ms)
 % Test set
 disp('Comparing ms1 and ms')
-compare(ztDetrend,ms,m)
+compare(ztDetrend,ms)
 % Complete set
 disp('Comparing th2 and ms')
-compare(zDetrend,ms,m)
+compare(zDetrend,ms)
 %% Compare n4Sid trained with validation set
 
 disp('Comparing ms and arx')
-compare(zvDetrend,msv,mv)
+compare(zvDetrend,msv)
 % Test set
 disp('Comparing ms1 and ms')
-compare(ztDetrend,msv,mv)
+compare(ztDetrend,msv)
 % Complete set
 disp('Comparing th2 and ms')
-compare(zDetrend,msv,mv)
+compare(zDetrend,msv)
 %% Compare n4Sid trained with Full set
 
 disp('Comparing ms and arx')
@@ -168,20 +168,28 @@ compare(zDetrend,msc)
 t = 0:Ts:Ts*(size(inputOriginal,1)-1);
 size(t)
 size(inputOriginal)
-y= lsim(mv,inputOriginal,t);
+
+tf(msv)
+[motor_num_tf_discrete , motor_den_tf_discrete] = tfdata(msv,'v')
+tfM = tf(motor_num_tf_discrete*1,motor_den_tf_discrete,0.009)
+
+y= lsim(tfM,inputOriginal,t);
+%y= lsim(msv,inputOriginal,t);
 
 plot(y)
 % Create iddata Time domain signal
 simulatedDData = iddata(y,inputOriginal,Ts)
 simulatedDDataDetrend = retrend(simulatedDData, T)
 
-%% Plot results
+% Plot results
 
 figure(10)
 plot(simulatedDData,'c')
 grid on
 hold on
 plot(z,'r-')
+tf(msv)
+
 
 legend('Simulated','measured')
 

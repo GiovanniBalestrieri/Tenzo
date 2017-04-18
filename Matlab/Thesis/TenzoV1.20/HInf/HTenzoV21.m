@@ -631,8 +631,15 @@ end
 
 cprintf('hyper', [char(10) 'b) Kalman with V\n']);
 
+
+alphaK = 120;
+
+
 % 1st Attempt 
 sigma_1 = 0.5;
+
+
+
 V_1 = sigma_1^2*tenzo_min_nominale.b*tenzo_min_nominale.b'; % matrice di intensità
 W_1 = eye(p);
 L_1 = lqr((tenzo_min_nominale.a+alphaK*eye(n))',tenzo_min_nominale.c',V_1,W_1)';

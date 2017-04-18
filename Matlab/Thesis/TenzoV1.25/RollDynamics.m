@@ -18,15 +18,26 @@ disp('Evaluating step response for motor dynamics. Press X');
 %pause()
 opt = stepDataOptions('InputOffset',0,'StepAmplitude',750);
 step(motorDynamics,opt)
-motorDynamics = d2d(motorDynamics,0.021)
+mmm = d2c(motorDynamics)
+
+[motor_num_tf_discrete , motor_den_tf_discrete] = tfdata(mmm,'v')
+
+%motorDynamics = d2d(motorDynamics,0.021)
 
 % get numerator and denominator Roll
-[motor_num_tf_discrete , motor_den_tf_discrete] = tfdata(motorDynamics,'v')
+%[motor_num_tf_discrete , motor_den_tf_discrete] = tfdata(motorDynamics,'v')
+
+% remove delay from transfer function
+motorWOdelay = tf(motor_num_tf_discrete,motor_den_tf_discrete)
 
 % Computing observator canonical form
 motorC = canon(motorDynamics,'companion');
 motorC1 = motorC;
 motorC2 = motorC;
+
+% REduce model order to 1
+mm = reduce(mmm,1)
+step(mm,'r',motorWOdelay,'b')
 
 %% Loading identified Roll dynamics
 
