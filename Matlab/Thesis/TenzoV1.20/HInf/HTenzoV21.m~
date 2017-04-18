@@ -197,7 +197,7 @@ stab=1;
 eOp = eig(tenzo_nominale.a);
 [dn,dm]=size(eOp);
 moltZero = 0;
-for i=1:dn,
+for i=1:dn
   if (real(eOp(i)) > 0) 
       stab=0; 
       disp('elemento a parte reale positiva:');
@@ -338,7 +338,7 @@ inputName = {'w1^2','w2^2','w3^2','w40^2'};
 disp('x,y position and velocities have been removed.');
 disp('When we linearize the non linear model, these informations are lost');
 
-tenzo_min_unc = uss(AMin,BMinw,ClocalMin,D,'statename',statesMin,'inputName',inputName,'outputname',outputsLocal);
+tenzo_min_unc = uss(AMin,BMin,ClocalMin,D,'statename',statesMin,'inputName',inputName,'outputname',outputsLocal);
 tenzo_min_nominale=tenzo_min_unc.NominalValue;
 
 % Sottosistema ragg e oss con decomposizione di Kalman
@@ -420,7 +420,10 @@ cprintf('hyper', [char(10) '2) Passo 1: LQR' char(10) char(10)]);
 %              matrice U0 del sistema a ciclo chiuso non deve essere troppo
 %              alto ad alte frequenze 
 
-
+lxx = lx.NominalValue;
+lyy = ly.NominalValue;
+Ktmm = Ktm.NominalValue;
+Kt.Nomi
 % Stabilizzazione LQR
 
 disp('Stabilizzazione mediante LQR dallo stato stimato');

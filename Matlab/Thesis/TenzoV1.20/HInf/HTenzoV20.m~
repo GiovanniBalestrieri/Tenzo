@@ -333,7 +333,7 @@ ClocalMin = [
             1 0 0 0 0 0 0 0];
         
 statesMin = {'ze','vze','phi','theta','psi','wxb','wyb','wzb'};
-inputName = {'w1^2','w2^2','w3^2','w40^2'};
+inputName = {'w1^2','w2^2','w3^2','w4^2'};
 
 disp('x,y position and velocities have been removed.');
 disp('When we linearize the non linear model, these informations are lost');
@@ -516,7 +516,7 @@ if isempty(answer2)
     answer10 = 'y';
 end
 
-open('LqrTenzoWMotors.slx');
+open('LqrTenzo.slx');
 A0 = tenzo_min_nominale.a;
 B0 = tenzo_min_nominale.b;
 C0 = tenzo_min_nominale.c;
@@ -529,7 +529,7 @@ set_param('LqrTenzo/Optima Controller/F1','Gain','Kopt1');
 
 
 if strcmp(answer10,'y')
-    sim('LqrTenzoWMotors.slx');
+    sim('LqrTenzo.slx');
 end
 
 %% 2) Passo 2

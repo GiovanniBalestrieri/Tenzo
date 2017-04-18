@@ -120,7 +120,7 @@ omegaPertOut = 6;
 cstPertOut = 0;
 
 % Noise
-randomAmpNoise =  1;
+randomAmpNoise =  1.5;
 amplitudeNoise = 2;
 omegaNoise = 370; % ~60Hz
 
@@ -197,7 +197,7 @@ stab=1;
 eOp = eig(tenzo_nominale.a);
 [dn,dm]=size(eOp);
 moltZero = 0;
-for i=1:dn,
+for i=1:dn
   if (real(eOp(i)) > 0) 
       stab=0; 
       disp('elemento a parte reale positiva:');
@@ -323,7 +323,7 @@ disp('Removing unobservable and unreachable modes from Tenzo.');
     0 0 0 1/Izz];
 
 % define B matrix related to wi anuglar velocities
-%BMinw = [Bw(3,:);Bw(6:end,:)];
+BMinw = [Bw(3,:);Bw(6:end,:)];
  
 outputsLocal = {'phi'; 'theta';'psi';'ze'};
 ClocalMin = [  
@@ -333,7 +333,7 @@ ClocalMin = [
             1 0 0 0 0 0 0 0];
         
 statesMin = {'ze','vze','phi','theta','psi','wxb','wyb','wzb'};
-inputName = {'w1^2','w2^2','w3^2','w40^2'};
+inputName = {'w1^2','w2^2','w3^2','w4^2'};
 
 disp('x,y position and velocities have been removed.');
 disp('When we linearize the non linear model, these informations are lost');
@@ -420,7 +420,10 @@ cprintf('hyper', [char(10) '2) Passo 1: LQR' char(10) char(10)]);
 %              matrice U0 del sistema a ciclo chiuso non deve essere troppo
 %              alto ad alte frequenze 
 
-
+lxx = lx.NominalValue;
+lyy = ly.NominalValue;
+Ktmm = Ktm.NominalValue;
+Ktt = Kt.NominalValue;
 % Stabilizzazione LQR
 
 disp('Stabilizzazione mediante LQR dallo stato stimato');
@@ -430,7 +433,7 @@ pause();
 rho1 = 0.01;
 rho2 = 1;
 rho3 = 100;
-alphaK = 0.9;
+alphaK = 0.3;
 alphaKLQR = alphaK;
 
 cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
@@ -439,7 +442,7 @@ cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
 Q = tenzo_min_nominale.c'*tenzo_min_nominale.c;
 
 %RieCmp = [1 0 0 0; 0 100000 0 0; 0 0 100000 0; 0 0 0 10000];
-R = eye(size(BMinw,2));
+R = eye(size(BMin,2));
 
 R1 = rho1*eye(p);
 R2 = rho2*eye(p);
@@ -522,10 +525,10 @@ B0 = tenzo_min_nominale.b;
 C0 = tenzo_min_nominale.c;
 D0 = tenzo_min_nominale.d;
 
-Kopt = Kopt_3;
+Kopt = Kopt_1;
 
-set_param('LQRTenzo/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
-set_param('LqrTenzo/Optima Controller/F1','Gain','Kopt1');
+set_param('LqrTenzoWMotors/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
+set_param('LqrTenzoWMotors/Optima Controller/F1','Gain','Kopt');
 
 
 if strcmp(answer10,'y')
