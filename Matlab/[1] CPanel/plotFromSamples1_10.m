@@ -27,7 +27,7 @@ xlabel('Time [us]');
 ylabel('Amplitude [m*s^-2]');
 plot(dat.time,dat.x);
 hold on
-plot(dat.time,dat.y,'g','LineWidth',2);
+%plot(dat.time,dat.y,'g','LineWidth',2);
 grid on
 grid minor
 
@@ -49,6 +49,7 @@ grid minor
 X_mags=abs(fft(dat.x));
 figure(3)
 plot(X_mags);
+grid on
 xlabel('DFT Bins');
 ylabel('Magnitude');
 
@@ -56,6 +57,7 @@ ylabel('Magnitude');
 figure(3)
 num_bins = length(X_mags);
 plot([0:1/(num_bins/2 -1):1],X_mags(1:num_bins/2))
+grid on
 xlabel('Normalized frequency [\pi rads/samples]');
 ylabel('Magnitude');
 
@@ -93,7 +95,7 @@ plot([0:1/(num_bins/2 -1):1], abs(H2), 'r');
 x_filtered2 = filter(b2,a2,dat.x);
 figure(5)
 plot(x_filtered2,'g');
-title('Filtered Signal - 20 Order Butterworth');
+title('Filtered Signal - 3 Order Butterworth');
 xlabel('Samples');
 ylabel('Amplitude');
 
@@ -118,19 +120,20 @@ ylabel('Amplitude');
 
 figure(7)
 % Plots Raw acc data
-plot(dat.time,dat.x,'k');
+plot(dat.time,dat.x);
 hold on
 % Arduino digital filter
-plot(dat.time,dat.y,'b','LineWidth',2);
+plot(dat.time,dat.y,'k','LineWidth',2);
 hold on
 % Matlab filter
-plot(dat.time,x_filtered,'ro','LineWidth',2);
+plot(dat.time,x_filtered,'r-','LineWidth',2);
 hold on
 % Plots cF = 0.10 Matlab filtered, order 3
 plot(dat.time,x_filtered2,'g-','LineWidth',2);
 hold on
 % Plots cf = 0.3 Matlab filtered order 30
-plot(dat.time,x_filtered3,'c-','LineWidth',2);
+%plot(dat.time,x_filtered3,'m-','LineWidth',2);
+legend('raw acceleration','first order low pass filter',' 2nd order Butterworth','3rd order Butterworth')
 title('Filter Comparison');
 xlabel('Samples [us]');
 ylabel('Amplitude [m*s^-2]');
