@@ -91,5 +91,11 @@ save('DynamicTenzo.mat','mts')
 save('Results/Roll76.mat','rollDynamic76')
 save('Results/Roll68.mat','rollDynamic68')
 
+%% Forma canonica di osservatore
+roll76 = ss(rollDynamic76)
 
+[Abar,Bbar,Cbar,T,k] = obsvf(roll76.A,roll76.B,roll76.C)
 
+rollX = ss(Abar,Bbar,Cbar,roll76.D)
+
+step(roll76,'r',rollX,'b')
