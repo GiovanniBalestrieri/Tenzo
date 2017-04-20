@@ -47,9 +47,9 @@ x0=[0 0];
 r=1;
 y_rif=1;
 dy_rif=0;
-%  [X,Jval] = fmincon('parameters',ci,Ao,Bo,Aeq,beq,lb,ub,@nonlcon_2,options);
-%  Kp=X(1)
-%  Ki=X(2)
+%   [X,Jval] = fmincon('parameters',ci,Ao,Bo,Aeq,beq,lb,ub,@nonlcon_2,options);
+%   Kp=X(1)
+%   Ki=X(2)
  
 
 %%REALIZZAZIONE DEL SISTEMA A CICLO CHIUSO
@@ -166,7 +166,7 @@ fs1=tf(ss(A1,B1,C1,0))
 f2=feedback(G2*P,1)
 fs2=tf(ss(A2,B2,C2,0))
 
-
+%%
 
 A1_0=[0 -Ki 0; 0 0 1; k -b-k*Kp -a];
 A2_0=[0 -Ki2 0; 0 0 1; k -b-k*Kp2 -a];
