@@ -9,43 +9,8 @@ Whovering = 750;
 Ts = 0.021;
 
 %% Loading identified motor dynamics
-motorDynamics = load('discreteMotortf.mat')
-motorDynamics = motorDynamics.mv
-
-mDyn = d2c(tf(motorDynamics))
-step(mDyn)
-mCst 
-
-
-disp('Evaluating step response for motor dynamics. Press X');
-%pause()
-opt = stepDataOptions('InputOffset',0,'StepAmplitude',750);
-step(motorDynamics,opt)
-mmm = d2c(motorDynamics)
-
-[motor_num_tf_discrete , motor_den_tf_discrete] = tfdata(mmm,'v')
-
-%motorDynamics = d2d(motorDynamics,0.021)
-
-% get numerator and denominator Roll
-%[motor_num_tf_discrete , motor_den_tf_discrete] = tfdata(motorDynamics,'v')
-
-% remove delay from transfer function
-motorWOdelay = tf(motor_num_tf_discrete,motor_den_tf_discrete)
-
-% Computing observator canonical form
-motorC = canon(motorDynamics,'companion');
-motorC1 = motorC;
-motorC2 = motorC;
-
-% REduce model order to 1
-mm = reduce(mmm,1)
-step(mm,'r',motorWOdelay,'b')
-
-%% Loading identified Roll dynamics
-
-rollDynamics = load('discreteDynamicTenzo.mat');
-rollDynamics = rollDynamics.mts
+rollDynamics = load('Roll84.mat')
+rollDynamics = rollDynamics.rollDynamic84
 
 disp('Evaluating step response for roll dynamics. Press X');
 %pause()
@@ -54,31 +19,10 @@ step(rollDynamics)
 % Computing observator canonical form
 rollC = canon(rollDynamics,'companion');
 
-%% Computing linearized 
-% Computing Thrust force. It is the result of vertical forces acting on all
-% blade elements of one propeller
-Radius = 0.115; % m
-Radius_in = 9; % in
-Ct = 0.18;
-rho = 1.225; % kg/m^3
-Aprop = pi*Radius^2;
-
-% Convert to RPM
-Kforce = Ct*rho*Aprop*2*Whovering*Radius^2;
-%Thrust_newton = rpm*Kforce;
-%Thrust_kg = Thrust_newton/9.81
-
-
-
-% get numerator and denominator Roll
-[roll_num_tf_discrete , roll_den_tf_discrete] = tfdata(rollDynamics,'v');
-
-
-
-
-
-
-
+rollD = c2d(rollC,Ts)
+[roll_lin_num_84, roll_lin_den_84] = tfdata(tf(rollD))
+roll_lin_num_84 = roll_lin_num_84{1,1}
+roll_lin_den_84 = roll_lin_den_84{1,1}
 %% Constant definition and simulation
 
 % initial value of error derivative
@@ -95,7 +39,7 @@ Me = 15;
 Mde = 70;
 
 % iperbole
-lambdaErr = 0.00000001;
+lambdaErr = 0.00001;
 
 
 armLength = 0.23;
@@ -115,7 +59,7 @@ enablePwmSaturation = -1;
 enableRpmSaturation = 1;
 
 % Measurement Error
-enableMisErr = 1;
+enableMisErr = -1;
 
 % Output Perturbation
 enableOutputPert = -1;
@@ -125,8 +69,7 @@ enableOutputPert = -1;
 mode = -1;
 
 %open('testRollContSolo');
-open('rollDynamicsNonLinear');
-sim('rollDynamicsNonLinear');
+open('rollDynamicsLinear');
 
 %% Plot switching criteria
 
