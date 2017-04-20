@@ -115,7 +115,29 @@ nns = selstruc(V)
 th2 = arx(ztDetrend,nns);
 th4 = arx(ztDetrend,nn);
 compare(zvDetrend(1:end),th2,th4);
+%% ARX results
+compare(zDetrend(1:end),th2,th4);
+grid on
 
+[motor_num_tf_arx , motor_den_tf_arx] = tfdata(th2,'v')
+th5 = tf(motor_num_tf_discrete , motor_den_tf_discrete,0.009)
+compare(zDetrend(1:end),th5,th2)
+th5ss = canon(th5,'modal')
+th5ss2 = reduce(th5ss,2)
+th5ss2tf = tf(th5ss2)
+th5ss1 = reduce(th5ss,1)
+th5ss1tf = tf(th5ss1)
+th5ss3 = reduce(th5ss,3)
+th5ss3tf = tf(th5ss3)
+th5ss4 = reduce(th5ss,4)
+th5ss4tf = tf(th5ss4)
+
+figure(21)
+compare(zDetrend(1:end),th5,th5ss1,th5ss2,th5ss4)
+
+figure(22)
+bode(th5,'r',th5ss2,'b',th5ss1,'c',th5ss4,'k')
+legend('6th order','reduction 2nd','reduction 1st','red 4th')
 %% Identifiy linear discrete time model with n4sid
 
 % Training
@@ -192,6 +214,7 @@ tf(msv)
 
 
 legend('Simulated','measured')
+% Problem encountered real and simulated outputs are differents. Delta 43,2
 
 save('discreteMotortf.mat','mv')
 %%
