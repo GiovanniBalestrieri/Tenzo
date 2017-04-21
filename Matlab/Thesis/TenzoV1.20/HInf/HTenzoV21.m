@@ -414,8 +414,7 @@ cprintf('hyper', [char(10) '2) Passo 1: LQR' char(10) char(10)]);
 %          Scegliere R=rho*I con rho>0 e calcolare la matrice dei guadagni 
 %          ottimi per tali Q e R. 
 %          Scelgo rho tenendo conto che:
-%          1. il controllo
-% non deve dar luogo ad una risposta troppo lenta.
+%          1. il controllo non deve dar luogo ad una risposta troppo lenta.
 %          2. l'andamento della curva del massimo valor singolare della 
 %              matrice U0 del sistema a ciclo chiuso non deve essere troppo
 %              alto ad alte frequenze 
@@ -430,10 +429,13 @@ disp('Stabilizzazione mediante LQR dallo stato stimato');
 disp('Press any key to continue.');
 pause();
 
-rho1 = 0.01;
-rho2 = 1;
-rho3 = 100;
-alphaK = 0.3;
+rho1 = 10;
+rho2 = 100;
+rho3 = 1000;
+alphaK = 0;
+alphaK1 = 1.3;
+alphaK2 = 2.4;
+alphaK3 = 3.9;
 alphaKLQR = alphaK;
 
 cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
@@ -452,6 +454,50 @@ Kopt_1 = lqr(tenzo_min_nominale.a+alphaK*eye(n) , tenzo_min_nominale.b, Q, R1);
 Kopt_2 = lqr(tenzo_min_nominale.a+alphaK*eye(n) , tenzo_min_nominale.b, Q, R2);
 Kopt_3 = lqr(tenzo_min_nominale.a+alphaK*eye(n) , tenzo_min_nominale.b, Q, R3);
 
+QQQ = eye(n);
+QQQ1 = 5000*eye(n);
+QQQ2 = 10000*eye(n);
+QQQ3 = 50000*eye(n);
+RRR = eye(p);
+Kopt_4 = lqr(tenzo_min_nominale.a, tenzo_min_nominale.b, QQQ, RRR);
+Kopt_5 = lqr(tenzo_min_nominale.a, tenzo_min_nominale.b, QQQ1, RRR);
+Kopt_6 = lqr(tenzo_min_nominale.a, tenzo_min_nominale.b, QQQ2, RRR);
+Kopt_7 = lqr(tenzo_min_nominale.a, tenzo_min_nominale.b, QQQ3, RRR);
+
+Kopt_8 = lqr(tenzo_min_nominale.a+alphaK1*eye(n), tenzo_min_nominale.b, Q, R3);
+Kopt_9 = lqr(tenzo_min_nominale.a+alphaK2*eye(n), tenzo_min_nominale.b, Q, R3);
+Kopt_10 = lqr(tenzo_min_nominale.a+alphaK3*eye(n), tenzo_min_nominale.b, Q, R3);
+
+
+tenzoLQR4=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_4,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoLQR5=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_5,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoLQR6=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_6,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoLQR7=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_7,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoLQR8=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_8,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoLQR9=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_9,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+tenzoLQR10=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_10,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+
+
+
+eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_5)
+figure(90);
+step(tenzoLQR5);
+hold on 
+step(tenzoLQR6);
+hold on 
+step(tenzoLQR7);
+legend('d = 5000','d=10000','d=50000')
+
+% Testing Cb confine
+
+figure(91);
+step(tenzoLQR8);
+hold on 
+step(tenzoLQR9);
+hold on 
+step(tenzoLQR10);
+legend('alpha=0.3','alpha=0.4','alpha=0.5')
+
 tenzoLQR1=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_1,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 tenzoLQR2=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_2,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 tenzoLQR3=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_3,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
@@ -464,6 +510,7 @@ disp('Eig sys 1 CC retroazione dallo stato:');
 eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_1)
 figure(3);
 step(tenzoLQR1);
+hold on
 title('Rho1 - CL  Lqr ');
 
 
@@ -472,8 +519,8 @@ pause();
 disp('Displaying LQR 2 with rho2');
 disp('Eig sys 2 CC retroazione dallo stato:');
 eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_2)
-figure(3)
 step(tenzoLQR2);
+hold on
 title('Rho2 - CL  Lqr ');
 
 cprintf('text','\nX to continue');
@@ -481,10 +528,10 @@ pause();
 disp('Displaying LQR 3 with rho3');
 disp('Eig sys 3 CC retroazione dallo stato:');
 eig(tenzo_min_nominale.a - tenzo_min_nominale.b*Kopt_3)
-figure(3)
 step(tenzoLQR3);
-title('Rho3 - CL Lqr');
-
+hold off
+title('Rho comparison - CL Lqr');
+legend('rho = 10','rho = 100','rho = 200');
 % Ricostruzione dello stato con Kalman
 
 disp('Ricostruzione dello stato con Kalman');
@@ -525,7 +572,7 @@ B0 = tenzo_min_nominale.b;
 C0 = tenzo_min_nominale.c;
 D0 = tenzo_min_nominale.d;
 
-Kopt = Kopt_1;
+Kopt = Kopt_10;
 
 set_param('LqrTenzoWMotors/DisturboOut/ErrOut/disturbo/SinOut','amplitude','amplitudePertOut');
 set_param('LqrTenzoWMotors/Optima Controller/F1','Gain','Kopt');
