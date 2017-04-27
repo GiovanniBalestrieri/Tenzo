@@ -134,7 +134,7 @@ cprintf([1,0.5,0],'tenzo_nominale\n\n');
 %disp(['Using Linearized Model: press tenzo_nominale for infos' char(10)]);
 
 states = {'xe','ye','ze','vxe','vye','vze','phi','theta','psi','wxb','wyb','wzb'};
-
+Jr =  6.678* 10^(-5) % propeller inertia
 A = [ 0 0 0 1 0 0 0 0 0 0 0 0;
       0 0 0 0 1 0 0 0 0 0 0 0;
       0 0 0 0 0 1 0 0 0 0 0 0;
@@ -144,7 +144,10 @@ A = [ 0 0 0 1 0 0 0 0 0 0 0 0;
       0 0 0 0 0 0 0 0 0 1 0 0; 
       0 0 0 0 0 0 0 0 0 0 1 0; 
       0 0 0 0 0 0 0 0 0 0 0 1; 
-      zeros(3,12)];
+      0 0 0 0 0 0 0 0 0 0 Jr 0; 
+      0 0 0 0 0 0 0 0 0 -Jr 0 0; 
+      0 0 0 0 0 0 0 0 0 0 0 0;];
+  %zeros(3,12)
   
 n = size(A,2);
 
@@ -435,7 +438,7 @@ rho3 = 1000;
 alphaK = 0;
 alphaK1 = 1.3;
 alphaK2 = 2.4;
-alphaK3 = 3.9;
+alphaK3 = 5;
 alphaKLQR = alphaK;
 
 cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
@@ -501,6 +504,8 @@ legend('alpha=0.3','alpha=0.4','alpha=0.5')
 tenzoLQR1=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_1,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 tenzoLQR2=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_2,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
 tenzoLQR3=ss(tenzo_min_nominale.a-tenzo_min_nominale.b*Kopt_3,tenzo_min_nominale.b,tenzo_min_nominale.c,tenzo_min_nominale.d,'statename',statesMin,'inputname',inputs,'outputname',outputsLocal);
+
+step(tenzoLQR10)
 
 disp('X to continue');
 pause();
@@ -950,6 +955,12 @@ for i=1:N
     G_3 = ss(Ac_3,Bc_3,Cc_3,Dc_3);      % Sistema filtro di kalman + guadagno k ottimo
     H_LTR_3 = series(sys{i},G_3);   % Connessione in serie all'impianto nominale
     Closed_Loop_LTR{i} = feedback(H_LTR_3,eye(q)); % Nuova matrice U_3 dopo LTR
+    
+    S0_LTR_i = feedback(eye(q),H_LTR_3);
+    figure(89)
+    sigma(S0_LTR_i);
+    hold on 
+    figure(88)
     step(feedback(H_LTR_3,eye(q)));
     hold on;
     grid on;

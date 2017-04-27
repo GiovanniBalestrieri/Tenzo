@@ -74,6 +74,7 @@ delay1 = delay;
 figure
 disp('Comparing ms1 and ms')
 compare(IOrawDetrend,mts,mt)
+legend('measured roll','identified model 1','identified model 2')
 %% Save Identified Discrete Time System
 
 rollDynamic82 = d2c(mts)
