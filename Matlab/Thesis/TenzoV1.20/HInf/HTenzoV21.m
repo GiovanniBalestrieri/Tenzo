@@ -439,7 +439,7 @@ alphaK = 0;
 alphaK1 = 1.3;
 alphaK2 = 2.4;
 alphaK3 = 5;
-alphaKLQR = alphaK;
+alphaKLQR = alphaK3;
 
 cprintf('cyan',['3 attempts:\n rho1 = ' num2str(rho1) '\n rho2 = '...
     num2str(rho2) '\n rho3 = ' num2str(rho3) '\n\n']);

@@ -13,12 +13,16 @@ uint8_t sd_answer;
 
 void setup() {
   Serial.begin(115200);
+  Serial.println("Welcome\n");
   RTC.begin();
-  RTC.adjust(DateTime(__DATE__, __TIME__));
+  Serial.println("Welcome\n");
+  //RTC.adjust(DateTime(__DATE__, __TIME__));
+  //Serial.println("Welcome\n");
   // put your setup code here, to run once:
 
   boolean tmp;
   tmp = logger.init();
+  Serial.println("Welcome\n");
   if (tmp)
     Serial.println("[ OK ] LOG");
   else      

@@ -2,8 +2,7 @@
 % Giovanni Balestrieri 
 % Info @ userk.co.uk
 clc
-clear all
- 
+clear all 
 
 Whovering = 750;
 Ts = 0.021;
@@ -40,8 +39,6 @@ Mde = 70;
 
 % iperbole
 lambdaErr = 0.00001;
-
-
 armLength = 0.23;
 
 %Saturation
@@ -63,7 +60,6 @@ enableMisErr = -1;
 
 % Output Perturbation
 enableOutputPert = -1;
-
 
 % nonlinear
 mode = -1;
