@@ -33,6 +33,7 @@ class Logs
     void logSession();
     void logSessionFile(String);
     void sessionStart();
+    void logTriple(int,int,int);
 
     /*
      * Check and Creates Files

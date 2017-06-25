@@ -51,7 +51,7 @@ void setup()
   //  driver.setCADTimeout(10000);
 }
 
-uint8_t data[] = "k";
+uint8_t data[] = "koala-ciao-ciao";
 // Dont put this on the stack:
 uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
 
@@ -77,11 +77,12 @@ void loop()
       Serial.println(",Z");
     }
     else {
-      Serial.println("No reply");
+      //Serial.println("No reply");
     }
   }
-  else
-    Serial.println("sendtoWait failed");
+  else {
+    //Serial.println("sendtoWait failed");
+  }
   delay(500);
 }
 
