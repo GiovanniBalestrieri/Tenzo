@@ -1,0 +1,938 @@
+ Session 17/9/2016 22:15:57
+Task:0	label:Control	wcet:8.00
+ Session 17/9/2016 22:15:57
+Task:0	label:gyro	wcet:4032.00
+Task:0	label:RTC	wcet:1116.00
+Task:0	label:Control	wcet:176.00
+Task:0	label:gyro	wcet:4328.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+ Session 17/9/2016 22:15:57
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:gyro	wcet:4368.00
+Task:0	label:RTC	wcet:1208.00
+Task:0	label:RTC	wcet:1260.00
+ Session 17/9/2016 22:15:57
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1104.00
+ Session 18/9/2016 0:40:26
+Task:0	label:Control	wcet:8.00
+Task:0	label:RTC	wcet:1116.00
+ Session 18/9/2016 0:40:25
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1108.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:RTC	wcet:1212.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:gyro	wcet:4348.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Sonar	wcet:736.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Sonar	wcet:736.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:RTC	wcet:1268.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Sonar	wcet:736.00
+Task:0	label:RTC	wcet:1268.00
+Task:0	label:Sonar	wcet:736.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Sonar	wcet:744.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:RTC	wcet:1296.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Sonar	wcet:748.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:gyro	wcet:4412.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+ Session 18/9/2016 1:23:0
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:4184.00
+Task:0	label:Sonar	wcet:700.00
+Task:0	label:RTC	wcet:1272.00
+Task:0	label:Sonar	wcet:732.00
+Task:0	label:Control	wcet:188.00
+Task:0	label:Control	wcet:188.00
+Task:0	label:Control	wcet:188.00
+Task:0	label:Control	wcet:188.00
+Task:0	label:Control	wcet:188.00
+Task:0	label:Sonar	wcet:732.00
+Task:0	label:Control	wcet:188.00
+Task:0	label:Control	wcet:188.00
+ Session 18/9/2016 1:25:29
+Task:0	label:Control	wcet:8.00
+Task:0	label:Sonar	wcet:732.00
+Task:0	label:gyro	wcet:3952.00
+Task:0	label:RTC	wcet:1280.00
+Task:0	label:gyro	wcet:4000.00
+Task:0	label:gyro	wcet:4024.00
+Task:0	label:gyro	wcet:4076.00
+Task:0	label:Control	wcet:200.00
+Task:0	label:Sonar	wcet:736.00
+Task:0	label:RTC	wcet:1288.00
+Task:0	label:gyro	wcet:4092.00
+Task:0	label:Control	wcet:208.00
+Task:0	label:Sonar	wcet:740.00
+Task:0	label:gyro	wcet:4148.00
+Task:0	label:Sonar	wcet:740.00
+Task:0	label:RTC	wcet:1292.00
+Task:0	label:Sonar	wcet:748.00
+ Session 18/9/2016 1:41:45
+Task:0	label:Control	wcet:4.00
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:8.00
+Task:0	label:RTC	wcet:1188.00
+ Session 18/9/2016 1:54:18
+Task:0	label:Control	wcet:8.00
+Task:0	label:Sonar	wcet:436.00
+Task:0	label:gyro	wcet:2752.00
+Task:0	label:RTC	wcet:1300.00
+Task:0	label:Control	wcet:64.00
+Task:0	label:Sonar	wcet:468.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:RTC	wcet:1300.00
+Task:0	label:RTC	wcet:1300.00
+ Session 18/9/2016 1:54:18
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:16.00
+Task:0	label:Control	wcet:16.00
+Task:0	label:gyro	wcet:2800.00
+Task:0	label:gyro	wcet:2836.00
+Task:0	label:Control	wcet:16.00
+ Session 18/9/2016 1:58:37
+Task:0	label:Control	wcet:4.00
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:RTC	wcet:1292.00
+Task:0	label:gyro	wcet:2800.00
+Task:0	label:Sonar	wcet:444.00
+Task:0	label:Sonar	wcet:444.00
+Task:0	label:RTC	wcet:1300.00
+ Session 18/9/2016 1:59:44
+Task:0	label:Control	wcet:8.00
+ Session 18/9/2016 2:0:26
+Task:0	label:Control	wcet:4.00
+Task:0	label:Sonar	wcet:324.00
+Task:0	label:Control	wcet:88.00
+Task:0	label:Sonar	wcet:440.00
+Task:0	label:Control	wcet:88.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:gyro	wcet:6372.00
+Task:0	label:Sonar	wcet:444.00
+Task:0	label:RTC	wcet:1168.00
+Task:0	label:RTC	wcet:1288.00
+Task:0	label:Control	wcet:188.00
+Task:0	label:gyro	wcet:6388.00
+Task:0	label:Sonar	wcet:460.00
+Task:0	label:gyro	wcet:6392.00
+Task:0	label:Control	wcet:188.00
+Task:0	label:Control	wcet:188.00
+Task:0	label:Control	wcet:208.00
+Task:0	label:RTC	wcet:1296.00
+ Session 18/9/2016 13:50:18
+Task:0	label:Control	wcet:8.00
+Task:0	label:Sonar	wcet:316.00
+ Session 18/9/2016 13:50:18
+Task:0	label:Control	wcet:4.00
+Task:0	label:Sonar	wcet:324.00
+Task:0	label:Sonar	wcet:440.00
+Task:0	label:gyro	wcet:6308.00
+Task:0	label:Sonar	wcet:440.00
+Task:0	label:gyro	wcet:6368.00
+Task:0	label:Control	wcet:188.00
+Task:0	label:gyro	wcet:6368.00
+Task:0	label:Sonar	wcet:448.00
+Task:0	label:gyro	wcet:6412.00
+Task:0	label:RTC	wcet:1284.00
+Task:0	label:RTC	wcet:1292.00
+Task:0	label:Sonar	wcet:472.00
+Task:0	label:gyro	wcet:6424.00
+Task:0	label:Control	wcet:188.00
+Task:0	label:RTC	wcet:1292.00
+Task:0	label:Control	wcet:208.00
+Task:0	label:RTC	wcet:1292.00
+Task:0	label:RTC	wcet:1300.00
+Task:0	label:RTC	wcet:1300.00
+Task:0	label:RTC	wcet:1304.00
+Task:0	label:Control	wcet:208.00
+Task:0	label:Control	wcet:212.00
+Task:0	label:Sonar	wcet:472.00
+Task:0	label:Sonar	wcet:472.00
+Task:0	label:Control	wcet:212.00
+Task:0	label:RTC	wcet:1320.00
+ Session 18/9/2016 13:50:18
+Task:0	label:Control	wcet:24.00
+Task:0	label:gyro	wcet:7384.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:gyro	wcet:7448.00
+ Session 18/9/2016 13:51:4
+Task:0	label:Control	wcet:64.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Sonar	wcet:336.00
+Task:0	label:Sonar	wcet:448.00
+Task:0	label:RTC	wcet:1248.00
+Task:0	label:Sonar	wcet:448.00
+ Session 1/1/2017 22:15:17
+ Session 1/1/2017 22:15:17
+Task:0	label:Control	wcet:4.00
+Task:0	label:Control	wcet:76.00
+Task:0	label:RTC	wcet:1208.00
+Task:0	label:RTC	wcet:1272.00
+Task:0	label:gyro	wcet:6268.00
+Task:0	label:gyro	wcet:6324.00
+Task:0	label:gyro	wcet:6392.00
+Task:0	label:Control	wcet:88.00
+Task:0	label:Sonar	wcet:448.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:RTC	wcet:1284.00
+Task:0	label:Sonar	wcet:448.00
+ Session 1/1/2017 22:20:52
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1168.00
+Task:0	label:Sonar	wcet:320.00
+Task:0	label:RTC	wcet:1232.00
+Task:0	label:Sonar	wcet:328.00
+Task:0	label:Control	wcet:60.00
+Task:0	label:Sonar	wcet:348.00
+Task:0	label:Sonar	wcet:396.00
+Task:0	label:Control	wcet:60.00
+Task:0	label:Control	wcet:60.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Sonar	wcet:400.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Sonar	wcet:440.00
+Task:0	label:Control	wcet:88.00
+Task:0	label:RTC	wcet:1232.00
+Task:0	label:RTC	wcet:1232.00
+Task:0	label:Sonar	wcet:440.00
+Task:0	label:RTC	wcet:1236.00
+Task:0	label:Control	wcet:188.00
+Task:0	label:gyro	wcet:6360.00
+Task:0	label:RTC	wcet:1260.00
+Task:0	label:Sonar	wcet:452.00
+ Session 1/1/2017 22:26:51
+Task:0	label:gyro	wcet:6192.00
+Task:0	label:gyro	wcet:6496.00
+Task:0	label:RTC	wcet:1184.00
+Task:0	label:gyro	wcet:6712.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:gyro	wcet:6800.00
+Task:0	label:Control	wcet:184.00
+ Session 1/1/2017 22:28:16
+Task:0	label:Control	wcet:4.00
+Task:0	label:Control	wcet:64.00
+Task:0	label:RTC	wcet:1268.00
+Task:0	label:gyro	wcet:7384.00
+Task:0	label:gyro	wcet:7396.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Sonar	wcet:444.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:RTC	wcet:1268.00
+Task:0	label:Sonar	wcet:452.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:RTC	wcet:1268.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:RTC	wcet:1288.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:204.00
+Task:0	label:gyro	wcet:7408.00
+Task:0	label:Sonar	wcet:468.00
+Task:0	label:gyro	wcet:7536.00
+Task:0	label:Sonar	wcet:468.00
+ Session 1/1/2017 22:34:58
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1112.00
+Task:0	label:RTC	wcet:1124.00
+Task:0	label:RTC	wcet:1172.00
+Task:0	label:Sonar	wcet:420.00
+Task:0	label:gyro	wcet:6324.00
+Task:0	label:Control	wcet:92.00
+Task:0	label:RTC	wcet:1268.00
+Task:0	label:RTC	wcet:1296.00
+Task:0	label:Sonar	wcet:476.00
+ Session 1/1/2017 22:37:36
+Task:0	label:Control	wcet:4.00
+Task:0	label:Control	wcet:60.00
+ Session 1/1/2017 22:38:7
+Task:0	label:Control	wcet:4.00
+Task:0	label:Sonar	wcet:328.00
+Task:0	label:gyro	wcet:7040.00
+Task:0	label:Sonar	wcet:336.00
+Task:0	label:Control	wcet:204.00
+Task:0	label:Control	wcet:204.00
+Task:0	label:Control	wcet:216.00
+ Session 1/1/2017 22:39:31
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1224.00
+Task:0	label:RTC	wcet:1240.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Sonar	wcet:336.00
+ Session 1/1/2017 22:40:20
+Task:0	label:gyro	wcet:7484.00
+Task:0	label:RTC	wcet:1120.00
+Task:0	label:RTC	wcet:1164.00
+Task:0	label:Control	wcet:196.00
+Task:0	label:RTC	wcet:1188.00
+Task:0	label:RTC	wcet:1216.00
+Task:0	label:Control	wcet:196.00
+ Session 1/1/2017 22:41:11
+Task:0	label:Control	wcet:4.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:RTC	wcet:1164.00
+Task:0	label:Sonar	wcet:464.00
+Task:0	label:Control	wcet:88.00
+ Session 1/1/2017 22:41:11
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:7780.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:RTC	wcet:1264.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Control	wcet:100.00
+Task:0	label:Sonar	wcet:480.00
+Task:0	label:RTC	wcet:1304.00
+Task:0	label:Control	wcet:196.00
+Task:0	label:Control	wcet:204.00
+Task:0	label:gyro	wcet:7968.00
+Task:0	label:gyro	wcet:8028.00
+Task:0	label:gyro	wcet:8036.00
+Task:0	label:gyro	wcet:8076.00
+Task:0	label:Control	wcet:212.00
+Task:0	label:Sonar	wcet:492.00
+Task:0	label:gyro	wcet:8080.00
+Task:0	label:gyro	wcet:8088.00
+Task:0	label:gyro	wcet:8096.00
+Task:0	label:Control	wcet:212.00
+Task:0	label:RTC	wcet:1312.00
+Task:0	label:gyro	wcet:9228.00
+ Session 1/1/2017 22:47:31
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1152.00
+Task:0	label:gyro	wcet:8044.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:RTC	wcet:1260.00
+Task:0	label:gyro	wcet:8072.00
+Task:0	label:Sonar	wcet:464.00
+ Session 1/1/2017 22:48:22
+Task:0	label:Control	wcet:4.00
+Task:0	label:Control	wcet:60.00
+Task:0	label:RTC	wcet:1216.00
+Task:0	label:Control	wcet:64.00
+Task:0	label:Control	wcet:64.00
+Task:0	label:Control	wcet:64.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:RTC	wcet:1236.00
+Task:0	label:RTC	wcet:1264.00
+Task:0	label:gyro	wcet:6420.00
+Task:0	label:RTC	wcet:1288.00
+Task:0	label:Sonar	wcet:448.00
+Task:0	label:RTC	wcet:1288.00
+ Session 1/1/2017 22:48:22
+Task:0	label:Control	wcet:8.00
+Task:0	label:Sonar	wcet:324.00
+Task:0	label:RTC	wcet:1116.00
+Task:0	label:Control	wcet:88.00
+Task:0	label:RTC	wcet:1224.00
+Task:0	label:Sonar	wcet:440.00
+Task:0	label:gyro	wcet:6292.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Control	wcet:180.00
+ Session 1/1/2017 22:52:14
+Task:0	label:Control	wcet:4.00
+Task:0	label:Control	wcet:40.00
+Task:0	label:gyro	wcet:7676.00
+Task:0	label:RTC	wcet:1300.00
+Task:0	label:Control	wcet:196.00
+Task:0	label:Sonar	wcet:464.00
+Task:0	label:Sonar	wcet:476.00
+Task:0	label:Control	wcet:228.00
+Task:0	label:Sonar	wcet:492.00
+ Session 1/1/2017 22:54:42
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:8480.00
+Task:0	label:Sonar	wcet:344.00
+ Session 1/1/2017 22:55:23
+Task:0	label:Control	wcet:4.00
+Task:0	label:Sonar	wcet:288.00
+Task:0	label:RTC	wcet:1184.00
+Task:0	label:Sonar	wcet:336.00
+Task:0	label:gyro	wcet:8576.00
+Task:0	label:gyro	wcet:8584.00
+Task:0	label:gyro	wcet:8588.00
+ Session 1/1/2017 22:56:22
+Task:0	label:Control	wcet:8.00
+Task:0	label:RTC	wcet:1124.00
+Task:0	label:Sonar	wcet:336.00
+Task:0	label:Control	wcet:100.00
+ Session 1/1/2017 22:56:59
+Task:0	label:Control	wcet:4.00
+Task:0	label:Control	wcet:40.00
+Task:0	label:gyro	wcet:9140.00
+Task:0	label:gyro	wcet:9212.00
+Task:0	label:Control	wcet:76.00
+Task:0	label:RTC	wcet:1256.00
+Task:0	label:Sonar	wcet:468.00
+Task:0	label:Control	wcet:200.00
+Task:0	label:RTC	wcet:1300.00
+Task:0	label:Control	wcet:224.00
+ Session 1/1/2017 22:59:16
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:9636.00
+Task:0	label:gyro	wcet:9688.00
+Task:0	label:RTC	wcet:1188.00
+ Session 1/1/2017 23:0:2
+Task:0	label:Control	wcet:12.00
+Task:0	label:gyro	wcet:9504.00
+Task:0	label:Sonar	wcet:436.00
+Task:0	label:gyro	wcet:9540.00
+Task:0	label:Control	wcet:204.00
+Task:0	label:gyro	wcet:9560.00
+Task:0	label:gyro	wcet:9560.00
+Task:0	label:gyro	wcet:9576.00
+Task:0	label:RTC	wcet:1264.00
+ Session 1/1/2017 23:1:17
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1128.00
+ Session 1/1/2017 23:1:53
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:10672.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Sonar	wcet:476.00
+Task:0	label:RTC	wcet:1240.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Sonar	wcet:484.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:gyro	wcet:10744.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:188.00
+ Session 1/1/2017 23:4:22
+Task:0	label:Control	wcet:8.00
+Task:0	label:RTC	wcet:1156.00
+Task:0	label:Sonar	wcet:340.00
+Task:0	label:Sonar	wcet:476.00
+Task:0	label:RTC	wcet:1172.00
+ Session 1/1/2017 23:4:21
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1240.00
+Task:0	label:Sonar	wcet:332.00
+Task:0	label:gyro	wcet:10244.00
+Task:0	label:Control	wcet:88.00
+Task:0	label:gyro	wcet:10256.00
+ Session 1/1/2017 23:4:22
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1144.00
+ Session 1/1/2017 23:6:21
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:10920.00
+Task:0	label:Control	wcet:88.00
+Task:0	label:RTC	wcet:1280.00
+Task:0	label:gyro	wcet:10936.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:Control	wcet:188.00
+Task:0	label:Sonar	wcet:436.00
+Task:0	label:RTC	wcet:1296.00
+Task:0	label:gyro	wcet:10952.00
+Task:0	label:Sonar	wcet:476.00
+Task:0	label:gyro	wcet:10972.00
+ Session 1/1/2017 23:6:20
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1132.00
+Task:0	label:gyro	wcet:10900.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:gyro	wcet:10908.00
+Task:0	label:RTC	wcet:1284.00
+Task:0	label:Sonar	wcet:468.00
+ Session 1/1/2017 23:9:7
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1320.00
+Task:0	label:gyro	wcet:10920.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Sonar	wcet:472.00
+Task:0	label:RTC	wcet:1320.00
+ Session 1/1/2017 23:10:45
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:10872.00
+Task:0	label:Sonar	wcet:340.00
+Task:0	label:gyro	wcet:10876.00
+Task:0	label:RTC	wcet:1228.00
+Task:0	label:gyro	wcet:10880.00
+ Session 1/1/2017 23:12:29
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:10840.00
+Task:0	label:RTC	wcet:1268.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Control	wcet:88.00
+Task:0	label:gyro	wcet:10876.00
+Task:0	label:Sonar	wcet:464.00
+Task:0	label:Control	wcet:204.00
+ Session 1/1/2017 23:12:30
+Task:0	label:Control	wcet:4.00
+Task:0	label:Sonar	wcet:336.00
+Task:0	label:gyro	wcet:10868.00
+ Session 1/1/2017 23:12:30
+Task:0	label:Control	wcet:4.00
+ Session 1/1/2017 23:19:29
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:10880.00
+Task:0	label:Control	wcet:104.00
+Task:0	label:RTC	wcet:1240.00
+Task:0	label:RTC	wcet:1256.00
+Task:0	label:RTC	wcet:1316.00
+ Session 1/1/2017 23:20:37
+Task:0	label:Control	wcet:8.00
+Task:0	label:gyro	wcet:15840.00
+Task:0	label:RTC	wcet:1196.00
+Task:0	label:Sonar	wcet:328.00
+ Session 1/1/2017 23:21:19
+Task:0	label:Control	wcet:16.00
+Task:0	label:Sonar	wcet:280.00
+Task:0	label:Sonar	wcet:328.00
+Task:0	label:Control	wcet:88.00
+Task:0	label:Sonar	wcet:372.00
+Task:0	label:gyro	wcet:15432.00
+Task:0	label:Sonar	wcet:420.00
+Task:0	label:gyro	wcet:15432.00
+Task:0	label:Sonar	wcet:452.00
+Task:0	label:gyro	wcet:15432.00
+Task:0	label:gyro	wcet:15436.00
+Task:0	label:Sonar	wcet:464.00
+Task:0	label:RTC	wcet:1316.00
+Task:0	label:Sonar	wcet:464.00
+Task:0	label:Control	wcet:88.00
+Task:0	label:Control	wcet:88.00
+ Session 1/1/2017 23:21:19
+Task:0	label:Control	wcet:8.00
+Task:0	label:gyro	wcet:15428.00
+ Session 2/1/2017 0:18:44
+Task:0	label:Control	wcet:4.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Sonar	wcet:344.00
+Task:0	label:Sonar	wcet:452.00
+Task:0	label:RTC	wcet:1268.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:RTC	wcet:1268.00
+Task:0	label:RTC	wcet:1280.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Sonar	wcet:468.00
+Task:0	label:gyro	wcet:15344.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Sonar	wcet:476.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:RTC	wcet:1308.00
+Task:0	label:RTC	wcet:1312.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:76.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:RTC	wcet:1316.00
+Task:0	label:RTC	wcet:1316.00
+Task:0	label:RTC	wcet:1324.00
+Task:0	label:gyro	wcet:15352.00
+Task:0	label:gyro	wcet:15400.00
+Task:0	label:gyro	wcet:15416.00
+Task:0	label:gyro	wcet:15448.00
+Task:0	label:gyro	wcet:15448.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:Control	wcet:96.00
+ Session 2/1/2017 0:29:14
+Task:0	label:Control	wcet:8.00
+Task:0	label:RTC	wcet:1160.00
+Task:0	label:gyro	wcet:16712.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:gyro	wcet:16756.00
+Task:0	label:gyro	wcet:16816.00
+Task:0	label:Sonar	wcet:476.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Sonar	wcet:504.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:76.00
+Task:0	label:Control	wcet:76.00
+Task:0	label:Control	wcet:76.00
+ Session 2/1/2017 0:33:33
+Task:0	label:gyro	wcet:15224.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Sonar	wcet:436.00
+Task:0	label:Sonar	wcet:468.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:gyro	wcet:15308.00
+Task:0	label:gyro	wcet:15404.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:96.00
+ Session 2/1/2017 0:35:11
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:16204.00
+Task:0	label:Sonar	wcet:340.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:76.00
+Task:0	label:Sonar	wcet:368.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:Control	wcet:104.00
+Task:0	label:Sonar	wcet:372.00
+ Session 2/1/2017 0:37:4
+Task:0	label:Control	wcet:8.00
+Task:0	label:RTC	wcet:1272.00
+Task:0	label:gyro	wcet:15240.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:RTC	wcet:1276.00
+ Session 2/1/2017 0:38:0
+Task:0	label:gyro	wcet:15276.00
+Task:0	label:Sonar	wcet:468.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:RTC	wcet:1244.00
+Task:0	label:Control	wcet:72.00
+ Session 2/1/2017 0:38:51
+Task:0	label:Control	wcet:4.00
+Task:0	label:Sonar	wcet:300.00
+Task:0	label:Sonar	wcet:348.00
+Task:0	label:Control	wcet:96.00
+ Session 2/1/2017 0:39:31
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:72.00
+ Session 2/1/2017 0:40:22
+Task:0	label:Control	wcet:4.00
+Task:0	label:Sonar	wcet:292.00
+Task:0	label:Sonar	wcet:340.00
+Task:0	label:Sonar	wcet:340.00
+Task:0	label:RTC	wcet:1212.00
+Task:0	label:Sonar	wcet:408.00
+Task:0	label:Sonar	wcet:456.00
+Task:0	label:RTC	wcet:1220.00
+Task:0	label:RTC	wcet:1276.00
+Task:0	label:Sonar	wcet:472.00
+Task:0	label:gyro	wcet:13256.00
+Task:0	label:Control	wcet:76.00
+Task:0	label:gyro	wcet:13260.00
+Task:0	label:gyro	wcet:13268.00
+Task:0	label:gyro	wcet:13268.00
+Task:0	label:gyro	wcet:13292.00
+ Session 2/1/2017 0:44:6
+Task:0	label:Control	wcet:8.00
+Task:0	label:Sonar	wcet:340.00
+Task:0	label:gyro	wcet:12768.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:gyro	wcet:12800.00
+Task:0	label:Control	wcet:72.00
+ Session 2/1/2017 0:44:56
+Task:0	label:gyro	wcet:13920.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:gyro	wcet:14156.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:gyro	wcet:14196.00
+Task:0	label:Sonar	wcet:344.00
+Task:0	label:RTC	wcet:1228.00
+Task:0	label:Sonar	wcet:344.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:RTC	wcet:1232.00
+Task:0	label:RTC	wcet:1308.00
+Task:0	label:Sonar	wcet:456.00
+Task:0	label:Sonar	wcet:468.00
+Task:0	label:Sonar	wcet:472.00
+Task:0	label:Control	wcet:104.00
+ Session 2/1/2017 0:50:20
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1272.00
+Task:0	label:gyro	wcet:14808.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:76.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:Sonar	wcet:480.00
+Task:0	label:gyro	wcet:14852.00
+Task:0	label:RTC	wcet:1280.00
+Task:0	label:RTC	wcet:1308.00
+ Session 2/1/2017 0:59:53
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1140.00
+Task:0	label:Sonar	wcet:340.00
+Task:0	label:RTC	wcet:1148.00
+Task:0	label:Sonar	wcet:440.00
+Task:0	label:gyro	wcet:14308.00
+Task:0	label:RTC	wcet:1236.00
+Task:0	label:Control	wcet:88.00
+Task:0	label:Sonar	wcet:472.00
+ Session 2/1/2017 1:5:3
+Task:0	label:Control	wcet:4.00
+ Session 2/1/2017 1:5:4
+Task:0	label:Control	wcet:8.00
+Task:0	label:RTC	wcet:1196.00
+Task:0	label:RTC	wcet:1268.00
+Task:0	label:Sonar	wcet:336.00
+Task:0	label:Sonar	wcet:408.00
+Task:0	label:Sonar	wcet:412.00
+Task:0	label:RTC	wcet:1272.00
+Task:0	label:Control	wcet:76.00
+Task:0	label:Sonar	wcet:460.00
+Task:0	label:Control	wcet:76.00
+Task:0	label:Sonar	wcet:464.00
+Task:0	label:Sonar	wcet:464.00
+ Session 2/1/2017 1:7:37
+Task:0	label:Control	wcet:4.00
+Task:0	label:Sonar	wcet:344.00
+Task:0	label:Control	wcet:196.00
+Task:0	label:Sonar	wcet:468.00
+Task:0	label:Control	wcet:196.00
+Task:0	label:RTC	wcet:1308.00
+Task:0	label:Control	wcet:204.00
+ Session 2/1/2017 1:9:14
+Task:0	label:Control	wcet:4.00
+Task:0	label:Control	wcet:68.00
+Task:0	label:RTC	wcet:1176.00
+Task:0	label:gyro	wcet:9784.00
+Task:0	label:Control	wcet:216.00
+Task:0	label:gyro	wcet:9792.00
+Task:0	label:Sonar	wcet:484.00
+Task:0	label:gyro	wcet:9808.00
+ Session 2/1/2017 1:11:55
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:9552.00
+Task:0	label:RTC	wcet:1188.00
+Task:0	label:RTC	wcet:1228.00
+Task:0	label:Sonar	wcet:436.00
+Task:0	label:RTC	wcet:1332.00
+Task:0	label:Sonar	wcet:464.00
+Task:0	label:Control	wcet:204.00
+Task:0	label:Control	wcet:204.00
+Task:0	label:Control	wcet:204.00
+Task:0	label:Control	wcet:204.00
+Task:0	label:Sonar	wcet:472.00
+Task:0	label:Control	wcet:208.00
+Task:0	label:Sonar	wcet:472.00
+Task:0	label:gyro	wcet:9648.00
+Task:0	label:Sonar	wcet:480.00
+ Session 2/1/2017 1:16:31
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:10396.00
+Task:0	label:RTC	wcet:1284.00
+Task:0	label:Sonar	wcet:336.00
+Task:0	label:Sonar	wcet:348.00
+ Session 2/1/2017 1:17:24
+Task:0	label:Control	wcet:4.00
+Task:0	label:RTC	wcet:1188.00
+Task:0	label:Sonar	wcet:464.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:RTC	wcet:1276.00
+ Session 2/1/2017 1:18:16
+Task:0	label:Control	wcet:4.00
+Task:0	label:Control	wcet:64.00
+Task:0	label:RTC	wcet:1316.00
+Task:0	label:Sonar	wcet:344.00
+Task:0	label:gyro	wcet:13196.00
+Task:0	label:Sonar	wcet:460.00
+Task:0	label:Sonar	wcet:468.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:RTC	wcet:1320.00
+Task:0	label:RTC	wcet:1324.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:Sonar	wcet:468.00
+Task:0	label:Sonar	wcet:468.00
+ Session 2/1/2017 1:25:36
+Task:0	label:gyro	wcet:11852.00
+Task:0	label:RTC	wcet:1228.00
+Task:0	label:RTC	wcet:1240.00
+Task:0	label:Sonar	wcet:444.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:Sonar	wcet:472.00
+Task:0	label:RTC	wcet:1320.00
+Task:0	label:Sonar	wcet:484.00
+Task:0	label:Control	wcet:96.00
+ Session 2/1/2017 1:27:20
+Task:0	label:gyro	wcet:16412.00
+Task:0	label:Sonar	wcet:460.00
+Task:0	label:RTC	wcet:1152.00
+Task:0	label:RTC	wcet:1208.00
+Task:0	label:gyro	wcet:16536.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:Sonar	wcet:468.00
+Task:0	label:RTC	wcet:1228.00
+ Session 2/1/2017 1:28:37
+Task:0	label:Control	wcet:8.00
+ Session 2/1/2017 1:36:45
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:15192.00
+Task:0	label:RTC	wcet:1272.00
+Task:0	label:Sonar	wcet:468.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Control	wcet:76.00
+Task:0	label:Sonar	wcet:472.00
+Task:0	label:gyro	wcet:15236.00
+ Session 2/1/2017 1:47:2
+Task:0	label:Control	wcet:4.00
+Task:0	label:gyro	wcet:12560.00
+Task:0	label:Control	wcet:68.00
+ Session 2/1/2017 1:47:35
+Task:0	label:Control	wcet:8.00
+Task:0	label:RTC	wcet:1256.00
+Task:0	label:gyro	wcet:16144.00
+Task:0	label:Sonar	wcet:448.00
+Task:0	label:Sonar	wcet:464.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:gyro	wcet:16180.00
+Task:0	label:Control	wcet:72.00
+Task:0	label:Sonar	wcet:464.00
+Task:0	label:Sonar	wcet:464.00
+Task:0	label:Sonar	wcet:472.00
+Task:0	label:Control	wcet:76.00
+Task:0	label:Control	wcet:76.00
+Task:0	label:Control	wcet:88.00
+Task:0	label:RTC	wcet:1316.00
+Task:0	label:RTC	wcet:1320.00
+Task:0	label:Sonar	wcet:472.00
+Task:0	label:Sonar	wcet:476.00
+Task:0	label:Sonar	wcet:476.00
+Task:0	label:gyro	wcet:16184.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:RTC	wcet:1328.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:gyro	wcet:16204.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:Control	wcet:96.00
+Task:0	label:Sonar	wcet:480.00
+Task:0	label:gyro	wcet:16204.00
+Task:0	label:Sonar	wcet:496.00
+Task:0	label:Control	wcet:96.00
+ Session 0/0/2000 0:0:28
+ Session 21/5/2017 19:4:14
+ Session 21/5/2017 19:4:15
+ Session 25/6/2017 19:47:23
+ Session 25/6/2017 19:47:22
+ Session 25/6/2017 19:48:37
+Task:0	label:Control	wcet:4.00
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:24.00
+Task:0	label:Sonar	wcet:292.00
+Task:0	label:Sonar	wcet:296.00
+Task:0	label:RTC	wcet:1208.00
+Task:0	label:RTC	wcet:1212.00
+Task:0	label:gyro	wcet:6236.00
+Task:0	label:Control	wcet:60.00
+Task:0	label:RTC	wcet:1288.00
+ Session 25/6/2017 19:48:38
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:60.00
+Task:0	label:Control	wcet:60.00
+Task:0	label:Control	wcet:60.00
+Task:0	label:RTC	wcet:1276.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:Sonar	wcet:320.00
+Task:0	label:Control	wcet:716.00
+Task:0	label:Sonar	wcet:352.00
+Task:0	label:Sonar	wcet:440.00
+ Session 25/6/2017 19:48:38
+Task:0	label:Control	wcet:8.00
+Task:0	label:Sonar	wcet:316.00
+ Session 25/6/2017 19:48:37
+Task:0	label:Control	wcet:4.00
+ Session 25/6/2017 19:48:39
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:12.00
+Task:0	label:RTC	wcet:1112.00
+Task:0	label:Control	wcet:24.00
+Task:0	label:Sonar	wcet:320.00
+Task:0	label:Control	wcet:36.00
+Task:0	label:RTC	wcet:1132.00
+Task:0	label:Control	wcet:36.00
+Task:0	label:RTC	wcet:1164.00
+Task:0	label:Sonar	wcet:320.00
+Task:0	label:Sonar	wcet:320.00
+ Session 25/6/2017 19:48:38
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:12.00
+Task:0	label:Control	wcet:12.00
+Task:0	label:Control	wcet:12.00
+Task:0	label:Sonar	wcet:452.00
+Task:0	label:Control	wcet:12.00
+Task:0	label:Control	wcet:12.00
+Task:0	label:Control	wcet:24.00
+Task:0	label:RTC	wcet:1152.00
+Task:0	label:RTC	wcet:1160.00
+ Session 25/6/2017 20:2:18
+Task:0	label:Control	wcet:8.00
+Task:0	label:Control	wcet:180.00
+Task:0	label:gyro	wcet:6404.00
+Task:0	label:gyro	wcet:6436.00
+Task:0	label:RTC	wcet:1300.00
+Task:0	label:Sonar	wcet:440.00
+Task:0	label:Sonar	wcet:440.00
+Task:0	label:Sonar	wcet:448.00
+ Session 29/6/2017 18:4:32
+Task:0	label:gyro	wcet:6176.00
+Task:0	label:Control	wcet:12.00
+Task:0	label:Control	wcet:12.00
+Task:0	label:RTC	wcet:1112.00
+Task:0	label:Control	wcet:12.00
+Task:0	label:Control	wcet:12.00
+Task:0	label:RTC	wcet:1116.00
+Task:0	label:RTC	wcet:1172.00
+Task:0	label:Sonar	wcet:320.00
+Task:0	label:Control	wcet:32.00
+Task:0	label:Control	wcet:32.00
+Task:0	label:Control	wcet:60.00
+Task:0	label:Sonar	wcet:324.00
+Task:0	label:Sonar	wcet:328.00
