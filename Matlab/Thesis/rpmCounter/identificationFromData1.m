@@ -115,7 +115,29 @@ nns = selstruc(V)
 th2 = arx(ztDetrend,nns);
 th4 = arx(ztDetrend,nn);
 compare(zvDetrend(1:end),th2,th4);
+%% ARX results
+compare(zDetrend(1:end),th2,th4);
+grid on
 
+[motor_num_tf_arx , motor_den_tf_arx] = tfdata(th2,'v')
+th5 = tf(motor_num_tf_discrete , motor_den_tf_discrete,0.009)
+compare(zDetrend(1:end),th5,th2)
+th5ss = canon(th5,'modal')
+th5ss2 = reduce(th5ss,2)
+th5ss2tf = tf(th5ss2)
+th5ss1 = reduce(th5ss,1)
+th5ss1tf = tf(th5ss1)
+th5ss3 = reduce(th5ss,3)
+th5ss3tf = tf(th5ss3)
+th5ss4 = reduce(th5ss,4)
+th5ss4tf = tf(th5ss4)
+
+figure(21)
+compare(zDetrend(1:end),th5,th5ss1,th5ss2,th5ss4)
+
+figure(22)
+bode(th5,'r',th5ss2,'b',th5ss1,'c',th5ss4,'k')
+legend('6th order','reduction 2nd','reduction 1st','red 4th')
 %% Identifiy linear discrete time model with n4sid
 
 % Training
@@ -135,23 +157,23 @@ compare(zvDetrend(1:end),th2,th4);
 %% Compare n4Sid trained with TestSet
 
 disp('Comparing ms and arx')
-compare(zvDetrend,ms,m)
+compare(zvDetrend,ms)
 % Test set
 disp('Comparing ms1 and ms')
-compare(ztDetrend,ms,m)
+compare(ztDetrend,ms)
 % Complete set
 disp('Comparing th2 and ms')
-compare(zDetrend,ms,m)
+compare(zDetrend,ms)
 %% Compare n4Sid trained with validation set
 
 disp('Comparing ms and arx')
-compare(zvDetrend,msv,mv)
+compare(zvDetrend,msv)
 % Test set
 disp('Comparing ms1 and ms')
-compare(ztDetrend,msv,mv)
+compare(ztDetrend,msv)
 % Complete set
 disp('Comparing th2 and ms')
-compare(zDetrend,msv,mv)
+compare(zDetrend,msv)
 %% Compare n4Sid trained with Full set
 
 disp('Comparing ms and arx')
@@ -168,22 +190,31 @@ compare(zDetrend,msc)
 t = 0:Ts:Ts*(size(inputOriginal,1)-1);
 size(t)
 size(inputOriginal)
-y= lsim(mv,inputOriginal,t);
+
+tf(msv)
+[motor_num_tf_discrete , motor_den_tf_discrete] = tfdata(msv,'v')
+tfM = tf(motor_num_tf_discrete*1,motor_den_tf_discrete,0.009)
+
+y= lsim(tfM,inputOriginal,t);
+%y= lsim(msv,inputOriginal,t);
 
 plot(y)
 % Create iddata Time domain signal
 simulatedDData = iddata(y,inputOriginal,Ts)
 simulatedDDataDetrend = retrend(simulatedDData, T)
 
-%% Plot results
+% Plot results
 
 figure(10)
 plot(simulatedDData,'c')
 grid on
 hold on
 plot(z,'r-')
+tf(msv)
+
 
 legend('Simulated','measured')
+% Problem encountered real and simulated outputs are differents. Delta 43,2
 
 save('discreteMotortf.mat','mv')
 %%

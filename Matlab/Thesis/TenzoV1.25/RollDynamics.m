@@ -18,15 +18,26 @@ disp('Evaluating step response for motor dynamics. Press X');
 %pause()
 opt = stepDataOptions('InputOffset',0,'StepAmplitude',750);
 step(motorDynamics,opt)
-motorDynamics = d2d(motorDynamics,0.021)
+mmm = d2c(motorDynamics)
+
+[motor_num_tf_discrete , motor_den_tf_discrete] = tfdata(mmm,'v')
+
+%motorDynamics = d2d(motorDynamics,0.021)
 
 % get numerator and denominator Roll
-[motor_num_tf_discrete , motor_den_tf_discrete] = tfdata(motorDynamics,'v')
+%[motor_num_tf_discrete , motor_den_tf_discrete] = tfdata(motorDynamics,'v')
+
+% remove delay from transfer function
+motorWOdelay = tf(motor_num_tf_discrete,motor_den_tf_discrete)
 
 % Computing observator canonical form
 motorC = canon(motorDynamics,'companion');
 motorC1 = motorC;
 motorC2 = motorC;
+
+% REduce model order to 1
+mm = reduce(mmm,1)
+step(mm,'r',motorWOdelay,'b')
 
 %% Loading identified Roll dynamics
 
@@ -77,11 +88,11 @@ k = 10;
 M = 200;
 
 % Bounding box
-Me = 5;
-Mde = 10;
+Me = 15;
+Mde = 70;
 
 % iperbole
-lambdaErr = 0.000001;
+lambdaErr = 0.00000001;
 
 
 armLength = 0.23;
@@ -101,7 +112,7 @@ enablePwmSaturation = -1;
 enableRpmSaturation = 1;
 
 % Measurement Error
-enableMisErr = -1;
+enableMisErr = 1;
 
 % Output Perturbation
 enableOutputPert = -1;
@@ -114,9 +125,28 @@ mode = -1;
 open('rollDynamicsNonLinear');
 sim('rollDynamicsNonLinear');
 
+%% Plot switching criteria
+
+time = -5:0.1:5;
+f = 0.00000001./time;
+f1 = -f;
+plot(f,time)
+hold on 
+plot(f1,time)
+grid on
+title("Switching function")
+xlabel("error")
+ylabel("d error")
+
 %% Valuta Err e DErr
-size(derErr.Data)
-plot(derErr.Data(120:end-2),Err.Data(120:end-2),'--')
+size(derErr.Data);
+plot3(derErr.Data(120:end-2),Err.Data(120:end-2),Err.Time(120:end-2),'--gs',...
+'MarkerSize',10,...
+    'MarkerEdgeColor','b')
+xlabel('Error derivative')
+ylabel('Error ')
+zlabel('Time')
+title('de Vs e vs T')
 grid on
 
 %% LQ regulator

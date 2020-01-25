@@ -170,13 +170,13 @@ simulatedDData = iddata(yOriginal,y,Ts)
 plot(simulatedDData)
 %%
 mTrend = retrend(simulatedDData,T)
-hold on
-plot(zDetrend,'g')
+%hold on
+%plot(zDetrend,'g')
 hold on
 plot(z,'r-')
 reT = retrend(zDetrend,T)
 hold on
-plot(reT,'b*')
+plot(reT,'b--')
 %%
 %plot(t,zOriginal,'r');
 hold on

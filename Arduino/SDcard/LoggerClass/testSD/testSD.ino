@@ -10,15 +10,17 @@ unsigned long timer;
 File myFile;
 uint8_t sd_answer;
 
-
 void setup() {
   Serial.begin(115200);
+  //Serial.println("Welcome\n");
   RTC.begin();
   RTC.adjust(DateTime(__DATE__, __TIME__));
+  //Serial.println("Welcome\n");
   // put your setup code here, to run once:
 
   boolean tmp;
   tmp = logger.init();
+  Serial.println("Welcome\n");
   if (tmp)
     Serial.println("[ OK ] LOG");
   else      
@@ -27,13 +29,11 @@ void setup() {
   logger.logSession();
 }
 
-void loop() 
-{   
+void loop() {   
   timer = millis();
   SerialRoutine(); 
 
-  if (timer % 1000 == 0)
-  {
+  if (timer % 1000 == 0) {
     appendDate(logPath);
     Serial.println("END\n");
     logger.logStates(0,0,1);
@@ -42,11 +42,8 @@ void loop()
   }
 }
 
-
-void deleteFile(String path)
-{
-  if (SD.exists(path))
-  {
+void deleteFile(String path) {
+  if (SD.exists(path)) {
     Serial.println("file exists. Delete");  
     SD.remove(path);      
     //sd_answer = myFile.println("\n\tNew Session: ");
@@ -55,15 +52,13 @@ void deleteFile(String path)
   }
 
   myFile = SD.open(path, FILE_WRITE);
-  if (myFile)
-  {
+  if (myFile) {
     Serial.println("File created");
     sd_answer = myFile.println("DELETED");
     sd_answer = myFile.println(myFile);
     myFile.close();
   }  
-  else
-  {
+  else {
     Serial.println("file1.txt NON Esiste");
   }
 }
@@ -105,8 +100,7 @@ void SerialRoutine()
 }
 
 
-void readFile(String path)
-{
+void readFile(String path) {
   Serial.println("\nContent of file:");
   myFile = SD.open(path);
   if (myFile)

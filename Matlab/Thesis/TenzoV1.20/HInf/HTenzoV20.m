@@ -304,7 +304,7 @@ cprintf('hyper', [char(10) 'New Plant definition' char(10) char(10)]);
 % Il sys non è osservabile. 
 % Definiamo il sottosistema osservabile e raggiungibile
 disp('Removing unobservable and unreachable modes from Tenzo.');
-  
+  If = 0;
   AMin = [
         0 1 0 0 0 0 0 0;
         0 If 0 0 0 0 0 0;
@@ -316,14 +316,14 @@ disp('Removing unobservable and unreachable modes from Tenzo.');
 % Define B matrix related to ui as torques and thrust
   BMin = [
     zeros(1,4);
-    0 0 0 1/mq; 
+    1/mq 0 0 0; 
     zeros(3,4);
-    1/Ixx 0 0 0;
-    0 1/Iyy 0 0;
-    0 0 1/Izz 0];
+    0 1/Ixx 0 0;
+    0 0 1/Iyy 0;
+    0 0 0 1/Izz];
 
 % define B matrix related to wi anuglar velocities
-BMinw = [Bw(3,:);Bw(6:end,:)];
+%BMinw = [Bw(3,:);Bw(6:end,:)];
  
 outputsLocal = {'phi'; 'theta';'psi';'ze'};
 ClocalMin = [  
@@ -333,7 +333,7 @@ ClocalMin = [
             1 0 0 0 0 0 0 0];
         
 statesMin = {'ze','vze','phi','theta','psi','wxb','wyb','wzb'};
-inputName = {'w1^2','w2^2','w3^2','w4^2'};
+inputName = {'w1^2','w2^2','w3^2','w40^2'};
 
 disp('x,y position and velocities have been removed.');
 disp('When we linearize the non linear model, these informations are lost');
@@ -516,7 +516,7 @@ if isempty(answer2)
     answer10 = 'y';
 end
 
-open('LqrTenzo.slx');
+open('LqrTenzoWMotors.slx');
 A0 = tenzo_min_nominale.a;
 B0 = tenzo_min_nominale.b;
 C0 = tenzo_min_nominale.c;
@@ -529,7 +529,7 @@ set_param('LqrTenzo/Optima Controller/F1','Gain','Kopt1');
 
 
 if strcmp(answer10,'y')
-    sim('LqrTenzo.slx');
+    sim('LqrTenzoWMotors.slx');
 end
 
 %% 2) Passo 2

@@ -20,12 +20,10 @@ boolean Logs::init()
   //Serial.print("\nInitializing SD card...");
   pinMode(53, OUTPUT);
    
-  if (!SD.begin(_chipSelect)) 
-  {
+  if (!SD.begin(_chipSelect)) {
     cardOK = false;
   } 
-  else 
-  {
+  else {
     cardOK = true;
     File logFile = SD.open(logPath, FILE_WRITE);
     logFile.close();
@@ -137,6 +135,25 @@ void Logs::logStates(int initialized, int hovering, int landed)
     logFile.print(hovering);
     logFile.print(',');
     logFile.print(landed);
+    logFile.println();
+    this->closeLogFile(); 
+  }
+}
+
+/*
+ * Log states
+ */
+void Logs::logTriple(int a, int b, int c)
+{
+  if (this->cardOK && this->checkFileLog())
+  {
+    this->openLogFile();
+    logFile.print("L,");
+    logFile.print(a);
+    logFile.print(',');
+    logFile.print(b);
+    logFile.print(',');
+    logFile.print(c);
     logFile.println();
     this->closeLogFile(); 
   }

@@ -38,7 +38,6 @@ NonLinearPid cascadeYawPid(consKpCascYaw, consKiCascYaw, consKdCascYaw);
 NonLinearPid cascadeYawPidW(consKpCascYawW, consKiCascYawW, consKdCascYawW);
 NonLinearPid cascadeAltPid(consKpCascAlt, consKiCascAlt, consKdCascAlt);
 
-        
 // Median Filter
 MedianFilter medianGyroX(3,0);
 MedianFilter medianGyroY(3,0);
