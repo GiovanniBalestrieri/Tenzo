@@ -81,7 +81,7 @@ Me = 5;
 Mde = 10;
 
 % iperbole
-lambdaErr = 0.00001;
+lambdaErr = 0.000001;
 
 
 armLength = 0.23;
